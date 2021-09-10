@@ -1,0 +1,19 @@
+.breadcrumb-wrp{
+    padding:5px 15px;
+    background: #e8e8e8;
+}
+.item-icon {
+    margin-right: 5px;
+}
+.breadcrumb-item{
+    line-height: 30px;
+}
+
+.MuiBreadcrumbs-li .MuiLink-root{
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+}
+.MuiBreadcrumbs-li .MuiLink-root svg{
+    font-size: 21px;
+}

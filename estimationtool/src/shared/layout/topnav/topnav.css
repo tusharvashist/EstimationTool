@@ -1,0 +1,8 @@
+.topnav-wrp{
+    height: 40px;
+    padding: 5px 15px;
+    background-color: #3d82f7;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
