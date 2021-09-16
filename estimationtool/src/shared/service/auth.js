@@ -1,17 +1,30 @@
 import axios from "axios";
 
+const Auth = {
+  login: function (user) {
+    localStorage.setItem("auth", JSON.stringify(user));
 
-const login = (user)=>{
-    let info = { 'one': 1, 'two': 2, 'three': 3 };
-    localStorage.setItem('auth', JSON.stringify(info));
+    if (user.email === "admin" && user.pass === "admin") {
+      return true;
+    } else {
+      return false;
+    }
+  },
 
-}
-
-const logout = (user)=>{
-    // let getauth = localStorage.getItem('testObject');
+  logout: function (user) {
+    localStorage.removeItem("auth");
+  },
+  isLogin: function () {
+    let getauth = localStorage.getItem("auth");
+    //let authObject = JSON.parse(getauth);
     // console.log('retrieved Object: ', JSON.parse(getauth));
-    localStorage.removeItem("auth")
-}
 
+    if (getauth) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+};
 
-export default Auth = {  login, logout }
+export default Auth;
