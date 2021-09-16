@@ -10,6 +10,12 @@ export default function GlobalTosterMsg() {
   const message = useSelector((state) => state.toaster.message);
   const duration = useSelector((state) => state.toaster.duration);
   const severity = useSelector((state) => state.toaster.severity);
+  const positionVertical = useSelector(
+    (state) => state.toaster.positionVertical
+  );
+  const positionHorizontal = useSelector(
+    (state) => state.toaster.positionHorizontal
+  );
 
   const dispatch = useDispatch();
 
@@ -24,8 +30,8 @@ export default function GlobalTosterMsg() {
     <>
       <Snackbar
         anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
+          vertical: positionVertical,
+          horizontal: positionHorizontal,
         }}
         autoHideDuration={duration}
         open={isShowSnackbar}

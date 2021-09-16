@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
+import loginSer from "./login.service";
+import authSer from "../shared/service/auth";
 
 import Button from "@material-ui/core/Button";
 import FormControl from "@material-ui/core/FormControl";
 import { useHistory } from "react-router-dom";
-import Auth from "../shared/service/auth";
 
 import { useDispatch } from "react-redux";
 import {
@@ -14,7 +15,6 @@ import {
 } from "../store/toasterSlice";
 
 import "./login.css";
-
 function Login(props) {
   const dispatch = useDispatch();
 
@@ -40,6 +40,12 @@ function Login(props) {
     history.push(url);
   };
 
+  useEffect(() => {
+    if (localStorage.getItem("user-info")) {
+      history.push("/home");
+    }
+  }, []);
+
   const isVlaidLogin = () => {
     // if (state.email === "admin" && state.pass === "admin") {
     // console.log("valid user")
@@ -53,7 +59,6 @@ function Login(props) {
 
   const handleLogin = function (e) {
     e.preventDefault();
-    //check velidation
     if (isVlaidLogin()) {
       //call user login
       login();
@@ -62,10 +67,19 @@ function Login(props) {
 
   //user login
   const login = () => {
-    const isUserLogged = Auth.login(state);
-
-    if (isUserLogged) {
-      userLoginSuccefulMsg();
+    if (state.email === "admin" && state.pass === "admin") {
+      loginSer
+        .login(state)
+        .then((res) => {
+          console.log(res);
+          authSer.login(res);
+          //    authSer.logout(res);
+          userLoginSuccefulMsg();
+        })
+        .catch((error) => {
+          //console.log(error.message);
+          userLoginFailMsg();
+        });
     } else {
       userLoginFailMsg();
     }
@@ -73,14 +87,16 @@ function Login(props) {
 
   //show successful msg
   const userLoginSuccefulMsg = () => {
-    dispatch(openSuccessToasterWithMsg("User Logging Successfully!"));
+    dispatch(
+      openSuccessToasterWithMsg({ message: "User Logging Successfully!" })
+    );
 
     redirectEstimation(); //redirect to all Estimation page
   };
 
   //show login fail msg
   const userLoginFailMsg = () => {
-    dispatch(openErrorToasterWithMsg("User Login Fail!"));
+    dispatch(openErrorToasterWithMsg({ message: "User Login Fail!" }));
   };
 
   return (
