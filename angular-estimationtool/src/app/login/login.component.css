@@ -1,0 +1,40 @@
+.login-title {
+    font-size: 20px;
+    text-transform: uppercase;
+}
+.bg-img {
+    height: 100%;
+    background:url(./bg.png) no-repeat center;
+    background-size: cover;
+}
+
+.promo-box  {
+    padding: 22%;
+    background: #ffffff54;
+}
+.promo-box .title{
+    font-size: 20px;
+}
+
+.promo-box .sub-title{
+    font-size: 16px;
+}
+
+.example-full-width {
+    width: 100%;
+  }
+
+.main-wrapper {
+	height: 100%;
+}
+
+.main-wrapper .example-form {
+	min-width: 100%;	
+	width: 100%;
+}
+
+.main-wrapper .example-full-width,
+.main-wrapper .btn-block {
+	width: 100%;
+}
+

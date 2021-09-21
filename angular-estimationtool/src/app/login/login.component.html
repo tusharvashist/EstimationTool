@@ -1,0 +1,45 @@
+<mat-grid-list cols="2" rowHeight="1:1">
+    <mat-grid-tile>
+        <div class="bg-img">
+            <div class="bg-mask">
+                <div class="promo-box">
+                    <h1 class="title"> Estimation Tool</h1>
+                    <p class="sub-title">The Scalable Path Project estimator. A tool that's flexible enough to help you
+                        estimate costs.</p>
+                </div>
+            </div>
+        </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <div class="main-wrapper" fxLayout="row" fxLayoutAlign="center center">
+            <mat-card class="box">
+                <mat-card-header>
+                    <mat-card-title>Login</mat-card-title>
+                </mat-card-header>
+                <form (ngSubmit)="userlogin()">
+                    <mat-card-content>
+                        <mat-form-field class="example-full-width">
+                            <input required matInput placeholder="Email" type="email" email name="username"
+                                [formControl]="emailFormControl" [(ngModel)]='user.Username'>
+                            <mat-error
+                                *ngIf="emailFormControl.errors?.pattern && !emailFormControl.hasError('required')">
+                                Please enter a valid email address
+                            </mat-error>
+                            <mat-error *ngIf="emailFormControl.hasError('required')">
+                                Email is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <mat-form-field class="example-full-width">
+                            <input required matInput type="password" placeholder="Password" name="password"
+                                [formControl]="inputFormControl" [(ngModel)]='user.Password'>
+                            <mat-error *ngIf="inputFormControl.hasError('required')">
+                                Password is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </mat-card-content>
+                    <button type="submit" mat-flat-button color="primary" class="btn-block">Login</button>
+                </form>
+            </mat-card>
+        </div>
+    </mat-grid-tile>
+</mat-grid-list>
