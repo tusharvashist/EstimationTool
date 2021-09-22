@@ -1,0 +1,35 @@
+<mat-grid-list cols="2" rowHeight="1:1" className="h-100 login-wrp">
+    <mat-grid-tile class="bg-img">
+        <div class="bg-mask" fxLayoutAlign="center center">
+            <div class="promo-box">
+                <h1 class="title">Estimation Tool</h1>
+                <p class="sub-title">The Scalable Path Project estimator. A tool that's flexible enough to help you
+                    estimate costs.</p>
+            </div>
+        </div>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <form (ngSubmit)="userlogin()">
+            <div class="outerContainer">
+                <div fxLayout="column" fxLayoutGap="20px" class="container">
+                    <div fxLayoutAlign="left">
+                        <h1 className="login-title">LOGIN</h1>
+                    </div>
+                    <div fxLayoutAlign="left">
+                        <input class="form-control" placeholder="Email" type="email"
+                            name="username" [(ngModel)]='user.email'>
+                        </div>
+                    <div fxLayoutAlign="left">
+                        <input class="form-control" type="password" placeholder="Password"
+                            name="password" [(ngModel)]='user.pass'>
+                        </div>
+                    <div fxLayoutAlign="left center">
+                        <button type="submit" class="btn btn-primary width-100">Login</button>
+                        </div>
+                </div>
+            </div>
+        </form>
+
+
+    </mat-grid-tile>
+</mat-grid-list>

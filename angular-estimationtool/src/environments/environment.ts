@@ -3,7 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  title: 'Estimation Tool-Dev',
+  appDomain: '',
+  //apiURL: 'http://localhost:5252/api/v1/',
+  apiURL: 'https://jsonplaceholder.typicode.com/posts',
+  appPort:'1000'
 };
 
 /*

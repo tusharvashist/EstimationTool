@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import baseURL from './helper';
+import {environment} from '../environments/environment';
 
 
 @Injectable({
@@ -12,6 +12,6 @@ export class UserService {
 
   //Check Login
   public login(user: any) {
-    return this.http.post(`https://jsonplaceholder.typicode.com/posts`, user);
+    return this.http.post(environment.apiURL, user);
   }
 }

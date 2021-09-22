@@ -9,12 +9,14 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './angular-material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
+import { AllclientComponent } from './pages/allclient/allclient.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    AllclientComponent
   ],
   imports: [
     BrowserModule,

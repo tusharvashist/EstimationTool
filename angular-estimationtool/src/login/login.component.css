@@ -1,5 +1,5 @@
 .login-title {
-    font-size: 20px;
+    font-weight: bold;
     text-transform: uppercase;
 }
 .bg-img {
@@ -8,33 +8,27 @@
     background-size: cover;
 }
 
+.bg-mask {
+    height: 100%;
+    width: 100%;
+    background-color: #2f2f2f4d;
+}
+
 .promo-box  {
     padding: 22%;
     background: #ffffff54;
 }
 .promo-box .title{
     font-size: 20px;
+    font-weight: bold;
 }
 
 .promo-box .sub-title{
     font-size: 16px;
 }
 
-.example-full-width {
+.width-100
+{
     width: 100%;
-  }
-
-.main-wrapper {
-	height: 100%;
-}
-
-.main-wrapper .example-form {
-	min-width: 100%;	
-	width: 100%;
-}
-
-.main-wrapper .example-full-width,
-.main-wrapper .btn-block {
-	width: 100%;
 }
 
