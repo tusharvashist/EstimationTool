@@ -1,22 +1,43 @@
+import React from "react";
+import "./styles.css";
+import { Route, Switch } from "react-router-dom";
+import Drawer from "./components/drawer/Drawer";
+import { makeStyles } from "@material-ui/core/styles";
+import Clients from "./pages/Client/Clients"
+import Projects from "./pages/Project/Projects"
+import RecentEstimation from "./pages/Estimation/RecentEstimation"
 
-import React from 'react';
-import './App.css';
-import Login from './login/login';
-import Layout from './shared/layout/layout';
+import {
+  Drawer as MUIDrawer,
+  ListItem,
+  List,
+  ListItemIcon,
+  ListItemText, AppBar, Toolbar, Typography
+} from "@material-ui/core";
+import { EvStation } from "@material-ui/icons";
 
-import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+const useStyles = makeStyles({
+  container: {
+    display: "flex"
+  }
+});
 
-function App() {
-  return ( 
-  <BrowserRouter> 
-    <Switch>
-      <Redirect exact from="/" to="/login" />
-      <Route exact path="/login"> <Login/></Route>
-      <Route>
-          <Layout/>
-      </Route>
-    </Switch>
-  </BrowserRouter>);
+export default function App() {
+  const classes = useStyles();
+  return (
+    <div className={classes.container}>
+      <Drawer />
+      
+      <Switch>
+        <Route exact from="/" render={props => <RecentEstimation {...props} />} />
+        <Route exact path="/client" render={props => <Clients {...props} />} />
+        <Route exact path="/project" render={props => <Projects {...props} />} />
+
+      </Switch>
+      
+
+    </div>
+  );
 }
 
-export default App;
+
