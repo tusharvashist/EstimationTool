@@ -10,13 +10,23 @@ import { AngularMaterialModule } from './angular-material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
 import { AllclientComponent } from './pages/allclient/allclient.component';
+import { TopnavComponent } from './shared/layout/topnav/topnav.component';
+import { FooterComponent } from './shared/layout/footer/footer.component';
+import { SidebarComponent } from './shared/layout/sidebar/sidebar.component';
+import { BreadcrumComponent } from './shared/layout/breadcrum/breadcrum.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    AllclientComponent
+    AllclientComponent,
+    TopnavComponent,
+    FooterComponent,
+    SidebarComponent,
+    BreadcrumComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

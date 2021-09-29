@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { UserService } from './login.service';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -9,47 +10,38 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 
-export class LoginComponent implements OnInit {  
+export class LoginComponent implements OnInit {
   submitted = false;
-  constructor(private userService: UserService,private router: Router) { }
+  constructor(private userService: UserService, private router: Router, private snack: MatSnackBar) { }
 
   public user = {
     email: '',
     pass: ''
-  }
-
-  public emailFormControl = new FormControl('', [
-    Validators.required,
-    //Validators.email,
-    //Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
-  ]);
-
-  public inputFormControl = new FormControl('', [
-    Validators.required,
-  ]);
+  }  
 
   ngOnInit(): void {
+    //Check Auth
+
   }
 
   userlogin() {
-    //if (this.emailFormControl.valid && this.inputFormControl.valid) {
-    if(this.user.email =='' || this.user.pass =='')
-    {
+    if (this.user.email.trim() == '' || this.user.pass.trim() == '') {
+      this.snack.open("Username and Password is required?", '', { duration: 1000 });
       return;
-    }  
+    }
 
-      this.userService.login(this.user).subscribe(
-        (data) => {
-          //sucess
-          alert('User Logined');
-          this.router.navigate(['/allclient']);
-        },
-        (error) => {
-          alert('User Name and Password are not valid');
-        }
-      )
 
-    //}
+    this.userService.login(this.user).subscribe(
+      (data) => {
+        //sucess          
+        this.router.navigate(['/dashboard']);
+      },
+      (error) => {
+        this.snack.open("Username and Password are not valid.", '', { duration: 1000 });
+      }
+    )
+
+
   }
 
 }

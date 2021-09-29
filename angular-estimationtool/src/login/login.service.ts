@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {environment} from '../environments/environment';
+import { environment } from '../environments/environment';
 
 
 @Injectable({
@@ -12,6 +12,21 @@ export class UserService {
 
   //Check Login
   public login(user: any) {
-    return this.http.post(environment.apiURL, user);
+    let headers: HttpHeaders = new HttpHeaders();
+    headers.append('Authorization', btoa(`${user.email}:${user.pass}`));
+    return this.http.post(environment.apiURL, user, { headers: headers });
+  }
+
+  public isLoggedIn() {
+    let tokenstr = localStorage.getItem('token');
+    if (tokenstr != undefined || tokenstr == '' || tokenstr == null) {
+      return false;
+    }
+    return true;
+  }
+
+  public setLoggedUser(token: any) {
+    localStorage.setItem('token', token);
+    return true;
   }
 }
