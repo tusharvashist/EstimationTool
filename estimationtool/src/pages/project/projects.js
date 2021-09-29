@@ -1,17 +1,15 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect  } from "react";
-import Edit from '@material-ui/icons/Edit';
-import Delete from '@material-ui/icons/Delete';
-import ClientSer from "./client.service";
+import ProjectSer from "./project.service";
 import {Box, Grid} from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { makeStyles } from '@material-ui/core/styles';
-import CreateClientDailog from "./create-client.dailog";
-import UpdateClientdailog from "./update-client.dailog";
-import DeleteClientdailog from "./delete-client.dailog";
+import CreateProjectDailog from "./create-project.dailog";
+import UpdateProjectDailog from "./update-project.dailog";
+import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from '@material-ui/icons/Add';
-import "./all-client.css";
+import "./project.css";
 
   const useStyles = makeStyles({
       MTableToolbar: {
@@ -21,36 +19,28 @@ import "./all-client.css";
       },
   });
 
-function AllClient() {
+function Projects() {
     const [tableData,setTableData] = useState([]);
     const [isOpenDailog,setIsOpenDailog] = useState(false);
-    const [createClinetDailog,setCreateClinetDailog] = useState(false);
-    const [editClinetDailog,setEditClinetDailog] = useState(false);
-    const [deleteClinetDailog,setDeleteClinetDailog] = useState(false);
+    const [createProjectDailog,setCreateProjectDailog] = useState(false);
+    const [editProjectDailog,setEditProjectDailog] = useState(false);
+    const [deleteProjectDailog,setDeleteProjectDailog] = useState(false);
     const [editRow,setEditRow] = useState({});
     const [actionId,setActionId] = useState("");
-    const [clientStatus,setClientStatus] = useState([
+    const [projectStatus,setProjectStatus] = useState([
         { title: 'All'},
         { title: 'Active'},
         { title: 'In-Active'},
     ]);
 
     useEffect(() => {
-      getAllClient()
+      getAllProject()
     },[]);
     
-    const getAllClient = ()=>{
-      ClientSer.getAllClient().then((res)=>{
-        let dataResponce = res.data.body;
-        setTableData([...dataResponce])
-      }).catch((err)=>{
-        console.log("estimation error",err)
-      })
-    }
+ 
     const columns = [
-      { title: "Client Name", field: "clientName", sorting: false },
-      { title: "Client Description", field: "description" },
-      { title: "Client Website", field: "website", render:(dataRow)=>{return(<a target="blank" href={dataRow.website}>{dataRow.website}</a>)} }
+      { title: "Project Name", field: "projectName", sorting: false },
+      { title: "Project Description", field: "projectDescription" }
     ];
 
     const openFun = ()=>{
@@ -66,103 +56,111 @@ function AllClient() {
     
     const openCreateDailog = ()=>{
       openFun()
-      setEditClinetDailog(false);
-      setDeleteClinetDailog(false);
-      setCreateClinetDailog(true)
-      console.log("createClinetDailog", createClinetDailog)
+      setEditProjectDailog(false);
+      setDeleteProjectDailog(false);
+      setCreateProjectDailog(true)
     }
   
     const openUpdateDailog = ()=>{
       openFun()
-      setCreateClinetDailog(false)
-      setDeleteClinetDailog(false);
-      setEditClinetDailog(true);
+      setCreateProjectDailog(false)
+      setDeleteProjectDailog(false);
+      setEditProjectDailog(true);
     }
   
     const openDeleteDailog = ()=>{
       openFun()
-      setCreateClinetDailog(false)
-      setEditClinetDailog(false);
-      setDeleteClinetDailog(true);
+      setCreateProjectDailog(false)
+      setEditProjectDailog(false);
+      setDeleteProjectDailog(true);
     }
 
-    const createClient = (clientData)=>{
-      ClientSer.createClient(clientData).then((res)=>{
-        getAllClient()
+    const getAllProject = ()=>{
+      ProjectSer.getAllProject().then((res)=>{
+        let dataResponce = res.data.body;
+        setTableData([...dataResponce])
+      }).catch((err)=>{
+        console.log("Project error",err)
+      })
+    }
+
+    const createProject = (projectData)=>{
+      ProjectSer.createProject(projectData).then((res)=>{
+        getAllProject()
         closeFun()
       }).catch((err)=>{
       });
     } 
 
-    const updateClient = (clientData)=>{
-      ClientSer.updateClient(actionId,clientData).then((res)=>{
-        getAllClient()
+    const updateProject = (projectData)=>{
+      ProjectSer.updateProject(actionId,projectData).then((res)=>{
+        getAllProject()
         closeFun()
       }).catch((err)=>{
       });
     } 
 
-    const deleteClient = ()=>{
-      ClientSer.deleteClient(actionId).then((res)=>{
-        getAllClient()
+    const deleteProject = ()=>{
+      ProjectSer.deleteProject(actionId).then((res)=>{
+        getAllProject()
         closeFun()
       }).catch((err)=>{
       });
     } 
 
-    const saveCreateClientFun = (data)=>{
-      createClient(data)
+    const saveCreateProjectFun = (data)=>{
+      createProject(data)
     }
 
-    const saveUpdateClientFun = (data)=>{
-      updateClient(data)
+    const saveUpdateProjectFun = (data)=>{
+      updateProject(data)
     }
-    const confirmDeleteClientFun = ()=>{
-      deleteClient()
+    const confirmDeleteProjectFun = ()=>{
+      deleteProject()
     }
 
     
 
   return (
-    <div className="all-client-wrap">
-     { createClinetDailog === true && isOpenDailog === true ?
-        (<CreateClientDailog 
+    <div className="all-project-wrap">
+     { createProjectDailog === true && isOpenDailog === true ?
+        (<CreateProjectDailog 
           isOpen={isOpenDailog} 
           openF={openFun} 
           closeF={closeFun} 
-          title="Create client" 
+          title="Create project" 
           oktitle="Save" 
-          saveFun={saveCreateClientFun}
+          saveFun={saveCreateProjectFun}
           cancelTitle="Cancel"
           />):null }
 
-      { editClinetDailog === true && isOpenDailog === true  ?
-       (<UpdateClientdailog 
+      { editProjectDailog === true && isOpenDailog === true  ?
+       (<UpdateProjectDailog 
         isOpen={isOpenDailog} 
           openF={openFun} 
           closeF={closeFun} 
           editRowObj={editRow} 
-          title="Edit Estimation" 
+          title="Edit Project" 
           oktitle="Save"
-          saveFun={saveUpdateClientFun} 
+          saveFun={saveUpdateProjectFun} 
           cancelTitle="Cancel"/>) 
           :null}
 
-          { deleteClinetDailog === true && isOpenDailog === true  ? 
-          (<DeleteClientdailog 
+          { deleteProjectDailog === true && isOpenDailog === true  ? 
+          (<DeleteProjectDailog 
             isOpen={isOpenDailog} 
               openF={openFun} 
               closeF={closeFun} 
               editRowObj={editRow} 
-              title="Delete Client" 
+              title="Delete Project" 
               oktitle="Ok"
-              saveFun={confirmDeleteClientFun} 
+              saveFun={confirmDeleteProjectFun} 
               cancelTitle="Cancel"/>) : null
           }
           <Box mb={3}>
               <Grid container justify="space-between" alignItems="center">
-                <Dropdown title="client status" list={clientStatus} getVal={getDropDownvalue}/>
-                <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>create client</Button>
+                <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/>
+                <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>Create Project</Button>
               </Grid>
           </Box>
        <MaterialTable
@@ -170,7 +168,7 @@ function AllClient() {
             actions={[
                 {
                 icon: 'edit',
-                tooltip: 'edit client',
+                tooltip: 'Edit project',
                 onClick: (event, rowData) => {
                     setEditRow({...rowData}); 
                     setActionId(rowData.id); 
@@ -178,7 +176,7 @@ function AllClient() {
                 }, 
                 {
                 icon: 'delete',
-                tooltip: 'delete client',
+                tooltip: 'Delete project',
                 onClick: (event, rowData) => {
                     setEditRow({...rowData}); 
                     setActionId(rowData.id); 
@@ -186,7 +184,6 @@ function AllClient() {
                 }
               
             ]}
-         
             options={{
                 actionsColumnIndex:-1,
                 sorting: true,
@@ -201,4 +198,4 @@ function AllClient() {
     </div>
   );
 }
-export default AllClient;
+export default Projects;

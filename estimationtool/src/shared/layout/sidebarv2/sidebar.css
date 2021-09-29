@@ -1,0 +1,16 @@
+.MuiDrawer-paper {
+    width: 220px !important;
+}
+.sidebar-bg{
+    background-color: #3549b5;
+    color: #fff;
+}
+.link-item {
+    color: #fff;
+    text-decoration: none;
+
+}
+.link-icon {
+    color: #fff;
+
+}

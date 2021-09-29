@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
 import AllClient from '../../pages/all-client/all-client';
+import Projects from '../../pages/project/projects';
 import Allestimation from '../../pages/allestimation/allestimation';
 import TopNan from './topnav/topnav';
 import Breadcrum from './breadcrum/breadcrum';
 import Footer from './footer/footer'
-import SideBar from './sidebar/sidebar';
-import {Container } from '@material-ui/core';
+import SideBarv2 from './sidebarv2/sidebar';
+import {Container} from '@material-ui/core';
+import Grid from '@material-ui/core/Grid';
 import {Switch, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
-
 import './layout.css';
 
 const EsContainer = withStyles((props) => {
@@ -32,17 +33,26 @@ export default class Layout extends Component {
             <div>
                 <EsContainer className="main-container" maxWidth={false}  fixed={false}>
                     <TopNan sidebar={this.toggleDrawer(true)}/>
-                    <Breadcrum/>
-                        <SideBar anchor='left' sideStateVal={this.state.sideState} toggleDrawerFun={this.toggleDrawer}/>
                         <div className="main-content">
-                            <Switch>
-                               <Route exact path="/allestimation">
-                                   <Allestimation/>
-                                </Route>
-                                <Route path="/allclient">
-                                    <AllClient />
-                                </Route>
-                            </Switch>
+                            <Grid container className="h-100" alignItems="stretch">
+                                <Grid item className="h-100" xs={2}>
+                                <SideBarv2 className="h-100" className="bg-vvv"/>
+                                </Grid>
+                                <Grid item className="h-100" xs={10}>
+                                     <Breadcrum/>
+                                     <Switch>
+                                        <Route exact path="/allestimation">
+                                        <Allestimation/>
+                                        </Route>
+                                        <Route path="/allclient">
+                                            <AllClient />
+                                        </Route>
+                                        <Route path="/project">
+                                            <Projects />
+                                        </Route>
+                                    </Switch> 
+                                </Grid>
+                            </Grid>
                         </div>
                         <Footer/> 
                 </EsContainer>

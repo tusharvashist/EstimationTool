@@ -9,7 +9,7 @@ module.exports.validateToken = (req,res,next) => {
             throw new Error(constant.requestValidationMessage.TOKEN_MISSING)
         }
         const token = req.headers.authorization.split('Bearer ')[1].replace('"','');
-        let decoded = jwt.verify(token, process.env.SECRET_KEY)
+        let decoded = jwt.verify(token, process.env.SECRET_KEY || 'py-estimation#$#')
         return next()
     }catch(err){
         console.log("error:" ,err);
