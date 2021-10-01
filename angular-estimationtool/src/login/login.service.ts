@@ -6,27 +6,32 @@ import { environment } from '../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class LoginService {
 
   constructor(private http: HttpClient) { }
 
   //Check Login
-  public login(user: any) {
-    let headers: HttpHeaders = new HttpHeaders();
-    headers.append('Authorization', btoa(`${user.email}:${user.pass}`));
-    return this.http.post(environment.apiURL, user, { headers: headers });
+  public login(user: any) {    
+    let userstr=btoa(`${user.email}:${user.pass}`);    
+    let headers = { 'Authorization': `Basic ${userstr}`};
+    let url=`${environment.apiURL}user/login`;
+    return this.http.post(url,'', { headers });
+  }
+
+  public getuser() {    
+    let url=`${environment.apiURL}allestimation?skip=0&limit=5`;
+    return this.http.get(url);
   }
 
   public isLoggedIn() {
     let tokenstr = localStorage.getItem('token');
-    if (tokenstr != undefined || tokenstr == '' || tokenstr == null) {
+    if (tokenstr == undefined || tokenstr == '' || tokenstr == null) {
       return false;
     }
     return true;
   }
 
-  public setLoggedUser(token: any) {
-    localStorage.setItem('token', token);
-    return true;
-  }
+ 
+
+ 
 }

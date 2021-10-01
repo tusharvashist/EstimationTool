@@ -9,7 +9,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatGridListModule } from '@angular/material/grid-list';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
-
+import { MatSidenavModule } from '@angular/material/sidenav';
+import {MatListModule} from '@angular/material/list'; 
 
 const materialModules = [ 
   MatButtonModule,
@@ -21,7 +22,8 @@ const materialModules = [
   MatGridListModule,
   MatToolbarModule,
   MatIconModule,
-
+  MatSidenavModule,
+  MatListModule
 ];
 
 @NgModule({

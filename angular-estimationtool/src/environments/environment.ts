@@ -6,8 +6,8 @@ export const environment = {
   production: false,
   title: 'Estimation Tool-Dev',
   appDomain: '',
-  //apiURL: 'http://localhost:5252/api/v1/',
-  apiURL: 'https://jsonplaceholder.typicode.com/posts',
+  apiURL: 'http://localhost:5252/api/v1/',
+  //apiURL: 'https://jsonplaceholder.typicode.com/posts',
   appPort:'1000'
 };
 
