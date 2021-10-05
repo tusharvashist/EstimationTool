@@ -23,13 +23,7 @@ export class LoginService {
     return this.http.get(url);
   }
 
-  public isLoggedIn() {
-    let tokenstr = localStorage.getItem('token');
-    if (tokenstr == undefined || tokenstr == '' || tokenstr == null) {
-      return false;
-    }
-    return true;
-  }
+  
 
  
 
