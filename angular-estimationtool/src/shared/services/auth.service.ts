@@ -19,30 +19,37 @@ export class AuthService {
     return true;
   }
 
-  public getToken() {
-    let tokenData = this.getLocalStorage('auth');
-    return '';
+  public isLoggedIn() {
+    let tokenstr = this.getToken();
+    if (tokenstr == undefined || tokenstr == '' || tokenstr == null) {
+      return false;
+    }
+    return true;
   }
 
-  public setLocalStorage(name: string, data: any) {
+  public getToken() {
+    let tokenData = this.getLocalStorage('auth'); 
+    if(tokenData != null)  
+    return tokenData.token;
+    else
+    return null; 
+  }
+
+  private setLocalStorage(name: string, data: any) {
     localStorage.setItem(name, data);
     return true;
   }
 
-  public removeLocalStorage(name: string) {
+  private removeLocalStorage(name: string) {
     localStorage.removeItem(name);
     return true;
   }
 
-  public getLocalStorage(name: string) {
+  private getLocalStorage(name: string) {
     let data = localStorage.getItem(name);
     if (data != null)
       return JSON.parse(data);
     else
       return null;
   }
-
-
-
-
 }

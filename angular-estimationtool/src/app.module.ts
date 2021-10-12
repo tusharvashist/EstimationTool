@@ -12,6 +12,8 @@ import { AllclientComponent } from './pages/allclient/allclient.component';
 
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { authInterceptorProviders } from './shared/services/http.interceptor';
+import { EstimationsComponent } from './pages/estimations/estimations.component';
+import { ProjectsComponent } from './pages/projects/projects.component';
 
 
 @NgModule({
@@ -19,7 +21,7 @@ import { authInterceptorProviders } from './shared/services/http.interceptor';
     AppComponent,
     LoginComponent,
     AllclientComponent,   
-    DashboardComponent,
+    DashboardComponent, EstimationsComponent, ProjectsComponent,
   ],
   imports: [
     BrowserModule,

@@ -22,7 +22,7 @@ export default function Sidebar(props){
                             <ListItemIcon>
                                 <HomeIcon />
                             </ListItemIcon>
-                            <Link to={{ pathname:"/allestimation", state:{pageName:'Allestimation'}}} onClick={props.toggleDrawerFun(false)}>Estimations</Link>
+                            <Link to={{pathname:"/estimation"}} onClick={props.toggleDrawerFun(false)}>Estimations</Link>
                         </ListItem>
                         <ListItem>
                             <ListItemIcon>

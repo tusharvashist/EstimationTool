@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React from 'react';
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from '@material-ui/core/TextField';
 import { Grid } from "@material-ui/core";

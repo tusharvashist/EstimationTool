@@ -8,7 +8,6 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 import  './dailog.css';
 
 const styles = (theme) => ({
@@ -57,14 +56,11 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 export default function CustomizedDialogs(props) {
-  const [open, setOpen] = React.useState(false);
-    const handleClickOpen = () => {
-        setOpen(true);
-        props.openFun();
-      };
+    // const handleClickOpen = () => {
+    //     props.openFun();
+    //   };
 
       const handleClose = () => {
-        setOpen(false);
         props.closeFun();
       };
     
@@ -73,7 +69,6 @@ export default function CustomizedDialogs(props) {
       }
 
     useEffect(() => {
-      console.log(">>>>>>>>>>>>>>>>>>>")
     }, [props.isOpen])
     
     

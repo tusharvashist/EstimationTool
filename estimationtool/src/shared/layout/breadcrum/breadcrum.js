@@ -1,22 +1,44 @@
-import React from 'react';
+import React, {useState,useEffect} from 'react';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
 import HomeIcon from '@material-ui/icons/Home';
 import Grid from '@material-ui/core/Grid';
+import { useLocation } from 'react-router-dom';
 import './breadcrum.css';
-function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
-  }
 
 export default function Breadcrum() {
+const location = useLocation();
+const [breadcrumbs, setBreadcrumbs] = useState({
+  path:"",
+  title:""
+});
+const routeList = [
+  {path:"estimation", title:"Estimation"},
+  {path:"allclient", title:"All Client"},
+  {path:"project", title:"Project"},
+  {path:"clientdetails", title:"Client Details"},
+  {path:"projectdetails", title:"Project Details"}
+]
+
+
+useEffect(() => {
+  let currentPath =  location.pathname.split("/")[1];
+  getBreadcrumbsTitle(currentPath)
+}, [location])
+
+let getBreadcrumbsTitle = (currentPath)=>{
+  let getbreadcrumb = routeList.find((itm,idx,arr)=>{
+    return itm.path === currentPath
+  })
+  setBreadcrumbs({...getbreadcrumb})
+ 
+  console.log("currentPath>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", breadcrumbs)
+}
+
     return (
       <Grid container  alignItems="center"  className="breadcrumb-wrp">
           <Breadcrumbs aria-label="breadcrumb" className="breadcrumb-item">
-            <Link color="inherit" href="/" onClick={handleClick}>
-            <HomeIcon className="item-icon"/>
-            Dashboard
-            </Link>
+             <p> {breadcrumbs.title} </p> 
           </Breadcrumbs>
       </Grid>
       );
