@@ -39,7 +39,7 @@ export default function Login(props) {
     };
 
     const redirectDashbord =()=>{
-        let url = "/allestimation"
+        let url = "/estimation"
        history.push(url)  
     }
 

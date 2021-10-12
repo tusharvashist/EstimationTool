@@ -1,6 +1,7 @@
 import axios from "axios";
 import Url from "../../shared/service/urls.service";
-const ProjectService = {
+const ClientService = {
+    
     getClientById:  function(){
         let url = Url.allClient;
         let clientId= "/614f3c6790a42ca5a74bebf6";
@@ -12,38 +13,38 @@ const ProjectService = {
             }
            })
     },
-    getAllProject:  function(){
-        let url = Url.allProject;
+    getAllClient:  function(){
+        let url = Url.allClient;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.get(url+"?skip=0&limit=20",{
+        return axios.get(url+"?skip=0&limit=10",{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }
            })
     },
-    createProject:  function(projectData){
-        let url = Url.createProject;
+    createClient:  function(clientData){
+        let url = Url.createClient;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.post(url,projectData,{
+        return axios.post(url,clientData,{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }
            })
     },
-    updateProject:  function(actionId,projectData){
-        let url = Url.createProject+"/"+actionId;
+    updateClient:  function(actionId,clientData){
+        let url = Url.createClient+"/"+actionId;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.put(url,projectData,{
+        return axios.put(url,clientData,{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }
         })
     },
-    deleteProject:  function(actionId){
-        let url = Url.deleteProject+"/"+actionId;
+    deleteClient:  function(actionId){
+        let url = Url.deleteClient+"/"+actionId;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
         return axios.delete(url,{
@@ -54,4 +55,4 @@ const ProjectService = {
         })
     }
 }
-export default ProjectService;
+export default ClientService;

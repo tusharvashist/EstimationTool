@@ -12,7 +12,7 @@ joiSchemaValidation.validateBody(joiClientSchema.createClientSchema),
 clientController.createClient
 );
 
-//----- Get item by id -----------
+//----- Get Client by id -----------
 router.get("/:id",
 tokenValidation.validateToken,
 clientController.getClientById);

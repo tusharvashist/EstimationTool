@@ -1,25 +1,14 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect  } from "react";
-import Edit from '@material-ui/icons/Edit';
-import Delete from '@material-ui/icons/Delete';
 import ClientSer from "./client.service";
 import {Box, Grid} from "@material-ui/core";
 import Button from '@material-ui/core/Button';
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
-import { makeStyles } from '@material-ui/core/styles';
 import CreateClientDailog from "./create-client.dailog";
 import UpdateClientdailog from "./update-client.dailog";
 import DeleteClientdailog from "./delete-client.dailog";
 import AddIcon from '@material-ui/icons/Add';
 import "./all-client.css";
-
-  const useStyles = makeStyles({
-      MTableToolbar: {
-          root: {
-          backgroundColor:"#000"
-        }
-      },
-  });
 
 function AllClient() {
     const [tableData,setTableData] = useState([]);

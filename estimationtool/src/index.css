@@ -27,3 +27,6 @@ html,body, #root, .App {
 body {
   background: #dedede;
 }
+p {
+  margin: 0;
+}

@@ -1,11 +1,7 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect  } from "react";
 import "./allestimation.css";
-import Edit from '@material-ui/icons/Edit';
 import AllestimationSer from "./allestimation.service";
-import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
-import TextField from '@material-ui/core/TextField';
-import { Grid } from "@material-ui/core";
 import Link from '@material-ui/core/Link';
 function Home() {
     const [tableData, setTableData] = useState([]);
@@ -19,12 +15,15 @@ function Home() {
       })
     },[]);
     const [isOpenDailog, setIsOpenDailog] = useState(false);
+    const clientDetailsUrl = "/clientdetails/"+"614f3c6790a42ca5a74bebf6";
+    //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
+    // render:(rowData)=>{ return (<Link  href={projectDetailsUrl}> { rowData.projectName}</Link>)} 
     const columns = [
       { title: "Estimation Name", field: "estimationName", sorting: false },
       { title: "Estimation Description", field: "estimationDescription" },
       { title: "Estimation Type", field: "estimationType" },
-      { title: "Client Name", field: "clientName", render:(rowData)=>{ return (<Link  href="/"> {rowData.clientName}</Link>)}},
-      { title: "Project Name", field: "projectName", render:(rowData)=>{ return (<Link  href="/"> {rowData.clientName}</Link>)} },
+      { title: "Client Name", field: "clientName", render:(rowData)=>{ return (<Link  href={"/clientdetails"+"/"+rowData.id}> {rowData.clientName}</Link>)}},
+      { title: "Project Name", field: "projectName"},
       { title: "Last update", field: "lastupdate", type:'date'},
     ];
     const openfn = ()=>{
@@ -37,32 +36,8 @@ function Home() {
 
   return (
     <div className="wrap">
-    {/* <CustomizedDialogs isOpen={isOpenDailog} openFun={openfn} closeFun={closefn} title="Edit Estimation" oktitle="Save" CancelTitle="Cancel">
-      <Grid container>
-          <form  noValidate>
-            <TextField autoFocus id="standard-basic" label="Estimation Name" className="full-width" value={editRow.estimationName} />
-            <TextField id="standard-basic" label="Estimation Description" className="full-width" value={editRow.estimationDescription} />
-            <TextField id="standard-basic" label="Estimation Type" className="full-width" value={editRow.estimationType} />
-            <TextField id="standard-basic" label="Client Name" className="full-width" value={editRow.clientName} />
-            <TextField id="standard-basic" label="Project Name" className="full-width" value={editRow.projectName} />
-            <TextField  id="date" label="Last update" type="date" className="full-width" InputLabelProps={{ shrink: true}}/>
-          </form>
-      </Grid>
-    </CustomizedDialogs> */}
        <MaterialTable
       columns={columns}
-      // actions={[
-      //   {
-      //     icon: 'save',
-      //     tooltip: 'Save User',
-      //     onClick: (event, rowData) => {openfn(); setEditRow({...editRow,...rowData}); console.log("****")}
-      //   }
-      // ]}
-      // components={{
-      //   Action: props => (
-      //    <Edit  onClick={(event) => props.action.onClick(event, props.data)}/>
-      //   ),
-      // }}
       options={{
         actionsColumnIndex:-1,
         sorting: true,

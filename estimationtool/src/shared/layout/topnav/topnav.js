@@ -24,19 +24,19 @@ const useStyles = makeStyles((theme) => ({
     let history = useHistory();
     const classes = useStyles();
   
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    // const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-      };
+    // const handleClick = (event) => {
+    //   setAnchorEl(event.currentTarget);
+    // };
+    // const handleClose = () => {
+    //     setAnchorEl(null);
+    //   };
       
     const redirectLogin =()=>{
         let url = "/login"
        history.push(url)  
-       handleClose();
+      //  handleClose();
     }
 
    

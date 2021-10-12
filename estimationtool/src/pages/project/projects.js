@@ -3,24 +3,21 @@ import React, { useState, useEffect  } from "react";
 import ProjectSer from "./project.service";
 import {Box, Grid} from "@material-ui/core";
 import Button from '@material-ui/core/Button';
-import Dropdown from "../../shared/ui-view/dropdown/dropdown";
-import { makeStyles } from '@material-ui/core/styles';
 import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
 import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from '@material-ui/icons/Add';
+import Link from '@material-ui/core/Link';
+import { useParams } from 'react-router-dom';
 import "./project.css";
 
-  const useStyles = makeStyles({
-      MTableToolbar: {
-          root: {
-          backgroundColor:"#000"
-        }
-      },
-  });
+
 
 function Projects() {
-    const [tableData,setTableData] = useState([]);
+  const { clientid } = useParams();
+  const { projectid } = useParams();
+  const [tableData,setTableData] = useState([]);
+  const [clientDeatils,setClientDeatils] = useState({});
     const [isOpenDailog,setIsOpenDailog] = useState(false);
     const [createProjectDailog,setCreateProjectDailog] = useState(false);
     const [editProjectDailog,setEditProjectDailog] = useState(false);
@@ -34,12 +31,13 @@ function Projects() {
     ]);
 
     useEffect(() => {
-      getAllProject()
+      getAllProject();
+      getClientById();
     },[]);
     
- 
+    const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
     const columns = [
-      { title: "Project Name", field: "projectName", sorting: false },
+      { title: "Project Name", field: "projectName", render:(rowData)=>{ return (<Link  href={projectDetailsUrl}> {rowData.projectName}</Link>)} },
       { title: "Project Description", field: "projectDescription" }
     ];
 
@@ -79,6 +77,17 @@ function Projects() {
       ProjectSer.getAllProject().then((res)=>{
         let dataResponce = res.data.body;
         setTableData([...dataResponce])
+      }).catch((err)=>{
+        console.log("Project error",err)
+      })
+    }
+    
+    const getClientById = ()=>{
+      ProjectSer.getClientById().then((res)=>{
+        let dataResponce = res.data.body;
+        setClientDeatils([...dataResponce])
+        
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", clientDeatils)
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -158,8 +167,8 @@ function Projects() {
               cancelTitle="Cancel"/>) : null
           }
           <Box mb={3}>
-              <Grid container justify="space-between" alignItems="center">
-                <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/>
+              <Grid container justify="flex-end" >
+                {/* <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/> */}
                 <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>Create Project</Button>
               </Grid>
           </Box>

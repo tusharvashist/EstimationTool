@@ -6,6 +6,8 @@ import TopNan from './topnav/topnav';
 import Breadcrum from './breadcrum/breadcrum';
 import Footer from './footer/footer'
 import SideBarv2 from './sidebarv2/sidebar';
+import ClientDetails from '../../pages/client-details/client-details';
+import ProjectDetails from '../../pages/project-details/project-details';
 import {Container} from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import {Switch, Route } from "react-router-dom";
@@ -41,7 +43,7 @@ export default class Layout extends Component {
                                 <Grid item className="h-100" xs={10}>
                                      <Breadcrum/>
                                      <Switch>
-                                        <Route exact path="/allestimation">
+                                        <Route exact path="/estimation">
                                         <Allestimation/>
                                         </Route>
                                         <Route path="/allclient">
@@ -49,6 +51,13 @@ export default class Layout extends Component {
                                         </Route>
                                         <Route path="/project">
                                             <Projects />
+                                        </Route>
+                                       
+                                        <Route path="/clientdetails/:clientid">
+                                            <ClientDetails/>
+                                        </Route>
+                                        <Route path="/projectdetails/:clientid/:projectid">
+                                            <ProjectDetails/>
                                         </Route>
                                     </Switch> 
                                 </Grid>
