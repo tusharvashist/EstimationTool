@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const projectSchema = new mongoose.Schema({
-    projectName:String,
-    projectDescription:String
+    projectName: {type: String},
+    projectDescription: {type: String},
+    clientId: {type: String},
+    isActive: {type: Boolean}
 },{
     timestamps:true,
     toObject:{
