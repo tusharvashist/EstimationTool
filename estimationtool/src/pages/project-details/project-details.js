@@ -1,7 +1,7 @@
 import React,{useState, useEffect} from 'react';
 import ProjectSer from "./project-details.service";
 import {Box, Grid} from "@material-ui/core";
-import ProjectView from "../project/projects"
+import ProjectEstimationsGridView from "../project/project-estimations"
 import "./project-details.css";
 
 export default function ClientDetails() {
@@ -13,7 +13,8 @@ export default function ClientDetails() {
     
     const [projectDetails,setProjectDetails] = useState({
         projectName:"",
-        projectDescription:""
+        projectDescription:"",
+        businessDomain:""
     });  
     useEffect(() => {
         getClientById()
@@ -52,28 +53,39 @@ export default function ClientDetails() {
 
     return (
         <div className="client-deatils-wrp">                 
-            <Box  p={3}>
+            <Box  p={5}>
                <Grid container alignItems="center">
-                        <Grid container justify="space-between" alignItems="center" className="block-section">
-                            <p className="section-title"> <span className="title-stl">Client Deatils</span></p> 
-                        </Grid>
+                        
                         <Grid container justify="space-between" alignItems="center">
-                            <p><span className="title-stl"> Client Name : </span>{clientDetails.clientName}</p>
-                            <p><span className="title-stl"> Website :</span> <a target="_blank" href={clientDetails.website}>{clientDetails.website}</a> </p>
+                            <Grid item xs={10} sm={4}>
+                                <p> <span className="title-stl"> Project Name :</span> {projectDetails.projectName}</p> 
+                            </Grid>
+                            <Grid item xs={10} sm={6}>
+                             <p> <span className="title-stl"> Business Domain :</span> {projectDetails.projectDescription}</p> 
+                             </Grid>
+                         </Grid>
+                         <Grid container justify="space-between" alignItems="center"  className="block-section">
+                             <p><span className="section-title"></span></p> 
                         </Grid>
 
-                      
-                        <Grid container justify="space-between" alignItems="center"  className="block-section">
-                         <p><span className="section-title">Project Deatils</span></p> 
+                        <Grid container justify="space-between" alignItems="center">
+                            <Grid item xs={10} sm={4}>
+                                <p><span className="title-stl"> Client Name : </span>{clientDetails.clientName}</p>
+                            </Grid>
+                            <Grid item xs={10} sm={6}>
+                                <p><span className="title-stl"> Client Website :</span> <a target="_blank" href={clientDetails.website}>{clientDetails.website}</a> </p>
+                            </Grid>
                         </Grid>
-                    <Grid container justify="space-between" alignItems="center">
-                        <p> <span className="title-stl">Description :</span> {projectDetails.projectName}</p> 
-                        <p> <span className="title-stl">Description :</span> {projectDetails.projectDescription}</p> 
-                    </Grid>
+
+                        <Grid container justify="space-between" alignItems="center"  className="block-section">
+                             <p><span className="section-title"></span></p> 
+                        </Grid>
+                        
+                    
                </Grid>
             </Box>
-            <Box p={3} pt={0}>
-               <ProjectView/>
+            <Box p={0} pt={0}>
+               <ProjectEstimationsGridView/>
             </Box>
         </div>
     )
