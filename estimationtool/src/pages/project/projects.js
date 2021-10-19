@@ -166,10 +166,13 @@ function Projects() {
               saveFun={confirmDeleteProjectFun} 
               cancelTitle="Cancel"/>) : null
           }
-          <Box mb={3}>
+          <Box mb={1}>
               <Grid container justify="flex-end" >
                 {/* <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/> */}
                 <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>Create Project</Button>
+              </Grid>
+              <Grid container justify="flex-start">
+                    <p><span className="title-stl"> Projects : </span></p>
               </Grid>
           </Box>
        <MaterialTable

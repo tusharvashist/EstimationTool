@@ -16,8 +16,8 @@ const routeList = [
   {path:"estimation", title:"Estimation"},
   {path:"allclient", title:"All Client"},
   {path:"project", title:"Project"},
-  {path:"clientdetails", title:"Client Details"},
-  {path:"projectdetails", title:"Project Details"}
+  {path:"clientdetails", title:"Client Detail"},
+  {path:"projectdetails", title:"Project Detail"}
 ]
 
 
