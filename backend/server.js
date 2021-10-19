@@ -2,10 +2,10 @@ const express = require("express");
 const dotEnv = require("dotenv");
 const cors = require("cors");
 const dbconnection = require("./database/connection");
-const swaggerUi = require("swagger-ui-express"); 
-const yaml = require("yamljs"); 
+const swaggerUi = require("swagger-ui-express");
+const yaml = require("yamljs");
 const swaggerDocument = yaml.load('./swagger.yaml');
-const productionURL="https://estimationtoolapi.azurewebsites.net/";
+const productionURL = "https://estimationtoolapi.azurewebsites.net/";
 const app = express();
 const PORT = process.env.PORT || 5252;
 let envName = "";
@@ -33,12 +33,15 @@ app.use("/api/v1/client", require("./routes/client.route"));
 //----------- Project Route
 app.use("/api/v1/project", require("./routes/project.route"));
 
+//----------- Role Route
+app.use("/api/v1/role", require("./routes/roleMaster.route"));
+
 //----------- API Documentation
-if(process.env.NODE_ENV != "production"){
+if (process.env.NODE_ENV != "production") {
   envName = "Locally"
-  app.get("/api-docs",swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-} 
-if(process.env.NODE_ENV === "production"){
+  app.get("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+if (process.env.NODE_ENV === "production") {
   envName = "Production"
 }
 
@@ -51,13 +54,13 @@ app.get("/", (req, res) => {
 
 
 app.listen(PORT, () => {
-    let prodctionMsz=()=>{
-      console.log("Node API Application Your Running On Production env...!", `${productionURL}`)
-    }
-    let localMsz =()=>{
-      console.log("Node API Application Running locally",`http://localhost:${PORT}`)
-    }
-  if(process.env.NODE_ENV === "production"){
+  let prodctionMsz = () => {
+    console.log("Node API Application Your Running On Production env...!", `${productionURL}`)
+  }
+  let localMsz = () => {
+    console.log("Node API Application Running locally", `http://localhost:${PORT}`)
+  }
+  if (process.env.NODE_ENV === "production") {
     return prodctionMsz()
   }
   return localMsz()
