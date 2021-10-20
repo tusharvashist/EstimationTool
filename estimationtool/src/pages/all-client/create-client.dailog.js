@@ -8,6 +8,7 @@ export default function CreateClientdailog(props) {
         clientName:"",
         description:"",
         website:"",
+        isDeleted: false
     });
     const[showError, setShowError] = React.useState(false);
 
