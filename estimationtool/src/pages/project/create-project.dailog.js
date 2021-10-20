@@ -7,7 +7,9 @@ export default function CreateProjectdailog(props) {
     const[formData, setFormData] = React.useState({
         projectName:"",
         projectDescription:"",
-        businessDomain:"",
+        domain : "",
+        client: "",
+        isDeleted: false 
     });
 
     const[showError, setShowError] = React.useState(false);
@@ -27,14 +29,14 @@ export default function CreateProjectdailog(props) {
 
     const handelBusinessDomain =(e)=>{
         let newObject = {...formData};
-        newObject.businessDomain=e.target.value
+        newObject.domain=e.target.value
         setFormData({...newObject})
     }
      
     const   onSubmitForm = (e) => {
         console.log("e", e)
         //e && e.preventDefault();
-        if(formData.projectName  && formData.businessDomain) {
+        if(formData.projectName  && formData.domain) {
             setShowError(false);
             props.saveFun(formData)
 
@@ -43,7 +45,7 @@ export default function CreateProjectdailog(props) {
         }
     }
 
-    const {projectName, projectDescription, businessDomain} = formData
+    const {projectName, projectDescription, domain} = formData
     
     return (
         <CustomizedDialogs 
@@ -59,7 +61,7 @@ export default function CreateProjectdailog(props) {
             <form  onSubmit={onSubmitForm}>
               <TextField required error={showError && !projectName} autoFocus id="standard-basic" label="Project Name" className="full-width" onChange={handelProjectName}/>
               <TextField  id="standard-basic" label="Project Description" className="full-width" onChange={handelProjectDescription}/>
-              <TextField required error={showError && !businessDomain} id="standard-basic" label="Business Domain" className="full-width" onChange={handelBusinessDomain}/>
+              <TextField required error={showError && !domain} id="standard-basic" label="Business Domain" className="full-width" onChange={handelBusinessDomain}/>
 
             </form>
         </Grid>
