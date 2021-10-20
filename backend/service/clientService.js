@@ -18,7 +18,7 @@ module.exports.createClient = async (serviceData) => {
 
 module.exports.getAllClient = async ({ skip = 0, limit = 10 }) => {
   try {
-    let clients = await Client.find({ isDeleted: false }).skip(parseInt(skip)).limit(parseInt(limit));
+    let clients = await Client.find().skip(parseInt(skip)).limit(parseInt(limit));
 
     return formatMongoData(clients)
   } catch (err) {
