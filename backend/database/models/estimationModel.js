@@ -1,15 +1,19 @@
 const mongoose = require("mongoose");
+const { Schema } = require('mongoose');
+
 const estimationShema = new mongoose.Schema({
-    estimationName:String,
-    estimationDescription:String,
-    estimationType:String,
-    clientName:String,
-    projectName:String,
-    lastupdate:Date
-},{
-    timestamps:true,
-    toObject:{
-        transform: function(doc,ret,option){
+    estimationName: String,
+    estimationDescription: String,
+    estimationType: String,
+    project: {
+        type: Schema.Types.ObjectId,
+        ref: 'project'
+    },
+    lastupdate: Date
+}, {
+    timestamps: true,
+    toObject: {
+        transform: function (doc, ret, option) {
             ret.id = ret._id;
             delete ret._id;
             delete ret.__v;
