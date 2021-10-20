@@ -19,8 +19,8 @@ function Home() {
     //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
     // render:(rowData)=>{ return (<Link  href={projectDetailsUrl}> { rowData.projectName}</Link>)} 
     const columns = [
-      { title: "Estimation Name", field: "estimationName", sorting: false },
-      { title: "Estimation Description", field: "estimationDescription" },
+      { title: "Estimation Name", field: "estimationName", sorting: false, render:(rowData)=>{ return (<Link > {rowData.estimationName}</Link>)} },
+      { title: "Estimation Description", field: "estimationDescription", render:(rowData)=>{ return (<Link > {rowData.estimationDescription}</Link>)}},
       { title: "Estimation Type", field: "estimationType" },
       { title: "Client Name", field: "clientName", render:(rowData)=>{ return (<Link  href={"/clientdetails"+"/"+rowData.id}> {rowData.clientName}</Link>)}},
       { title: "Project Name", field: "projectName"},

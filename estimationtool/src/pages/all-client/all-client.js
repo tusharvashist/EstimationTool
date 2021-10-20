@@ -10,6 +10,7 @@ import DeleteClientdailog from "./delete-client.dailog";
 import AddIcon from '@material-ui/icons/Add';
 import "./all-client.css";
 
+import Link from '@material-ui/core/Link';    
 function AllClient() {
     const [tableData,setTableData] = useState([]);
     const [isOpenDailog,setIsOpenDailog] = useState(false);
@@ -19,7 +20,6 @@ function AllClient() {
     const [editRow,setEditRow] = useState({});
     const [actionId,setActionId] = useState("");
     const [clientStatus,setClientStatus] = useState([
-        { title: 'All'},
         { title: 'Active'},
         { title: 'In-Active'},
     ]);
@@ -31,13 +31,14 @@ function AllClient() {
     const getAllClient = ()=>{
       ClientSer.getAllClient().then((res)=>{
         let dataResponce = res.data.body;
+        console.log("d, ataResponce", dataResponce)
         setTableData([...dataResponce])
       }).catch((err)=>{
         console.log("estimation error",err)
       })
     }
     const columns = [
-      { title: "Client Name", field: "clientName", sorting: false },
+      { title: "Client Name", field: "clientName", render:(rowData)=>{ return (<Link  href={"/clientdetails"+"/"+rowData.id}> {rowData.clientName}</Link>)} ,sorting: false },
       { title: "Client Description", field: "description" },
       { title: "Client Website", field: "website", render:(dataRow)=>{return(<a target="blank" href={dataRow.website}>{dataRow.website}</a>)} }
     ];

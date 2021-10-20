@@ -10,6 +10,8 @@ export default function UpdateClientdailog(props) {
         website:props.editRowObj.website,
     });
 
+    const[showError, setShowError] = React.useState(false);
+
     const handelClientName=(e)=>{
             let newObject = {...formData};
             newObject.clientName= e.target.value
@@ -26,9 +28,22 @@ export default function UpdateClientdailog(props) {
             let newObject = {...formData};
             newObject.website=e.target.value
             setFormData({...newObject})
-    }
+    },
   
-   
+    onSubmitForm = (e) => {
+        console.log("e", e)
+        const {clientName, description, website} = formData;
+        //e && e.preventDefault();
+        if(clientName && description && website) {
+            setShowError(false);
+            props.saveFun(formData)
+
+        } else {
+            setShowError(true);
+        }
+    }
+
+    const {clientName, description, website} = formData;
     return (
         <CustomizedDialogs 
             isOpen={props.isOpen} 
@@ -37,13 +52,13 @@ export default function UpdateClientdailog(props) {
             title={props.title} 
             oktitle={props.oktitle} 
             cancelTitle={props.cancelTitle}
-            saveFun={()=>{props.saveFun(formData)}}
+            saveFun={onSubmitForm}
             >
         <Grid container>
-            <form  noValidate>
-              <TextField autoFocus id="standard-basic" label="Client Name" className="full-width" value={formData.clientName} onChange={handelClientName}/>
-              <TextField id="standard-basic" label="Description" className="full-width" value={formData.description} onChange={handelDescription}/>
-              <TextField id="standard-basic" label="Website" className="full-width" value={formData.website} onChange={handelWebsite}/>
+            <form  onSubmit={onSubmitForm}>
+              <TextField required error={showError && !clientName} autoFocus id="standard-basic" label="Client Name" className="full-width" value={formData.clientName} onChange={handelClientName}/>
+              <TextField required error={showError && !description} id="standard-basic" label="Description" className="full-width" value={formData.description} onChange={handelDescription}/>
+              <TextField required error={showError && !website} id="standard-basic" label="Website" className="full-width" value={formData.website} onChange={handelWebsite}/>
             </form>
         </Grid>
     </CustomizedDialogs>
