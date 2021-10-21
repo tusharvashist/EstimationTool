@@ -8,6 +8,7 @@ export default function CreateProjectdailog(props) {
         projectName:"",
         projectDescription:"",
         businessDomain:"",
+        isDeleted: false
     });
 
     const[showError, setShowError] = React.useState(false);
