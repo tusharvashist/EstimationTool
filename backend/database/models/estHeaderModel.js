@@ -13,7 +13,7 @@ estVersionno:{
 },
 projectId:{ 
     type: Schema.Types.ObjectId, 
-    ref: 'project',
+    ref: 'ProjectMaster',
     required : true
 },
 estName:{ 

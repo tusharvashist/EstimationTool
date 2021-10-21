@@ -12,7 +12,7 @@ const clientSchema = new mongoose.Schema({
     },
     projects: [{
         type: Schema.Types.ObjectId,
-        ref: 'project'
+        ref: 'ProjectMaster'
     }]
 }, {
     timestamps: true,
@@ -25,4 +25,4 @@ const clientSchema = new mongoose.Schema({
         }
     }
 })
-module.exports = mongoose.model("client", clientSchema)
+module.exports = mongoose.model("ClientMaster", clientSchema)
