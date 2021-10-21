@@ -74,7 +74,11 @@ module.exports.estimationDelete = async({id})=>{
 
 module.exports.getRecentEstimation = async({skip = 0,limit = 10})=>{
   try{
-    let estimations = await EstimationHeader.find({}).skip(parseInt(skip)).limit(parseInt(limit));
+    let estimations = await EstimationHeader.find({}).
+    populate({
+         path: 'projectId',
+         populate: { path: 'client' }
+    }).skip(parseInt(skip)).limit(parseInt(limit));
     return formatMongoData(estimations)
   }catch(err){
     console.log("something went wrong: service > createEstimation ", err);
