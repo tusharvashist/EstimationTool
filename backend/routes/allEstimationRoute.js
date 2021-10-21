@@ -12,7 +12,7 @@ const tokenValidation =  require("../middleware/tokenValidationJwt");
 // );
 
 
-router.post("/create", 
+router.post("/", 
 tokenValidation.validateToken,
 joiSchemaValidation.validateBody(joiEstimationSchema.createEstimationHeaderSchema),
 estimationController.createEstimationHeader
