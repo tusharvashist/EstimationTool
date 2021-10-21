@@ -13,6 +13,7 @@ import "./all-client.css";
 import Link from '@material-ui/core/Link';    
 function AllClient() {
     const [tableData,setTableData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [isOpenDailog,setIsOpenDailog] = useState(false);
     const [createClinetDailog,setCreateClinetDailog] = useState(false);
     const [editClinetDailog,setEditClinetDailog] = useState(false);
@@ -20,8 +21,8 @@ function AllClient() {
     const [editRow,setEditRow] = useState({});
     const [actionId,setActionId] = useState("");
     const [clientStatus,setClientStatus] = useState([
-        { title: 'Active'},
-        { title: 'In-Active'},
+        { title: 'Active', value: false},
+        { title: 'In-Active', value: true},
     ]);
 
     useEffect(() => {
@@ -31,8 +32,9 @@ function AllClient() {
     const getAllClient = ()=>{
       ClientSer.getAllClient().then((res)=>{
         let dataResponce = res.data.body;
-        console.log("d, ataResponce", dataResponce)
+        console.log(dataResponce)
         setTableData([...dataResponce])
+        setFilteredData(dataResponce.filter(op => op.isDeleted === false))
       }).catch((err)=>{
         console.log("estimation error",err)
       })
@@ -50,8 +52,9 @@ function AllClient() {
     const closeFun = ()=>{
       setIsOpenDailog(false)
     }
-    const getDropDownvalue = (val)=>{
-      console.log("this is an download vlaue", val)
+    const getDropDownvalue = ({ value } = {}) => {
+      let dataResponce = tableData.filter(op => op.isDeleted === value);
+      setFilteredData([...dataResponce])
     }
     
     const openCreateDailog = ()=>{
@@ -151,7 +154,7 @@ function AllClient() {
           }
           <Box mb={3}>
               <Grid container justify="space-between" alignItems="center">
-                <Dropdown title="client status" list={clientStatus} getVal={getDropDownvalue}/>
+                <Dropdown defaultValue={{ title: 'Active', value: 'active' }} title="client status" list={clientStatus} getVal={getDropDownvalue}/>
                 <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>create client</Button>
               </Grid>
           </Box>
@@ -185,7 +188,7 @@ function AllClient() {
                 pageSize:5,
                 paging: false,
             }}
-            data={tableData}
+            data={filteredData}
             title=""
           />
     </div>

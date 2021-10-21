@@ -9,10 +9,15 @@ export default function Dropdown(props) {
       size="small"
       id="combo-box-demo"
       options={props.list}
-      onChange = { (event,value)=>{props.getVal(value)}}
-      getOptionLabel={(option) => {return option.title} }
+      onChange={(event, value) => { props.getVal(value) }}
+      getOptionLabel={(option) => {
+        return option.title
+      }}
       style={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} label={props.title} variant="outlined" />}
+      defaultValue={props.defaultValue || ''}
+      renderInput={(params) => {
+        console.log("params", params)
+      return <TextField {...params} label={props.title} variant="outlined" />}}
     />
   );
 }
