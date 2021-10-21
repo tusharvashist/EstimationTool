@@ -11,10 +11,17 @@ joiSchemaValidation.validateBody(joiEstimationSchema.createEstimationSchema),
 estimationController.createEstimation
 );
 
-//----- Get item by id -----------
-router.get("/:id",
+
+router.post("/create", 
 tokenValidation.validateToken,
-estimationController.getAllEstimationById);
+joiSchemaValidation.validateBody(joiEstimationSchema.createEstimationHeaderSchema),
+estimationController.createEstimationHeader
+);
+
+//----- Get item by id -----------
+// router.get("/:id",
+// tokenValidation.validateToken,
+// estimationController.getAllEstimationById);
 
 //----- Update -----------
 router.put("/:id",
@@ -30,7 +37,13 @@ joiSchemaValidation.validateQueryParams(joiEstimationSchema.getallEstimationSche
 estimationController.getAllEstimation
 );
 
-//----- Get all List -----------
+router.get("/recentestimationlist",
+tokenValidation.validateToken,
+joiSchemaValidation.validateQueryParams(joiEstimationSchema.getallEstimationSchema),
+estimationController.getRecentEstimation
+);
+
+//----- Delete Estimation -----------
 router.delete("/:id",
 tokenValidation.validateToken,
 estimationController.estimationDelete

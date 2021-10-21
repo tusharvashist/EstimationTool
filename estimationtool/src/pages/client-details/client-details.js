@@ -5,17 +5,21 @@ import ProjectView from '../project/projects';
 import { useLocation } from 'react-router-dom';
 import './client-details.css';
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
+import { useParams } from 'react-router-dom';
 
 export default function ClientDetails() {
     const location = useLocation();
+    const { clientid } = useParams();
+
     const [clientDetails,setClientDetails] = useState({
         clientName:"",
         description:"",
-        website:""
+        website:"",
+        id:""
     });  
-    const [clients,setClients] = useState([{clientName: "BioIQ"}]);
-    
-
+    const [clients,setClients] = useState([]);
+ 
+    console.log("location *****"+ clientid);
     useEffect(() => {
         getAllClient()
         getClientById()
@@ -23,7 +27,7 @@ export default function ClientDetails() {
 
     const getClientById = ()=>{
         // const clientId = location.pathname.split("/")[2];
-        ClientSer.getClientById().then((res)=>{
+        ClientSer.getClientById(clientid).then((res)=>{
             let dataResponce = res.data.body;
             setClientDetails({...dataResponce})
         }).catch((err)=>{
@@ -41,32 +45,33 @@ export default function ClientDetails() {
       }  
  
     const getDropDownvalue = (event)=>{
-        console.log("this is an selected value", event)
-        setClientDetails({clientName: event.target.clientName,
-            website: event.target.website,
+        //console.log("this is an selected value", event)
+        let obj = JSON.parse(event.target.value); //object
+        setClientDetails({clientName: obj.clientName,
+            website: obj.website,
             description: ""});
-            console.log("name"+event.target.value.clientName + "website " + event.target.value.website )
-
+            console.log("name"+obj.clientName + "website " + obj.website )
+           
       }
 
-      
     return (
         <div className="client-deatils-wrp">                 
             <Box  p={5}>
                <Grid container alignItems="center">
                         <Grid container justify="space-between" alignItems="center">
                             <Grid item xs={5} sm={1}>
-                                 <p><span className="title-stl"> Client Name : </span>{clientDetails.clientName}</p>
-                                 {/* <Dropdown title="Client Name" list={clientList.clientName} getVal={getDropDownvalue}/> */}
+                                 <p><span className="title-stl"> Client Name : </span></p>
                                  </Grid>
                                  <Grid item xs={5} sm={5}>  
-                                <select value={clientDetails.clientName} onChange={getDropDownvalue}>
+                                <select  onChange={getDropDownvalue}>
                                     {
                                         clients.map(item =>(
+                                            
                                             <option key={item.clientName}
-                                                    value={item.website}>
+                                                    value={JSON.stringify(item)}>
                                                     {item.clientName}
                                             </option>
+                                            
                                         ))
                                     }
                                 </select>
@@ -81,7 +86,7 @@ export default function ClientDetails() {
                
             </Box>
             <Box p={3} pt={0}>
-               <ProjectView/>
+               <ProjectView data={clientid}/>
             </Box>
         </div>
     )

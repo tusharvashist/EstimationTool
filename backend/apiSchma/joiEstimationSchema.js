@@ -19,3 +19,14 @@ module.exports.estimationUpdateSchema = Joi.object({
     projectName:Joi.string(),
     lastupdate:Joi.date()
 })
+
+
+
+module.exports.createEstimationHeaderSchema = Joi.object({  
+    estheaderParentid:Joi.string().required(),
+    estVersionno:Joi.number().required(),
+    estName:Joi.string().required(),
+    projectId:Joi.string().required(),
+    esttypeId:Joi.string().required(),
+    effortUnit:Joi.string().required()
+})

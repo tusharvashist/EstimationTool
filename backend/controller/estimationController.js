@@ -74,3 +74,31 @@ module.exports.estimationDelete = async (req,res)=>{
 }
 
 
+
+module.exports.createEstimationHeader = async (req,res)=>{
+    let responce = {...constant.defaultResponce};
+    try{
+        
+       const responceFromestimationSer = await estimationSer.createEstimationHeader(req.body);
+        responce.status = 200;
+        responce.message = constant.estimationMessage.ESTIMATION_CREATED;
+        responce.body = responceFromestimationSer;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
+module.exports.getRecentEstimation = async (req,res)=>{
+    let responce = {...constant.defaultResponce};
+    try{
+        const responceFromestimationSer = await estimationSer.getRecentEstimation(req.query);
+        responce.status = 200;
+        responce.message = constant.estimationMessage.ESTIMATION_FETCH;
+        responce.body = responceFromestimationSer;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
