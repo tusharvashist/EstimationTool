@@ -4,13 +4,18 @@ import "./allestimation.css";
 import AllestimationSer from "./allestimation.service";
 import Link from "@material-ui/core/Link";
 import { fontSize, style } from "@material-ui/system";
-import { createMuiTheme } from "@material-ui/core";
+import { createMuiTheme, Paper } from "@material-ui/core";
 function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
   useEffect(() => {
     AllestimationSer.getAllEstimation().then((res) => {
       let dataResponce = res.data.body;
+      if (tableData.length !== 0) {
+        if (tableData.id == dataResponce.id) {
+          return;
+        }
+      }
       setTableData([...tableData, ...dataResponce]);
     });
   }, []);
@@ -33,6 +38,7 @@ function Home() {
       render: (rowData) => {
         return <Link> {rowData.estimationDescription}</Link>;
       },
+      width: "15%",
     },
     { title: "Estimation Type", field: "estimationType" },
     {
@@ -61,6 +67,9 @@ function Home() {
   return (
     <div className="wrap">
       <MaterialTable
+        components={{
+          Container: (props) => <Paper {...props} elevation={2} />,
+        }}
         columns={columns}
         options={{
           actionsColumnIndex: -1,
@@ -70,8 +79,7 @@ function Home() {
           pageSize: 5,
           paging: false,
           headerStyle: {
-            backgroundColor: "#1d1660",
-            color: "#fff",
+            backgroundColor: "#e5ebf7",
             fontWeight: "bold",
             fontSize: "0.9rem",
           },
