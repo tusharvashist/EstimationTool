@@ -163,7 +163,9 @@ function Projects(props) {
               openF={openFun} 
               closeF={closeFun} 
               editRowObj={editRow} 
-              title="Delete Project" 
+              title="Delete Project"
+              message="Do you want to delete "
+              category = "Project"
               oktitle="Ok"
               saveFun={confirmDeleteProjectFun} 
               cancelTitle="Cancel"/>) : null

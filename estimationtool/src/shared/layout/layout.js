@@ -8,6 +8,8 @@ import Footer from "./footer/footer";
 import SideBarv2 from "./sidebarv2/sidebar";
 import ClientDetails from "../../pages/client-details/client-details";
 import ProjectDetails from "../../pages/project-details/project-details";
+
+import EstimationWizardStep1 from "../../pages/estimationWizard/estimationWizardStep1";
 import { Container } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { Switch, Route } from "react-router-dom";
@@ -54,7 +56,9 @@ export default class Layout extends Component {
                   <Route path="/project">
                     <Projects />
                   </Route>
-
+                  <Route path="/createEstimate">
+                    <EstimationWizardStep1 />
+                  </Route>
                   <Route path="/clientdetails/:clientid">
                     <ClientDetails />
                   </Route>

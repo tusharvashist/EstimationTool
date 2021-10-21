@@ -15,7 +15,7 @@ export default function DeleteProjectdailog(props) {
             >
         <Grid container>
             <form  noValidate>
-              Are you sure you want to delete <b>{props.editRowObj.projectName}</b> project ?
+             {props.message} <b>{props.editRowObj.projectName}</b>  {props.category} ?
             </form>
         </Grid>
     </CustomizedDialogsBlank>

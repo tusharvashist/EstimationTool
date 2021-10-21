@@ -5,7 +5,8 @@ import ProjectEstimationsGridView from "../project/project-estimations"
 import "./project-details.css";
 
 export default function ClientDetails() {
-    const [clientDetails,setclientDetails] = useState({
+
+    const [clientDetails,setClientDetails] = useState({
         clientName:"",
         description:"",
         website:""
@@ -15,28 +16,21 @@ export default function ClientDetails() {
         projectName:"",
         projectDescription:"",
         businessDomain:""
-    });  
+    });
+    
+    const [tableData, setTableData] = useState([]);
+
     useEffect(() => {
-        getClientById()
         getProjectById();
       },[]);
 
-
-   
-
-    const getClientById = ()=>{
-        ProjectSer.getClientById().then((res)=>{
-            let dataResponce = res.data.body;
-            setclientDetails({...dataResponce})
-        }).catch((err)=>{
-          console.log("get Client by id error",err)
-        })
-      }
     const getProjectById = ()=>{
         ProjectSer.getProjectById().then((res)=>{
-            let dataResponce = res.data.body;
-            setProjectDetails({...dataResponce})
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", projectDetails)
+            let dataResponse = res.data.body;
+            setProjectDetails({ ...dataResponse });
+            setClientDetails({ ...dataResponse.client });
+            setTableData([...dataResponse.estimates]);
+            console.log(">>>>>>Project Detail>>>>>>>>>>>", tableData);
         }).catch((err)=>{
           console.log("get Client by id error",err)
         })
@@ -47,6 +41,7 @@ export default function ClientDetails() {
         { title: 'Active'},
         { title: 'In-Active'},
     ]);
+
     const getDropDownvalue = (val)=>{
         console.log("this is an download vlaue", val)
       }
@@ -85,7 +80,7 @@ export default function ClientDetails() {
                </Grid>
             </Box>
             <Box p={0} pt={0}>
-               <ProjectEstimationsGridView/>
+               <ProjectEstimationsGridView tableData1= {tableData}/>
             </Box>
         </div>
     )
