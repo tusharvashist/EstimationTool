@@ -9,14 +9,10 @@ function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
   useEffect(() => {
-    AllestimationSer.getAllEstimation()
-      .then((res) => {
-        let dataResponce = res.data.body;
-        setTableData([...tableData, ...dataResponce]);
-      })
-      .catch((err) => {
-        console.log("estimation error", err);
-      });
+    AllestimationSer.getAllEstimation().then((res) => {
+      let dataResponce = res.data.body;
+      setTableData([...tableData, ...dataResponce]);
+    });
   }, []);
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const clientDetailsUrl = "/clientdetails/" + "614f3c6790a42ca5a74bebf6";
@@ -27,16 +23,18 @@ function Home() {
       title: "Estimation Name",
       field: "estimationName",
       sorting: false,
+      render: (rowData) => {
+        return <Link> {rowData.estimationName}</Link>;
+      },
     },
     {
       title: "Estimation Description",
       field: "estimationDescription",
-      width: "15%",
+      render: (rowData) => {
+        return <Link> {rowData.estimationDescription}</Link>;
+      },
     },
-    {
-      title: "Estimation Type",
-      field: "estimationType",
-    },
+    { title: "Estimation Type", field: "estimationType" },
     {
       title: "Client Name",
       field: "clientName",
@@ -49,15 +47,8 @@ function Home() {
         );
       },
     },
-    {
-      title: "Project Name",
-      field: "projectName",
-    },
-    {
-      title: "Last update",
-      field: "lastupdate",
-      type: "date",
-    },
+    { title: "Project Name", field: "projectName" },
+    { title: "Last update", field: "lastupdate", type: "date" },
   ];
   const openfn = () => {
     setIsOpenDailog(true);

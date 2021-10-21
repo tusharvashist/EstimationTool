@@ -13,7 +13,7 @@ import "./project.css";
 
 
 
-function Projects() {
+function Projects(props) {
   const { clientid } = useParams();
   const { projectid } = useParams();
   const [tableData,setTableData] = useState([]);
@@ -34,10 +34,10 @@ function Projects() {
       getAllProject();
       getClientById();
     },[]);
-    
-    const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
+    console.log("&&&&&&&&"+ props.data)
+    const projectDetailsUrl = "/projectdetails/" + props.data + "/" + "614fefd74d9da71851f36df4";
     const columns = [
-      { title: "Project Name", field: "projectName", render:(rowData)=>{ return (<Link  href={projectDetailsUrl}> {rowData.projectName}</Link>)} },
+      { title: "Project Name", field: "projectName", render:(rowData)=>{ return (<Link  href={"/projectdetails/" + props.data + "/" + rowData.id}> {rowData.projectName}</Link>)} },
       { title: "Project Description", field: "projectDescription" }
     ];
 
@@ -83,11 +83,11 @@ function Projects() {
     }
     
     const getClientById = ()=>{
-      ProjectSer.getClientById().then((res)=>{
+      ProjectSer.getClientById(clientid).then((res)=>{
         let dataResponce = res.data.body;
         setClientDeatils([...dataResponce])
         
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", clientDeatils)
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", JSON.stringify(clientDeatils))
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -118,7 +118,9 @@ function Projects() {
     } 
 
     const saveCreateProjectFun = (data)=>{
-      createProject(data)
+      let newObject = {...data};
+      newObject.client = clientid;
+      createProject(newObject)
     }
 
     const saveUpdateProjectFun = (data)=>{

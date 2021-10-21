@@ -1,6 +1,7 @@
 
 const constant = require("../constant")
 const Estimation = require("../database/models/estimationModel")
+const EstimationHeader = require("../database/models/estHeaderModel")
 const {formatMongoData} = require("../helper/dbhelper")
 const mongoose = require("mongoose")
 
@@ -68,4 +69,27 @@ module.exports.estimationDelete = async({id})=>{
       console.log("something went wrong: service > createEstimation ", err);
       throw new Error(err)
     }
+}
+
+
+module.exports.getRecentEstimation = async({skip = 0,limit = 10})=>{
+  try{
+    let estimations = await EstimationHeader.find({}).skip(parseInt(skip)).limit(parseInt(limit));
+    return formatMongoData(estimations)
+  }catch(err){
+    console.log("something went wrong: service > createEstimation ", err);
+    throw new Error(err)
+  }
+}
+
+
+module.exports.createEstimationHeader = async(serviceData)=>{
+  try{
+    let estimation = new EstimationHeader({...serviceData})
+    let result =  await estimation.save();
+    return formatMongoData(result)
+  }catch(err){
+    console.log("something went wrong: service > createEstimation ", err);
+    throw new Error(err)
+  }
 }

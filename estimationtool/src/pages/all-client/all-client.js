@@ -10,8 +10,10 @@ import DeleteClientdailog from "./delete-client.dailog";
 import AddIcon from '@material-ui/icons/Add';
 import "./all-client.css";
 
+import Link from '@material-ui/core/Link';    
 function AllClient() {
     const [tableData,setTableData] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [isOpenDailog,setIsOpenDailog] = useState(false);
     const [createClinetDailog,setCreateClinetDailog] = useState(false);
     const [editClinetDailog,setEditClinetDailog] = useState(false);
@@ -19,9 +21,8 @@ function AllClient() {
     const [editRow,setEditRow] = useState({});
     const [actionId,setActionId] = useState("");
     const [clientStatus,setClientStatus] = useState([
-        { title: 'All'},
-        { title: 'Active'},
-        { title: 'In-Active'},
+        { title: 'Active', value: false},
+        { title: 'In-Active', value: true},
     ]);
 
     useEffect(() => {
@@ -31,13 +32,15 @@ function AllClient() {
     const getAllClient = ()=>{
       ClientSer.getAllClient().then((res)=>{
         let dataResponce = res.data.body;
+        console.log(dataResponce)
         setTableData([...dataResponce])
+        setFilteredData(dataResponce.filter(op => op.isDeleted === false))
       }).catch((err)=>{
         console.log("estimation error",err)
       })
     }
     const columns = [
-      { title: "Client Name", field: "clientName", sorting: false },
+      { title: "Client Name", field: "clientName", render:(rowData)=>{ return (<Link  href={"/clientdetails"+"/"+rowData.id}> {rowData.clientName}</Link>)} ,sorting: false },
       { title: "Client Description", field: "description" },
       { title: "Client Website", field: "website", render:(dataRow)=>{return(<a target="blank" href={dataRow.website}>{dataRow.website}</a>)} }
     ];
@@ -49,8 +52,9 @@ function AllClient() {
     const closeFun = ()=>{
       setIsOpenDailog(false)
     }
-    const getDropDownvalue = (val)=>{
-      console.log("this is an download vlaue", val)
+    const getDropDownvalue = ({ value } = {}) => {
+      let dataResponce = tableData.filter(op => op.isDeleted === value);
+      setFilteredData([...dataResponce])
     }
     
     const openCreateDailog = ()=>{
@@ -150,7 +154,7 @@ function AllClient() {
           }
           <Box mb={3}>
               <Grid container justify="space-between" alignItems="center">
-                <Dropdown title="client status" list={clientStatus} getVal={getDropDownvalue}/>
+                <Dropdown defaultValue={{ title: 'Active', value: 'active' }} title="client status" list={clientStatus} getVal={getDropDownvalue}/>
                 <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>create client</Button>
               </Grid>
           </Box>
@@ -184,7 +188,7 @@ function AllClient() {
                 pageSize:5,
                 paging: false,
             }}
-            data={tableData}
+            data={filteredData}
             title=""
           />
     </div>
