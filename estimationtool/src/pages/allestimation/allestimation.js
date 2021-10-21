@@ -26,35 +26,35 @@ function Home() {
   const columns = [
     {
       title: "Estimation Name",
-      field: "estimationName",
+      field: "estName",
       sorting: false,
       render: (rowData) => {
-        return <Link> {rowData.estimationName}</Link>;
+        return <Link> {rowData.estName}</Link>;
       },
     },
     {
       title: "Estimation Description",
-      field: "estimationDescription",
+      field: "estDescription",
       render: (rowData) => {
-        return <Link> {rowData.estimationDescription}</Link>;
+        return <Link> {rowData.estDescription}</Link>;
       },
       width: "15%",
     },
-    { title: "Estimation Type", field: "estimationType" },
+    { title: "Estimation Type", field: "esttypeId" },
     {
       title: "Client Name",
-      field: "clientName",
+      field: "projectId.client.clientName",
       render: (rowData) => {
         return (
           <Link href={"/clientdetails" + "/" + rowData.id}>
             {" "}
-            {rowData.clientName}
+            {rowData.projectId.client.clientName}
           </Link>
         );
       },
     },
-    { title: "Project Name", field: "projectName" },
-    { title: "Last update", field: "lastupdate", type: "date" },
+    { title: "Project Name", field: "projectId.projectName" },
+    { title: "Last update", field: "updatedAt", type: "date" },
   ];
   const openfn = () => {
     setIsOpenDailog(true);
