@@ -65,7 +65,7 @@ export default class Layout extends Component {
               </Grid>
             </Grid>
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </EsContainer>
       </div>
     );

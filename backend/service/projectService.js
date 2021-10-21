@@ -37,7 +37,7 @@ module.exports.getProjectById = async ({ id }) => {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.projectMessage.INVALID_ID)
     }
-    let project = await Project.findById(id).populate({ path: 'client' }, { path: 'estimates' });
+    let project = await Project.findById(id).populate('client').populate('estimates')
     if (!project) {
       throw new Error(constant.projectMessage.PROJECT_NOT_FOUND)
     }
