@@ -5,11 +5,11 @@ const joiSchemaValidation =  require("../middleware/joiSchemaValidation");
 const joiEstimationSchema =  require("../apiSchma/joiEstimationSchema");
 const tokenValidation =  require("../middleware/tokenValidationJwt");
 //----- Create -----------
-router.post("/", 
-tokenValidation.validateToken,
-joiSchemaValidation.validateBody(joiEstimationSchema.createEstimationSchema),
-estimationController.createEstimation
-);
+// router.post("/", 
+// tokenValidation.validateToken,
+// joiSchemaValidation.validateBody(joiEstimationSchema.createEstimationSchema),
+// estimationController.createEstimation
+// );
 
 
 router.post("/create", 
@@ -24,28 +24,28 @@ estimationController.createEstimationHeader
 // estimationController.getAllEstimationById);
 
 //----- Update -----------
-router.put("/:id",
-tokenValidation.validateToken,
-joiSchemaValidation.validateBody(joiEstimationSchema.estimationUpdateSchema),
-estimationController.estimationUpdate);
+// router.put("/:id",
+// tokenValidation.validateToken,
+// joiSchemaValidation.validateBody(joiEstimationSchema.estimationUpdateSchema),
+// estimationController.estimationUpdate);
 
 
 //----- Get all List -----------
-router.get("/",
-tokenValidation.validateToken,
-joiSchemaValidation.validateQueryParams(joiEstimationSchema.getallEstimationSchema),
-estimationController.getAllEstimation
-);
+// router.get("/",
+// tokenValidation.validateToken,
+// joiSchemaValidation.validateQueryParams(joiEstimationSchema.getallEstimationSchema),
+// estimationController.getAllEstimation
+// );
 
-router.get("/recentestimationlist",
+router.get("/",
 tokenValidation.validateToken,
 joiSchemaValidation.validateQueryParams(joiEstimationSchema.getallEstimationSchema),
 estimationController.getRecentEstimation
 );
 
 //----- Delete Estimation -----------
-router.delete("/:id",
-tokenValidation.validateToken,
-estimationController.estimationDelete
-);
+// router.delete("/:id",
+// tokenValidation.validateToken,
+// estimationController.estimationDelete
+// );
 module.exports = router;
