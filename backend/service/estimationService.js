@@ -77,7 +77,8 @@ module.exports.getRecentEstimation = async({skip = 0,limit = 10})=>{
     let estimations = await EstimationHeader.find({}).
     populate({
          path: 'projectId',
-         populate: { path: 'client' }
+         populate: { path: 'client' },
+         //path : 'esttypeId'
     }).skip(parseInt(skip)).limit(parseInt(limit));
     return formatMongoData(estimations)
   }catch(err){
