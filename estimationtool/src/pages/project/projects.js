@@ -25,16 +25,18 @@ function Projects(props) {
     const [editRow,setEditRow] = useState({});
     const [actionId,setActionId] = useState("");
     const [projectStatus,setProjectStatus] = useState([
-        { title: 'All'},
         { title: 'Active'},
         { title: 'In-Active'},
     ]);
 
     useEffect(() => {
-      getAllProject();
+      // getAllProject();
       getClientById();
     },[]);
-    console.log("&&&&&&&&"+ props.data)
+    useEffect(() => {
+      // getAllProject();
+      getClientById();
+    },[clientid]);
     const projectDetailsUrl = "/projectdetails/" + props.data + "/" + "614fefd74d9da71851f36df4";
     const columns = [
       { title: "Project Name", field: "projectName", render:(rowData)=>{ return (<Link  href={"/projectdetails/" + props.data + "/" + rowData.id}> {rowData.projectName}</Link>)} },
@@ -76,7 +78,7 @@ function Projects(props) {
     const getAllProject = ()=>{
       ProjectSer.getAllProject().then((res)=>{
         let dataResponce = res.data.body;
-        setTableData([...dataResponce])
+        // setTableData([...dataResponce])
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -84,10 +86,9 @@ function Projects(props) {
     
     const getClientById = ()=>{
       ProjectSer.getClientById(clientid).then((res)=>{
-        let dataResponce = res.data.body;
-        setClientDeatils([...dataResponce])
+        let dataResponce = res.data.body.projects;
         
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", JSON.stringify(clientDeatils))
+        setTableData([...dataResponce])
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -163,7 +164,9 @@ function Projects(props) {
               openF={openFun} 
               closeF={closeFun} 
               editRowObj={editRow} 
-              title="Delete Project" 
+              title="Delete Project"
+              message="Do you want to delete "
+              category = "Project"
               oktitle="Ok"
               saveFun={confirmDeleteProjectFun} 
               cancelTitle="Cancel"/>) : null

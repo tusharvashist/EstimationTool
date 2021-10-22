@@ -7,78 +7,59 @@ import AddIcon from "@material-ui/icons/Add";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "./project.css";
-import EstimationCreation from "../estimationCreation/EstimationCreation";
+import DeleteProjectdailog from "./delete-project.dailog";
+
+import { useHistory } from "react-router-dom";
 
 function ProjectEstimations(props) {
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState();
   const [clientDeatils, setClientDeatils] = useState({});
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
 
+  const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
   useEffect(() => {
-    setTableData(projectEstimationData);
-    getClientById();
-  }, []);
+    setTableData([...props.tableData1]);
+  }, [props.tableData1]);
 
-  const projectDetailsUrl =
-    "/projectdetails/" +
-    "614f3c6790a42ca5a74bebf6" +
-    "/" +
-    "614fefd74d9da71851f36df4";
+  //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
   const columns = [
     {
       title: "Estimation Name",
-      field: "estimationName",
+      field: "estName",
       render: (rowData) => {
-        return <Link> {rowData.estimationName}</Link>;
+        console.log("----Row id", rowData._id);
+        return (
+          <Link href={"/createEstimate"} estId={rowData._id}>
+            {" "}
+            {rowData.estName}
+          </Link>
+        );
       },
+      sorting: false,
     },
-    { title: "Estimation Type", field: "estimationType" },
-    { title: "Estimation Description", field: "estimationDesc" },
-    { title: "Total Cost($)", field: "cost" },
-    { title: "No of Persons", field: "noOfPerson" },
+    { title: "Estimation Type", field: "esttypeId.estType" },
+    { title: "Estimation Description", field: "estDescription" },
+    { title: "Total Cost($)", field: "totalCost" },
+    { title: "No of Persons", field: "manCount" },
   ];
 
-  const projectEstimationData = [
-    {
-      estimation_id: "1",
-      estimationName: "Phase1",
-      estimationDesc: "lorem ipsom..description",
-      estimationType: "ROM",
-      cost: "10000",
-      noOfPerson: "5",
-    },
-    {
-      estimation_id: "2",
-      estimationName: "Phase2",
-      estimationDesc: "dummy..description",
-      estimationType: "SWAG",
-      cost: "100000",
-      noOfPerson: "8",
-    },
-    {
-      estimation_id: "3",
-      estimationName: "Phase3",
-      estimationDesc: "sample..description",
-      estimationType: "FIX",
-      cost: "50000",
-      noOfPerson: "6",
-    },
-    {
-      estimation_id: "4",
-      estimationName: "Phase4",
-      estimationDesc: "description",
-      estimationType: "ROM",
-      cost: "80000",
-      noOfPerson: "7",
-    },
-  ];
-
-  const openFun = () => {
+  const openFun = (name) => {
     setIsOpenDailog(true);
+    setEditRow(name);
+    setDeleteEstimationDailog(true);
+    //   setCreateClinetDailog(false)
+    // setEditClinetDailog(false);
+    // setDeleteClinetDailog(true);
   };
-
+  const deleteProject = () => {
+    // ClientSer.deleteClient(actionId).then((res)=>{
+    //   getAllClient()
+    //   closeFun()
+    // }).catch((err)=>{
+    // });
+  };
   const closeFun = () => {
     setIsOpenDailog(false);
   };
@@ -87,35 +68,23 @@ function ProjectEstimations(props) {
 
   const openUpdateDailog = () => {};
 
-  const openDeleteDailog = () => {};
-
-  const getClientById = () => {
-    ProjectSer.getClientById()
-      .then((res) => {
-        let dataResponce = res.data.body;
-        setClientDeatils([...dataResponce]);
-
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", clientDeatils);
-      })
-      .catch((err) => {
-        console.log("Project error", err);
-      });
+  const openDeleteDailog = (name) => {
+    openFun(name);
   };
 
   const confirmDeleteEstimationFun = () => {};
+
+  let history = useHistory();
 
   return (
     <div className="all-project-wrap">
       <Box mb={3}>
         <Grid container justify="flex-end">
-          <Link to={"/create-estimation"}>
-            Create
-            {/* <Button variant="outlined">
-              {" "}
-              <AddIcon />
-              Create Estimation
-            </Button> */}
-          </Link>
+          <Button variant="outlined" onClick={openCreateDailog}>
+            {" "}
+            <AddIcon />
+            Create Estimation
+          </Button>
         </Grid>
         <Grid container justify="flex-start">
           <p>
@@ -123,6 +92,20 @@ function ProjectEstimations(props) {
           </p>
         </Grid>
       </Box>
+      {deleteEstimationDailog === true && isOpenDailog === true ? (
+        <DeleteProjectdailog
+          isOpen={isOpenDailog}
+          openF={openFun}
+          closeF={closeFun}
+          editRowObj={editRow}
+          title="Delete Project"
+          message="Do you want to delete"
+          category="Estimate"
+          oktitle="Ok"
+          saveFun={confirmDeleteEstimationFun}
+          cancelTitle="Cancel"
+        />
+      ) : null}
       <MaterialTable
         columns={columns}
         actions={[
@@ -130,6 +113,8 @@ function ProjectEstimations(props) {
             icon: "edit",
             tooltip: "Edit Estimation",
             onClick: (event, rowData) => {
+              let url = "/createEstimate";
+              history.push(url);
               setEditRow({ ...rowData });
               setActionId(rowData.id);
               openUpdateDailog();
@@ -141,7 +126,7 @@ function ProjectEstimations(props) {
             onClick: (event, rowData) => {
               setEditRow({ ...rowData });
               setActionId(rowData.id);
-              openDeleteDailog();
+              openDeleteDailog(rowData.estName);
             },
           },
         ]}
@@ -159,4 +144,5 @@ function ProjectEstimations(props) {
     </div>
   );
 }
+
 export default ProjectEstimations;
