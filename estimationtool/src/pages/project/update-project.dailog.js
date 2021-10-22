@@ -8,6 +8,7 @@ export default function UpdateProjectDailog(props) {
         projectName:props.editRowObj.projectName,
         projectDescription:props.editRowObj.projectDescription,
         domain:props.editRowObj.domain,
+        client:""
     });
 
     const[showError, setShowError] = React.useState(false);
