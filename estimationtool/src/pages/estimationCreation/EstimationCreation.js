@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import FirstStep from "./FirstStep";
-import BorderedContainer from "./";
+import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 const steps = [
   "Basic Detail",
