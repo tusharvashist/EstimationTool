@@ -96,7 +96,7 @@ function Projects(props) {
 
     const createProject = (projectData)=>{
       ProjectSer.createProject(projectData).then((res)=>{
-        getAllProject()
+        getClientById()
         closeFun()
       }).catch((err)=>{
       });

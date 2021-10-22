@@ -34,7 +34,6 @@ export default function CreateProjectdailog(props) {
     }
      
     const   onSubmitForm = (e) => {
-        console.log("e", e)
         //e && e.preventDefault();
         if(formData.projectName  && formData.domain) {
             setShowError(false);
