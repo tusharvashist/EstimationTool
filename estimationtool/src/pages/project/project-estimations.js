@@ -80,11 +80,13 @@ function ProjectEstimations(props) {
     <div className="all-project-wrap">
       <Box mb={3}>
         <Grid container justify="flex-end">
-          <Button variant="outlined" onClick={openCreateDailog}>
-            {" "}
-            <AddIcon />
-            Create Estimation
-          </Button>
+          <Link to={"/create-estimation"}>
+            <Button variant="outlined">
+              {" "}
+              <AddIcon />
+              Create Estimation
+            </Button>
+          </Link>
         </Grid>
         <Grid container justify="flex-start">
           <p>

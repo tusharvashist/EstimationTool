@@ -8,11 +8,14 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import FirstStep from "./FirstStep";
+import BorderedContainer from "./";
 
 const steps = [
-  "Select campaign settings",
-  "Create an ad group",
-  "Create an ad",
+  "Basic Detail",
+  "Effort Attributes",
+  "Calculated Attributes",
+  "Define Feature",
+  "Preview & Save",
 ];
 
 const EstimationCreation = () => {
@@ -96,7 +99,6 @@ const EstimationCreation = () => {
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
             <Box sx={{ width: "100%" }}>{activeStep == 0 && <FirstStep />}</Box>
-            Hello Step {activeStep + 1}
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Button
