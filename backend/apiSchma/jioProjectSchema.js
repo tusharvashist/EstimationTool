@@ -13,5 +13,6 @@ module.exports.getallProject = Joi.object({
 module.exports.projectUpdateSchema = Joi.object({
     projectName: Joi.string(),
     projectDescription: Joi.string().allow(""),
-    domain: Joi.string().required()
+    domain: Joi.string().required(),
+    client: Joi.string().required()
 })
