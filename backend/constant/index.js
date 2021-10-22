@@ -56,4 +56,15 @@ module.exports = {
         ROLE_UPDATE: "Role update successfully",
         ROLE_DELETE: "Role delete successfully",
     },
+
+    pageMessage: {
+        PAGE_CREATED: "Page Master created successfully",
+        PAGE_ERROR: "Page Master create fail",
+        PAGE_FETCH: "All Page Masters fetch successfully",
+        PAGE_GET_ERROR: "All Page fetch error",
+        PAGE_NOT_FOUND: "Page Master not found",
+        INVALID_ID: "Invalid id",
+        PAGE_UPDATE: "Page Master update successfully",
+        PAGE_DELETE: "Page Master delete successfully",
+    },
 }
