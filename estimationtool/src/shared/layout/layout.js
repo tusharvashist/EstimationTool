@@ -13,6 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import { Switch, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import "./layout.css";
+import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -60,6 +61,9 @@ export default class Layout extends Component {
                   </Route>
                   <Route path="/projectdetails/:clientid/:projectid">
                     <ProjectDetails />
+                  </Route>
+                  <Route path="/create-estimation">
+                    <EstimationCreation />
                   </Route>
                 </Switch>
               </Grid>
