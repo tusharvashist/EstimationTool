@@ -16,7 +16,9 @@ function Home() {
           return;
         }
       }
-      setTableData([...tableData, ...dataResponce]);
+
+      console.log("dataResponce", res.data.body);
+      setTableData([...dataResponce]);
     });
   }, []);
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -40,7 +42,7 @@ function Home() {
       },
       width: "15%",
     },
-    { title: "Estimation Type", field: "esttypeId" },
+    { title: "Estimation Type", field: "esttypeId.estType" },
     {
       title: "Client Name",
       field: "projectId.client.clientName",

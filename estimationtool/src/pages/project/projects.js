@@ -125,7 +125,9 @@ function Projects(props) {
     }
 
     const saveUpdateProjectFun = (data)=>{
-      updateProject(data)
+      let newObject = {...data};
+      newObject.client = clientid;
+      updateProject(newObject)
     }
     const confirmDeleteProjectFun = ()=>{
       deleteProject()
@@ -188,7 +190,7 @@ function Projects(props) {
                 tooltip: 'Edit project',
                 onClick: (event, rowData) => {
                     setEditRow({...rowData}); 
-                    setActionId(rowData.id); 
+                    setActionId(rowData._id); 
                     openUpdateDailog();}
                 }, 
                 {
@@ -196,7 +198,7 @@ function Projects(props) {
                 tooltip: 'Delete project',
                 onClick: (event, rowData) => {
                     setEditRow({...rowData}); 
-                    setActionId(rowData.id); 
+                    setActionId(rowData._id); 
                     openDeleteDailog();}
                 }
               
