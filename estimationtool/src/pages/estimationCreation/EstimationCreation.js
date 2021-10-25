@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import FirstStep from "./FirstStep";
+import SecondStep from "./SecondStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 const steps = [
@@ -101,6 +102,7 @@ const EstimationCreation = () => {
             <Typography sx={{ mt: 2, mb: 1 }}>
               <Box sx={{ width: "100%" }}>
                 {activeStep == 0 && <FirstStep />}
+                {activeStep == 1 && <SecondStep />}
               </Box>
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
