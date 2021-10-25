@@ -7,7 +7,7 @@ module.exports.createEstimationTemplate = async (req, res) => {
     try {
         const responceFromEstimationTemplateSer = await estimationTemplateSer.createEstimationTemplate(req.body);
         responce.status = 200;
-        responce.message = constant.estimationTemplateMessage.ESTIMATION_TEMPLATE_CREATED;
+        responce.message = constant.estimationTemplateMessage.ESTIMATIONTEMPLATE_CREATED;
         responce.body = responceFromEstimationTemplateSer;
     } catch (err) {
         responce.message = err.message;
