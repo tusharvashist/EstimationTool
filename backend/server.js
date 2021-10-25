@@ -39,6 +39,9 @@ app.use("/api/v1/role", require("./routes/roleMaster.route"));
 //----------- Page Master Route
 app.use("/api/v1/pagemaster", require("./routes/pageMaster.route"));
 
+//----------- Estimation Attribute Route
+app.use("/api/v1/estimationattribute", require("./routes/estimationattribute.route"));
+
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
   envName = "Locally"

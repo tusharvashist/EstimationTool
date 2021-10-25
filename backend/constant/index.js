@@ -67,4 +67,15 @@ module.exports = {
         PAGE_UPDATE: "Page Master update successfully",
         PAGE_DELETE: "Page Master delete successfully",
     },
+
+    EstimationAttributeMessage: {
+        ATTRIBUTE_CREATED: "Estimation Attribute created successfully",
+        ATTRIBUTE_ERROR: "Estimation Attribute create fail",
+        ATTRIBUTE_FETCH: "All Estimation Attribute s fetch successfully",
+        ATTRIBUTE_GET_ERROR: "All Estimation Attribute error",
+        ATTRIBUTE_NOT_FOUND: "Estimation Attribute not found",
+        INVALID_ID: "Invalid id",
+        ATTRIBUTE_UPDATE: "Estimation Attribute update successfully",
+        ATTRIBUTE_DELETE: "Estimation Attribute delete successfully",
+    },
 }
