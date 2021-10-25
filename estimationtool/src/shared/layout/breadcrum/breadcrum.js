@@ -18,6 +18,7 @@ export default function Breadcrum() {
     { path: "project", title: "Project" },
     { path: "clientdetails", title: "Client Detail" },
     { path: "projectdetails", title: "Project Detail" },
+    { path: "create-estimation", title: "Create Estimation" },
   ];
 
   useEffect(() => {
