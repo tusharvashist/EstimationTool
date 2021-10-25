@@ -11,28 +11,28 @@ export default function Sidebarv2(props) {
   return (
     <div className="sidebar-bg  h-100">
       <List component="nav" aria-label="main mailbox folders" className="list">
-        <ListItem button className="listitem">
-          <ListItemIcon>
-            <HomeIcon className="link-icon" />
-          </ListItemIcon>
-          <Link
-            className="link-item"
-            to={{
-              pathname: "/estimation",
-              state: { pageName: "Allestimation" },
-            }}
-          >
-            Estimations
-          </Link>
-        </ListItem>
-        <ListItem button className="listitem">
-          <ListItemIcon>
-            <AssignmentIndIcon className="link-icon" />
-          </ListItemIcon>
-          <Link className="link-item" to="/allclient">
-            Clients
-          </Link>
-        </ListItem>
+        <Link
+          className="link-item"
+          to={{
+            pathname: "/estimation",
+            state: { pageName: "Allestimation" },
+          }}
+        >
+          <ListItem button className="listitem">
+            <ListItemIcon>
+              <HomeIcon className="link-icon" />
+            </ListItemIcon>
+            <span>Estimations</span>
+          </ListItem>
+        </Link>
+        <Link className="link-item" to="/allclient">
+          <ListItem button className="listitem">
+            <ListItemIcon>
+              <AssignmentIndIcon className="link-icon" />
+            </ListItemIcon>
+            <span>Clients</span>
+          </ListItem>
+        </Link>
       </List>
     </div>
   );

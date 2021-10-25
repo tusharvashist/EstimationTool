@@ -56,19 +56,19 @@ const firstStep = () => {
       </BorderedContainer>
       <BorderedContainer>
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
-          <FormLabel component="legend">Assign responsibility</FormLabel>
+          <FormLabel component="legend">Effort Attribute</FormLabel>
           <FormGroup>
             <FormControlLabel
               control={<Checkbox defaultChecked />}
               label="Label"
             />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
-            <FormControlLabel control={<Checkbox />} label="Disabled" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
+            <FormControlLabel control={<Checkbox />} label="Label" />
           </FormGroup>
         </FormControl>
       </BorderedContainer>
