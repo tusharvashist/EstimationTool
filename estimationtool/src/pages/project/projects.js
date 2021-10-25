@@ -87,8 +87,8 @@ function Projects(props) {
     const getClientById = ()=>{
       ProjectSer.getClientById(clientid).then((res)=>{
         let dataResponce = res.data.body.projects;
-        
-        setTableData([...dataResponce])
+        const filteredProjects = dataResponce.filter(x => x.isDeleted===false);
+        setTableData([...filteredProjects])
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -104,7 +104,7 @@ function Projects(props) {
 
     const updateProject = (projectData)=>{
       ProjectSer.updateProject(actionId,projectData).then((res)=>{
-        getAllProject()
+        getClientById()
         closeFun()
       }).catch((err)=>{
       });
@@ -112,7 +112,7 @@ function Projects(props) {
 
     const deleteProject = ()=>{
       ProjectSer.deleteProject(actionId).then((res)=>{
-        getAllProject()
+        getClientById()
         closeFun()
       }).catch((err)=>{
       });
