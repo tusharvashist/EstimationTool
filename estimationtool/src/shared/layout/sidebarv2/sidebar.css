@@ -23,14 +23,20 @@
   position: fixed !important;
   margin-left: calc(2%) !important;
 }
+.list * {
+  margin: 2px 0;
+}
 
 .link-item {
   color: #000;
   text-decoration: none;
-  margin-left: 9px;
+}
+.listitem:hover > span {
+  color: #fff;
 }
 .link-icon {
   color: #000;
+  margin-right: 9px;
 }
 .MuiListItem-button {
   border-radius: 7px !important;

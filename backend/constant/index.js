@@ -41,6 +41,17 @@ module.exports = {
         PROJECT_UPDATE: "Project update successfully",
         PROJECT_DELETE: "Project delete successfully",
     },
+
+    estimationTemplateMessage: {
+        ESTIMATIONTEMPLATE_CREATED: "Estimation Template created successfully",
+        ESTIMATIONTEMPLATE_ERROR: "Estimation Template create fail",
+        ESTIMATIONTEMPLATE_FETCH: "All Estimation Template fetch successfully",
+        ESTIMATIONTEMPLATE_GET_ERROR: "All Estimation Template featch error",
+        ESTIMATIONTEMPLATE_NOT_FOUND: "Estimation Template not found",
+        INVALID_ID: "Invalid id",
+
+    },
+
     requestValidationMessage: {
         BAD_REQUEST: "Invalid filds",
         TOKEN_MISSING: "Token missing from header",
