@@ -33,16 +33,7 @@ function ProjectEstimations(props) {
    const columns = [
     {
       title: "Estimation Name",
-      field: "estName",
-      render: (rowData) => {
-        return (
-          <Link href={"/createEstimate"} estId={rowData._id}>
-            {" "}
-            {rowData.estName}
-          </Link>
-        );
-      },
-      sorting: false,
+      field: "estName"
     },
     { title: "Estimation Type", field: "esttypeId.estType" },
     { title: "Estimation Description", field: "estDescription" },
@@ -68,11 +59,9 @@ function ProjectEstimations(props) {
   };
 
   const confirmDeleteEstimationFun = () => {
-    console.log("Action Id :", actionId);
     EstimationService.delete(actionId).then((res) => {
       props.refreshData();
-        closeFun();
-
+      closeFun();
     }).catch((err) => {
       
     });
