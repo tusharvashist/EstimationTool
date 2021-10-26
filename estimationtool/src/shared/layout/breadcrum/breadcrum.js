@@ -13,7 +13,7 @@ export default function Breadcrum() {
     title: "",
   });
   const routeList = [
-    { path: "estimation", title: "Estimation" },
+    { path: "estimation", title: "Dashboard" },
     { path: "allclient", title: "All Client" },
     { path: "project", title: "Project" },
     { path: "clientdetails", title: "Client Detail" },

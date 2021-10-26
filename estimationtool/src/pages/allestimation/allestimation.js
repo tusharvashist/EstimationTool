@@ -16,7 +16,6 @@ function Home() {
           return;
         }
       }
-
       console.log("dataResponce", res.data.body);
       setTableData([...dataResponce]);
     });
@@ -87,7 +86,7 @@ function Home() {
           },
         }}
         data={tableData}
-        title="Recent Estimation"
+        title={`Recent Estimation${tableData.length > 1 ? "s" : ""}`}
         style={{ fontSize: "0.9rem" }}
       />
     </div>
