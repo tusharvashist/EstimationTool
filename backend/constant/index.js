@@ -80,15 +80,16 @@ module.exports = {
         ROLE_DELETE: "Role delete successfully",
     },
 
-    pageMessage: {
-        PAGE_CREATED: "Page Master created successfully",
-        PAGE_ERROR: "Page Master create fail",
-        PAGE_FETCH: "All Page Masters fetch successfully",
-        PAGE_GET_ERROR: "All Page fetch error",
-        PAGE_NOT_FOUND: "Page Master not found",
+    moduleMessage: {
+        MODULE_CREATED: "Module Master created successfully",
+        MODULE_DUPLICATE: "Module Master already exists",
+        MODULE_ERROR: "Module Master create fail",
+        MODULE_FETCH: "All Module Masters fetch successfully",
+        MODULE_GET_ERROR: "All Module fetch error",
+        MODULE_NOT_FOUND: "Module Master not found",
         INVALID_ID: "Invalid id",
-        PAGE_UPDATE: "Page Master update successfully",
-        PAGE_DELETE: "Page Master delete successfully",
+        MODULE_UPDATE: "Module Master update successfully",
+        MODULE_DELETE: "Module Master delete successfully",
     },
 
     EstimationAttributeMessage: {
@@ -100,5 +101,16 @@ module.exports = {
         INVALID_ID: "Invalid id",
         ATTRIBUTE_UPDATE: "Estimation Attribute update successfully",
         ATTRIBUTE_DELETE: "Estimation Attribute delete successfully",
+    },
+
+    TokenMessage: {
+        MODULETOKEN_CREATED: "Module Token created successfully",
+        MODULETOKEN_ERROR: "Module Token create fail",
+        MODULETOKEN_FETCH: "All Module Tokens fetch successfully",
+        MODULETOKEN_GET_ERROR: "All Module Tokenerror",
+        MODULETOKEN_NOT_FOUND: "Module Token not found",
+        INVALID_ID: "Invalid id",
+        MODULETOKEN_UPDATE: "Module Token update successfully",
+        MODULETOKEN_DELETE: "Module Token delete successfully",
     },
 }

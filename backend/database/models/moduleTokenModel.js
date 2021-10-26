@@ -2,13 +2,15 @@ const { number } = require("joi");
 const mongoose = require("mongoose");
 const { Schema } = require('mongoose');
 
-const pageMasterSchema = new mongoose.Schema({
-    pageName: {
-        type: String,
-        required: true
+const moduleTokenSchema = new mongoose.Schema({
+    moduleId: {
+        type: Schema.Types.ObjectId,
+        ref: "ModuleMaster",
+        required: 'Module Id  is required!'
     },
-    pageURL: {
-        type: String
+    token: {
+        type: String,        
+        required: 'Token is required!'
     }
 }, {
     timestamps: true,
@@ -21,4 +23,4 @@ const pageMasterSchema = new mongoose.Schema({
         }
     }
 })
-module.exports = mongoose.model("PageMaster", pageMasterSchema)
+module.exports = mongoose.model("ModuleToken", moduleTokenSchema)
