@@ -30,14 +30,14 @@ function Home() {
       field: "estName",
       sorting: false,
       render: (rowData) => {
-        return <Link> {rowData.estName}</Link>;
+        return <Link href={"/createEstimate"}> {rowData.estName}</Link>;
       },
     },
     {
       title: "Estimation Description",
       field: "estDescription",
       render: (rowData) => {
-        return <Link> {rowData.estDescription}</Link>;
+        return <Link href={"/createEstimate"} > {rowData.estDescription}</Link>;
       },
       width: "15%",
     },
@@ -54,9 +54,17 @@ function Home() {
         );
       },
     },
-    { title: "Project Name", field: "projectId.projectName" },
+    { title: "Project Name", field: "projectId.projectName" ,
+      render: (rowData) => {
+        return (
+          <Link href={"/projectdetails/" + rowData.id + "/" + rowData.projectId.id}>
+            {" "}
+            {rowData.projectId.projectName}
+          </Link>
+        );
+      },},
     { title: "Last update", field: "updatedAt", type: "date" },
-  ];
+  ];// 
   const openfn = () => {
     setIsOpenDailog(true);
   };

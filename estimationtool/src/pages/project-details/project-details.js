@@ -31,9 +31,7 @@ export default function ClientDetails() {
     });  
     const [tableDataWithoutFilter, setTableDataWithoutFilter] = useState([]);
     const [tableData, setTableData] = useState([]);
-    const [estimationSelectedState, setEstimationSelectedState] = useState("Active");
     useEffect(() => {
-        setEstimationSelectedState('Active');
         getProjectById();
       },[projectId]);
 
@@ -43,7 +41,7 @@ export default function ClientDetails() {
             setProjectDetails({ ...dataResponse });
             setClientDetails({ ...dataResponse.client });
             setTableDataWithoutFilter([...dataResponse.estimates]);
-            setTableData(filterEstimation('Active'));
+            setTableData([...dataResponse.estimates]);
         }).catch((err)=>{
           console.log("get Client by id error",err)
         })
@@ -66,7 +64,6 @@ export default function ClientDetails() {
 
       const filterEstimation = (value)=>{
           console.log("estimationSelectedState :", value)
- 
               switch (value) {
                   case 'Active':
                       console.log("set Active data ");
@@ -84,10 +81,8 @@ export default function ClientDetails() {
     const getDropDownvalue = (dropDownvalue)=>{
         console.log("this is an download vlaue", dropDownvalue);
         if (dropDownvalue !== null) {
-            setEstimationSelectedState(dropDownvalue.title);
             setTableData(filterEstimation(dropDownvalue.title));
         } else {
-             setEstimationSelectedState('Active');
             setTableData(filterEstimation('Active'));
         }
       }
@@ -119,7 +114,7 @@ export default function ClientDetails() {
                              <p><span className="section-title"></span></p> 
                         </Grid>
                         <Grid container justify="space-between" alignItems="center">
-                        <Dropdown defaultValue={{ title: 'Active', value: 'active' }}
+                        <Dropdown defaultValue={{ title: 'All', value: 'All' }}
                             title="Estimation status"
                             list={clientStatus}
                             getVal={getDropDownvalue}

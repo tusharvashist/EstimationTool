@@ -178,7 +178,7 @@ function Projects(props) {
                 <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>Create Project</Button>
               </Grid>
               <Grid container justify="flex-start">
-                    <p><span className="title-stl"> Projects : </span></p>
+                    <p><span className="title-stl">  {`Project${tableData.length > 1 ? "s" : ""}`}: </span></p>
               </Grid>
           </Box>
        <MaterialTable
@@ -209,7 +209,12 @@ function Projects(props) {
                 search: false,
                 filtering: false,
                 pageSize:5,
-                paging: false,
+              paging: false,
+                 headerStyle: {
+            backgroundColor: "#e5ebf7",
+            fontWeight: "bold",
+            fontSize: "0.9rem",
+          }
             }}
             data={tableData}
             title=""
