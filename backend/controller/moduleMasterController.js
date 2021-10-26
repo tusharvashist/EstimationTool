@@ -6,9 +6,14 @@ module.exports.createModuleMaster = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
         const responceSer = await moduleSer.createModuleMaster(req.body);
-        responce.status = 200;
-        responce.message = constant.moduleMessage.MODULE_CREATED;
-        responce.body = responceSer;
+        if (responceSer) {
+            responce.status = 200;
+            responce.message = constant.moduleMessage.MODULE_CREATED;
+            responce.body = responceSer;
+        }
+        else {
+            responce.message = constant.moduleMessage.MODULE_DUPLICATE;
+        }
     } catch (err) {
         responce.message = err.message;
     }

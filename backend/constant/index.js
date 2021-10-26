@@ -81,6 +81,7 @@ module.exports = {
 
     moduleMessage: {
         MODULE_CREATED: "Module Master created successfully",
+        MODULE_DUPLICATE: "Module Master already exists",
         MODULE_ERROR: "Module Master create fail",
         MODULE_FETCH: "All Module Masters fetch successfully",
         MODULE_GET_ERROR: "All Module fetch error",

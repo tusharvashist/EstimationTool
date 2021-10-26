@@ -5,9 +5,13 @@ const mongoose = require("mongoose")
 
 module.exports.createModuleMaster = async (serviceData) => {
     try {
-        let page = new ModuleMaster({ ...serviceData })
-        let result = await page.save();
-        return formatMongoData(result)
+        let module = new ModuleMaster({ ...serviceData })
+        console.log(module);
+        let exits = await ModuleMaster.find({ moduleName: module.moduleName });
+        if (exits.length == 0) {
+            let result = await module.save();
+            return formatMongoData(result)
+        }
     } catch (err) {
         console.log("something went wrong: service > Module Master Service ", err);
         throw new Error(err)
