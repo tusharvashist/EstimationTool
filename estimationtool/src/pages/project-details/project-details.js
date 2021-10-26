@@ -3,9 +3,11 @@ import ProjectSer from "./project-details.service";
 import {Box, Grid} from "@material-ui/core";
 import ProjectEstimationsGridView from "../project/project-estimations"
 import "./project-details.css";
+import { useParams } from 'react-router-dom';
 
 export default function ClientDetails() {
-
+    const params = useParams();
+    const projectId = params.projectid;
     const [clientDetails,setClientDetails] = useState({
         clientName:"",
         description:"",
@@ -25,7 +27,7 @@ export default function ClientDetails() {
       },[]);
 
     const getProjectById = ()=>{
-        ProjectSer.getProjectById().then((res)=>{
+        ProjectSer.getProjectById(projectId).then((res)=>{
             let dataResponse = res.data.body;
             setProjectDetails({ ...dataResponse });
             setClientDetails({ ...dataResponse.client });
