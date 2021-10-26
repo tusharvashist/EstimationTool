@@ -1,5 +1,6 @@
 const constant = require("../constant")
 const EstimationAttribute = require("../database/models/estimationAttributesModel")
+const EstimationTemplateAttribute = require("../database/models/estimationTemplateAttrModel")
 const { formatMongoData } = require("../helper/dbhelper")
 const mongoose = require("mongoose")
 
@@ -17,9 +18,9 @@ module.exports.createEstimationAttribute = async (serviceData) => {
 
 module.exports.getAllEstimationAttributes = async ({ esttypeId }) => {
     try {
-        let page = await EstimationAttribute.find({});
-        
-        return formatMongoData(page)
+        let estAtt = await EstimationAttribute.find({})
+        //let estSelAtt=await EstimationTemplateAttribute.find({estTypeId : esttypeId});
+        return formatMongoData(estAtt)
     } catch (err) {
         console.log("something went wrong: service > Get All Estimation Attribute Servive ", err);
         throw new Error(err)
