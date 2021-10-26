@@ -10,7 +10,7 @@ import React from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 
-const firstStep = () => {
+const FirstStep = () => {
   return (
     <React.Fragment>
       <BorderedContainer className="no-shadow">
@@ -91,4 +91,4 @@ const firstStep = () => {
   );
 };
 
-export default firstStep;
+export default FirstStep;
