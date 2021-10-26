@@ -13,18 +13,24 @@ export default function ClientDetails() {
         description:"",
         website:""
     });  
-    
     const [projectDetails,setProjectDetails] = useState({
         projectName:"",
         projectDescription:"",
         businessDomain:""
     });
-    
+    const [headerData,setHeaderData] = useState({
+        clientName:"",
+        projectName:"",
+        website:"",
+        domain:""
+    });  
+
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         getProjectById();
       },[]);
+
 
     const getProjectById = ()=>{
         ProjectSer.getProjectById(projectId).then((res)=>{
@@ -32,11 +38,24 @@ export default function ClientDetails() {
             setProjectDetails({ ...dataResponse });
             setClientDetails({ ...dataResponse.client });
             setTableData([...dataResponse.estimates]);
-            console.log(">>>>>>Project Detail>>>>>>>>>>>", tableData);
+            //updateHeaderData(dataResponse.client.clientName,dataResponse.projectName,dataResponse.client.website,dataResponse.domain);
+            console.log(">>>>>>Project Detail>>>>>>>>>>>", + dataResponse.client.clientName + JSON.stringify(headerData) + "&&" + JSON.stringify(projectDetails));
         }).catch((err)=>{
           console.log("get Client by id error",err)
         })
       }
+
+    const updateHeaderData = (clientName,projectName,website,domain) => {
+        setHeaderData({
+            clientName:clientName,
+            projectName:projectName,
+            website:website,
+            domain:domain
+        })
+
+        console.log(">>>>>>Header Detail>>>>>>>>>>>", JSON.stringify(headerData) );
+
+    }
  
     const [clientStatus,setClientStatus] = useState([
         { title: 'All'},
@@ -58,7 +77,7 @@ export default function ClientDetails() {
                                 <p> <span className="title-stl"> Project Name :</span> {projectDetails.projectName}</p> 
                             </Grid>
                             <Grid item xs={10} sm={6}>
-                             <p> <span className="title-stl"> Business Domain :</span> {projectDetails.projectDescription}</p> 
+                             <p> <span className="title-stl"> Business Domain :</span> {projectDetails.domain}</p> 
                              </Grid>
                          </Grid>
                          <Grid container justify="space-between" alignItems="center"  className="block-section">
@@ -82,7 +101,7 @@ export default function ClientDetails() {
                </Grid>
             </Box>
             <Box p={0} pt={0}>
-               <ProjectEstimationsGridView tableData1= {tableData}/>
+               <ProjectEstimationsGridView tableData1= {tableData} clientInfo= {clientDetails} projectInfo ={projectDetails}/>
             </Box>
         </div>
     )

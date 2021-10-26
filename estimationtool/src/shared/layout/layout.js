@@ -66,9 +66,7 @@ export default class Layout extends Component {
                   <Route path="/projectdetails/:clientid/:projectid">
                     <ProjectDetails />
                   </Route>
-                  <Route path="/create-estimation">
-                    <EstimationCreation />
-                  </Route>
+                  <Route path="/create-estimation" render={(props) => <EstimationCreation clientInfo={props.clientInfo} projectInfo ={props.projectInfo}/>} />
                 </Switch>
               </Grid>
             </Grid>
