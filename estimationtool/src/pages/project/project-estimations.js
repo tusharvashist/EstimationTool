@@ -1,6 +1,7 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
+import EstimationService from "../estimationCreation/estimation.service";
 import { Box, Grid } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
@@ -19,21 +20,21 @@ function ProjectEstimations(props) {
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
-
+  const [deleteRecordName, setDeleteRecordName] = useState("");
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
+  
+  
   useEffect(() => {
     setTableData([...props.tableData1]);
     setClientDeatils({...props.clientInfo});
     setProjectDeatils({...props.projectInfo})
   }, [props.tableData1]);
 
-  //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
-  const columns = [
+   const columns = [
     {
       title: "Estimation Name",
       field: "estName",
       render: (rowData) => {
-        console.log("----Row id", rowData._id);
         return (
           <Link href={"/createEstimate"} estId={rowData._id}>
             {" "}
@@ -51,19 +52,9 @@ function ProjectEstimations(props) {
 
   const openFun = (name) => {
     setIsOpenDailog(true);
-    setEditRow(name);
     setDeleteEstimationDailog(true);
-    //   setCreateClinetDailog(false)
-    // setEditClinetDailog(false);
-    // setDeleteClinetDailog(true);
   };
-  const deleteProject = () => {
-    // ClientSer.deleteClient(actionId).then((res)=>{
-    //   getAllClient()
-    //   closeFun()
-    // }).catch((err)=>{
-    // });
-  };
+
   const closeFun = () => {
     setIsOpenDailog(false);
   };
@@ -72,44 +63,34 @@ function ProjectEstimations(props) {
 
   const openUpdateDailog = () => {};
 
-  const openDeleteDailog = (name) => {
-    openFun(name);
+  const openDeleteDailog = () => {
+    openFun();
   };
 
-  const confirmDeleteEstimationFun = () => {};
+  const confirmDeleteEstimationFun = () => {
+    console.log("Action Id :", actionId);
+    EstimationService.delete(actionId).then((res) => {
+      props.refreshData();
+        closeFun();
+
+    }).catch((err) => {
+      
+    });
+  };
+
 
   let history = useHistory();
 
   return (
     <div className="all-project-wrap">
-      <Box mb={3}>
-        <Grid container justify="flex-end">
-          <Link to={
-          {
-            pathname : "/create-estimation",
-            clientInfo: clientDeatils,
-            projectInfo: projectDeatils
-          }
-        }>
-            <Button variant="outlined">
-              {" "}
-              <AddIcon />
-              Create Estimation
-            </Button>
-          </Link>
-        </Grid>
-        <Grid container justify="flex-start">
-          <p>
-            <span className="title-stl"> Estimations : </span>
-          </p>
-        </Grid>
-      </Box>
+
       {deleteEstimationDailog === true && isOpenDailog === true ? (
         <DeleteProjectdailog
           isOpen={isOpenDailog}
           openF={openFun}
           closeF={closeFun}
           editRowObj={editRow}
+          name={ deleteRecordName}
           title="Delete Project"
           message="Do you want to delete"
           category="Estimate"
@@ -137,8 +118,10 @@ function ProjectEstimations(props) {
             tooltip: "Delete Estimation",
             onClick: (event, rowData) => {
               setEditRow({ ...rowData });
-              setActionId(rowData.id);
-              openDeleteDailog(rowData.estName);
+              setActionId(rowData._id);
+              console.log("Row : ",rowData._id);
+              setDeleteRecordName(rowData.estName)
+              openDeleteDailog();
             },
           },
         ]}
@@ -149,6 +132,11 @@ function ProjectEstimations(props) {
           filtering: false,
           pageSize: 5,
           paging: false,
+          headerStyle: {
+            backgroundColor: "#e5ebf7",
+            fontWeight: "bold",
+            fontSize: "0.9rem",
+          }
         }}
         data={tableData}
         title="Estimations:"

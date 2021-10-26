@@ -59,19 +59,19 @@ const constant =  require("../constant");
 //     return res.status(responce.status).send(responce);
 // }
 
-// //-----------------  Delete
-// module.exports.estimationDelete = async (req,res)=>{
-//     let responce = {...constant.defaultResponce};
-//     try{
-//        const responceFromestimationSer = await estimationSer.estimationDelete(req.params);
-//         responce.status = 200;
-//         responce.message = constant.estimationMessage.ESTIMATION_DELETE;
-//         responce.body = responceFromestimationSer;
-//     }catch(err){
-//         responce.message = err.message;
-//     }
-//     return res.status(responce.status).send(responce);
-// }
+//-----------------  Delete
+module.exports.estimationDelete = async (req,res)=>{
+    let responce = {...constant.defaultResponce};
+    try{
+       const responceFromestimationSer = await estimationSer.estimationDelete(req.params);
+        responce.status = 200;
+        responce.message = constant.estimationMessage.ESTIMATION_DELETE;
+        responce.body = responceFromestimationSer;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
 
 
 

@@ -35,11 +35,12 @@ module.exports = {
         PROJECT_CREATED: "Project created successfully",
         PROJECT_ERROR: "Project create fail",
         PROJECT_FETCH: "All Projects fetch successfully",
-        PROJECT_GET_ERROR: "All Project featch error",
+        PROJECT_GET_ERROR: "All Project fetch error",
         PROJECT_NOT_FOUND: "Project not found",
         INVALID_ID: "Invalid id",
         PROJECT_UPDATE: "Project update successfully",
         PROJECT_DELETE: "Project delete successfully",
+        DUPLICATE_PROJECT: "Project already exist with given name.",
     },
 
     estimationTemplateMessage: {

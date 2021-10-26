@@ -18,23 +18,23 @@ function Projects(props) {
   const { projectid } = useParams();
   const [tableData,setTableData] = useState([]);
   const [clientDeatils,setClientDeatils] = useState({});
-    const [isOpenDailog,setIsOpenDailog] = useState(false);
-    const [createProjectDailog,setCreateProjectDailog] = useState(false);
-    const [editProjectDailog,setEditProjectDailog] = useState(false);
-    const [deleteProjectDailog,setDeleteProjectDailog] = useState(false);
-    const [editRow,setEditRow] = useState({});
-    const [actionId,setActionId] = useState("");
+  const [isOpenDailog,setIsOpenDailog] = useState(false);
+  const [createProjectDailog,setCreateProjectDailog] = useState(false);
+  const [editProjectDailog,setEditProjectDailog] = useState(false);
+  const [deleteProjectDailog,setDeleteProjectDailog] = useState(false);
+  const [editRow,setEditRow] = useState({});
+  const [actionId, setActionId] = useState("");
+  
+  const [deleteRecordName, setDeleteRecordName] = useState("");
     const [projectStatus,setProjectStatus] = useState([
         { title: 'Active'},
         { title: 'In-Active'},
     ]);
 
     useEffect(() => {
-      // getAllProject();
       getClientById();
     },[]);
     useEffect(() => {
-      // getAllProject();
       getClientById();
     },[clientid]);
     const projectDetailsUrl = "/projectdetails/" + props.data + "/" + "614fefd74d9da71851f36df4";
@@ -78,7 +78,6 @@ function Projects(props) {
     const getAllProject = ()=>{
       ProjectSer.getAllProject().then((res)=>{
         let dataResponce = res.data.body;
-        // setTableData([...dataResponce])
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -87,8 +86,7 @@ function Projects(props) {
     const getClientById = ()=>{
       ProjectSer.getClientById(clientid).then((res)=>{
         let dataResponce = res.data.body.projects;
-        
-        setTableData([...dataResponce])
+        setTableData([...dataResponce.filter(op => op.isDeleted === false)])
       }).catch((err)=>{
         console.log("Project error",err)
       })
@@ -112,8 +110,8 @@ function Projects(props) {
 
     const deleteProject = ()=>{
       ProjectSer.deleteProject(actionId).then((res)=>{
-        getAllProject()
-        closeFun()
+        getClientById();
+        closeFun();
       }).catch((err)=>{
       });
     } 
@@ -131,9 +129,8 @@ function Projects(props) {
     }
     const confirmDeleteProjectFun = ()=>{
       deleteProject()
+  
     }
-
-    
 
   return (
     <div className="all-project-wrap">
@@ -167,6 +164,7 @@ function Projects(props) {
               closeF={closeFun} 
               editRowObj={editRow} 
               title="Delete Project"
+              name={ deleteRecordName}
               message="Do you want to delete "
               category = "Project"
               oktitle="Ok"
@@ -198,7 +196,8 @@ function Projects(props) {
                 tooltip: 'Delete project',
                 onClick: (event, rowData) => {
                     setEditRow({...rowData}); 
-                    setActionId(rowData._id); 
+                    setActionId(rowData._id);
+                    setDeleteRecordName(rowData.projectName);
                     openDeleteDailog();}
                 }
               
