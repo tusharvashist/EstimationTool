@@ -76,7 +76,3 @@ s .bg-img {
   top: 15px;
   right: 15px;
 }
-.border-container {
-  width: calc(60%);
-  padding: 10% 20px !important;
-}
