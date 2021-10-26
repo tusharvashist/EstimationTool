@@ -6,9 +6,9 @@ const estimationAttributeSchema = new mongoose.Schema({
     attributeCode: {
         type: String,
         required: 'Attribute Code is required!'
-    }, attbuteName: {
+    }, attributeName: {
         type: String,
-        required: 'Attribute Type is required!'
+        required: 'Attribute Name is required!'
     },
     description: {
         type: String
