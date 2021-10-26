@@ -51,6 +51,17 @@ module.exports = {
         INVALID_ID: "Invalid id",
 
     },
+    estimationCalcAttrMessage: {
+        ESTIMATIONCALCATTR_CREATED: "Estimation Calculate Attribute created successfully",
+        ESTIMATIONCALCATTR_ERROR: "Estimation Calculate Attribute create fail",
+        ESTIMATIONCALCATTR_FETCH: "All Estimation Calculate Attribute fetch successfully",
+        ESTIMATIONCALCATTR_GET_ERROR: "All Estimation Calculate Attribute featch error",
+        ESTIMATIONCALCATTR_NOT_FOUND: "Estimation Calculate Attribute not found",
+        INVALID_ID: "Invalid id",
+        ESTIMATIONCALCATTR_UPDATE: "Estimation Calculate Attribute update successfully",
+        ESTIMATIONCALCATTR_DELETE: "Estimation Calculate Attribute delete successfully",
+
+    },
 
     requestValidationMessage: {
         BAD_REQUEST: "Invalid filds",
@@ -77,5 +88,16 @@ module.exports = {
         INVALID_ID: "Invalid id",
         PAGE_UPDATE: "Page Master update successfully",
         PAGE_DELETE: "Page Master delete successfully",
+    },
+
+    EstimationAttributeMessage: {
+        ATTRIBUTE_CREATED: "Estimation Attribute created successfully",
+        ATTRIBUTE_ERROR: "Estimation Attribute create fail",
+        ATTRIBUTE_FETCH: "All Estimation Attribute s fetch successfully",
+        ATTRIBUTE_GET_ERROR: "All Estimation Attribute error",
+        ATTRIBUTE_NOT_FOUND: "Estimation Attribute not found",
+        INVALID_ID: "Invalid id",
+        ATTRIBUTE_UPDATE: "Estimation Attribute update successfully",
+        ATTRIBUTE_DELETE: "Estimation Attribute delete successfully",
     },
 }

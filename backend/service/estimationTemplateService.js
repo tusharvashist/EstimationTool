@@ -1,6 +1,6 @@
 
 const constant = require("../constant")
-const EstimationTemplate = require("../database/models/estimationTemplate")
+const EstimationTemplate = require("../database/models/estimationTemplateModel")
 const Client = require("../database/models/clientModel")
 const { formatMongoData } = require("../helper/dbhelper")
 const mongoose = require("mongoose")

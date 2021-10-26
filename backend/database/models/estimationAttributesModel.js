@@ -1,0 +1,27 @@
+const { number } = require("joi");
+const mongoose = require("mongoose");
+const { Schema } = require('mongoose');
+
+const estimationAttributeSchema = new mongoose.Schema({
+    attributeCode: {
+        type: String,
+        required: 'Attribute Code is required!'
+    }, attbuteName: {
+        type: String,
+        required: 'Attribute Type is required!'
+    },
+    description: {
+        type: String
+    }
+}, {
+    timestamps: true,
+    toObject: {
+        transform: function (doc, ret, option) {
+            ret.id = ret._id;
+            delete ret._id;
+            delete ret.__v;
+            return ret;
+        }
+    }
+})
+module.exports = mongoose.model("EstimationAttributes", estimationAttributeSchema)

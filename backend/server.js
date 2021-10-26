@@ -43,6 +43,8 @@ app.use("/api/v1/estimationTemplate", require("./routes/estimationTemplateRoute"
 //----------- Page Master Route
 app.use("/api/v1/pagemaster", require("./routes/pageMaster.route"));
 
+//----------- Estimation Attribute Route
+app.use("/api/v1/estimationattribute", require("./routes/estimationattribute.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
