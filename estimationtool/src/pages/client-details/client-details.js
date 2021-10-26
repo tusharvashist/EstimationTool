@@ -63,7 +63,6 @@ export default function ClientDetails() {
     }
 
 
-    console.log("clients", clients)
     return (
         <div className="client-deatils-wrp">
             <Box p={5}>

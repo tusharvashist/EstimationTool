@@ -15,38 +15,67 @@ import React, { useState } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
-import AddAttributeDialog from "./AddAttributeDialog";
+import AddAttributeEstimation from "../estimationCreation/add-attribute-estimation";
+import SecondStepServ from "../estimationCreation/SecStepService.service";
+import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
+
+
+// useEffect(() => {
+//   getAttribute()
+// },[]);
+
+
+const getAttribute = () => {
+  SecondStepServ.getAllAttribute().then((res)=>{
+let dataResponse = res.data.body;
+console.log(dataResponse)
+  }).catch((err)=>{
+    console.log("Not getting Attribute",err)
+  })
+}
+
+const MOCK_CONFIG = [{ defaultChecked: true, label: 'first', name: 'first' }, { label: 'second', name: 'second' }, { label: 'third', name: 'third' }];
 
 const SecondStep = () => {
-  const [openAddAttributeBox, setOpenAddAttributeBox] = useState(false);
+  const [checkboxValues, setCheckboxValues] = useState({});
+  const [dialog, setDialog] = useState(false);
 
-  const openAddAttribute = () => {
-    openFun();
-  };
+  const openDailog = () => {
+    setDialog(true)
+  },
+    closeDialog = () => {
+      setDialog(false)
+    };
 
-  const openFun = () => {
-    setOpenAddAttributeBox(true);
-  };
 
-  const closeFun = () => {
-    setOpenAddAttributeBox(false);
-  };
+    const saveCreateAttribute = (data)=>{
+      createAttribute(data)
+    }
 
-  const saveAddAttributeFun = () => {};
+
+    const createAttribute = (Data)=>{
+      SecondStepServ.createAttribute(Data).then((res)=>{
+        console.log("response",Data)
+        getAttribute()
+        closeDialog()
+      }).catch((err)=>{
+      });
+    } 
 
   return (
     <React.Fragment>
-      {openAddAttributeBox ? (
-        <AddAttributeDialog
-          isOpen={openAddAttributeBox}
-          openF={openFun}
-          closeF={closeFun}
-          title="Add Attribute"
+     {dialog &&
+        (<AddAttributeEstimation
+          isOpen={dialog}
+          openF={openDailog}
+          closeF={closeDialog}
+          title="Add New Attribute"
           oktitle="Save"
-          saveFun={saveAddAttributeFun}
+          saveFun={saveCreateAttribute}
           cancelTitle="Cancel"
-        />
-      ) : null}
+        />)}
+
+      
       <BorderedContainer className="no-shadow">
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={6}>
@@ -92,7 +121,7 @@ const SecondStep = () => {
       >
         <Grid item>
           <div className="field-width add-attribute-btn">
-            <Button variant="outlined" onClick={openAddAttribute}>
+            <Button variant="outlined" onClick={openDailog}>
               {" "}
               <AddIcon /> Add Attribute
             </Button>
@@ -102,19 +131,9 @@ const SecondStep = () => {
       <BorderedContainer>
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Effort Attribute</FormLabel>
-          <FormGroup className="label-to-row">
-            <FormControlLabel
-              control={<Checkbox defaultChecked />}
-              label="Label"
-            />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-            <FormControlLabel control={<Checkbox />} label="Label" />
-          </FormGroup>
+          <Checkboxes config={MOCK_CONFIG} onChange={(data) => {
+            setCheckboxValues(data);
+          }} />
         </FormControl>
       </BorderedContainer>
     </React.Fragment>
