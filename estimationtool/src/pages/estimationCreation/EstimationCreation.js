@@ -9,15 +9,10 @@ import {
 import React from "react";
 import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
+import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
-const steps = [
-  "Basic Detail",
-  "Effort Attributes",
-  "Calculated Attributes",
-  "Define Feature",
-  "Preview & Save",
-];
+const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = () => {
   const [activeStep, setActiveStep] = React.useState(0);
@@ -103,6 +98,7 @@ const EstimationCreation = () => {
               <Box sx={{ width: "100%" }}>
                 {activeStep == 0 && <FirstStep />}
                 {activeStep == 1 && <SecondStep />}
+                {activeStep == 2 && <ThirdStep />}
               </Box>
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
