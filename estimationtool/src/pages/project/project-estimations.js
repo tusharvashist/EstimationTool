@@ -14,6 +14,8 @@ import { useHistory } from "react-router-dom";
 function ProjectEstimations(props) {
   const [tableData, setTableData] = useState();
   const [clientDeatils, setClientDeatils] = useState({});
+  const [projectDeatils, setProjectDeatils] = useState();
+  
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
@@ -21,6 +23,8 @@ function ProjectEstimations(props) {
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
   useEffect(() => {
     setTableData([...props.tableData1]);
+    setClientDeatils({...props.clientInfo});
+    setProjectDeatils({...props.projectInfo})
   }, [props.tableData1]);
 
   //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
@@ -80,7 +84,13 @@ function ProjectEstimations(props) {
     <div className="all-project-wrap">
       <Box mb={3}>
         <Grid container justify="flex-end">
-          <Link to={"/create-estimation"}>
+          <Link to={
+          {
+            pathname : "/create-estimation",
+            clientInfo: clientDeatils,
+            projectInfo: projectDeatils
+          }
+        }>
             <Button variant="outlined">
               {" "}
               <AddIcon />

@@ -23,8 +23,10 @@
 }
 .login-widget {
   width: 300px;
+  width: calc(60%);
+  padding: 10% 20px !important;
 }
-s .bg-img {
+.bg-img {
   height: 100%;
 }
 .bg-mask {
