@@ -40,7 +40,8 @@ function Projects(props) {
     const projectDetailsUrl = "/projectdetails/" + props.data + "/" + "614fefd74d9da71851f36df4";
     const columns = [
       { title: "Project Name", field: "projectName", render:(rowData)=>{ return (<Link  href={"/projectdetails/" + props.data + "/" + rowData._id}> {rowData.projectName}</Link>)} },
-      { title: "Project Description", field: "projectDescription" }
+      { title: "Project Description", field: "projectDescription" },
+      { title: "Business Domain", field: "domain" }
     ];
 
     const openFun = ()=>{
