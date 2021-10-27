@@ -23,6 +23,6 @@
 .MuiFormControl-root {
   margin: 8px 0 !important;
 }
-.MuiFormControl-root.MuiTextField-root.text-box {
-  margin-left: 20px !important;
+.MuiFormControlLabel-label {
+  flex-grow: 1;
 }
