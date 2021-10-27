@@ -40,11 +40,14 @@ app.use("/api/v1/role", require("./routes/roleMaster.route"));
 //----------- Role Estimation Template
 app.use("/api/v1/estimationTemplate", require("./routes/estimationTemplateRoute"));
 
-//----------- Page Master Route
-app.use("/api/v1/pagemaster", require("./routes/pageMaster.route"));
+//----------- Module Master Route
+app.use("/api/v1/modulemaster", require("./routes/moduleMaster.route"));
 
 //----------- Estimation Attribute Route
 app.use("/api/v1/estimationattribute", require("./routes/estimationattribute.route"));
+
+//----------- Module Token Route
+app.use("/api/v1/moduletoken", require("./routes/moduleToken.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {

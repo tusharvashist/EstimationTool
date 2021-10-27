@@ -29,6 +29,7 @@ const getAttribute = () => {
   SecondStepServ.getAllAttribute().then((res)=>{
 let dataResponse = res.data.body;
 console.log(dataResponse)
+setCheckboxValues
   }).catch((err)=>{
     console.log("Not getting Attribute",err)
   })
@@ -76,22 +77,6 @@ const SecondStep = () => {
         />)}
 
       
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <ListItem>Client Name: </ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Client Website:</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Project Name:</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Business Domain:</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
       <BorderedContainer className="no-shadow">
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={4}>

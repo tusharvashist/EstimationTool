@@ -60,18 +60,19 @@ const mongoose = require("mongoose")
 // }
 
 
-// module.exports.estimationDelete = async({id})=>{
-//     try{
-//       let estimation = await Estimation.findByIdAndDelete(id);
-//       if(!estimation){
-//           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
-//       }
-//       return formatMongoData(estimation)
-//     }catch(err){
-//       console.log("something went wrong: service > createEstimation ", err);
-//       throw new Error(err)
-//     }
-// }
+module.exports.estimationDelete = async({id})=>{
+    try{
+      let estimation = await EstimationHeader.updateOne({ _id: id }, { isDeleted: true });
+      
+      if(!estimation){
+          throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
+      }
+      return formatMongoData(estimation)
+    }catch(err){
+      console.log("something went wrong: service > createEstimation ", err);
+      throw new Error(err)
+    }
+}
 
 
 module.exports.getRecentEstimation = async({skip = 0,limit = 10})=>{
@@ -100,16 +101,6 @@ module.exports.createEstimationHeader = async(serviceData)=>{
     projectModel.estimates.push(estimation);
     await projectModel.save();
 
-    //ToDo : remove following code till End
-    // let estimationTemplate = new EstimationTemplateModel({
-    //   estType: "ROM",
-    //   description: "Rough Order Magnitude",
-    // });
-    
-    // let result2 = await estimationTemplate.save();
-    //estimation.esttypeId.push(result2);
-    //ToDo : End
-   
     return formatMongoData(result)
   }catch(err){
     console.log("something went wrong: service > createEstimation Header ", err);

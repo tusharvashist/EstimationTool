@@ -44,8 +44,8 @@ estimationController.getRecentEstimation
 );
 
 //----- Delete Estimation -----------
-// router.delete("/:id",
-// tokenValidation.validateToken,
-// estimationController.estimationDelete
-// );
+router.delete("/:id",
+tokenValidation.validateToken,
+estimationController.estimationDelete
+);
 module.exports = router;
