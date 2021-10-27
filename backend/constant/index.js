@@ -30,6 +30,8 @@ module.exports = {
         INVALID_ID: "Invalid id",
         CLIENT_UPDATE: "Client update successfully",
         CLIENT_DELETE: "Client delete successfully",
+        DUPLICATE_CLIENT: "Client already exist with given name.",
+
     },
     projectMessage: {
         PROJECT_CREATED: "Project created successfully",

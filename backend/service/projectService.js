@@ -58,6 +58,10 @@ module.exports.getProjectById = async ({ id }) => {
 
 module.exports.projectUpdate = async ({ id, updateInfo }) => {
   try {
+    const findProject = await Project.find({projectName :  updateInfo.projectName },{client :  updateInfo.client },);
+    if(findProject.length != 0){
+         throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
+    }
 
     let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
     if (!project) {

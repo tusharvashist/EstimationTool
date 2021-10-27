@@ -7,6 +7,11 @@ const mongoose = require("mongoose")
 module.exports.createClient = async (serviceData) => {
   try {
     let client = new Client({ ...serviceData })
+    const findRecord = await Client.find({clientName :  client.clientName });
+    if(findRecord.length != 0){
+         throw new Error(constant.clientMessage.DUPLICATE_CLIENT);
+    }
+
     let result = await client.save();
     return formatMongoData(result)
   } catch (err) {
@@ -49,6 +54,10 @@ module.exports.getClientById = async ({ id }) => {
 
 module.exports.clientUpdate = async ({ id, updateInfo }) => {
   try {
+    const findRecord = await Client.find({clientName :  updateInfo.clientName });
+    if(findRecord.length != 0){
+      throw new Error(constant.clientMessage.DUPLICATE_CLIENT);
+      }
 
     let clients = await Client.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
     if (!clients) {
