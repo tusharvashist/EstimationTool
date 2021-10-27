@@ -105,7 +105,11 @@ const ThirdStep = () => {
               control={
                 <>
                   <Checkbox defaultChecked />{" "}
-                  <TextField className="text-box" label="%" />
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -113,7 +117,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -121,7 +130,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -129,7 +143,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -137,7 +156,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -145,7 +169,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -153,7 +182,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
@@ -161,7 +195,12 @@ const ThirdStep = () => {
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
                 </>
               }
               label="Label"
