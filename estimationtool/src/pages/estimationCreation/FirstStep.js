@@ -13,7 +13,12 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import "./step.css";
 
 const FirstStep = () => {
-  const [characterCount, setCharacterCount] = useState(0);
+  const [characterCount, setCharacterCount] = useState(250);
+
+  const remainingCharCount = (charLength) => {
+       var remainingCharLimit = 250 - charLength;
+      setCharacterCount(remainingCharLimit);
+  }
   return (
     <React.Fragment>
       <BorderedContainer className="no-shadow">
@@ -75,9 +80,11 @@ const FirstStep = () => {
             multiline
             rows={3}
             rowsMax={3}
-            onChange={(e) => setCharacterCount(e.target.value.length)}
+            onChange={(e) => remainingCharCount(e.target.value.length)}
             variant="outlined"
+            inputProps={{ maxLength: 250 }}
           />
+          <div><p> Remaining character limit: {characterCount}</p></div>
         </Grid>
       </BorderedContainer>
     </React.Fragment>
