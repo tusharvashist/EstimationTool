@@ -18,7 +18,7 @@ module.exports.createClient = async (serviceData) => {
 
 module.exports.getAllClient = async ({ skip = 0, limit = 10 }) => {
   try {
-    let clients = await Client.find().skip(parseInt(skip)).limit(parseInt(limit));
+    let clients = await Client.find().sort({updatedAt : -1}).skip(parseInt(skip)).limit(parseInt(limit));
 
     return formatMongoData(clients)
   } catch (err) {
@@ -32,7 +32,11 @@ module.exports.getClientById = async ({ id }) => {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.clientMessage.INVALID_ID)
     }
-    let clients = await Client.findById(id).populate({ path: 'projects' });
+    let clients = await Client.findById(id)
+    .populate(
+      { path: 'projects',
+        options: { sort: {updatedAt:-1}} 
+      });
     if (!clients) {
       throw new Error(constant.clientMessage.CLIENT_NOT_FOUND)
     }
