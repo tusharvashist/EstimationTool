@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
-import AddAttributeDialog from "./AddAttributeDialog";
+import AddCalAttributeDialog from "./AddCalAttributeDialog";
 
 const ThirdStep = () => {
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
@@ -35,7 +35,7 @@ const ThirdStep = () => {
   return (
     <React.Fragment>
       {openAddCalAttributeBox ? (
-        <AddAttributeDialog
+        <AddCalAttributeDialog
           isOpen={openAddCalAttributeBox}
           openF={openFun}
           closeF={closeFun}
