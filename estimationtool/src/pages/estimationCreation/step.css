@@ -16,11 +16,13 @@
 .text-box {
   order: 3;
   width: 100px !important;
-  margin-left: 20px !important;
 }
 .MuiFormControlLabel-root {
   margin: 8px 0;
 }
 .MuiFormControl-root {
   margin: 8px 0 !important;
+}
+.MuiFormControl-root.MuiTextField-root.text-box {
+  margin-left: 20px !important;
 }
