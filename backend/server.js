@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", require("./routes/userRoute"));
 
 //----------- allestimation Route
-app.use("/api/v1/allestimation", require("./routes/allEstimationRoute"));
+app.use("/api/v1/estimation", require("./routes/estimation.route"));
 
 //----------- Client Route
 app.use("/api/v1/client", require("./routes/client.route"));
@@ -37,7 +37,7 @@ app.use("/api/v1/project", require("./routes/project.route"));
 app.use("/api/v1/role", require("./routes/roleMaster.route"));
 
 
-//----------- Role Estimation Template
+//-----------  Estimation Type Template ie: ROM/SWAG/FIXBID
 app.use("/api/v1/estimationTemplate", require("./routes/estimationTemplateRoute"));
 
 //----------- Module Master Route
