@@ -5,8 +5,8 @@ import {
     FormGroup,
 } from "@material-ui/core";
 
-const Checkboxes = ({ config = [], onChange }) => {
-    const [values, setValues] = useState({});
+const Checkboxes = ({ config = [], onChange, defaultValues = {} }) => {
+    const [values, setValues] = useState(defaultValues);
 
     const onUpdate = ({ target }) => {
         const name = target.name, checked = target.checked;

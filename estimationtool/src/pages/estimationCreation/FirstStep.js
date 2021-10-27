@@ -6,9 +6,10 @@ import {
   NativeSelect,
   TextField,
 } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
+
 
 const FirstStep = () => {
   const [characterCount, setCharacterCount] = useState(0);
