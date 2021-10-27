@@ -29,7 +29,6 @@ const getAttribute = () => {
   SecondStepServ.getAllAttribute().then((res)=>{
 let dataResponse = res.data.body;
 console.log(dataResponse)
-setCheckboxValues
   }).catch((err)=>{
     console.log("Not getting Attribute",err)
   })
