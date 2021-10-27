@@ -13,15 +13,20 @@
 .add-attribute-btn {
   padding: 0 10px;
 }
-.text-box {
-  order: 3;
-  width: 100px !important;
-}
 .MuiFormControlLabel-root {
   margin: 8px 0;
 }
 .MuiFormControl-root {
   margin: 8px 0 !important;
+}
+.text-box {
+  order: 3;
+  width: 100px !important;
+  margin: 0 30px !important;
+}
+.comment-box {
+  order: 4;
+  width: 60% !important;
 }
 .MuiFormControlLabel-label {
   flex-grow: 1;

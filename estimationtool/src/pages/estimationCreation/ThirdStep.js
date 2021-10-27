@@ -110,9 +110,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="QA"
             />
             <FormControlLabel
               control={
@@ -123,9 +128,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="BA"
             />
             <FormControlLabel
               control={
@@ -136,9 +146,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="PM"
             />
             <FormControlLabel
               control={
@@ -149,9 +164,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Unit Testing"
             />
             <FormControlLabel
               control={
@@ -162,9 +182,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Architect"
             />
             <FormControlLabel
               control={
@@ -175,9 +200,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="UAT Testing"
             />
             <FormControlLabel
               control={
@@ -188,9 +218,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Prod Support"
             />
             <FormControlLabel
               control={
@@ -201,9 +236,14 @@ const ThirdStep = () => {
                     label="%"
                     variant="outlined"
                   />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Buffer"
             />
           </FormGroup>
         </FormControl>
