@@ -21,14 +21,14 @@ const BasicBreadcrumbs = (props) => {
       <Breadcrumbs aria-label="breadcrumb">
         <Link onClick={() => history.push("/estimation")}>Dashboard</Link>
         {pathnames.map((name, index) => {
+          console.log(name);
           const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
-          const isLast = pathnames.length - 1;
+          const isLast = index === pathnames.length - 1;
+          console.log(routeTo, isLast);
           return isLast ? (
-            <Typography key={name}>{name}</Typography>
+            <Typography>{name}</Typography>
           ) : (
-            <Link color="inherit" onClick={() => history.push(routeTo)}>
-              {name}
-            </Link>
+            <Link onClick={() => history.push(routeTo)}>{name}</Link>
           );
         })}
       </Breadcrumbs>

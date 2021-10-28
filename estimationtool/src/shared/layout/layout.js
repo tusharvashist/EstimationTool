@@ -25,6 +25,7 @@ const EsContainer = withStyles((props) => {
     },
   };
 })(Container);
+
 export default class Layout extends Component {
   constructor(props) {
     super(props);
@@ -51,8 +52,12 @@ export default class Layout extends Component {
                   <Route exact path="/estimation">
                     <Allestimation />
                   </Route>
-                  <Route path="/allclient">
-                    <AllClient />
+                  <Route
+                    exact
+                    path="/allclient"
+                    render={(props) => <AllClient {...props} />}
+                  >
+                    {/* <AllClient /> */}
                   </Route>
                   <Route path="/project">
                     <Projects />
@@ -60,13 +65,25 @@ export default class Layout extends Component {
                   <Route path="/createEstimate">
                     <EstimationWizardStep1 />
                   </Route>
-                  <Route path="/clientdetails/:clientid">
-                    <ClientDetails />
+                  <Route
+                    exact
+                    path="/allclient/:clientid"
+                    render={(props) => <ClientDetails {...props} />}
+                  >
+                    {/* <ClientDetails /> */}
                   </Route>
                   <Route path="/projectdetails/:clientid/:projectid">
                     <ProjectDetails />
                   </Route>
-                  <Route path="/create-estimation" render={(props) => <EstimationCreation clientInfo={props.clientInfo} projectInfo ={props.projectInfo}/>} />
+                  <Route
+                    path="/create-estimation"
+                    render={(props) => (
+                      <EstimationCreation
+                        clientInfo={props.clientInfo}
+                        projectInfo={props.projectInfo}
+                      />
+                    )}
+                  />
                 </Switch>
               </Grid>
             </Grid>

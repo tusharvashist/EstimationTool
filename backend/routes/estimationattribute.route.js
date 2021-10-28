@@ -12,6 +12,13 @@ joiSchemaValidation.validateBody(joiEstimationAttSchema.createEstimationAttribut
 estimationAttController.createEstimationAttribute
 );
 
+//Create Estimation Selection Attribute
+router.post("/estattribute", 
+tokenValidation.validateToken,
+joiSchemaValidation.validateBody(joiEstimationAttSchema.createEstimationTemplateAttSchema),
+estimationAttController.createEstimationTempplateAttribute
+);
+
 //----- Update -----------
 // router.put("/:id",
 // tokenValidation.validateToken,

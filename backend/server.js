@@ -59,6 +59,8 @@ app.use("/api/v1/wizard1", require("./routes/wizard1.route"));
 //----------- Module Token Route
 app.use("/api/v1/moduletoken", require("./routes/moduleToken.route"));
 
+//----------- Permission
+app.use("/api/v1/permission", require("./routes/permission.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
