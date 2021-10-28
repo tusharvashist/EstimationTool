@@ -15,11 +15,14 @@ import "./client-details.css";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useParams, useHistory } from "react-router-dom";
 import ProjectServ from "../project/project.service";
+
 export default function ClientDetails() {
   const location = useLocation();
   const history = useHistory();
+
   const params = useParams(),
     { clientid } = params;
+  console.log(params, history);
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
     description: "",
@@ -71,7 +74,7 @@ export default function ClientDetails() {
       description: obj.description,
     });
     setClientId(cId);
-    history.replace({ pathname: cId });
+    // history.replace({ pathname: cId });
   };
 
   console.log("clients", clients);
