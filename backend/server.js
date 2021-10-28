@@ -46,6 +46,12 @@ app.use("/api/v1/pagemaster", require("./routes/pageMaster.route"));
 //----------- Estimation Attribute Route
 app.use("/api/v1/estimationattribute", require("./routes/estimationattribute.route"));
 
+//----------- Estimation calculate attribute
+app.use("/api/v1/estimationCalcAttr", require("./routes/estimationCalcAttr.route"));
+
+//----------- Estimation template calculate attribute
+app.use("/api/v1/estimationTemplateCalcAttr", require("./routes/estimationTemplateCalcAttr.route"));
+
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
   envName = "Locally"

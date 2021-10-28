@@ -1,6 +1,6 @@
 const Joi = require("joi");
 module.exports.createEstimationCalcAttrSchema = Joi.object({
-    estTypeId: Joi.number().required(),
+    estTypeId: Joi.string().required(),
     calcAttribute: Joi.string().required(),
     calcAttributeName: Joi.string().required(),
     isFormula: Joi.boolean().required(),
@@ -16,7 +16,7 @@ module.exports.getallEstimationCalcAttr = Joi.object({
     limit: Joi.string()
 })
 module.exports.estimationCalcAttrUpdateSchema = Joi.object({
-    estTypeId: Joi.number().required(),
+    estTypeId: Joi.string().required(),
     calcAttribute: Joi.string().required(),
     calcAttributeName: Joi.string().required(),
     isFormula: Joi.boolean().required(),

@@ -37,10 +37,10 @@ module.exports.getEstimationTemplateCalcAttrById = async ({ id }) => {
         if (!mongoose.Types.ObjectId(id)) {
             throw new Error(constant.estimationTemplateCalcAttrMessage.INVALID_ID)
         }
-        // let estimationTemplateCalcAttr = await EstimationTemplateCalcAttr.findById(id).populate('client').populate({
-        //      path: 'estimates',
-        //      populate: { path: 'esttypeId' }
-        // })
+        let estimationTemplateCalcAttr = await EstimationTemplateCalcAttr.findById(id).populate('estTypeId').populate({
+            path: 'estimates',
+            populate: { path: 'estTypeId' }
+        })
         if (!estimationTemplateCalcAttr) {
             throw new Error(constant.estimationTemplateCalcAttrMessage.ESTIMATIONTEMPLATECALCATTR_NOT_FOUND)
         }

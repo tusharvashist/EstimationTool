@@ -5,6 +5,7 @@ const Client = require("../database/models/clientModel")
 const { formatMongoData } = require("../helper/dbhelper")
 const mongoose = require("mongoose")
 
+
 module.exports.createEstimationCalcAttr = async (serviceData) => {
     try {
         let estimationCalcAttr = new EstimationCalcAttr({ ...serviceData })
@@ -24,7 +25,7 @@ module.exports.createEstimationCalcAttr = async (serviceData) => {
 
 module.exports.getAllEstimationCalcAttr = async ({ skip = 0, limit = 10 }) => {
     try {
-        let estimationCalcAttr = await EstimationCalcAttr.find({ isDeleted: false }).skip(parseInt(skip)).limit(parseInt(limit));
+        let estimationCalcAttr = await EstimationCalcAttr.find({}).skip(parseInt(skip)).limit(parseInt(limit));
         return formatMongoData(estimationCalcAttr)
     } catch (err) {
         console.log("something went wrong: service > estimationCalcAttrService ", err);
@@ -32,17 +33,18 @@ module.exports.getAllEstimationCalcAttr = async ({ skip = 0, limit = 10 }) => {
     }
 }
 
+
 module.exports.getEstimationCalcAttrById = async ({ id }) => {
     try {
-        if (!mongoose.Types.ObjectId(id)) {
-            throw new Error(constant.estimationCalcAttrMessage.INVALID_ID)
+        if (!Types.ObjectId(id)) {
+            throw new Error(estimationCalcAttrMessage.INVALID_ID)
         }
-        // let estimationCalcAttr = await EstimationCalcAttr.findById(id).populate('client').populate({
-        //      path: 'estimates',
-        //      populate: { path: 'esttypeId' }
-        // })
+        let estimationCalcAttr = await findById(id).populate('estTypeId').populate({
+            path: 'estimates',
+            populate: { path: 'estTypeId' }
+        })
         if (!estimationCalcAttr) {
-            throw new Error(constant.estimationCalcAttrMessage.ESTIMATIONCALCATTR_NOT_FOUND)
+            throw new Error(estimationCalcAttrMessage.ESTIMATIONCALCATTR_NOT_FOUND)
         }
         return formatMongoData(estimationCalcAttr)
     } catch (err) {
@@ -54,9 +56,9 @@ module.exports.getEstimationCalcAttrById = async ({ id }) => {
 module.exports.estimationCalcAttrUpdate = async ({ id, updateInfo }) => {
     try {
 
-        let estimationCalcAttr = await EstimationCalcAttr.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
+        let estimationCalcAttr = await findOneAndUpdate({ _id: id }, updateInfo, { new: true });
         if (!estimationCalcAttr) {
-            throw new Error(constant.estimationCalcAttrMessage.ESTIMATIONCALCATTR_NOT_FOUND)
+            throw new Error(estimationCalcAttrMessage.ESTIMATIONCALCATTR_NOT_FOUND)
         }
         return formatMongoData(estimationCalcAttr)
     } catch (err) {
@@ -68,9 +70,9 @@ module.exports.estimationCalcAttrUpdate = async ({ id, updateInfo }) => {
 
 module.exports.estimationCalcAttrDelete = async ({ id }) => {
     try {
-        let estimationCalcAttr = await EstimationCalcAttr.updateOne({ _id: id }, { isDeleted: true });
+        let estimationCalcAttr = await updateOne({ _id: id }, { isDeleted: true });
         if (!estimationCalcAttr) {
-            throw new Error(constant.estimationCalcAttrMessage.ESTIMATIONCALCATTR_NOT_FOUND)
+            throw new Error(estimationCalcAttrMessage.ESTIMATIONCALCATTR_NOT_FOUND)
         }
         return formatMongoData(estimationCalcAttr)
     } catch (err) {

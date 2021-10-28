@@ -39,7 +39,7 @@ function ProjectEstimations(props) {
       },
       sorting: false,
     },
-    { title: "Estimation Type", field: "esttypeId.estType" },
+    { title: "Estimation Type", field: "estTypeId.estType" },
     { title: "Estimation Description", field: "estDescription" },
     { title: "Total Cost($)", field: "totalCost" },
     { title: "No of Persons", field: "manCount" },
@@ -64,15 +64,15 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => {};
+  const openCreateDailog = () => { };
 
-  const openUpdateDailog = () => {};
+  const openUpdateDailog = () => { };
 
   const openDeleteDailog = (name) => {
     openFun(name);
   };
 
-  const confirmDeleteEstimationFun = () => {};
+  const confirmDeleteEstimationFun = () => { };
 
   let history = useHistory();
 

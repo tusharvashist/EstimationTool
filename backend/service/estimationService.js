@@ -4,7 +4,7 @@ const constant = require("../constant")
 const EstimationHeader = require("../database/models/estHeaderModel")
 const EstimationTemplateModel = require("../database/models/estimationTemplateModel")
 const ProjectModel = require("../database/models/projectModel")
-const {formatMongoData} = require("../helper/dbhelper")
+const { formatMongoData } = require("../helper/dbhelper")
 const mongoose = require("mongoose")
 
 // module.exports.createEstimation = async(serviceData)=>{
@@ -47,7 +47,7 @@ const mongoose = require("mongoose")
 
 // module.exports.estimationUpdate = async({id,updateInfo})=>{
 //     try{
-    
+
 //       let estimation = await Estimation.findOneAndUpdate({_id:id},updateInfo,{new:true});
 //       if(!estimation){
 //           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
@@ -74,28 +74,28 @@ const mongoose = require("mongoose")
 // }
 
 
-module.exports.getRecentEstimation = async({skip = 0,limit = 10})=>{
-  try{
+module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
+  try {
     let estimations = await EstimationHeader.find({}).
-    populate({
-         path: 'projectId',
-         populate: { path: 'client' }
-    }).populate({
-         path: 'esttypeId'
-    }).skip(parseInt(skip)).limit(parseInt(limit));
+      populate({
+        path: 'projectId',
+        populate: { path: 'client' }
+      }).populate({
+        path: 'estTypeId'
+      }).skip(parseInt(skip)).limit(parseInt(limit));
     return formatMongoData(estimations)
-  }catch(err){
+  } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
     throw new Error(err)
   }
 }
 
 
-module.exports.createEstimationHeader = async(serviceData)=>{
-  try{
-    let estimation = new EstimationHeader({...serviceData})
+module.exports.createEstimationHeader = async (serviceData) => {
+  try {
+    let estimation = new EstimationHeader({ ...serviceData })
     let result = await estimation.save();
-   
+
     const projectModel = await ProjectModel.findById({ _id: estimation.projectId })
     projectModel.estimates.push(estimation);
     await projectModel.save();
@@ -105,13 +105,13 @@ module.exports.createEstimationHeader = async(serviceData)=>{
     //   estType: "ROM",
     //   description: "Rough Order Magnitude",
     // });
-    
+
     // let result2 = await estimationTemplate.save();
     //estimation.esttypeId.push(result2);
     //ToDo : End
-   
+
     return formatMongoData(result)
-  }catch(err){
+  } catch (err) {
     console.log("something went wrong: service > createEstimation Header ", err);
     throw new Error(err)
   }

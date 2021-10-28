@@ -1,11 +1,11 @@
-const exporess = require("express");
+const express = require("express");
 const estimationCalcAttrController = require("../controller/estimationCalcAttrController");
-const router = exporess.Router();
+const router = express.Router();
 const joiSchemaValidation = require("../middleware/joiSchemaValidation");
 const joiEstimationCalcAttrSchema = require("../apiSchma/joiEstimationCalcAttr");
 const tokenValidation = require("../middleware/tokenValidationJwt");
 
-//----- Create Project-----------
+//----- Create estimation calculate attr-----------
 router.post("/",
     tokenValidation.validateToken,
     joiSchemaValidation.validateBody(joiEstimationCalcAttrSchema.createEstimationCalcAttrSchema),
@@ -15,7 +15,7 @@ router.post("/",
 //----- Get Project By ID -----------
 router.get("/:id",
     tokenValidation.validateToken,
-    estimationCalcAttrController.getEstimationCalcAttrControllerById);
+    estimationCalcAttrController.getEstimationCalcAttrById);
 
 //----- Update Project -----------
 router.put("/:id",

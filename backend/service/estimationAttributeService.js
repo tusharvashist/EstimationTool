@@ -16,7 +16,7 @@ module.exports.createEstimationAttribute = async (serviceData) => {
 }
 
 
-module.exports.getAllEstimationAttributes = async ({ esttypeId }) => {
+module.exports.getAllEstimationAttributes = async ({ estTypeId }) => {
     try {
         let estAtt = await EstimationAttribute.find({})
         //let estSelAtt=await EstimationTemplateAttribute.find({estTypeId : esttypeId});

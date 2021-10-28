@@ -21,6 +21,16 @@ module.exports = {
         ESTIMATION_UPDATE: "Estimation update successfully",
         ESTIMATION_DELETE: "Estimation delete successfully",
     },
+    estimationTemplateCalcAttrMessage: {
+        ESTIMATIONTEMPLATECALCATTR_CREATED: "Estimation Template Calc Attr created successfully",
+        ESTIMATIONTEMPLATECALCATTR_ERROR: "Estimation Template Calc Attr create fail",
+        ESTIMATIONTEMPLATECALCATTR_FETCH: "All estimation Template Calc Attr fetch successfully",
+        ESTIMATIONTEMPLATECALCATTR_GET_ERROR: "All estimation  Template Calc Attrfeatch error",
+        ESTIMATIONTEMPLATECALCATTR_NOT_FOUND: "Estimation Template Calc Attr not found",
+        INVALID_ID: "Invalid id",
+        ESTIMATIONTEMPLATECALCATTR_UPDATE: "Estimation  Template Calc Attrupdate successfully",
+        ESTIMATIONTEMPLATECALCATTR_DELETE: "Estimation Template Calc Attr delete successfully",
+    },
     clientMessage: {
         CLIENT_CREATED: "Client created successfully",
         CLIENT_ERROR: "Client create fail",
