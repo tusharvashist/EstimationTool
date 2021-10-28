@@ -5,23 +5,29 @@ import {
   StepLabel,
   Stepper,
   Typography,
+  Grid,
+  ListItem
+
 } from "@material-ui/core";
-import React from "react";
+import React,  { useState, useEffect } from "react";
 import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
+import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
+import { useParams, useLocation } from "react-router-dom";
 
-const steps = [
-  "Basic Detail",
-  "Effort Attributes",
-  "Calculated Attributes",
-  "Define Feature",
-  "Preview & Save",
-];
+const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
-const EstimationCreation = () => {
+const EstimationCreation = (props) => {
+  const location1 = useLocation();
+  const [location, setLocation] = React.useState(location1);
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
+  const clientInfo = {...location1.clientInfo }
+  //const [clientInfo, setClientInfo] = React.useState({...useLocation().clientInfo });
+  const projecttInfo  = {...location1.projectInfo }
+  //const [projecttInfo, setProjectInfo] = React.useState({...useLocation().projecttInfo });
+
 
   const isStepOptional = (step) => {
     return step === null;
@@ -30,6 +36,12 @@ const EstimationCreation = () => {
   const isStepSkipped = (step) => {
     return skipped.has(step);
   };
+
+  useEffect(() => {
+    setLocation(location)
+    //setClientInfo(location.clientInfo);
+    //setProjectInfo(location.projectInfo);
+  }, [clientInfo]);
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -67,6 +79,7 @@ const EstimationCreation = () => {
 
   return (
     <BorderedContainer>
+      
       <Box sx={{ width: "100%" }}>
         <Stepper activeStep={activeStep}>
           {steps.map((label, index) => {
@@ -87,6 +100,23 @@ const EstimationCreation = () => {
             );
           })}
         </Stepper>
+        <BorderedContainer className="no-shadow">
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid item xs={6}>
+            <ListItem>Client Name: {clientInfo.clientName}</ListItem>
+          </Grid>
+          <Grid item xs={6}>
+            <ListItem>Client Website: <a target="_blank" href={clientInfo.website} >{clientInfo.website} </a></ListItem>
+          </Grid>
+          <Grid item xs={6}>
+            <ListItem>Project Name:{projecttInfo.projectName}</ListItem>
+          </Grid>
+          <Grid item xs={6}>
+            <ListItem>Business Domain: {projecttInfo.domain}</ListItem>
+          </Grid>
+        </Grid>
+      </BorderedContainer>
+
         {activeStep === steps.length ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
@@ -103,6 +133,7 @@ const EstimationCreation = () => {
               <Box sx={{ width: "100%" }}>
                 {activeStep == 0 && <FirstStep />}
                 {activeStep == 1 && <SecondStep />}
+                {activeStep == 2 && <ThirdStep />}
               </Box>
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>

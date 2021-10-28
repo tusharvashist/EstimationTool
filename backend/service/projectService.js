@@ -7,9 +7,14 @@ const mongoose = require("mongoose")
 
 module.exports.createProject = async (serviceData) => {
   try {
+    
     let project = new Project({ ...serviceData })
+    const findProject = await Project.find({projectName :  project.projectName },{client :  project.client },);
+    if(findProject.length != 0){
+         throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
+    }
+    
     let result = await project.save();
-
     const client = await Client.findById({ _id: project.client })
     client.projects.push(project);
     await client.save();
@@ -53,6 +58,10 @@ module.exports.getProjectById = async ({ id }) => {
 
 module.exports.projectUpdate = async ({ id, updateInfo }) => {
   try {
+    const findProject = await Project.find({projectName :  updateInfo.projectName },{client :  updateInfo.client },);
+    if(findProject.length != 0){
+         throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
+    }
 
     let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
     if (!project) {

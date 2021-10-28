@@ -22,7 +22,7 @@ export default function Sidebarv2(props) {
             <ListItemIcon>
               <HomeIcon className="link-icon" />
             </ListItemIcon>
-            <span>Estimations</span>
+            <span>Dashboard</span>
           </ListItem>
         </Link>
         <Link className="link-item" to="/allclient">

@@ -7,6 +7,11 @@ const mongoose = require("mongoose")
 module.exports.createClient = async (serviceData) => {
   try {
     let client = new Client({ ...serviceData })
+    const findRecord = await Client.find({clientName :  client.clientName });
+    if(findRecord.length != 0){
+         throw new Error(constant.clientMessage.DUPLICATE_CLIENT);
+    }
+
     let result = await client.save();
     return formatMongoData(result)
   } catch (err) {
@@ -18,7 +23,7 @@ module.exports.createClient = async (serviceData) => {
 
 module.exports.getAllClient = async ({ skip = 0, limit = 10 }) => {
   try {
-    let clients = await Client.find().skip(parseInt(skip)).limit(parseInt(limit));
+    let clients = await Client.find().sort({updatedAt : -1}).skip(parseInt(skip)).limit(parseInt(limit));
 
     return formatMongoData(clients)
   } catch (err) {
@@ -32,7 +37,11 @@ module.exports.getClientById = async ({ id }) => {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.clientMessage.INVALID_ID)
     }
-    let clients = await Client.findById(id).populate({ path: 'projects' });
+    let clients = await Client.findById(id)
+    .populate(
+      { path: 'projects',
+        options: { sort: {updatedAt:-1}} 
+      });
     if (!clients) {
       throw new Error(constant.clientMessage.CLIENT_NOT_FOUND)
     }
@@ -45,6 +54,10 @@ module.exports.getClientById = async ({ id }) => {
 
 module.exports.clientUpdate = async ({ id, updateInfo }) => {
   try {
+    const findRecord = await Client.find({clientName :  updateInfo.clientName });
+    if(findRecord.length != 0){
+      throw new Error(constant.clientMessage.DUPLICATE_CLIENT);
+      }
 
     let clients = await Client.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
     if (!clients) {
