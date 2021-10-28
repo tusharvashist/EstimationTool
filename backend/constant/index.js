@@ -113,4 +113,15 @@ module.exports = {
         MODULETOKEN_UPDATE: "Module Token update successfully",
         MODULETOKEN_DELETE: "Module Token delete successfully",
     },
+
+    PermssionMessage: {
+        PERMISSION_CREATED: "User Permission created successfully",
+        PERMISSION_ERROR: "User Permission create fail",
+        PERMISSION_FETCH: "All User Permissions fetch successfully",
+        PERMISSION_GET_ERROR: "All User Permission error",
+        PERMISSION_NOT_FOUND: "User Permission not found",
+        INVALID_ID: "Invalid id",
+        PERMISSION_UPDATE: "User Permission update successfully",
+        PERMISSION_DELETE: "User Permission delete successfully",
+    },
 }

@@ -49,6 +49,9 @@ app.use("/api/v1/estimationattribute", require("./routes/estimationattribute.rou
 //----------- Module Token Route
 app.use("/api/v1/moduletoken", require("./routes/moduleToken.route"));
 
+//----------- Permission
+app.use("/api/v1/permission", require("./routes/permission.route"));
+
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
   envName = "Locally"

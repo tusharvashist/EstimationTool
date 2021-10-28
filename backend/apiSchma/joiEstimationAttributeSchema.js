@@ -5,6 +5,10 @@ module.exports.createEstimationAttributeSchema = Joi.object({
     description: Joi.string()
 })
 module.exports.getAllEstimationAttribute = Joi.object({
-    skip: Joi.string(),
-    limit: Joi.string()
+    esttype : Joi.string()
+})
+
+module.exports.createEstimationTemplateAttSchema = Joi.object({
+    estAttrId: Joi.string().required(),
+    estTypeId: Joi.string().required()
 })
