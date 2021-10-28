@@ -25,8 +25,9 @@ module.exports.createEstimationCalcAttr = async (serviceData) => {
 
 module.exports.getAllEstimationCalcAttr = async ({ skip = 0, limit = 10 }) => {
     try {
+
         let estimationCalcAttr = await EstimationCalcAttr.find({}).skip(parseInt(skip)).limit(parseInt(limit));
-        return formatMongoData(estimationCalcAttr)
+        return (estimationCalcAttr)
     } catch (err) {
         console.log("something went wrong: service > estimationCalcAttrService ", err);
         throw new Error(err)

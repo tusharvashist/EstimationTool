@@ -43,6 +43,18 @@ module.exports = {
         DUPLICATE_CLIENT: "Client already exist with given name.",
 
     },
+    wizard1Message: {
+        WIZARD1_CREATED: "Wizard 1 created successfully",
+        WIZARD1_ERROR: "Wizard 1 create fail",
+        WIZARD1_FETCH: "All Wizard 1 fetch successfully",
+        WIZARD1_GET_ERROR: "All Wizard 1 featch error",
+        WIZARD1_NOT_FOUND: "Wizard 1 not found",
+        INVALID_ID: "Invalid id",
+        WIZARD1_UPDATE: "Wizard 1 update successfully",
+        WIZARD1_DELETE: "Wizard 1 delete successfully",
+        DUPLICATE_Wizard1: "Wizard 1 already exist with given name.",
+
+    },
     projectMessage: {
         PROJECT_CREATED: "Project created successfully",
         PROJECT_ERROR: "Project create fail",
