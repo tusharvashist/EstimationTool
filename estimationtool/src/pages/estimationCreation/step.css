@@ -1,5 +1,5 @@
 .field-width {
-  max-width: 250px;
+  max-width: 350px;
 }
 .MuiFormControl-root {
   width: 100% !important;
@@ -13,8 +13,21 @@
 .add-attribute-btn {
   padding: 0 10px;
 }
+.MuiFormControlLabel-root {
+  margin: 8px 0;
+}
+.MuiFormControl-root {
+  margin: 8px 0 !important;
+}
 .text-box {
   order: 3;
   width: 100px !important;
-  margin-left: 200px;
+  margin: 0 30px !important;
+}
+.comment-box {
+  order: 4;
+  width: 60% !important;
+}
+.MuiFormControlLabel-label {
+  flex-grow: 1;
 }

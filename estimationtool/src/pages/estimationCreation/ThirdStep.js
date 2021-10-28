@@ -15,7 +15,7 @@ import React, { useState } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
-import AddAttributeDialog from "./AddAttributeDialog";
+import AddCalAttributeDialog from "./AddCalAttributeDialog";
 
 const ThirdStep = () => {
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
@@ -35,7 +35,7 @@ const ThirdStep = () => {
   return (
     <React.Fragment>
       {openAddCalAttributeBox ? (
-        <AddAttributeDialog
+        <AddCalAttributeDialog
           isOpen={openAddCalAttributeBox}
           openF={openFun}
           closeF={closeFun}
@@ -105,66 +105,145 @@ const ThirdStep = () => {
               control={
                 <>
                   <Checkbox defaultChecked />{" "}
-                  <TextField className="text-box" label="%" />
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="QA"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="BA"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="PM"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Unit Testing"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Architect"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="UAT Testing"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Prod Support"
             />
             <FormControlLabel
               control={
                 <>
-                  <Checkbox /> <TextField className="text-box" label="%" />
+                  <Checkbox />{" "}
+                  <TextField
+                    className="text-box"
+                    label="%"
+                    variant="outlined"
+                  />
+                  <TextField
+                    className="comment-box"
+                    label="Comment"
+                    variant="outlined"
+                  />
                 </>
               }
-              label="Label"
+              label="Buffer"
             />
           </FormGroup>
         </FormControl>

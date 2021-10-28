@@ -29,7 +29,8 @@ module.exports.createEstimationTempplateAttribute = async (serviceData) => {
     }
 }
 
-module.exports.getAllEstimationAttributes = async ({ esttype }) => {
+
+module.exports.getAllEstimationAttributes = async ({ estTypeId }) => {
     try {
         let estAtt = await EstimationAttribute.aggregate().addFields({ selected: true });
         var est = ObjectID(esttype);      

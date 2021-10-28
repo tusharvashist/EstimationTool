@@ -187,9 +187,14 @@ function AllClient() {
                 filtering: false,
                 pageSize:5,
                 paging: false,
+                headerStyle: {
+                  backgroundColor: "#e5ebf7",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                },
             }}
             data={filteredData}
-            title=""
+            title={`Client${tableData.length > 1 ? "s" : ""}`}
           />
     </div>
   );

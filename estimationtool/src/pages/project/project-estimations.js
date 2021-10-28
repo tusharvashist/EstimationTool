@@ -16,26 +16,26 @@ function ProjectEstimations(props) {
   const [tableData, setTableData] = useState();
   const [clientDeatils, setClientDeatils] = useState({});
   const [projectDeatils, setProjectDeatils] = useState();
-  
+
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
-  
-  
+
+
   useEffect(() => {
     setTableData([...props.tableData1]);
-    setClientDeatils({...props.clientInfo});
-    setProjectDeatils({...props.projectInfo})
+    setClientDeatils({ ...props.clientInfo });
+    setProjectDeatils({ ...props.projectInfo })
   }, [props.tableData1]);
 
-   const columns = [
+  const columns = [
     {
       title: "Estimation Name",
       field: "estName"
     },
-    { title: "Estimation Type", field: "esttypeId.estType" },
+    { title: "Estimation Type", field: "estTypeId.estType" },
     { title: "Estimation Description", field: "estDescription" },
     { title: "Total Cost($)", field: "totalCost" },
     { title: "No of Persons", field: "manCount" },
@@ -50,9 +50,9 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => {};
+  const openCreateDailog = () => { };
 
-  const openUpdateDailog = () => {};
+  const openUpdateDailog = () => { };
 
   const openDeleteDailog = () => {
     openFun();
@@ -63,7 +63,7 @@ function ProjectEstimations(props) {
       props.refreshData();
       closeFun();
     }).catch((err) => {
-      
+
     });
   };
 
@@ -71,8 +71,8 @@ function ProjectEstimations(props) {
   let history = useHistory();
 
   const actionArry = (rowData) => {
-  
-}
+
+  }
 
   return (
     <div className="all-project-wrap">
@@ -83,7 +83,7 @@ function ProjectEstimations(props) {
           openF={openFun}
           closeF={closeFun}
           editRowObj={editRow}
-          name={ deleteRecordName}
+          name={deleteRecordName}
           title="Delete Project"
           message="Do you want to delete"
           category="Estimate"
@@ -112,7 +112,7 @@ function ProjectEstimations(props) {
             onClick: (event, rowData) => {
               setEditRow({ ...rowData });
               setActionId(rowData._id);
-              console.log("Row : ",rowData._id);
+              console.log("Row : ", rowData._id);
               setDeleteRecordName(rowData.estName)
               openDeleteDailog();
             },

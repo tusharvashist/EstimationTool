@@ -103,7 +103,7 @@ function Projects(props) {
 
     const updateProject = (projectData)=>{
       ProjectSer.updateProject(actionId,projectData).then((res)=>{
-        getAllProject()
+        getClientById()
         closeFun()
       }).catch((err)=>{
       });
@@ -177,9 +177,6 @@ function Projects(props) {
                 {/* <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/> */}
                 <Button variant="outlined" onClick={openCreateDailog}> <AddIcon/>Create Project</Button>
               </Grid>
-              <Grid container justify="flex-start">
-                    <p><span className="title-stl">  {`Project${tableData.length > 1 ? "s" : ""}`}: </span></p>
-              </Grid>
           </Box>
        <MaterialTable
             columns={columns}
@@ -217,7 +214,7 @@ function Projects(props) {
           }
             }}
             data={tableData}
-            title=""
+            title={`Project${tableData.length > 1 ? "s" : ""}`}
           />
     </div>
   );

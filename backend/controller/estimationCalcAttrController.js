@@ -1,8 +1,8 @@
-const estimationCalcAttrSer = require("../service/estimationCalcAttr");
+const estimationCalcAttrSer = require("../service/estimationCalcAttrService");
 const constant = require("../constant");
 
-//----------------- Create Project 
-module.exports.createProject = async (req, res) => {
+//----------------- Create Estimation calaculate attribute
+module.exports.createEstimationCalcAttr = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
         const responceFromEstimationCalcAttrSer = await estimationCalcAttrSer.createEstimationCalcAttr(req.body);
@@ -15,7 +15,7 @@ module.exports.createProject = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
-//----------------- Get Project By ID
+//----------------- Get Estimation calaculate attribute By ID
 module.exports.getEstimationCalcAttrById = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
@@ -29,21 +29,21 @@ module.exports.getEstimationCalcAttrById = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
-//----------------- Get All Project
+//----------------- Get All Estimation calaculate attribute
 module.exports.getAllEstimationCalcAttr = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
-        const responceFromProjectSer = await projectSer.getAllEstimationCalcAttr(req.query);
+        const responceFromEstimationCalcAttrSer = await estimationCalcAttrSer.getAllEstimationCalcAttr(req.query);
         responce.status = 200;
         responce.message = constant.estimationCalcAttrMessage.ESTIMATIONCALCATTR_FETCH;
-        responce.body = responceFromProjectSer;
+        responce.body = responceFromEstimationCalcAttrSer;
     } catch (err) {
         responce.message = err.message;
     }
     return res.status(responce.status).send(responce);
 }
 
-//----------------- Update Project
+//----------------- Update Estimation calaculate attribute
 module.exports.estimationCalcAttrUpdate = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
@@ -60,7 +60,7 @@ module.exports.estimationCalcAttrUpdate = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
-//-----------------  Delete Project
+//-----------------  Delete estimation calc attr
 module.exports.estimationCalcAttrDelete = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {

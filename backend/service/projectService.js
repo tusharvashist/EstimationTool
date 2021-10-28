@@ -43,8 +43,8 @@ module.exports.getProjectById = async ({ id }) => {
       throw new Error(constant.projectMessage.INVALID_ID)
     }
     let project = await Project.findById(id).populate('client').populate({
-         path: 'estimates',
-         populate: { path: 'esttypeId' }
+      path: 'estimates',
+      populate: { path: 'estTypeId' }
     })
     if (!project) {
       throw new Error(constant.projectMessage.PROJECT_NOT_FOUND)
@@ -58,6 +58,10 @@ module.exports.getProjectById = async ({ id }) => {
 
 module.exports.projectUpdate = async ({ id, updateInfo }) => {
   try {
+    const findProject = await Project.find({projectName :  updateInfo.projectName },{client :  updateInfo.client },);
+    if(findProject.length != 0){
+         throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
+    }
 
     let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
     if (!project) {

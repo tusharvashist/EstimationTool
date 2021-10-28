@@ -15,7 +15,7 @@ router.post("/",
 //----- Get EstimationTemplateCalcAttr By ID -----------
 router.get("/:id",
     tokenValidation.validateToken,
-    estimationTemplateCalcAttrController.getEstimationTemplateCalcAttrControllerById);
+    estimationTemplateCalcAttrController.getEstimationTemplateCalcAttrById);
 
 //----- Update EstimationTemplateCalcAttr -----------
 router.put("/:id",

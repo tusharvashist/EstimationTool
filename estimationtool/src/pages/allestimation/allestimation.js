@@ -41,7 +41,7 @@ function Home() {
       },
       width: "15%",
     },
-    { title: "Estimation Type", field: "esttypeId.estType" },
+    { title: "Estimation Type", field: "estTypeId.estType" },
     {
       title: "Client Name",
       field: "projectId.client.clientName",
