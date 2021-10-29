@@ -16,6 +16,8 @@ import AuthSer from "../shared/service/auth";
 import BorderedContainer from "../shared/ui-view/borderedContainer/BorderedContainer";
 
 import logo from "./img/logo.png";
+import { useSelector, useDispatch } from 'react-redux'
+import { setEmail,setFirstName, setLastName ,setFullName} from '../Redux/loginRedux'
 
 function Alert(props) {
   return (
@@ -24,6 +26,9 @@ function Alert(props) {
 }
 
 export default function Login(props) {
+  const loginRedux = useSelector((state) => state.login);
+  const dispatch = useDispatch();
+
   let history = useHistory();
   const [user, setUser] = React.useState({
     email: "jitendra.jahagirdar@pyramidconsultinginc.com",
@@ -61,6 +66,11 @@ export default function Login(props) {
       .then(async (res) => {
         let result = await res;
         await AuthSer.login(result.data.body);
+        dispatch(setEmail(result.data.body.email));
+        dispatch(setFirstName(result.data.body.first_name));
+        dispatch(setLastName(result.data.body.last_name));
+        dispatch(setFullName(result.data.body.first_name+" "+result.data.body.last_name));
+
         setIsShowSpinner(false);
         redirectDashbord();
       })
