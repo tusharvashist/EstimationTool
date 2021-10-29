@@ -67,9 +67,9 @@ export default function Login(props) {
         let result = await res;
         await AuthSer.login(result.data.body);
         dispatch(setEmail(result.data.body.email));
-        dispatch(setFirstName(result.data.body.first_name));
-        dispatch(setLastName(result.data.body.last_name));
-        dispatch(setFullName(result.data.body.first_name+" "+result.data.body.last_name));
+        dispatch(setFirstName(result.data.body.firstName));
+        dispatch(setLastName(result.data.body.lastName));
+        dispatch(setFullName(result.data.body.firstName+" "+result.data.body.lastName));
 
         setIsShowSpinner(false);
         redirectDashbord();

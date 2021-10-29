@@ -56,7 +56,7 @@ module.exports.signup = async({email,pass,first_name,
         throw new Error(constant.userMessage.INVALID_PASS);
       }
       var token = jwt.sign({ id: user._id }, process.env.SECRET_KEY || "py-estimation#$#", { expiresIn: "1d" });
-      var responce = {email:user.email,first_name:user.first_name,last_name:user.last_name, token: token};
+      var responce = {email:user.email,firstName:user.firstName,lastName:user.lastName, token: token};
      
       return responce;
     }catch(err){
