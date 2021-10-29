@@ -78,12 +78,16 @@ export default function Topnav(props) {
     var name = loginRedux.fullName;
        var firstChar = '';
     var secondChar = '';
-      if(loginRedux.firstName.length !== 0){
+    if (loginRedux.firstName !== undefined) {
+      if (loginRedux.firstName?.length !== 0) {
         firstChar = loginRedux.firstName[0][0];
       }
-     if(loginRedux.lastName.length !== 0){
-       secondChar = loginRedux.lastName[0][0];
+    }
+    if (loginRedux.lastName !== undefined) {
+      if (loginRedux.lastName?.length !== 0) {
+        secondChar = loginRedux.lastName[0][0];
       }
+    }
     
   return {
     sx: {
@@ -128,7 +132,7 @@ export default function Topnav(props) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem ><b>{loginRedux.fullName}</b></MenuItem>
+                <MenuItem ><b>{loginRedux.firstName !== undefined ? loginRedux.fullName : "" }</b></MenuItem>
                 <MenuItem >{loginRedux.email}</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
