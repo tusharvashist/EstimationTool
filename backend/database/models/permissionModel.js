@@ -4,15 +4,17 @@ const { Schema } = require('mongoose');
 
 const permissionSchema = new mongoose.Schema({
     typeId: {
-        type: Number,
-        required: 'Type Id is required!'
+        type: String,        
+        required: true
     }, 
     typeName: {
         type: String,
         required: 'Type Name is required!'
     },
     tokenID: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'ModuleToken',
+        required: true
     }
 }, {
     timestamps: true,

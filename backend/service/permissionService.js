@@ -16,9 +16,12 @@ module.exports.createPermission = async (serviceData) => {
     }
 }
 
-module.exports.getAllPermission = async ({ typeid }) => {
+module.exports.getAllPermission = async ({ }) => {
     try {
-        let lst = await Permission.find();
+        let lst = await Permission.find().
+        populate({
+            path: 'tokenID'            
+          });
         return (lst);
     } catch (err) {
         console.log("something went wrong: service > Get All Permission Service", err);
@@ -28,7 +31,10 @@ module.exports.getAllPermission = async ({ typeid }) => {
 
 module.exports.getAllUserPermission = async ({ roletype }) => {
     try {
-        let lst = await Permission.find();
+        let lst = await Permission.find({typeId : roletype, typeName : 'R'}).
+        populate({
+            path: 'tokenID'            
+          });;
         return (lst);
     } catch (err) {
         console.log("something went wrong: service > Get All User Permission Service", err);
