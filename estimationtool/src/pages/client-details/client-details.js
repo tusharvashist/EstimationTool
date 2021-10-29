@@ -21,8 +21,8 @@ export default function ClientDetails() {
   const history = useHistory();
 
   const params = useParams(),
-    { clientid } = params;
-  console.log(params, history);
+    { clientName } = params;
+
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
     description: "",
@@ -30,20 +30,32 @@ export default function ClientDetails() {
     id: "",
   });
   const [clients, setClients] = useState([]);
-  const [clientId, setClientId] = useState(clientid);
+  const [clientUrlName, setClientUrlName] = useState(clientName);
+  const [clientId, setClientId] = useState();
 
   useEffect(() => {
     getAllClient();
     getClientById();
-  }, []);
-  // useEffect(() => {
-  //     getAllClient()
-  //     getClientById()
-  // }, [clientid]);
+  }, [clientId]);
+
+  const getAllClient = () => {
+    ClientSer.getAllClient()
+      .then((res) => {
+        let dataResponce = res.data.body;
+        setClients(dataResponce.filter((op) => op.isDeleted === false));
+        setClientId(
+          dataResponce.find((x) => x.clientName === clientUrlName).id
+        );
+      })
+      .catch((err) => {
+        console.log("get Client by id error", err);
+      });
+  };
 
   const getClientById = () => {
     // const clientId = location.pathname.split("/")[2];
-    ClientSer.getClientById(clientid)
+
+    ClientSer.getClientById(clientId)
       .then((res) => {
         let dataResponce = res.data.body;
         setClientDetails({ ...dataResponce });
@@ -53,19 +65,9 @@ export default function ClientDetails() {
       });
   };
 
-  const getAllClient = () => {
-    ClientSer.getAllClient()
-      .then((res) => {
-        let dataResponce = res.data.body;
-        setClients(dataResponce.filter((op) => op.isDeleted === false));
-      })
-      .catch((err) => {
-        console.log("get Client by id error", err);
-      });
-  };
-
   const getDropDownvalue = (event) => {
     //console.log("this is an selected value", event);
+
     let cId = event.target.value; //object
     const obj = clients.find((op) => op.id === cId);
     setClientDetails({
@@ -73,11 +75,15 @@ export default function ClientDetails() {
       website: obj.website,
       description: obj.description,
     });
+    history.push(`/allclient/${obj.clientName}`);
+    setClientUrlName(obj.clientName);
     setClientId(cId);
     // history.replace({ pathname: cId });
   };
 
   console.log("clients", clients);
+  console.log("clientID", clientId);
+  console.log("clientDetails", clientDetails);
 
   return (
     <div className="client-deatils-wrp">
@@ -99,6 +105,7 @@ export default function ClientDetails() {
                     labelId="client-label"
                     id="client-simple-select"
                     value={clientId}
+                    defaultValue={clientId}
                     label={clients.clientName}
                     onChange={getDropDownvalue}
                   >
@@ -133,7 +140,7 @@ export default function ClientDetails() {
         </Grid>
       </Box>
       <Box p={3} pt={0}>
-        <ProjectView data={clientid} />
+        <ProjectView data={clientId} clientName={clientUrlName} />
       </Box>
     </div>
   );
