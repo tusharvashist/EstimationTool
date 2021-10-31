@@ -113,11 +113,13 @@ const FirstStep = (props) => {
                 <Select
                   labelId="estimation-type-label"
                   id="estimation-type-select"
-                  defaultValue = {basicDetailRedux.estimationTypeId}
                   onChange={(e) => {
                   console.log(e.target.value+"Instade est select onchange")
                   getEstimationDropDownValue(e)}
-                }
+                 }
+                 value={basicDetailRedux.estimationTypeId}
+
+                
                 >
                   {estTypes.map((item) => (
                      <MenuItem key={item.estType} value={item.id}>
@@ -139,12 +141,12 @@ const FirstStep = (props) => {
                 <Select
                     labelId="effort-unit-label"
                     id="effort-unit-select"
-                    defaultValue = {basicDetailRedux.efforUnit}
                     onChange={getEffortUnitDropDownValue}
+                    value={basicDetailRedux.efforUnit}
                   >
                    {effortUnitTypes.map((item) => (
                        <MenuItem value={item.value}>
-                          {item.value}
+                         {item.value}
                        </MenuItem>  
                     ))} 
                   </Select>
@@ -171,7 +173,7 @@ const FirstStep = (props) => {
             variant="standard"
             multiline={true}
             rows={3}
-            rowsMax={3}
+            maxRows={3}
             value={basicDetailRedux.esttimationDesc}
             onChange={(e) => remainingCharCount(e.target.value)}
             variant="outlined"

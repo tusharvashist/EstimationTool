@@ -16,6 +16,7 @@ import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useParams, useLocation } from "react-router-dom";
 import { useSelector } from 'react-redux'
+import estimationServices from "../allestimation/allestimation.service"
 
 // import {
 //   useForm,
@@ -62,20 +63,56 @@ const EstimationCreation = (props) => {
     //setProjectInfo(location.projectInfo);
   }, [clientInfo]);
 
+// send Estimation Basic detail data to post request to generating estimation header APi
+const postEstimationBasicDetail = (reqData) => {
+  estimationServices.saveEstimationBasicDetail(reqData)
+    .then((res) => {
+      let dataResponce = res.data.body;
+      console.log("Save Basic Details APi response:" +JSON.stringify(dataResponce));
+     //TODO:// show response and move next step
+     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    })
+    .catch((err) => {
+      console.log("get master estimation types", err);
+    });
+};
 
-
-  const handleNext = (data) => {
-   // console.log("data@@"+JSON.stringify(data));
+  const handleNext = () => {
+     console.log("data@@"+console.log("current step"+activeStep));
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-    if(activeStep == 1){
-      
+    if(activeStep == 0){
+      console.log("current step"+activeStep+ 
+      "Estimation Name: "+ basicDetailRedux.estimationName+ "estimationTypeId: "+ basicDetailRedux.estimationTypeId + "estimationName: "
+      +basicDetailRedux.estimationType + "efforUnit: "+basicDetailRedux.efforUnit + "estimationDesc :" + basicDetailRedux.esttimationDesc+
+      "projectId: "+  projecttInfo._id );
+
+      if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
+        && basicDetailRedux.efforUnit){ 
+          postEstimationBasicDetail({
+        "estheaderParentid": "-1",
+        "estVersionno": "1",
+        "projectId" : projecttInfo._id,
+        "estName" : basicDetailRedux.estimationName,
+        "estTypeId": basicDetailRedux.estimationTypeId,
+        "estDescription": basicDetailRedux.esttimationDesc,
+        "effortUnit": basicDetailRedux.efforUnit,
+        "manCount": 0,
+        "contigency": "25",
+        "totalCost": 0,
+        "estCalcColumns": "NA",
+        "estColumns": "NA",
+        "isDeleted": false
+           });
+      } else{
+        
+      }
     }
 
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
   };
 
@@ -142,6 +179,8 @@ const EstimationCreation = (props) => {
           </Grid>
         </Grid>
       </BorderedContainer>
+
+      
 
         {activeStep === steps.length ? (
           <React.Fragment>
