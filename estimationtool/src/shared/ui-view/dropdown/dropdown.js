@@ -16,7 +16,6 @@ export default function Dropdown(props) {
       style={{ width: 300 }}
       defaultValue={props.defaultValue || ''}
       renderInput={(params) => {
-        console.log("params", params)
       return <TextField {...params} label={props.title} variant="outlined" />}}
     />
   );

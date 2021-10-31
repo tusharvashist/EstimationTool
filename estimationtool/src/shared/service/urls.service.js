@@ -15,5 +15,6 @@ const Url = {
    updateProject: `${process.env.REACT_APP_URL}project`,
    deleteProject: `${process.env.REACT_APP_URL}project`,
    createAttribute :   `${process.env.REACT_APP_URL}estimationattribute`,
+   getCalculativeAttribute : `${process.env.REACT_APP_URL}estimationCalcAttr`
 }
 export default Url;

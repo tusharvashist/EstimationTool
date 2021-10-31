@@ -11,14 +11,42 @@ import {
   NativeSelect,
   TextField,
 } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
 import AddCalAttributeDialog from "./AddCalAttributeDialog";
-
+import SecondStepServ from "../estimationCreation/SecStepService.service";
+import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
 const ThirdStep = () => {
+
+  useEffect(() => {
+    getCalcAttribute()
+  }, []);
+
+  const getCalcAttribute = () => {
+    SecondStepServ.getAllCalculativeAttribute().then((res) => {
+      let dataResponse = res.data.body;
+      console.log(dataResponse)
+
+      let calAttriValues = {}
+      setAttributes(dataResponse.map(ob => {
+        calAttriValues[ob.calcAttributeName] = false;
+        return ({ name: ob.calcAttributeName, label: ob.calcAttributeName, checked: ob.isFormula })
+      }));
+
+      setcalAttriValues(calAttriValues)
+    }).catch((err) => {
+      console.log("Not getting Attribute", err)
+    })
+  }
+
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
+
+  const [attributes, setAttributes] = useState([]);
+
+
+  const [calAttriValues, setcalAttriValues] = useState(null);
 
   const openAddCalAttribute = () => {
     openFun();
@@ -30,7 +58,20 @@ const ThirdStep = () => {
   const closeFun = () => {
     setOpenAddCalAttributeBox(false);
   };
-  const saveAddCalAttributeFun = () => {};
+  const saveAddCalAttributeFun = (data) => {
+    createCalAttribute(data);
+  };
+
+  const createCalAttribute = (data) => {
+
+    SecondStepServ.createCalAttribute(data).then((res) => {
+      console.log("Calculative Attribute Created", res);
+      getCalcAttribute();
+      closeFun()
+    })
+  }
+
+
 
   return (
     <React.Fragment>
@@ -100,15 +141,27 @@ const ThirdStep = () => {
       <BorderedContainer>
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
+
+          {calAttriValues && (
+            <Checkboxes defaultValues={calAttriValues} config={attributes} onChange={(data) => {
+              setcalAttriValues(data);
+            }} />
+          )}
+
           <FormGroup className="">
             <FormControlLabel
               control={
                 <>
-                  <Checkbox defaultChecked />{" "}
+                  {calAttriValues && (
+            <Checkboxes defaultValues={calAttriValues} config={attributes} onChange={(data) => {
+              setcalAttriValues(data);
+            }} />
+          )}
                   <TextField
                     className="text-box"
                     label="%"
                     variant="outlined"
+                    value="123"
                   />
                   <TextField
                     className="comment-box"
@@ -117,7 +170,7 @@ const ThirdStep = () => {
                   />
                 </>
               }
-              label="QA"
+              
             />
             <FormControlLabel
               control={
