@@ -15,10 +15,20 @@ import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useParams, useLocation } from "react-router-dom";
+import { useSelector } from 'react-redux'
+
+// import {
+//   useForm,
+//   Controller,
+//   FormProvider,
+//   useFormContext,
+// } from "react-hook-form";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = (props) => {
+  const basicDetailRedux = useSelector((state) => state.basicDetail);
+
   const location1 = useLocation();
   const [location, setLocation] = React.useState(location1);
   const [activeStep, setActiveStep] = React.useState(0);
@@ -28,7 +38,16 @@ const EstimationCreation = (props) => {
   const projecttInfo  = {...location1.projectInfo }
   //const [projecttInfo, setProjectInfo] = React.useState({...useLocation().projecttInfo });
 
-
+  // const basicDetails = useForm({
+  //   defaultValues: {
+  //     estTypeId: '',
+  //     estTypeName: '',
+  //     effortUnit: '',
+  //     estName: '',
+  //     estDesc: ''
+  //   },
+  // });
+  
   const isStepOptional = (step) => {
     return step === null;
   };
@@ -43,17 +62,24 @@ const EstimationCreation = (props) => {
     //setProjectInfo(location.projectInfo);
   }, [clientInfo]);
 
-  const handleNext = () => {
+
+
+  const handleNext = (data) => {
+   // console.log("data@@"+JSON.stringify(data));
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
+    }
+    if(activeStep == 1){
+      
     }
 
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
   };
 
+ 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -128,14 +154,20 @@ const EstimationCreation = (props) => {
             </Box>
           </React.Fragment>
         ) : (
-          <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-              <Box sx={{ width: "100%" }}>
-                {activeStep == 0 && <FirstStep />}
+          <>
+          {/* <FormProvider {...basicDetails}>
+            <form onSubmit={basicDetails.handleSubmit(handleNext)} > */}
+            <React.Fragment>
+            {activeStep == 0 && 
+                <FirstStep 
+                 clientName={clientInfo.clientName}
+                 projectName={projecttInfo.projectName}
+                // next={handleNext}
+
+                 />}
                 {activeStep == 1 && <SecondStep />}
                 {activeStep == 2 && <ThirdStep />}
-              </Box>
-            </Typography>
+
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button
                 color="inherit"
@@ -152,11 +184,13 @@ const EstimationCreation = (props) => {
                 </Button>
               )}
 
-              <Button onClick={handleNext}>
+              <Button 
+              onClick={handleNext} >
                 {activeStep === steps.length - 1 ? "Finish" : "Next"}
               </Button>
             </Box>
-          </React.Fragment>
+            </React.Fragment>
+          </>
         )}
       </Box>
     </BorderedContainer>
