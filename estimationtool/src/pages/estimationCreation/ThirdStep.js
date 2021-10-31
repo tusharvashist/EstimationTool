@@ -32,7 +32,7 @@ const ThirdStep = () => {
       let calAttriValues = {}
       setAttributes(dataResponse.map(ob => {
         calAttriValues[ob.calcAttributeName] = false;
-        return ({ name: ob.calcAttributeName, label: ob.calcAttributeName, checked: ob.isFormula })
+        return ({ ...ob, name: ob.calcAttributeName, label: ob.calcAttributeName, defaultChecked: ob.isFormula, })
       }));
 
       setcalAttriValues(calAttriValues)
@@ -86,8 +86,8 @@ const ThirdStep = () => {
           cancelTitle="Cancel"
         />
       ) : null}
-      
-      
+
+
       <Grid
         container
         rowSpacing={1}
@@ -107,161 +107,40 @@ const ThirdStep = () => {
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
 
-          {calAttriValues && (
-            <Checkboxes defaultValues={calAttriValues} config={attributes} onChange={(data) => {
-              setcalAttriValues(data);
-            }} />
-          )}
-
           <FormGroup className="">
             <FormControlLabel
               control={
                 <>
                   {calAttriValues && (
-            <Checkboxes defaultValues={calAttriValues} config={attributes} onChange={(data) => {
-              setcalAttriValues(data);
-            }} />
-          )}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                    value="123"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
+                    <Checkboxes defaultValues={calAttriValues} config={attributes} onChange={(data) => {
+                      setcalAttriValues(data);
+                    }} customComponent={({ data }) => {
+
+                      return (
+                        <>
+                          <TextField
+                            type={"number"}
+                            max={2}
+                            className="text-box"
+                            label="%"
+                            variant="outlined"
+                            value={data.unit}
+                          />
+                          <TextField
+                            className="comment-box"
+                            label="Comment"
+                            variant="outlined"
+                            value={data.description}
+                          /></>
+
+                      )
+                    }
+                    } />
+                  )}
+
                 </>
               }
-              
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="BA"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="PM"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Unit Testing"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Architect"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="UAT Testing"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Prod Support"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Buffer"
+
             />
           </FormGroup>
         </FormControl>
