@@ -86,43 +86,8 @@ const ThirdStep = () => {
           cancelTitle="Cancel"
         />
       ) : null}
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <ListItem>Client Name: </ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Client Website:</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Project Name:</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Business Domain:</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Name:</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Type:</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <ListItem>Effort Unit:</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
+      
+      
       <Grid
         container
         rowSpacing={1}

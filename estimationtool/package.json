@@ -1,6 +1,6 @@
 {
   "homepage": "https://estimationtool.azurewebsites.net/",
-  "name": "jitu-estimationtool",
+  "name": "estimationtool",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
