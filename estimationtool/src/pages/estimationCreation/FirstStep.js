@@ -37,8 +37,6 @@ const FirstStep = (props) => {
   const [clientName, setClientName] = useState();
   const [projectName, setProjectName] = useState();
   //const [estimationDescription, setEstimationDescription] = useState();
-  //const { control } = useFormContext();
-
 
 
   useEffect(()=>{

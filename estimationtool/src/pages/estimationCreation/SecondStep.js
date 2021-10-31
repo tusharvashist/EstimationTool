@@ -91,27 +91,6 @@ const SecondStep = () => {
         />)}
 
 
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Name:</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Type:</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <ListItem>Effort Unit:</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
       <Grid
         container
         rowSpacing={1}

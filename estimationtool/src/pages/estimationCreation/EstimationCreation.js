@@ -6,7 +6,8 @@ import {
   Stepper,
   Typography,
   Grid,
-  ListItem
+  ListItem,
+  FormControl
 
 } from "@material-ui/core";
 import React,  { useState, useEffect } from "react";
@@ -18,13 +19,6 @@ import { useParams, useLocation } from "react-router-dom";
 import { useSelector } from 'react-redux'
 import estimationServices from "../allestimation/allestimation.service"
 
-// import {
-//   useForm,
-//   Controller,
-//   FormProvider,
-//   useFormContext,
-// } from "react-hook-form";
-
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = (props) => {
@@ -35,19 +29,10 @@ const EstimationCreation = (props) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const clientInfo = {...location1.clientInfo }
-  //const [clientInfo, setClientInfo] = React.useState({...useLocation().clientInfo });
   const projecttInfo  = {...location1.projectInfo }
-  //const [projecttInfo, setProjectInfo] = React.useState({...useLocation().projecttInfo });
+  const [estimationHeaderId, setEstimationHeaderId] = React.useState();
 
-  // const basicDetails = useForm({
-  //   defaultValues: {
-  //     estTypeId: '',
-  //     estTypeName: '',
-  //     effortUnit: '',
-  //     estName: '',
-  //     estDesc: ''
-  //   },
-  // });
+
   
   const isStepOptional = (step) => {
     return step === null;
@@ -59,8 +44,6 @@ const EstimationCreation = (props) => {
 
   useEffect(() => {
     setLocation(location)
-    //setClientInfo(location.clientInfo);
-    //setProjectInfo(location.projectInfo);
   }, [clientInfo]);
 
 // send Estimation Basic detail data to post request to generating estimation header APi
@@ -69,22 +52,23 @@ const postEstimationBasicDetail = (reqData) => {
     .then((res) => {
       let dataResponce = res.data.body;
       console.log("Save Basic Details APi response:" +JSON.stringify(dataResponce));
+      setEstimationHeaderId(dataResponce._id);
      //TODO:// show response and move next step
      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     })
     .catch((err) => {
-      console.log("get master estimation types", err);
+      console.log("save estimation header detail error : ", err);
     });
 };
 
   const handleNext = () => {
-     console.log("data@@"+console.log("current step"+activeStep));
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-    if(activeStep == 0){
+    //TODO: handle edit basic detail API & error
+    if(activeStep == 0 ){
       console.log("current step"+activeStep+ 
       "Estimation Name: "+ basicDetailRedux.estimationName+ "estimationTypeId: "+ basicDetailRedux.estimationTypeId + "estimationName: "
       +basicDetailRedux.estimationType + "efforUnit: "+basicDetailRedux.efforUnit + "estimationDesc :" + basicDetailRedux.esttimationDesc+
@@ -108,12 +92,16 @@ const postEstimationBasicDetail = (reqData) => {
         "isDeleted": false
            });
       } else{
-        
+        console.log("Fill all details validation error");
       }
+    }else{
+      //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
-    //setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if(activeStep > 0)
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
+    
   };
 
  
@@ -163,6 +151,7 @@ const postEstimationBasicDetail = (reqData) => {
             );
           })}
         </Stepper>
+
         <BorderedContainer className="no-shadow">
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={6}>
@@ -180,7 +169,29 @@ const postEstimationBasicDetail = (reqData) => {
         </Grid>
       </BorderedContainer>
 
-      
+      {activeStep != 0 && 
+      <BorderedContainer className="no-shadow">
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid item xs={4}>
+            <div className="field-width">
+              <FormControl fullWidth>
+                <ListItem>Estimation Name: {basicDetailRedux.estimationName}</ListItem>
+              </FormControl>
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+            <div className="field-width">
+              <FormControl fullWidth>
+                <ListItem>Estimation Type: {basicDetailRedux.estimationType}</ListItem>
+              </FormControl>
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+            <ListItem>Effort Unit: {basicDetailRedux.efforUnit}</ListItem>
+          </Grid>
+        </Grid>
+      </BorderedContainer>
+        }
 
         {activeStep === steps.length ? (
           <React.Fragment>
@@ -194,15 +205,12 @@ const postEstimationBasicDetail = (reqData) => {
           </React.Fragment>
         ) : (
           <>
-          {/* <FormProvider {...basicDetails}>
-            <form onSubmit={basicDetails.handleSubmit(handleNext)} > */}
+
             <React.Fragment>
             {activeStep == 0 && 
                 <FirstStep 
                  clientName={clientInfo.clientName}
                  projectName={projecttInfo.projectName}
-                // next={handleNext}
-
                  />}
                 {activeStep == 1 && <SecondStep />}
                 {activeStep == 2 && <ThirdStep />}
