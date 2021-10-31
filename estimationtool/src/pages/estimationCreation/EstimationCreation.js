@@ -212,8 +212,8 @@ const postEstimationBasicDetail = (reqData) => {
                  clientName={clientInfo.clientName}
                  projectName={projecttInfo.projectName}
                  />}
-                {activeStep == 1 && <SecondStep />}
-                {activeStep == 2 && <ThirdStep />}
+                {activeStep == 1 && <SecondStep estimatioHeaderId={estimationHeaderId} />}
+                {activeStep == 2 && <ThirdStep estimatioHeaderId={estimationHeaderId}/>}
 
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button

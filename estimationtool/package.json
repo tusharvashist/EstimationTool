@@ -1,6 +1,6 @@
 {
   "homepage": "https://estimationtool.azurewebsites.net/",
-  "name": "jitu-estimationtool",
+  "name": "estimationtool",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -21,8 +21,6 @@
     "material-table": "^1.69.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-form-hook": "^0.0.1",
-    "react-hook-form": "^7.18.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
