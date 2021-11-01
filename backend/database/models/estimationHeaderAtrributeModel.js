@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = require('mongoose');
 
-const wizard1Schema = new mongoose.Schema({
+const estimationHeaderAtrributeSchema = new mongoose.Schema({
     estHeaderId: {
         type: Schema.Types.ObjectId,
         ref: 'EstHeader'
@@ -22,4 +22,5 @@ const wizard1Schema = new mongoose.Schema({
         }
     }
 })
-module.exports = mongoose.model("wizard1", wizard1Schema)
+module.exports = mongoose.model("estimationHeaderAtrribute", estimationHeaderAtrributeSchema)
+

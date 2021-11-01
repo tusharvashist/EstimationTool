@@ -33,9 +33,9 @@ module.exports.createEstimationTempplateAttribute = async (serviceData) => {
 module.exports.getAllEstimationAttributes = async ({ estTypeId }) => {
     try {
         let estAtt = await EstimationAttribute.aggregate().addFields({ selected: true });
-        var est = ObjectID(esttype);      
-        console.log(est); 
-        let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
+        var est = ObjectID(estTypeId);
+        console.log(est);
+        let estSelAtt = await EstimationTemplateAttribute.find({ estTypeId: est });
         console.log(estSelAtt);
         return (estAtt);
     } catch (err) {

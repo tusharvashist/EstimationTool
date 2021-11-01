@@ -43,16 +43,40 @@ module.exports = {
         DUPLICATE_CLIENT: "Client already exist with given name.",
 
     },
-    wizard1Message: {
-        WIZARD1_CREATED: "Wizard 1 created successfully",
-        WIZARD1_ERROR: "Wizard 1 create fail",
-        WIZARD1_FETCH: "All Wizard 1 fetch successfully",
-        WIZARD1_GET_ERROR: "All Wizard 1 featch error",
-        WIZARD1_NOT_FOUND: "Wizard 1 not found",
+    estimationHeaderAtrributeMessage: {
+        estimationHeaderAtrribute_CREATED: "estimationHeaderAtrribute created successfully",
+        estimationHeaderAtrribute_ERROR: "estimationHeaderAtrribute create fail",
+        estimationHeaderAtrribute_FETCH: "All estimationHeaderAtrribute fetch successfully",
+        estimationHeaderAtrribute_GET_ERROR: "All estimationHeaderAtrribute featch error",
+        estimationHeaderAtrribute_NOT_FOUND: "estimationHeaderAtrribute not found",
         INVALID_ID: "Invalid id",
-        WIZARD1_UPDATE: "Wizard 1 update successfully",
-        WIZARD1_DELETE: "Wizard 1 delete successfully",
-        DUPLICATE_Wizard1: "Wizard 1 already exist with given name.",
+        estimationHeaderAtrribute_UPDATE: "estimationHeaderAtrribute update successfully",
+        estimationHeaderAtrribute_DELETE: "estimationHeaderAtrribute delete successfully",
+        DUPLICATE_estimationHeaderAtrribute: "estimationHeaderAtrribute already exist with given name.",
+
+    },
+    estimationHeaderAtrributeCalcMessage: {
+        estimationHeaderAtrributeCalc_CREATED: "estimationHeaderAtrributeCalc created successfully",
+        estimationHeaderAtrributeCalc_ERROR: "estimationHeaderAtrributeCalc create fail",
+        estimationHeaderAtrributeCalc_FETCH: "All estimationHeaderAtrributeCalc fetch successfully",
+        estimationHeaderAtrributeCalc_GET_ERROR: "All estimationHeaderAtrributeCalc featch error",
+        estimationHeaderAtrributeCalc_NOT_FOUND: "estimationHeaderAtrributeCalc not found",
+        INVALID_ID: "Invalid id",
+        estimationHeaderAtrributeCalc_UPDATE: "estimationHeaderAtrributeCalc update successfully",
+        estimationHeaderAtrributeCalc_DELETE: "estimationHeaderAtrributeCalc delete successfully",
+        DUPLICATE_estimationHeaderAtrributeCalc: "estimationHeaderAtrributeCalc already exist with given name.",
+
+    },
+    wizard2Message: {
+        WIZARD2_CREATED: "Wizard 2 created successfully",
+        WIZARD2_ERROR: "Wizard 2 create fail",
+        WIZARD2_FETCH: "All Wizard 2 fetch successfully",
+        WIZARD2_GET_ERROR: "All Wizard 2 featch error",
+        WIZARD2_NOT_FOUND: "Wizard 2 not found",
+        INVALID_ID: "Invalid id",
+        WIZARD2_UPDATE: "Wizard 2 update successfully",
+        WIZARD2_DELETE: "Wizard 2 delete successfully",
+        DUPLICATE_Wizard2: "Wizard 2 already exist with given name.",
 
     },
     projectMessage: {
@@ -89,7 +113,7 @@ module.exports = {
     },
 
     requestValidationMessage: {
-        BAD_REQUEST: "Invalid filds",
+        BAD_REQUEST: "Invalid fields",
         TOKEN_MISSING: "Token missing from header",
         AUTHORIZATION_MISSING: "Authorization missing from header",
     },
