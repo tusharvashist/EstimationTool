@@ -5,27 +5,53 @@ import { Grid } from "@material-ui/core";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 
 const AddCalAttributeDialog = (props) => {
-  const [showError, setShowError] = useState(false);
-  const [calAttributeName, setCalAttributeName] = useState("");
-  const calUnit = [
-    {
-      id: 1,
-      title: "percentage",
-    },
-    {
-      id: 2,
-      title: "quantity",
-    },
-  ];
 
+  const [formData, setFormData] = React.useState({
+
+    estTypeId: props.estimationHeaderId,
+   
+       calcAttribute: "345fghf",
+   
+       calcAttributeName: "",
+   
+       isFormula: true,
+   
+      formula: "%",
+   
+      operator: "abcd",
+   
+      unit: null,
+   
+       description: "abcd"
+   
+   });
+
+  const [showError, setShowError] = useState(false);
+ 
   const handelCalAttributeName = (e) => {
-    setCalAttributeName(e.target.value);
+    let newObject = { ...formData };
+    newObject.calcAttributeName = e.target.value;
+    setFormData({ ...newObject });
   };
 
   const onSubmitForm = (e) => {
-    console.log(e);
-    setShowError(false);
+    if (formData.calcAttributeName && formData.formula) {
+      setShowError(false);
+      props.saveFun({ ...formData });
+    } else {
+      setShowError(true);
+    }
   };
+
+  const handelFormula = (e) => {
+    let newObject = { ...formData };
+    newObject.unit = e.target.value;
+    setFormData({ ...newObject });
+  }
+
+
+
+  const { calcAttributeName, unit} = formData;
 
   return (
     <CustomizedDialogs
@@ -41,7 +67,7 @@ const AddCalAttributeDialog = (props) => {
         <Grid item md={12}>
           <TextField
             required
-            error={showError && !calAttributeName}
+            error={showError && !calcAttributeName}
             autoFocus
             id="standard-basic"
             label="Calculated Attribute Name"
@@ -51,24 +77,33 @@ const AddCalAttributeDialog = (props) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Dropdown
-            defaultValue={{ title: "Active", value: "active" }}
+          {/* <Dropdown
             title="Calculation Unit"
-            list={calUnit}
-          />
+            value="percentage"
+          /> */}
+           <TextField
+              
+              id="standard-basic"
+              label="Calculation Unit"
+              className="full-width"
+              variant="outlined"
+              value="percentage"
+              disabled
+            />
         </Grid>
         <Grid item xs={12}>
-          <form onSubmit={onSubmitForm}>
+         
             <TextField
               required
-              error={showError && !calAttributeName}
+              error={showError && !unit}
               id="standard-basic"
               label="Formula"
               className="full-width"
-              onChange={handelCalAttributeName}
+              onChange={handelFormula}
               variant="outlined"
+              type={"number"}
+                            max={2}
             />
-          </form>
         </Grid>
       </Grid>
     </CustomizedDialogs>

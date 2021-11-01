@@ -18,7 +18,29 @@ const ClientService = {
         let url = Url.createAttribute;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.get(url+"?skip=0&limit=10",{
+        return axios.get(url,{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            }
+           })
+    },
+
+    getAllCalculativeAttribute: function(){
+        let url = Url.getCalculativeAttribute;
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        return axios.get(url+"?skip=0&limit=12",{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            }
+           })
+    },
+
+    createCalAttribute: function(attributeData){
+        let url = Url.getCalculativeAttribute;
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        return axios.post(url,attributeData,{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }

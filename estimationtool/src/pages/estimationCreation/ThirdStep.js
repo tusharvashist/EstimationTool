@@ -11,14 +11,42 @@ import {
   NativeSelect,
   TextField,
 } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
 import AddCalAttributeDialog from "./AddCalAttributeDialog";
-
+import SecondStepServ from "../estimationCreation/SecStepService.service";
+import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
 const ThirdStep = () => {
+
+  useEffect(() => {
+    getCalcAttribute()
+  }, []);
+
+  const getCalcAttribute = () => {
+    SecondStepServ.getAllCalculativeAttribute().then((res) => {
+      let dataResponse = res.data.body;
+      console.log(dataResponse)
+
+      let calAttriValues = {}
+      setAttributes(dataResponse.map(ob => {
+        calAttriValues[ob.calcAttributeName] = ob.isFormula;
+        return ({ ...ob, name: ob.calcAttributeName, label: ob.calcAttributeName })
+      }));
+
+      setcalAttriValues(calAttriValues)
+    }).catch((err) => {
+      console.log("Not getting Attribute", err)
+    })
+  }
+
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
+
+  const [attributes, setAttributes] = useState([]);
+
+
+  const [calAttriValues, setcalAttriValues] = useState(null);
 
   const openAddCalAttribute = () => {
     openFun();
@@ -30,8 +58,33 @@ const ThirdStep = () => {
   const closeFun = () => {
     setOpenAddCalAttributeBox(false);
   };
-  const saveAddCalAttributeFun = () => {};
+  const saveAddCalAttributeFun = (data) => {
+    createCalAttribute(data);
+  };
 
+  const createCalAttribute = (data) => {
+
+    SecondStepServ.createCalAttribute(data).then((res) => {
+      console.log("Calculative Attribute Created", res);
+      getCalcAttribute();
+      closeFun()
+    })
+  }
+
+
+
+  const onChangeField = ({data}) => ({target}) => {
+    console.log("data, target", data, target)
+   
+     setAttributes(attributes.map((obj) => {
+        if(obj._id === data._id ) {
+          const newobj = {...obj, [target.name]: target.value}
+          return newobj;
+        } else {
+          return obj;
+        }
+     })) 
+  }
   return (
     <React.Fragment>
       {openAddCalAttributeBox ? (
@@ -45,43 +98,8 @@ const ThirdStep = () => {
           cancelTitle="Cancel"
         />
       ) : null}
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <ListItem>Client Name: </ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Client Website:</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Project Name:</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Business Domain:</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Name:</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Type:</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <ListItem>Effort Unit:</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
+
+
       <Grid
         container
         rowSpacing={1}
@@ -100,150 +118,45 @@ const ThirdStep = () => {
       <BorderedContainer>
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
+
           <FormGroup className="">
             <FormControlLabel
               control={
                 <>
-                  <Checkbox defaultChecked />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
+                  {calAttriValues && (
+                    <Checkboxes defaultValues={calAttriValues} config={attributes} onChange={(data) => {
+                      setcalAttriValues(data);
+                    }} customComponent={({ data }) => {
+
+                      return (
+                        <>
+                          <TextField
+                          name="unit"
+                            type={"number"}
+                            max={2}
+                            className="text-box"
+                            label="%"
+                            variant="outlined"
+                            value={data.unit}
+                            onChange={onChangeField({data})}
+                          />
+                          <TextField
+                          name="description"
+                            className="comment-box"
+                            label="Comment"
+                            variant="outlined"
+                            value={data.description}
+                            onChange={onChangeField({data})}
+                          /></>
+
+                      )
+                    }
+                    } />
+                  )}
+
                 </>
               }
-              label="QA"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="BA"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="PM"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Unit Testing"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Architect"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="UAT Testing"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Prod Support"
-            />
-            <FormControlLabel
-              control={
-                <>
-                  <Checkbox />{" "}
-                  <TextField
-                    className="text-box"
-                    label="%"
-                    variant="outlined"
-                  />
-                  <TextField
-                    className="comment-box"
-                    label="Comment"
-                    variant="outlined"
-                  />
-                </>
-              }
-              label="Buffer"
+
             />
           </FormGroup>
         </FormControl>

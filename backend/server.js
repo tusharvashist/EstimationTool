@@ -54,7 +54,7 @@ app.use("/api/v1/estimationCalcAttr", require("./routes/estimationCalcAttr.route
 app.use("/api/v1/estimationTemplateCalcAttr", require("./routes/estimationTemplateCalcAttr.route"));
 
 //----------- Estimation wizard1
-app.use("/api/v1/wizard1", require("./routes/wizard1.route"));
+//app.use("/api/v1/wizard1", require("./routes/wizard1.route"));
 
 //----------- Module Token Route
 app.use("/api/v1/moduletoken", require("./routes/moduleToken.route"));

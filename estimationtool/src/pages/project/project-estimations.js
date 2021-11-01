@@ -33,7 +33,9 @@ function ProjectEstimations(props) {
   const columns = [
     {
       title: "Estimation Name",
-      field: "estName"
+      field: "estName",render: (rowData) => {
+        return <Link href={"/createEstimate"}> {rowData.estName}</Link>;
+      },
     },
     { title: "Estimation Type", field: "estTypeId.estType" },
     { title: "Estimation Description", field: "estDescription" },

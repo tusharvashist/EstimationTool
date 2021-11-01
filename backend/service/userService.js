@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
 
+
 module.exports.signup = async ({ email, password, roleId }) => {
   try {
     const user = await userModel.findOne({ email });
@@ -21,6 +22,7 @@ module.exports.signup = async ({ email, password, roleId }) => {
     throw new Error(err)
   }
 }
+
 
 // module.exports.login = async({email,pass})=>{
 //   try{

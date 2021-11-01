@@ -3,7 +3,6 @@ module.exports.createEstimationTemplateSchema = Joi.object({
 
     estType: Joi.string().required(),
     description: Joi.string().required(),
-
     estimationName: Joi.string().required(),
     estimationDescription: Joi.string().required(),
     estimationType: Joi.string().required(),
