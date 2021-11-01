@@ -3,7 +3,6 @@ import React from 'react';
 import './App.css';
 import Login from './login/login';
 import Layout from './shared/layout/layout';
-
 import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
 
 function App() {
