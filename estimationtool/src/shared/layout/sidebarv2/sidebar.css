@@ -3,8 +3,8 @@
   color: #000;
   top: 55px;
   left: 0;
-  position: relative;
-  width: 100%;
+  position: fixed;
+  width: 16%;
   height: 100vh;
 }
 @media (max-width: 1130px) {
