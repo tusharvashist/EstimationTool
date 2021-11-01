@@ -3,16 +3,17 @@ import ProjectSer from "./project-details.service";
 import { Box, Grid } from "@material-ui/core";
 import ProjectEstimationsGridView from "../project/project-estimations";
 import "./project-details.css";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 
-export default function ClientDetails() {
-  const params = useParams();
-  const projectId = params.projectid;
+export default function ClientDetails(props) {
+  const location = useLocation();
+
+  const projectId = location.state.projectId;
 
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
