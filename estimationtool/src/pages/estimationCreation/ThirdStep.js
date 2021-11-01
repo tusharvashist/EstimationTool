@@ -18,7 +18,8 @@ import AddIcon from "@material-ui/icons/Add";
 import AddCalAttributeDialog from "./AddCalAttributeDialog";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
-const ThirdStep = () => {
+import { setEstimationTypeId } from "../../Redux/basicDetailRedux";
+const ThirdStep = (props) => {
 
   useEffect(() => {
     getCalcAttribute()
@@ -63,8 +64,10 @@ const ThirdStep = () => {
   };
 
   const createCalAttribute = (data) => {
+    let newObject = { ...data };
 
-    SecondStepServ.createCalAttribute(data).then((res) => {
+    newObject.estTypeId = props.estimationTypeId;
+    SecondStepServ.createCalAttribute(newObject).then((res) => {
       console.log("Calculative Attribute Created", res);
       getCalcAttribute();
       closeFun()
@@ -73,17 +76,17 @@ const ThirdStep = () => {
 
 
 
-  const onChangeField = ({data}) => ({target}) => {
+  const onChangeField = ({ data }) => ({ target }) => {
     console.log("data, target", data, target)
-   
-     setAttributes(attributes.map((obj) => {
-        if(obj._id === data._id ) {
-          const newobj = {...obj, [target.name]: target.value}
-          return newobj;
-        } else {
-          return obj;
-        }
-     })) 
+
+    setAttributes(attributes.map((obj) => {
+      if (obj._id === data._id) {
+        const newobj = { ...obj, [target.name]: target.value }
+        return newobj;
+      } else {
+        return obj;
+      }
+    }))
   }
   return (
     <React.Fragment>
@@ -131,22 +134,22 @@ const ThirdStep = () => {
                       return (
                         <>
                           <TextField
-                          name="unit"
+                            name="unit"
                             type={"number"}
                             max={2}
                             className="text-box"
                             label="%"
                             variant="outlined"
                             value={data.unit}
-                            onChange={onChangeField({data})}
+                            onChange={onChangeField({ data })}
                           />
                           <TextField
-                          name="description"
+                            name="description"
                             className="comment-box"
                             label="Comment"
                             variant="outlined"
                             value={data.description}
-                            onChange={onChangeField({data})}
+                            onChange={onChangeField({ data })}
                           /></>
 
                       )

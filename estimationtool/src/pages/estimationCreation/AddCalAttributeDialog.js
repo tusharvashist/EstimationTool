@@ -8,7 +8,7 @@ const AddCalAttributeDialog = (props) => {
 
   const [formData, setFormData] = React.useState({
 
-    estTypeId: props.estimationHeaderId,
+    estTypeId: null,
    
        calcAttribute: "345fghf",
    

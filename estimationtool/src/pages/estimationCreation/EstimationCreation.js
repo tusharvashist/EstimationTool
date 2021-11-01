@@ -215,8 +215,8 @@ const postEstimationBasicDetail = (reqData) => {
                  projectName={projecttInfo.projectName}
                  ref={childRef}
                  />}
-                {activeStep == 1 && <SecondStep estimatioHeaderId={estimationHeaderId} />}
-                {activeStep == 2 && <ThirdStep estimatioHeaderId={estimationHeaderId}/>}
+                {activeStep == 1 && <SecondStep estimatioHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId} />}
+                {activeStep == 2 && <ThirdStep estimatioHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId}/>}
 
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button
