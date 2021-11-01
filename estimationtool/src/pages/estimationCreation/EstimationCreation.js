@@ -68,39 +68,38 @@ const postEstimationBasicDetail = (reqData) => {
       newSkipped.delete(activeStep);
     }
     //TODO: handle edit basic detail API & error
-    // if(activeStep == 0 ){
-    //   console.log("current step"+activeStep+ 
-    //   "Estimation Name: "+ basicDetailRedux.estimationName+ "estimationTypeId: "+ basicDetailRedux.estimationTypeId + "estimationName: "
-    //   +basicDetailRedux.estimationType + "efforUnit: "+basicDetailRedux.efforUnit + "estimationDesc :" + basicDetailRedux.esttimationDesc+
-    //   "projectId: "+  projecttInfo._id );
+    if(activeStep == 0 ){
+      console.log("current step"+activeStep+ 
+      "Estimation Name: "+ basicDetailRedux.estimationName+ "estimationTypeId: "+ basicDetailRedux.estimationTypeId + "estimationName: "
+      +basicDetailRedux.estimationType + "efforUnit: "+basicDetailRedux.efforUnit + "estimationDesc :" + basicDetailRedux.esttimationDesc+
+      "projectId: "+  projecttInfo._id );
 
-    //   if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
-    //     && basicDetailRedux.efforUnit){ 
-    //       postEstimationBasicDetail({
-    //     "estheaderParentid": "-1",
-    //     "estVersionno": "1",
-    //     "projectId" : projecttInfo._id,
-    //     "estName" : basicDetailRedux.estimationName,
-    //     "estTypeId": basicDetailRedux.estimationTypeId,
-    //     "estDescription": basicDetailRedux.esttimationDesc,
-    //     "effortUnit": basicDetailRedux.efforUnit,
-    //     "manCount": 0,
-    //     "contigency": "25",
-    //     "totalCost": 0,
-    //     "estCalcColumns": "NA",
-    //     "estColumns": "NA",
-    //     "isDeleted": false
-    //        });
-    //   } else{
-    //     console.log("Fill all details validation error");
-    //   }
-    // }else{
-    //   //setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
+        && basicDetailRedux.efforUnit){ 
+          postEstimationBasicDetail({
+        "estheaderParentid": "-1",
+        "estVersionno": "1",
+        "projectId" : projecttInfo._id,
+        "estName" : basicDetailRedux.estimationName,
+        "estTypeId": basicDetailRedux.estimationTypeId,
+        "estDescription": basicDetailRedux.esttimationDesc,
+        "effortUnit": basicDetailRedux.efforUnit,
+        "manCount": 0,
+        "contigency": "25",
+        "totalCost": 0,
+        "estCalcColumns": "NA",
+        "estColumns": "NA",
+        "isDeleted": false
+           });
+      } else{
+        console.log("Fill all details validation error");
+      }
+    }else{
+      //setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
 
     if(activeStep > 0)
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
     
   };
