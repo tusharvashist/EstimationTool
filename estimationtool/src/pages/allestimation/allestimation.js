@@ -37,7 +37,7 @@ function Home() {
       title: "Estimation Description",
       field: "estDescription",
       render: (rowData) => {
-        return <Link href={"/createEstimate"} > {rowData.estDescription}</Link>;
+        return <Link href={"/createEstimate"}> {rowData.estDescription}</Link>;
       },
       width: "15%",
     },
@@ -46,25 +46,38 @@ function Home() {
       title: "Client Name",
       field: "projectId.client.clientName",
       render: (rowData) => {
+        console.log(rowData);
         return (
-          <Link href={"/clientdetails" + "/" + rowData.id}>
+          <Link
+            href={"/All-Clients" + "/" + rowData.projectId.client.clientName}
+          >
             {" "}
             {rowData.projectId.client.clientName}
           </Link>
         );
       },
     },
-    { title: "Project Name", field: "projectId.projectName" ,
+    {
+      title: "Project Name",
+      field: "projectId.projectName",
       render: (rowData) => {
         return (
-          <Link href={"/projectdetails/" + rowData.id + "/" + rowData.projectId.id}>
+          <Link
+            href={
+              "/All-Clients/" +
+              rowData.projectId.client.clientName +
+              "/" +
+              rowData.projectId.id
+            }
+          >
             {" "}
             {rowData.projectId.projectName}
           </Link>
         );
-      },},
+      },
+    },
     { title: "Last update", field: "updatedAt", type: "date" },
-  ];// 
+  ]; //
   const openfn = () => {
     setIsOpenDailog(true);
   };
