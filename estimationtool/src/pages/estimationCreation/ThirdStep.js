@@ -31,8 +31,8 @@ const ThirdStep = () => {
 
       let calAttriValues = {}
       setAttributes(dataResponse.map(ob => {
-        calAttriValues[ob.calcAttributeName] = false;
-        return ({ ...ob, name: ob.calcAttributeName, label: ob.calcAttributeName, defaultChecked: ob.isFormula, })
+        calAttriValues[ob.calcAttributeName] = ob.isFormula;
+        return ({ ...ob, name: ob.calcAttributeName, label: ob.calcAttributeName })
       }));
 
       setcalAttriValues(calAttriValues)
@@ -73,6 +73,18 @@ const ThirdStep = () => {
 
 
 
+  const onChangeField = ({data}) => ({target}) => {
+    console.log("data, target", data, target)
+   
+     setAttributes(attributes.map((obj) => {
+        if(obj._id === data._id ) {
+          const newobj = {...obj, [target.name]: target.value}
+          return newobj;
+        } else {
+          return obj;
+        }
+     })) 
+  }
   return (
     <React.Fragment>
       {openAddCalAttributeBox ? (
@@ -119,18 +131,22 @@ const ThirdStep = () => {
                       return (
                         <>
                           <TextField
+                          name="unit"
                             type={"number"}
                             max={2}
                             className="text-box"
                             label="%"
                             variant="outlined"
                             value={data.unit}
+                            onChange={onChangeField({data})}
                           />
                           <TextField
+                          name="description"
                             className="comment-box"
                             label="Comment"
                             variant="outlined"
                             value={data.description}
+                            onChange={onChangeField({data})}
                           /></>
 
                       )

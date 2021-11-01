@@ -40,7 +40,8 @@ const SecondStep = () => {
 
       let checkboxValues = {}
       setAttributes(dataResponse.map(ob => {
-        checkboxValues[ob.attributeName] = false;
+        checkboxValues[ob.attributeName] = ob.selected;
+        console.log("")
         return ({ name: ob.attributeName, label: ob.attributeName })
       }));
 

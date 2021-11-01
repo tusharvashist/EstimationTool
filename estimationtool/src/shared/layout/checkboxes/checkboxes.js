@@ -13,17 +13,19 @@ const Checkboxes = ({ config = [], onChange, defaultValues = {}, customComponent
         let updatedValues = { ...values, [name]: checked }
 
         setValues(updatedValues);
+        console.log("updatedValues", updatedValues)
         onChange && onChange(updatedValues)
 
     } 
   
+    console.log("values", values)
     return (
         <FormGroup>
             {config.map((checkConfig) => {
                 return (
                     <FormControlLabel
                         control={<>
-                            <Checkbox name={checkConfig.name} checked={values[checkConfig.name] || checkConfig.defaultChecked || false} onChange={onUpdate} />
+                            <Checkbox name={checkConfig.name} checked={values[checkConfig.name] || false} onChange={onUpdate} />
                             {customComponent && customComponent({data:checkConfig})}
                             </>}
                         label={checkConfig.label}

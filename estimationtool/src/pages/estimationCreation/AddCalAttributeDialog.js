@@ -8,7 +8,7 @@ const AddCalAttributeDialog = (props) => {
 
   const [formData, setFormData] = React.useState({
 
-    estTypeId: "61764c1c51e16f30dc1f3ee5",
+    estTypeId: props.estimationHeaderId,
    
        calcAttribute: "345fghf",
    
@@ -101,6 +101,8 @@ const AddCalAttributeDialog = (props) => {
               className="full-width"
               onChange={handelFormula}
               variant="outlined"
+              type={"number"}
+                            max={2}
             />
         </Grid>
       </Grid>
