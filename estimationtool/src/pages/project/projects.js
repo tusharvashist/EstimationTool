@@ -44,7 +44,7 @@ function Projects(props) {
       field: "projectName",
       render: (rowData) => {
         return (
-          <Link href={"/allclient/" + props.clientName + "/" + rowData._id}>
+          <Link href={"/All-Clients/" + props.clientName + "/" + rowData._id}>
             {" "}
             {rowData.projectName}
           </Link>
