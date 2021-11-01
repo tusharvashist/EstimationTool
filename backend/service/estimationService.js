@@ -114,6 +114,8 @@ module.exports.createEstimationHeader = async (serviceData) => {
   }
 }
 
+//===update estimation header ===========
+
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
@@ -232,9 +234,9 @@ module.exports.getEstimationHeaderAtrributeCalcById = async ({ id }) => {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.estimationHeaderAtrributeCalcMessage.INVALID_ID)
     }
-    let estimationHeaderAtrributeCalc = await findById(id).populate('estTypeId').populate({
+    let estimationHeaderAtrributeCalc = await findById(id).populate('estHeaderId').populate({
       path: 'estimates',
-      populate: { path: 'estTypeId' }
+      populate: { path: 'estHeaderId' }
     });
     if (!estimationHeaderAtrributeCalc) {
       throw new Error(constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND)
