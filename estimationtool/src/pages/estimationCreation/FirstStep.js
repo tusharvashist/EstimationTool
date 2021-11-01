@@ -9,14 +9,9 @@ import {
   TextField,
 } from "@material-ui/core";
 
-import {
-  useForm,
-  Controller,
-  FormProvider,
-  useFormContext,
-} from "react-hook-form";
 
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect,forwardRef, useRef, useImperativeHandle } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./step.css";
 import masterServices from "../masterservices/master.service"
@@ -25,7 +20,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setEstimationName,setEstimationType, setEstimationTypeId,setEfforUnit,setEsttimationDesc} from '../../Redux/basicDetailRedux'
 
 
-const FirstStep = (props) => {
+const FirstStep = forwardRef((props, ref) =>  {
   const basicDetailRedux = useSelector((state) => state.basicDetail);
   const dispatch = useDispatch();
   const [characterCount, setCharacterCount] = useState(250);
@@ -37,14 +32,34 @@ const FirstStep = (props) => {
   const [clientName, setClientName] = useState();
   const [projectName, setProjectName] = useState();
   //const [estimationDescription, setEstimationDescription] = useState();
+  //const { forwardRef, useRef, useImperativeHandle } = React;
+  const [isEstimationTypeInvalid, setIsEstimationTypeInvalid] = useState(false);
+  const [isEffortUnitInvalid, setIsEffortUnitInvalid] = useState(false);
+  const [isEstimationNameInvalid, setEstimationNameInvalid] = useState(false);
+  const [isDescriptionInvalid, setDescriptionInvalid] = useState(false);
 
 
   useEffect(()=>{
     setClientName(props.clientName);
     setProjectName(props.projectName);
     getAllMasterEstimationTypes();
+
     remainingCharCount(basicDetailRedux.esttimationDesc);
   },[])
+
+  useImperativeHandle(ref, () => ({
+    
+    showError(error) {
+      handleFieldsError();
+      //alert(error);
+    }}));
+  
+const handleFieldsError = ()=>{
+        setIsEstimationTypeInvalid(basicDetailRedux.estimationTypeId === "");
+        setIsEffortUnitInvalid(basicDetailRedux.efforUnit === "");
+        setEstimationNameInvalid(basicDetailRedux.estimationName == "");
+        setDescriptionInvalid(basicDetailRedux.esttimationDesc === "");
+} 
 
   // get all estimation types master list
   const getAllMasterEstimationTypes = () => {
@@ -64,17 +79,20 @@ const FirstStep = (props) => {
     let etId = event.target.value; //estimation type object
     //setSelectedEstimationType(etId);
     console.log("Selected ESTIMATION TYPE+"+ etId);
-    generateEstimationName(etId);
-    dispatch(setEstimationTypeId(etId));
     
+    dispatch(setEstimationTypeId(etId));
+    //handleFieldsError();
+    setIsEstimationTypeInvalid(false);
+    generateEstimationName(etId);
   };
     //update the remaining character count limit
     const remainingCharCount = (charString) => {
       var remainingCharLimit = 250 - charString.length;
      setCharacterCount(remainingCharLimit);
      dispatch(setEsttimationDesc(charString));
-
- }
+     //handleFieldsError();
+     setDescriptionInvalid(charString.length >0 && remainingCharLimit == 250);
+    }
 
   //generate estimation Name
   const generateEstimationName = (etId) =>{
@@ -84,7 +102,8 @@ const FirstStep = (props) => {
     //setEstimationNameAutoGen(estName.replace(/ /g,"_"));
     dispatch(setEstimationType(selectedEstimationObj.estType));
     dispatch(setEstimationName(estName.replace(/ /g,"_")));
-
+    //handleFieldsError();
+    setEstimationNameInvalid(estName == "");
   }
 
   // get the Effort Unit value from selected dropdown
@@ -94,7 +113,8 @@ const FirstStep = (props) => {
     //setSelectedEffortUnit(effortUnit);
     console.log("Selected EffortUnit+"+ effortUnit);
     dispatch(setEfforUnit(effortUnit));
-
+    //handleFieldsError();
+    setIsEffortUnitInvalid(effortUnit === "");
   };
 
   return (
@@ -116,6 +136,7 @@ const FirstStep = (props) => {
                   getEstimationDropDownValue(e)}
                  }
                  value={basicDetailRedux.estimationTypeId}
+                 error={isEstimationTypeInvalid}
 
                 
                 >
@@ -141,6 +162,7 @@ const FirstStep = (props) => {
                     id="effort-unit-select"
                     onChange={getEffortUnitDropDownValue}
                     value={basicDetailRedux.efforUnit}
+                    error={isEffortUnitInvalid}
                   >
                    {effortUnitTypes.map((item) => (
                        <MenuItem value={item.value}>
@@ -159,6 +181,7 @@ const FirstStep = (props) => {
               label=""
               variant="outlined"
               value={basicDetailRedux.estimationName}
+              error={isEstimationNameInvalid}
             />
             
           </Grid>
@@ -176,12 +199,13 @@ const FirstStep = (props) => {
             onChange={(e) => remainingCharCount(e.target.value)}
             variant="outlined"
             inputProps={{ maxLength: 250 }}
+            error={isDescriptionInvalid}
           />
           <div><p>Remaining character limit: {characterCount}</p></div>
         </Grid>
       </BorderedContainer>
     </React.Fragment>
   );
-};
+});
 
 export default FirstStep;
