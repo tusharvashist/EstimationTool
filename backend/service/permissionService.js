@@ -19,9 +19,9 @@ module.exports.createPermission = async (serviceData) => {
 module.exports.getAllPermission = async ({ }) => {
     try {
         let lst = await Permission.find().
-        populate({
-            path: 'tokenID'            
-          });
+            populate({
+                path: 'tokenID'
+            });
         return (lst);
     } catch (err) {
         console.log("something went wrong: service > Get All Permission Service", err);
@@ -31,11 +31,32 @@ module.exports.getAllPermission = async ({ }) => {
 
 module.exports.getAllUserPermission = async ({ roletype }) => {
     try {
-        let lst = await Permission.find({typeId : roletype, typeName : 'R'}).
-        populate({
-            path: 'tokenID'            
-          });;
-        return (lst);
+        //let permissions = await Permission.find({typeId : roletype, typeName : 'R'}).
+        //populate({
+        //   path: 'tokenID'            
+        // });
+        const filter = { typeName: 'R', typeId: roletype };
+
+        let lst = await Permission.aggregate([            
+            {
+                $group: {
+                    _id: {
+                        typeId: '$typeId',
+                        typeName: '$typeName',
+                        tokens: '$tokenId'
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    Permissions: "$_id",
+                    _id: "$$REMOVE"
+                }
+            }
+        ]);
+
+
+        return (permissions);
     } catch (err) {
         console.log("something went wrong: service > Get All User Permission Service", err);
         throw new Error(err)

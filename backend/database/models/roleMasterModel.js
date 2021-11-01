@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const roleModelSchema = new mongoose.Schema({
     roleName: String,
     roleDescription: String,
@@ -16,4 +17,4 @@ const roleModelSchema = new mongoose.Schema({
     //     }
     // }
 )
-module.exports = mongoose.model("roleModel", roleModelSchema)
+module.exports = mongoose.model("RoleMaster", roleModelSchema)

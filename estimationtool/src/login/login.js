@@ -26,7 +26,7 @@ function Alert(props) {
 export default function Login(props) {
   let history = useHistory();
   const [user, setUser] = React.useState({
-    email: "jitendra.jahagirdar@pyramidconsultinginc.com",
+    email: "admin@pyramidconsultinginc.com",
     pass: "admin",
   });
   const [isShowSpinner, setIsShowSpinner] = React.useState(false);
