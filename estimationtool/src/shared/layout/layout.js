@@ -54,7 +54,7 @@ export default class Layout extends Component {
                   </Route>
                   <Route
                     exact
-                    path="/allclient"
+                    path="/All-Clients"
                     render={(props) => <AllClient {...props} />}
                   >
                     {/* <AllClient /> */}
@@ -67,12 +67,12 @@ export default class Layout extends Component {
                   </Route>
                   <Route
                     exact
-                    path="/allclient/:clientName"
+                    path="/All-Clients/:clientName"
                     render={(props) => <ClientDetails {...props} />}
                   >
                     {/* <ClientDetails /> */}
                   </Route>
-                  <Route exact path="/allclient/:clientName/:projectid">
+                  <Route exact path="/All-Clients/:clientName/:projectid">
                     <ProjectDetails />
                   </Route>
                   <Route

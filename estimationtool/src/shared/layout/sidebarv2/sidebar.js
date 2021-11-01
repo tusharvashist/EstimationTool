@@ -37,7 +37,7 @@ const Sidebarv2 = (props) => {
         <ListItem
           button
           className="listitem"
-          onClick={() => history.push("/allclient")}
+          onClick={() => history.push("/All-Clients")}
         >
           <ListItemIcon>
             <AssignmentIndIcon className="link-icon" />

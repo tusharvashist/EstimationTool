@@ -4,9 +4,11 @@ import {
   //   Box,
   FormControl,
   Grid,
+  Hidden,
   InputLabel,
   MenuItem,
   Select,
+  TextField,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import ProjectView from "../project/projects";
@@ -16,7 +18,7 @@ import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useParams, useHistory } from "react-router-dom";
 import ProjectServ from "../project/project.service";
 
-export default function ClientDetails() {
+export default function ClientDetails(props) {
   const location = useLocation();
   const history = useHistory();
 
@@ -66,16 +68,20 @@ export default function ClientDetails() {
   };
 
   const getDropDownvalue = (event) => {
-    //console.log("this is an selected value", event);
+    //console.log("this is an selected value", event.target.value);
 
-    let cId = event.target.value; //object
+    const dropdownNameSelected = clients.find(
+      (client) => client.clientName === event.target.value
+    );
+
+    let cId = dropdownNameSelected.id; //object
     const obj = clients.find((op) => op.id === cId);
     setClientDetails({
       clientName: obj.clientName,
       website: obj.website,
       description: obj.description,
     });
-    history.push(`/allclient/${obj.clientName}`);
+    history.push(`/All-Clients/${obj.clientName}`);
     setClientUrlName(obj.clientName);
     setClientId(cId);
     // history.replace({ pathname: cId });
@@ -98,19 +104,19 @@ export default function ClientDetails() {
             <Grid item xs={5} sm={5}>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
-                  <InputLabel id="client-simple-select-label">
-                    Client Name
+                  <InputLabel id="client-simple-select">
+                    Client Name{" "}
                   </InputLabel>
+
                   <Select
-                    labelId="client-label"
+                    labelId="client-simple-select"
                     id="client-simple-select"
-                    value={clientId}
-                    defaultValue={clientId}
-                    label={clients.clientName}
+                    value={clientUrlName}
+                    label={clientUrlName}
                     onChange={getDropDownvalue}
                   >
                     {clients.map((item) => (
-                      <MenuItem key={item.clientName} value={item.id}>
+                      <MenuItem key={item.clientName} value={item.clientName}>
                         {item.clientName}
                       </MenuItem>
                     ))}
