@@ -234,6 +234,7 @@ function AllClient(props) {
             backgroundColor: "#e5ebf7",
             fontWeight: "bold",
             fontSize: "0.9rem",
+            color: "#113c91",
           },
         }}
         data={filteredData}

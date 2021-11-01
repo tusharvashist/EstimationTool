@@ -87,7 +87,7 @@ router.delete("/atrribute/:id",
 //----- Create -----------
 router.post("/atrributeCalc/",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.createEstimationHeaderAtrributeCalcSchema),
+    joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
     estimationController.createEstimationHeaderAtrribute
 );
 
@@ -106,7 +106,7 @@ router.put("/atrributeCalc/:id",
 //----- Get all List -----------
 router.get("/atrributeCalc/",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateQueryParams(joiEstimationHeaderAtrributeCalcSchema.getAllEstimationHeaderAtrributeCalc),
+    joiSchemaValidation.validateQueryParams(joiEstimationHeaderAtrributeCalcSchema.getallEstimationHeaderAtrributeCalc),
     estimationController.getAllEstimationHeaderAtrributeCalc
 );
 
