@@ -7,8 +7,8 @@ import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
 import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from "@material-ui/icons/Add";
-import Link from "@material-ui/core/Link";
-import { useParams } from "react-router-dom";
+// import Link from "@material-ui/core/Link";
+import { useParams, Link } from "react-router-dom";
 import "./project.css";
 
 function Projects(props) {
@@ -44,7 +44,13 @@ function Projects(props) {
       field: "projectName",
       render: (rowData) => {
         return (
-          <Link href={"/allclient/" + props.clientName + "/" + rowData._id}>
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" + props.clientName + "/" + rowData.projectName,
+              state: { projectId: rowData._id },
+            }}
+          >
             {" "}
             {rowData.projectName}
           </Link>

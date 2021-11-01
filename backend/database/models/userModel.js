@@ -1,9 +1,16 @@
 const mongoose = require("mongoose");
+const { Schema } = require('mongoose');
+
 const userSchema = new mongoose.Schema({
     firstName: String,
     lastName:String,
     email:String,
-    pass:String,
+    password:String,
+    roleId : 
+    {
+        type: Schema.Types.ObjectId,
+        ref: 'RoleMaster'
+    }
 },{
     timestamps:true,
     toObject:{

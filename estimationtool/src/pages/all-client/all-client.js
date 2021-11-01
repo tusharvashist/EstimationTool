@@ -53,9 +53,8 @@ function AllClient(props) {
       render: (rowData) => {
         return (
           <Link
-            onClick={() => history.push(`/allclient/${rowData.clientName}`)}
+            onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
           >
-            {" "}
             {rowData.clientName}
           </Link>
         );

@@ -10,7 +10,7 @@ import {
   FormControl
 
 } from "@material-ui/core";
-import React,  { useState, useEffect } from "react";
+import React,  { useState, useEffect, useRef } from "react";
 import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
@@ -32,7 +32,7 @@ const EstimationCreation = (props) => {
   const projecttInfo  = {...location1.projectInfo }
   const [estimationHeaderId, setEstimationHeaderId] = React.useState();
 
-
+ const childRef = useRef();
   
   const isStepOptional = (step) => {
     return step === null;
@@ -58,6 +58,7 @@ const postEstimationBasicDetail = (reqData) => {
     })
     .catch((err) => {
       console.log("save estimation header detail error : ", err);
+      childRef.current.showError(err);
     });
 };
 
@@ -92,7 +93,8 @@ const postEstimationBasicDetail = (reqData) => {
         "isDeleted": false
            });
       } else{
-        console.log("Fill all details validation error");
+        console.log("Please fill all mandatory fields");
+        childRef.current.showError("Please fill all mandatory fields");
       }
     }else{
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -211,6 +213,7 @@ const postEstimationBasicDetail = (reqData) => {
                 <FirstStep 
                  clientName={clientInfo.clientName}
                  projectName={projecttInfo.projectName}
+                 ref={childRef}
                  />}
                 {activeStep == 1 && <SecondStep estimatioHeaderId={estimationHeaderId} />}
                 {activeStep == 2 && <ThirdStep estimatioHeaderId={estimationHeaderId}/>}
