@@ -50,6 +50,15 @@ router.delete("/:id",
     tokenValidation.validateToken,
     estimationController.estimationDelete
 );
+
+// ---- Update Estimation Header Basic info-----
+router.put("/:id",
+    tokenValidation.validateToken,
+    joiSchemaValidation.validateBody(joiEstimationSchema.UpdateEstimationHeaderSchema),
+    estimationController.updateEstimationHeader
+);
+
+
 //=====================================estimationHeaderAtrribute=====================
 //----- Create -----------
 router.post("/atrribute/",

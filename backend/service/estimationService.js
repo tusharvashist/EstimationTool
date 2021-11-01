@@ -114,7 +114,26 @@ module.exports.createEstimationHeader = async (serviceData) => {
   }
 }
 
-//===update estimation header ===========
+// Update estimation header basic info 
+module.exports.updateEstimationHeader = async ({id, updatedInfo}) => {
+  try {
+
+    let estimation = await EstimationHeader.findOneAndUpdate({ _id: id}, updatedInfo, { new: true });
+    if (!estimation) {
+      throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
+    }
+
+    const projectModel = await ProjectModel.findById({ _id: estimation.projectId })
+    projectModel.estimates.push(estimation);
+
+    await projectModel.save();
+
+    return formatMongoData(estimation)
+  } catch (err) {
+    console.log("something went wrong: service > Update Estimation Header ", err);
+    throw new Error(err)
+  }
+}
 
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {

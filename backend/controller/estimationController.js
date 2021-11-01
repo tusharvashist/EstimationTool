@@ -104,6 +104,24 @@ module.exports.getRecentEstimation = async (req, res) => {
 
 
 }
+
+module.exports.updateEstimationHeader = async (req,res)=>{
+    let responce = {...constant.defaultResponce};
+    try{
+        console.log("Estimation Header Id"+ req.params.id);
+
+        const responceFromestimationSer = await estimationSer.updateEstimationHeader({
+            id:req.params.id,
+            updatedInfo:req.body,
+        });
+        responce.status = 200;
+        responce.message = constant.estimationMessage.ESTIMATION_UPDATE;
+        responce.body = responceFromestimationSer;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
 //===========================EstimationHeaderAtrribute=======================================================
 
 
