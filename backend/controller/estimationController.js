@@ -74,7 +74,18 @@ module.exports.estimationDelete = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
-
+module.exports.getById = async (req, res) => {
+    let responce = { ...constant.defaultResponce };
+    try {
+        const responceGetById = await estimationSer.getById(req.params);
+        responce.status = 200;
+        responce.message = constant.estimationMessage.ESTIMATION_FETCH;
+        responce.body = responceGetById;
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
 
 module.exports.createEstimationHeader = async (req, res) => {
     let responce = { ...constant.defaultResponce };
@@ -104,13 +115,31 @@ module.exports.getRecentEstimation = async (req, res) => {
 
 
 }
+
+module.exports.updateEstimationHeader = async (req,res)=>{
+    let responce = {...constant.defaultResponce};
+    try{
+        console.log("Estimation Header Id"+ req.params.id);
+
+        const responceFromestimationSer = await estimationSer.updateEstimationHeader({
+            id:req.params.id,
+            updatedInfo:req.body,
+        });
+        responce.status = 200;
+        responce.message = constant.estimationMessage.ESTIMATION_UPDATE;
+        responce.body = responceFromestimationSer;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
 //===========================EstimationHeaderAtrribute=======================================================
 
 
 module.exports.createEstimationHeaderAtrribute = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
-        const responceFromEstimationHeaderAtrributeSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrribute(req.body);
+        const responceFromEstimationHeaderAtrributeSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrribute(req.body.estattlist);
         responce.status = 200;
         responce.message = constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_CREATED;
         responce.body = responceFromEstimationHeaderAtrributeSer;

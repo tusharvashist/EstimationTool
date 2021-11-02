@@ -30,7 +30,8 @@ function Home() {
       field: "estName",
       sorting: false,
       render: (rowData) => {
-        return <Link href={"/createEstimate"}> {rowData.estName}</Link>;
+        return <Link href={"/createEstimate" + "/" + rowData.id}> {rowData.estName}</Link>;
+        
       },
     },
     {
@@ -104,6 +105,7 @@ function Home() {
             backgroundColor: "#e5ebf7",
             fontWeight: "bold",
             fontSize: "0.9rem",
+            color: "#113c91",
           },
         }}
         data={tableData}

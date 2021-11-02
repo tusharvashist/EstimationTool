@@ -9,13 +9,13 @@ import SideBarv2 from "./sidebarv2/sidebar";
 import ClientDetails from "../../pages/client-details/client-details";
 import ProjectDetails from "../../pages/project-details/project-details";
 
-import EstimationWizardStep1 from "../../pages/estimationWizard/estimationWizardStep1";
 import { Container } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { Switch, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
+import EstimationDetail from "../../pages/estimationDetail/EstimationDetail";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -63,7 +63,7 @@ export default class Layout extends Component {
                     <Projects />
                   </Route>
                   <Route path="/createEstimate">
-                    <EstimationWizardStep1 />
+                    <EstimationDetail />
                   </Route>
                   <Route
                     exact
@@ -84,6 +84,9 @@ export default class Layout extends Component {
                       />
                     )}
                   />
+                  <Route exact path="/Estimation-Detail">
+                    <EstimationDetail />
+                  </Route>
                 </Switch>
               </Grid>
             </Grid>

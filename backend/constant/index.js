@@ -4,6 +4,12 @@ module.exports = {
         message: "",
         body: {}
     },
+
+    requirmentResponce: {
+        basicDetails: {},
+        featureList: [],
+    },
+       
     userMessage: {
         SIGNUP_SUCCESS: "Signup successfully",
         DUPLICATE_EMAIL: "User alrady exsist with given email",
@@ -17,7 +23,7 @@ module.exports = {
         ESTIMATION_FETCH: "All estimation fetch successfully",
         ESTIMATION_GET_ERROR: "All estimation featch error",
         ESTIMATION_NOT_FOUND: "Estimation not found",
-        INVALID_ID: "Invalid id",
+        INVALID_ID: "Invalid Estimation id",
         ESTIMATION_UPDATE: "Estimation update successfully",
         ESTIMATION_DELETE: "Estimation delete successfully",
     },
@@ -89,6 +95,19 @@ module.exports = {
         PROJECT_UPDATE: "Project update successfully",
         PROJECT_DELETE: "Project delete successfully",
         DUPLICATE_PROJECT: "Project already exist with given name.",
+    },
+    
+    requirmentMessage: {
+        REQUIREMENT_CREATED: "Requirement created successfully",
+        REQUIREMENT_ERROR: "Requirement create fail",
+        REQUIREMENT_FETCH: "All Requirement fetch successfully",
+        REQUIREMENT_GET_ERROR: "All Requirement fetch error",
+        REQUIREMENT_NOT_FOUND: "Requirement not found",
+        INVALID_ID: "Invalid id",
+        REQUIREMENT_UPDATE: "Requirement update successfully",
+        REQUIREMENT_DELETE: "Requirement delete successfully",
+        DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
+        REQUIREMENT_ESTHEADER_REQUIRED: "estHeader paramater requied. ",
     },
 
     estimationTemplateMessage: {

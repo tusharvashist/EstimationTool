@@ -29,6 +29,7 @@ module.exports.createEstimationTempplateAttribute = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
+//Get All Attribute based on EstHeader or EstType
 module.exports.getAllEstimationAttributes = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {

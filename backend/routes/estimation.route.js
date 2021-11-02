@@ -1,11 +1,13 @@
 const exporess = require("express");
 const estimationController = require("../controller/estimationController");
+const estimationRequirementController = require("../controller/estimationRequirmentController");
 const router = exporess.Router();
 const joiSchemaValidation = require("../middleware/joiSchemaValidation");
 const joiEstimationSchema = require("../apiSchma/joiEstimationSchema");
 const tokenValidation = require("../middleware/tokenValidationJwt");
 const joiEstimationHeaderAtrributeSchema = require("../apiSchma/joiEstimationHeaderAtrributeSchema");
 const joiEstimationHeaderAtrributeCalcSchema = require("../apiSchma/joiEstimationHeaderAtrributeCalcSchema");
+
 //----- Create -----------
 // router.post("/", 
 // tokenValidation.validateToken,
@@ -45,16 +47,44 @@ router.get("/",
     estimationController.getRecentEstimation
 );
 
+router.get("/:id",
+    tokenValidation.validateToken,
+    estimationController.getById
+);
+
+
 //----- Delete Estimation -----------
 router.delete("/:id",
     tokenValidation.validateToken,
     estimationController.estimationDelete
 );
+
+// ---- Update Estimation Header Basic info-----
+router.put("/:id",
+    tokenValidation.validateToken,
+    joiSchemaValidation.validateBody(joiEstimationSchema.UpdateEstimationHeaderSchema),
+    estimationController.updateEstimationHeader
+);
+
+
+//------Requirment ------
+
+//----- Create -----------
+router.post("/requirement/",
+    tokenValidation.validateToken,
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    estimationRequirementController.create
+);
+
+
+
+
+
 //=====================================estimationHeaderAtrribute=====================
 //----- Create -----------
 router.post("/atrribute/",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationController.createEstimationHeaderAtrribute
 );
 

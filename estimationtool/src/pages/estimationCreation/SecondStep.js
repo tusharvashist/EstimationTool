@@ -19,25 +19,19 @@ import AddAttributeEstimation from "../estimationCreation/add-attribute-estimati
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
 
-
-
-const MOCK_CONFIG = [{ defaultChecked: true, label: 'first', name: 'first' }, { label: 'second', name: 'second' }, { label: 'third', name: 'third' }];
-
-const SecondStep = () => {
-
+const SecondStep = (props) => {
 
   useEffect(() => {
     getAttribute()
   }, []);
 
   const [checkboxValues, setCheckboxValues] = useState(null);
+ 
 
 
   const getAttribute = () => {
-    SecondStepServ.getAllAttribute().then((res) => {
+    SecondStepServ.getAllAttribute(props.estimationTypeId).then((res) => {
       let dataResponse = res.data.body;
-      console.log(dataResponse)
-
       let checkboxValues = {}
       setAttributes(dataResponse.map(ob => {
         checkboxValues[ob.attributeName] = ob.selected;
