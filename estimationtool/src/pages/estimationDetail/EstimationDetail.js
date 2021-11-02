@@ -8,16 +8,15 @@ import "./EstimationDetail.css";
 
 import { useParams, useLocation } from "react-router-dom";
 import EstimationService from "./estimation.service";
-
+import EditConfiguration from "./EditConfigurationDialog";
+import AddRequirements from "./AddRequirements";
 
 const EstimationDetail = () => {
+  const location = useLocation();
 
-   const location = useLocation();
-
-    
   const params = useParams(),
     { estimationId } = "61800391ba98bdf33f0d1447";
-  
+
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
     description: "",
@@ -35,43 +34,41 @@ const EstimationDetail = () => {
     totalCost: 0,
     estTypeId: {},
   });
-    
-    
 
-  const [summaryHeaderArray, setSummaryHeaderArray] = useState([[
-            {
-              title: "Requirement",
-              field: "Requirement",
-              editable: false,
-            },
-            { title: "Description", field: "Description", editable: false },
-            {
-              title: "UI(Days)",
-              field: "UI",
-              type: "numeric",
-            },
-            {
-              title: "Frontend(Days)",
-              field: "Frontend",
-              type: "numeric",
-            },
-            {
-              title: "Backend(Days)",
-              field: "Backend",
-              type: "numeric",
-            },
-          ]]);
+  const [summaryHeaderArray, setSummaryHeaderArray] = useState([
+    [
+      {
+        title: "Requirement",
+        field: "Requirement",
+        editable: false,
+      },
+      { title: "Description", field: "Description", editable: false },
+      {
+        title: "UI(Days)",
+        field: "UI",
+        type: "numeric",
+      },
+      {
+        title: "Frontend(Days)",
+        field: "Frontend",
+        type: "numeric",
+      },
+      {
+        title: "Backend(Days)",
+        field: "Backend",
+        type: "numeric",
+      },
+    ],
+  ]);
   const [summaryDataArray, setSummaryDataArray] = useState([
-            {
-              Requirement: "Clients",
-              Description: "POC",
-              UI: 12,
-              Frontend: 63,
-              Backend: 63,
-            },
-            
-          ]);
-  
+    {
+      Requirement: "Clients",
+      Description: "POC",
+      UI: 12,
+      Frontend: 63,
+      Backend: 63,
+    },
+  ]);
 
   const [requirmentHeaderArray, setRequirmentArray] = useState([
     {
@@ -82,75 +79,115 @@ const EstimationDetail = () => {
     {
       title: "Description",
       field: "Description",
-      editable: false
+      editable: false,
     },
     {
       title: "UI(Days)",
       field: "UI",
       id: 1,
       type: "numeric",
-    }
+    },
   ]);
-  const [requirmentDataArray, setRequirementDataArray] = useState([
- 
-    ]);
-  
-    useEffect(() => {
-            getById();
-        }, []);
+  const [requirmentDataArray, setRequirementDataArray] = useState([]);
 
-  
-  
-  
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
+    useState(false);
+  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+
+  useEffect(() => {
+    getById();
+  }, []);
+
+  const openEditConfigConfig = () => {
+    openFun();
+  };
+
+  const openFun = () => {
+    setOpenEditConfigurationBox(true);
+  };
+  const closeFun = () => {
+    setOpenEditConfigurationBox(false);
+  };
+  const saveEditConfigFun = () => {};
+
+  const openAddRequirement = () => {
+    openAddFun();
+  };
+
+  const openAddFun = () => {
+    setOpenAddRequirementsBox(true);
+  };
+  const closeAddFun = () => {
+    setOpenAddRequirementsBox(false);
+  };
+  const saveAddRequirementsgFun = () => {};
+
   const getById = () => {
-
-      
     EstimationService.getById("61800391ba98bdf33f0d1447")
       .then((res) => {
         let dataResponse = res.data.body;
         console.log("dataResponse: ", dataResponse);
-        
+
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
-        setHeaderData({...dataResponse.basicDetails});
-        var arrayRequirent = [] 
+        setHeaderData({ ...dataResponse.basicDetails });
+        var arrayRequirent = [];
         dataResponse.featureList.forEach((item, i) => {
           var requirment = {
             Requirement: item.requirement.requirement,
             Description: item.requirement.description,
-            _id:  item.requirement._id,
-          }
+            _id: item.requirement._id,
+          };
 
           arrayRequirent.push(requirment);
-
         });
-        
+
         var requirment = {
-            Requirement: "Total",
+          Requirement: "Total",
           Description: "",
-            _id: -1
-          }
+          _id: -1,
+        };
 
-          arrayRequirent.push(requirment);
-          console.log("arrayRequirent", arrayRequirent);
+        arrayRequirent.push(requirment);
+        console.log("arrayRequirent", arrayRequirent);
         setRequirementDataArray(arrayRequirent);
-
-  
       })
       .catch((err) => {
         console.log("get Client by id error", err);
       });
   };
 
-
-
-  
   return (
     <React.Fragment>
-
+      {openEditConfigurationBox ? (
+        <EditConfiguration
+          isOpen={openEditConfigurationBox}
+          openF={openFun}
+          closeF={closeFun}
+          title="Add Cal Attribute"
+          oktitle="Save"
+          saveFun={saveEditConfigFun}
+          cancelTitle="Cancel"
+        />
+      ) : null}
+      {openAddRequirementsBox ? (
+        <AddRequirements
+          isOpen={openAddRequirementsBox}
+          openF={openAddFun}
+          closeF={closeAddFun}
+          title="Add Cal Attribute"
+          oktitle="Save"
+          saveFun={saveAddRequirementsgFun}
+          cancelTitle="Cancel"
+        />
+      ) : null}
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
-          <Button variant="outlined" className="estimation-detail-button">
+          <Button
+            variant="outlined"
+            className="estimation-detail-button"
+            onClick={openEditConfigConfig}
+          >
             {" "}
             <EditOutlined /> Edit Configuration
           </Button>
@@ -162,13 +199,14 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Estimation Name : </span>{" "}
-              { headerData.estName}
+              {headerData.estName}
             </p>
           </Grid>
           <Grid item xs={10} sm={6}>
             <p>
               {" "}
-              <span className="title-stl"> Estimation Type :</span>  { headerData.estTypeId.estType}
+              <span className="title-stl"> Estimation Type :</span>{" "}
+              {headerData.estTypeId.estType}
             </p>
           </Grid>
         </Grid>
@@ -186,12 +224,13 @@ const EstimationDetail = () => {
           <Grid item xs={10} sm={4}>
             <p>
               <span className="title-stl"> Effort Unit : </span>
-               { headerData.effortUnit}
+              {headerData.effortUnit}
             </p>
           </Grid>
           <Grid item xs={10} sm={6}>
             <p>
-              <span className="title-stl"> Total Cost :</span> $ { headerData.totalCost}{" "}
+              <span className="title-stl"> Total Cost :</span> ${" "}
+              {headerData.totalCost}{" "}
             </p>
           </Grid>
         </Grid>
@@ -201,14 +240,15 @@ const EstimationDetail = () => {
           <Grid item xs={10} sm={4}>
             <p>
               {" "}
-              <span className="title-stl"> Client Name :</span> {clientDetails.clientName }
+              <span className="title-stl"> Client Name :</span>{" "}
+              {clientDetails.clientName}
             </p>
           </Grid>
           <Grid item xs={10} sm={6}>
             <p>
               {" "}
               <span className="title-stl"> Client Website :</span>{" "}
-              <a href="#"> {clientDetails.website }</a>
+              <a href="#"> {clientDetails.website}</a>
             </p>
           </Grid>
         </Grid>
@@ -226,19 +266,24 @@ const EstimationDetail = () => {
           <Grid item xs={10} sm={4}>
             <p>
               <span className="title-stl"> Project Name : </span>
-              { projectDetails.projectName}
+              {projectDetails.projectName}
             </p>
           </Grid>
           <Grid item xs={10} sm={6}>
             <p>
-              <span className="title-stl"> Business Domain :</span>  { projectDetails.domain}{" "}
+              <span className="title-stl"> Business Domain :</span>{" "}
+              {projectDetails.domain}{" "}
             </p>
           </Grid>
         </Grid>
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
-          <Button variant="outlined" className="estimation-detail-button">
+          <Button
+            variant="outlined"
+            className="estimation-detail-button"
+            onClick={openAddRequirement}
+          >
             {" "}
             <Add /> Add Requirements
           </Button>
