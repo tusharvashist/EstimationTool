@@ -42,7 +42,7 @@ module.exports.signup = async ({ email, password, roleId,firstname,lastname }) =
 //   }
 // }
 
-module.exports.login = async(req)=>{
+module.exports.login_old = async(req)=>{
   try{
     const headresEmailAndPass = req.headers.authorization.split('Basic ')[1].replace('"','');
     const emailNpass = Buffer.from(headresEmailAndPass, 'base64').toString().split(":");
@@ -65,7 +65,7 @@ module.exports.login = async(req)=>{
 }
 
 //Do Not Delete this Code
-module.exports.login_new = async (req) => {
+module.exports.login = async (req) => {
   try {
     const headresEmailAndPass = req.headers.authorization.split('Basic ')[1].replace('"', '');
     const emailNpass = Buffer.from(headresEmailAndPass, 'base64').toString().split(":");
