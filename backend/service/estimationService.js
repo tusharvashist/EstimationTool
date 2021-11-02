@@ -204,13 +204,17 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
   try {
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrributeCalc({ ...serviceData })
     console.log(">>>>>estimationHeaderAtrributeCalc>>>", estimationHeaderAtrributeCalc)
-    const findRecord = await EstimationHeaderAtrributeCalc.find({ estHeaderId: estimationHeaderAtrributeCalc.estHeaderId });
+    let findRecord = await EstimationHeaderAtrributeCalc.find({ estHeaderId: estimationHeaderAtrributeCalc.estHeaderId });
+    console.log
+      (">>>>>>>11111>>>>>>>" + findRecord + ">>>>>>>>>>>>>>>>>>>>>>>>")
     if (findRecord.length != 0) {
       throw new Error(constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc);
-    }
 
+    }
     let result = await estimationHeaderAtrributeCalc.save();
+    console.log(">>>>>>>>>>>>>>>234234234", result + ">>>>>>>>>>>>>>>")
     return formatMongoData(result)
+
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err)

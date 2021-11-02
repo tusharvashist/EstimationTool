@@ -88,7 +88,7 @@ router.delete("/atrribute/:id",
 router.post("/atrributeCalc/",
     tokenValidation.validateToken,
     joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
-    estimationController.createEstimationHeaderAtrribute
+    estimationController.createEstimationHeaderAtrributeCalc
 );
 
 //----- Get wizard by id -----------

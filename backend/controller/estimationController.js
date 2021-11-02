@@ -183,11 +183,18 @@ module.exports.createEstimationHeaderAtrributeCalc = async (req, res) => {
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>calc")
     let responce = { ...constant.defaultResponce };
     try {
-        const responceFromEstimationHeaderAtrributeCalcSer = estimationHeaderAtrributeSer.createEstimationHeaderAtrributeCalc(req.body);
+        const responceFromEstimationHeaderAtrributeCalcSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrributeCalc(req.body);
         console.log("HIHIHiHiHIHI")
-        responce.status = 200;
-        responce.message = constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_CREATED;
-        responce.body = responceFromEstimationHeaderAtrributeCalcSer;
+        if (responceFromEstimationHeaderAtrributeCalcSer) {
+            console.log("HIHIHiHiHIHI2000000000000")
+            console.log(responceFromEstimationHeaderAtrributeCalcSer)
+            responce.status = 200;
+            responce.message = constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_CREATED;
+            responce.body = responceFromEstimationHeaderAtrributeCalcSer;
+        } else {
+            console.log("HIHIHiHiHIHI98989898989898989")
+            responce.message = constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc;
+        }
     } catch (err) {
         responce.message = err.message;
     }
