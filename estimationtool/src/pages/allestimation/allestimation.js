@@ -30,7 +30,8 @@ function Home() {
       field: "estName",
       sorting: false,
       render: (rowData) => {
-        return <Link href={"/createEstimate"}> {rowData.estName}</Link>;
+        return <Link href={"/createEstimate" + "/" + rowData.id}> {rowData.estName}</Link>;
+        
       },
     },
     {

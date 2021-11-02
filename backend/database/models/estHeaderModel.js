@@ -45,7 +45,8 @@ const estimationHeaderSchema = new mongoose.Schema({
     updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'user'
-    }
+    },
+
 }, {
     timestamps: true,
     toObject: {
