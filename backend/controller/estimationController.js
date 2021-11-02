@@ -139,7 +139,7 @@ module.exports.updateEstimationHeader = async (req,res)=>{
 module.exports.createEstimationHeaderAtrribute = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
-        const responceFromEstimationHeaderAtrributeSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrribute(req.body);
+        const responceFromEstimationHeaderAtrributeSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrribute(req.body.estattlist);
         responce.status = 200;
         responce.message = constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_CREATED;
         responce.body = responceFromEstimationHeaderAtrributeSer;

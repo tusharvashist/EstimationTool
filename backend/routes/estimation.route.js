@@ -84,7 +84,7 @@ router.post("/requirement/",
 //----- Create -----------
 router.post("/atrribute/",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationController.createEstimationHeaderAtrribute
 );
 

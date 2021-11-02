@@ -99,31 +99,31 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
 
 module.exports.getById = async ({ id }) => {
   try {
-       if (!mongoose.Types.ObjectId(id)) {
+    if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.estimationMessage.INVALID_ID)
-       }
-    
-    let estimations = await EstimationHeader.findById({ _id:id}).
+    }
+
+    let estimations = await EstimationHeader.findById({ _id: id }).
       populate({
         path: 'projectId',
         populate: { path: 'client' }
       }).populate({
         path: 'estTypeId'
       });
-    
-    
-    
-     let responce = { ...constant.requirmentResponce };
+
+
+
+    let responce = { ...constant.requirmentResponce };
     responce.basicDetails = estimations;
 
-    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, {_id:0, requirement:1}).populate({
-        path: 'requirement'
-      }) 
+    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { _id: 0, requirement: 1 }).populate({
+      path: 'requirement'
+    })
     if (estHeaderRequirement.length != 0) {
       responce.featureList = estHeaderRequirement
     }
-    
-    
+
+
     return formatMongoData(responce)
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
@@ -151,10 +151,10 @@ module.exports.createEstimationHeader = async (serviceData) => {
 }
 
 // Update estimation header basic info 
-module.exports.updateEstimationHeader = async ({id, updatedInfo}) => {
+module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
   try {
 
-    let estimation = await EstimationHeader.findOneAndUpdate({ _id: id}, updatedInfo, { new: true });
+    let estimation = await EstimationHeader.findOneAndUpdate({ _id: id }, updatedInfo, { new: true });
     if (!estimation) {
       throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
     }
@@ -169,14 +169,15 @@ module.exports.updateEstimationHeader = async ({id, updatedInfo}) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
-    let estimationHeaderAtrribute = new EstimationHeaderAtrribute({ ...serviceData })
-    const findRecord = await EstimationHeaderAtrribute.find({ estHeaderId: estimationHeaderAtrribute.estHeaderId , estAttributeId : estimationHeaderAtrribute.estAttributeId});
-    if (findRecord.length != 0) {
-      throw new Error(constant.estimationHeaderAtrributeMessage.DUPLICATE_estimationHeaderAtrribute);
-    }
+    //Remove All Attributes from Estimation Header
+    if (serviceData) {
+      let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
+      let result = await EstimationHeaderAtrribute.insertMany(serviceData);
 
-    let result = await estimationHeaderAtrribute.save();
-    return formatMongoData(result)
+      return formatMongoData(result)
+    }
+    else
+    throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err)
