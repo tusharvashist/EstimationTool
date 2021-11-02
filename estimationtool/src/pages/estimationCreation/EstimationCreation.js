@@ -46,8 +46,14 @@ const EstimationCreation = (props) => {
     setLocation(location)
   }, [clientInfo]);
 
-// send Estimation Basic detail data to post request to generating estimation header APi
-const postEstimationBasicDetail = (reqData) => {
+  const clearStorageOnBack =  () => {
+    if (history.action === "POP") {
+        
+        }
+   }
+// save Estimation Basic detail data to post request to generating estimation header APi
+const createEstimationBasicDetail = (reqData) => {
+  
   estimationServices.saveEstimationBasicDetail(reqData)
     .then((res) => {
       let dataResponce = res.data.body;
@@ -62,6 +68,23 @@ const postEstimationBasicDetail = (reqData) => {
     });
 };
 
+// update estimation basic detals Api call
+const updateEstimationBasicDetail = (reqData) => {
+  
+  estimationServices.updateEstimationBasicDetail(estimationHeaderId,reqData)
+    .then((res) => {
+      let dataResponce = res.data.body;
+      console.log("Update Basic Details APi response:" +JSON.stringify(dataResponce));
+      setEstimationHeaderId(dataResponce._id);
+     //TODO:// show response and move next step
+     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    })
+    .catch((err) => {
+      console.log("Update estimation header detail error : ", err);
+      childRef.current.showError(err);
+    });
+};
+
   const handleNext = () => {
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
@@ -70,32 +93,7 @@ const postEstimationBasicDetail = (reqData) => {
     }
     //TODO: handle edit basic detail API & error
     if(activeStep == 0 ){
-      console.log("current step"+activeStep+ 
-      "Estimation Name: "+ basicDetailRedux.estimationName+ "estimationTypeId: "+ basicDetailRedux.estimationTypeId + "estimationName: "
-      +basicDetailRedux.estimationType + "efforUnit: "+basicDetailRedux.efforUnit + "estimationDesc :" + basicDetailRedux.esttimationDesc+
-      "projectId: "+  projecttInfo._id );
-
-      if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
-        && basicDetailRedux.efforUnit){ 
-          postEstimationBasicDetail({
-        "estheaderParentid": "-1",
-        "estVersionno": "1",
-        "projectId" : projecttInfo._id,
-        "estName" : basicDetailRedux.estimationName,
-        "estTypeId": basicDetailRedux.estimationTypeId,
-        "estDescription": basicDetailRedux.esttimationDesc,
-        "effortUnit": basicDetailRedux.efforUnit,
-        "manCount": 0,
-        "contigency": "25",
-        "totalCost": 0,
-        "estCalcColumns": "NA",
-        "estColumns": "NA",
-        "isDeleted": false
-           });
-      } else{
-        console.log("Please fill all mandatory fields");
-        childRef.current.showError("Please fill all mandatory fields");
-      }
+      handleBasicDetailSaveUpdate();
     }else{
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
@@ -106,6 +104,33 @@ const postEstimationBasicDetail = (reqData) => {
     
   };
 
+  const handleBasicDetailSaveUpdate = () =>{
+    if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
+      && basicDetailRedux.efforUnit){ 
+        estimationHeaderId ? updateEstimationBasicDetail(getRequestPayload()) : createEstimationBasicDetail(getRequestPayload())
+    } else{
+      console.log("Please fill all mandatory fields");
+      childRef.current.showError("Please fill all mandatory fields");
+    }
+  }
+  
+  const getRequestPayload = () =>{
+    return {
+      "estheaderParentid": "-1",
+      "estVersionno": "1",
+      "projectId" : projecttInfo._id,
+      "estName" : basicDetailRedux.estimationName,
+      "estTypeId": basicDetailRedux.estimationTypeId,
+      "estDescription": basicDetailRedux.esttimationDesc,
+      "effortUnit": basicDetailRedux.efforUnit,
+      "manCount": 0,
+      "contigency": "25",
+      "totalCost": 0,
+      "estCalcColumns": "NA",
+      "estColumns": "NA",
+      "isDeleted": false,
+    }
+  }
  
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);

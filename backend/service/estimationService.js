@@ -159,11 +159,6 @@ module.exports.updateEstimationHeader = async ({id, updatedInfo}) => {
       throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
     }
 
-    const projectModel = await ProjectModel.findById({ _id: estimation.projectId })
-    projectModel.estimates.push(estimation);
-
-    await projectModel.save();
-
     return formatMongoData(estimation)
   } catch (err) {
     console.log("something went wrong: service > Update Estimation Header ", err);
