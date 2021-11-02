@@ -39,30 +39,27 @@ module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => 
             var index = 0;
             estAtt.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
-                    if (String(estSelAttElement.estAttributeId) ==  String(element._id)) {
+                    if (String(estSelAttElement.estAttributeId) == String(element._id)) {
                         estAtt[index].selected = true;
-                     }
-                    });
+                    }
+                });
                 index = index + 1;
             });
-    
-
-            //console.log(ids);
-            //db.getCollection('sms').aggregate([{ "$addFields": {"hasRead" : {"$in":[ ObjectId("59c25751dcfdaf2944ee2fae"), "$readings"] } } }])
-
-            //let estAtt1 = await EstimationAttribute.aggregate([{ "$addFields": { "selected": { "$in":[ids, "$_id" ]} } }])
-            return (estAtt);
         }
 
         if (esttype) {
             let estSelAtt = await EstimationTemplateAttribute.find({ estTypeId: esttype });
-            estSelAtt.forEach(element => {
-                console.log(element)
+            var index = 0;
+            estAtt.forEach(element => {
+                estSelAtt.forEach(estSelAttElement => {
+                    if (String(estSelAttElement.estAttrId) == String(element._id)) {
+                        estAtt[index].selected = true;
+                    }
+                });
+                index = index + 1;
             });
-
-            return (estAtt);
         }
-
+        return (estAtt);
         // var est = ObjectID(esttype);      
         // console.log(est); 
         // let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
