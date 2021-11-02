@@ -116,19 +116,19 @@ module.exports.getRecentEstimation = async (req, res) => {
 
 }
 
-module.exports.updateEstimationHeader = async (req,res)=>{
-    let responce = {...constant.defaultResponce};
-    try{
-        console.log("Estimation Header Id"+ req.params.id);
+module.exports.updateEstimationHeader = async (req, res) => {
+    let responce = { ...constant.defaultResponce };
+    try {
+        console.log("Estimation Header Id" + req.params.id);
 
         const responceFromestimationSer = await estimationSer.updateEstimationHeader({
-            id:req.params.id,
-            updatedInfo:req.body,
+            id: req.params.id,
+            updatedInfo: req.body,
         });
         responce.status = 200;
         responce.message = constant.estimationMessage.ESTIMATION_UPDATE;
         responce.body = responceFromestimationSer;
-    }catch(err){
+    } catch (err) {
         responce.message = err.message;
     }
     return res.status(responce.status).send(responce);
@@ -209,22 +209,27 @@ module.exports.estimationHeaderAtrributeDelete = async (req, res) => {
 }
 //==========================================EstimationHeaderAtrributeCalc================================
 module.exports.createEstimationHeaderAtrributeCalc = async (req, res) => {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>calc")
     let responce = { ...constant.defaultResponce };
+    // try {
+    //     const responceFromEstimationHeaderAtrributeSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrribute(req.body.estattlist);
+    //     responce.status = 200;
+    //     responce.message = constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_CREATED;
+    //     responce.body = responceFromEstimationHeaderAtrributeSer;
+    // }
     try {
-        const responceFromEstimationHeaderAtrributeCalcSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrributeCalc(req.body);
-        console.log("HIHIHiHiHIHI")
+        const responceFromEstimationHeaderAtrributeCalcSer = await estimationHeaderAtrributeSer.createEstimationHeaderAtrributeCalc(req.body.estattcalclist);
         if (responceFromEstimationHeaderAtrributeCalcSer) {
-            console.log("HIHIHiHiHIHI2000000000000")
-            console.log(responceFromEstimationHeaderAtrributeCalcSer)
             responce.status = 200;
             responce.message = constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_CREATED;
             responce.body = responceFromEstimationHeaderAtrributeCalcSer;
         } else {
-            console.log("HIHIHiHiHIHI98989898989898989")
             responce.message = constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc;
         }
-    } catch (err) {
+    }
+
+
+
+    catch (err) {
         responce.message = err.message;
     }
     return res.status(responce.status).send(responce);

@@ -117,7 +117,7 @@ router.delete("/atrribute/:id",
 //----- Create -----------
 router.post("/atrributeCalc/",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
+    // joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
     estimationController.createEstimationHeaderAtrributeCalc
 );
 
