@@ -170,9 +170,10 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
     //Remove All Attributes from Estimation Header
+    let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({ serviceData })
     if (serviceData) {
       let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
-      let result = await EstimationHeaderAtrribute.insertMany(serviceData);
+      let result = await EstimationHeaderAtrribute.insertMany(serviceData, forceServerObjectId = true);
 
       return formatMongoData(result)
     }

@@ -2,32 +2,28 @@ import React, { useState } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import { Grid } from "@material-ui/core";
-import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 
 const AddCalAttributeDialog = (props) => {
-
   const [formData, setFormData] = React.useState({
-
     estTypeId: null,
-   
-       calcAttribute: "345fghf",
-   
-       calcAttributeName: "",
-   
-       isFormula: true,
-   
-      formula: "%",
-   
-      operator: "abcd",
-   
-      unit: null,
-   
-       description: "abcd"
-   
-   });
+
+    calcAttribute: "345fghf",
+
+    calcAttributeName: "",
+
+    isFormula: true,
+
+    formula: "%",
+
+    operator: "abcd",
+
+    unit: null,
+
+    description: "abcd",
+  });
 
   const [showError, setShowError] = useState(false);
- 
+
   const handelCalAttributeName = (e) => {
     let newObject = { ...formData };
     newObject.calcAttributeName = e.target.value;
@@ -47,11 +43,9 @@ const AddCalAttributeDialog = (props) => {
     let newObject = { ...formData };
     newObject.unit = e.target.value;
     setFormData({ ...newObject });
-  }
+  };
 
-
-
-  const { calcAttributeName, unit} = formData;
+  const { calcAttributeName, unit } = formData;
 
   return (
     <CustomizedDialogs
@@ -81,29 +75,27 @@ const AddCalAttributeDialog = (props) => {
             title="Calculation Unit"
             value="percentage"
           /> */}
-           <TextField
-              
-              id="standard-basic"
-              label="Calculation Unit"
-              className="full-width"
-              variant="outlined"
-              value="percentage"
-              disabled
-            />
+          <TextField
+            id="standard-basic"
+            label="Calculation Unit"
+            className="full-width"
+            variant="outlined"
+            value="percentage"
+            disabled
+          />
         </Grid>
         <Grid item xs={12}>
-         
-            <TextField
-              required
-              error={showError && !unit}
-              id="standard-basic"
-              label="Formula"
-              className="full-width"
-              onChange={handelFormula}
-              variant="outlined"
-              type={"number"}
-                            max={2}
-            />
+          <TextField
+            required
+            error={showError && !unit}
+            id="standard-basic"
+            label="Formula"
+            className="full-width"
+            onChange={handelFormula}
+            variant="outlined"
+            type={"number"}
+            max={2}
+          />
         </Grid>
       </Grid>
     </CustomizedDialogs>
