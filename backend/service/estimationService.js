@@ -139,7 +139,7 @@ module.exports.updateEstimationHeader = async ({id, updatedInfo}) => {
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
     let estimationHeaderAtrribute = new EstimationHeaderAtrribute({ ...serviceData })
-    const findRecord = await EstimationHeaderAtrribute.find({ estHeaderId: estimationHeaderAtrribute.estHeaderId });
+    const findRecord = await EstimationHeaderAtrribute.find({ estHeaderId: estimationHeaderAtrribute.estHeaderId , estAttributeId : estimationHeaderAtrribute.estAttributeId});
     if (findRecord.length != 0) {
       throw new Error(constant.estimationHeaderAtrributeMessage.DUPLICATE_estimationHeaderAtrribute);
     }

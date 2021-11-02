@@ -3,12 +3,12 @@ const { Schema } = require('mongoose');
 
 const estimationHeaderAtrributeSchema = new mongoose.Schema({
     estHeaderId: {
-        type: Schema.Types.ObjectId,
-        ref: 'EstHeader'
+        type: String
+        //ref: 'EstHeader'
     },
     estAttributeId: {
-        type: Schema.Types.ObjectId,
-        ref: 'EstimationAttributes'
+        type: String
+        //ref: 'EstimationAttributes'
     }
 
 }, {
