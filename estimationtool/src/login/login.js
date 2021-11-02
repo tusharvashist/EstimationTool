@@ -65,7 +65,7 @@ export default function Login(props) {
     LoginSer.login(user)
       .then(async (res) => {
         let result = await res;
-        await AuthSer.login(result.data.body.user.token);
+        await AuthSer.login(result.data.body.user);
         dispatch(setEmail(result.data.body.user.email));
         dispatch(setFirstName(result.data.body.user.firstName));
         dispatch(setLastName(result.data.body.user.lastName));
