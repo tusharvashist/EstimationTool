@@ -46,11 +46,7 @@ const EstimationCreation = (props) => {
     setLocation(location)
   }, [clientInfo]);
 
-  const clearStorageOnBack =  () => {
-    if (history.action === "POP") {
-        
-        }
-   }
+
 // save Estimation Basic detail data to post request to generating estimation header APi
 const createEstimationBasicDetail = (reqData) => {
   
