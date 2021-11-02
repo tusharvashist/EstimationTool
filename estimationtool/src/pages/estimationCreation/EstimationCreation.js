@@ -24,6 +24,7 @@ const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 const EstimationCreation = (props) => {
   const basicDetailRedux = useSelector((state) => state.basicDetail);
 
+  const effortAttributeSave = useSelector((state) => state.effortAttribute);
   const location1 = useLocation();
   const [location, setLocation] = React.useState(location1);
   const [activeStep, setActiveStep] = React.useState(0);
@@ -90,7 +91,10 @@ const updateEstimationBasicDetail = (reqData) => {
     //TODO: handle edit basic detail API & error
     if(activeStep == 0 ){
       handleBasicDetailSaveUpdate();
-    }else{
+     } else if (activeStep == 1) {
+      handleSaveEffortAttribute();
+     }
+    else{
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
@@ -99,6 +103,50 @@ const updateEstimationBasicDetail = (reqData) => {
     setSkipped(newSkipped);
     
   };
+
+  const handleSaveEffortAttribute = () => {
+    if (effortAttributeSave.estAttributeId && effortAttributeSave.estHeaderId) {
+      estimationHeaderId ? updateEffortAttribute(getEffortAttributeRequestPayload()) : createSaveEffortAttribute(getEffortAttributeRequestPayload())
+
+    }
+  }
+
+
+
+// save effort Attribute data 
+const createSaveEffortAttribute = (reqData) => {
+  
+  estimationServices.saveEffortAttribute(reqData)
+    .then((res) => {
+      let dataResponce = res.data.body;
+      console.log("Save Basic Details APi response:" +JSON.stringify(dataResponce));
+      setEstimationHeaderId(dataResponce._id);
+     //TODO:// show response and move next step
+     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    })
+    .catch((err) => {
+      console.log("save estimation header detail error : ", err);
+      childRef.current.showError(err);
+    });
+};
+
+// update effort Atrribute Api call
+const updateEffortAttribute = (reqData) => {
+  
+  estimationServices.updateEffortAttribute(estimationHeaderId,reqData)
+    .then((res) => {
+      let dataResponce = res.data.body;
+      console.log("Update Basic Details APi response:" +JSON.stringify(dataResponce));
+      setEstimationHeaderId(dataResponce._id);
+     //TODO:// show response and move next step
+     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    })
+    .catch((err) => {
+      console.log("Update estimation header detail error : ", err);
+      childRef.current.showError(err);
+    });
+};
+
 
   const handleBasicDetailSaveUpdate = () =>{
     if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
@@ -110,6 +158,15 @@ const updateEstimationBasicDetail = (reqData) => {
     }
   }
   
+const getEffortAttributeRequestPayload = () =>{
+  return {
+    estattlist :[{
+      "estHeaderId": effortAttributeSave.estHeaderId,
+      "estAttributeId": effortAttributeSave.estAttributeId
+      }]
+  }
+}
+
   const getRequestPayload = () =>{
     return {
       "estheaderParentid": "-1",
