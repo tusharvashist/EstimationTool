@@ -21,6 +21,18 @@ const AllestimationService = {
                 'Authorization': `Bearer ${token}` 
             }
            })
+    },
+
+    updateEstimationBasicDetail: function(estimationHeaderId,estimationConfigBasicDetailReq){
+        let url = Url.allestimation
+        let actionId = "/"+estimationHeaderId
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        return axios.put(url+actionId,estimationConfigBasicDetailReq,{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            }
+           })
     }
 }
 export default AllestimationService;
