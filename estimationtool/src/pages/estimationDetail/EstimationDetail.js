@@ -97,6 +97,7 @@ const EstimationDetail = () => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
 
   useEffect(() => {
+    console.log("estimationId", estimationId);
     getById();
   }, [estimationId]);
 
@@ -130,9 +131,9 @@ const EstimationDetail = () => {
         let dataResponse = res.data.body;
         //console.log("dataResponse: ", dataResponse);
 
+        setHeaderData({ ...dataResponse.basicDetails });
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
-        setHeaderData({ ...dataResponse.basicDetails });
         var arrayRequirent = [];
         dataResponse.featureList.forEach((item, i) => {
           var requirment = {
@@ -209,7 +210,7 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Estimation Type :</span>{" "}
-              {headerData.estTypeId.estType}
+              {/* {headerData.estTypeId.estType} */}
             </p>
           </Grid>
         </Grid>

@@ -3,6 +3,8 @@
   color: #000;
   top: 55px;
   left: 0;
+  display: flex;
+  justify-content: center;
   position: fixed;
   width: 16%;
   height: 100vh;
@@ -12,16 +14,24 @@
     font-size: 14px;
     margin-left: -10px;
   }
+  .listitem span {
+    font-size: 14px;
+  }
 }
 @media (max-width: 960px) {
   .link-item {
+    display: none;
+  }
+  .listitem {
+    margin: auto;
+  }
+  .listitem span {
     display: none;
   }
 }
 
 .list {
   position: fixed !important;
-  margin-left: calc(2%) !important;
 }
 .list * {
   margin: 2px 0;
@@ -36,7 +46,6 @@
 }
 .link-icon {
   color: #000;
-  margin-right: 9px;
 }
 .MuiListItem-button {
   border-radius: 7px !important;
