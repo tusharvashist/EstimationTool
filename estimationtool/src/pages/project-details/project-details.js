@@ -16,13 +16,9 @@ export default function ClientDetails(props) {
   let projectIdForFun;
   const [projectId, setProjectId] = useState();
 
-  const pastProjectId = [];
-
   const checkUrl = () => {
     if (location.state == undefined) {
       console.log("comeback");
-      projectIdForFun = pastProjectId[0];
-      console.log(pastProjectId);
       console.log(location);
       setProjectId(projectIdForFun);
       console.log(projectIdForFun);
@@ -56,13 +52,8 @@ export default function ClientDetails(props) {
 
     return function cleanup() {
       console.log("cleanup");
-      pastProjectId.pop();
-      pastProjectId.push(projectIdForFun);
-      console.log(pastProjectId);
     };
   }, [projectIdForFun]);
-
-  console.log(pastProjectId, projectId);
 
   const getProjectById = () => {
     ProjectSer.getProjectById(projectIdForFun)
