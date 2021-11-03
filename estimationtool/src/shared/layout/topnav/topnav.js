@@ -6,15 +6,16 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import AuthSer from "../../service/auth";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import { Box } from "@material-ui/core";
+// import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { PersonAdd, Settings, ExitToApp } from "@material-ui/icons";
+import { Box, Divider } from "@material-ui/core";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import logo from "../../../login/img/logo.png";
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import Avatar from '@mui/material/Avatar';
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import Avatar from "@mui/material/Avatar";
 
-
-import { useSelector } from 'react-redux'
+import { useSelector } from "react-redux";
 
 function stringToColor(string) {
   let hash = 0;
@@ -25,7 +26,7 @@ function stringToColor(string) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  let color = '#';
+  let color = "#";
 
   for (i = 0; i < 3; i += 1) {
     const value = (hash >> (i * 8)) & 0xff;
@@ -35,7 +36,6 @@ function stringToColor(string) {
 
   return color;
 }
-
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function Topnav(props) {
-
   const loginRedux = useSelector((state) => state.login);
   let history = useHistory();
   const classes = useStyles();
@@ -67,17 +66,17 @@ export default function Topnav(props) {
     AuthSer.logout();
     redirectLogin();
   };
-    const handleClose = () => {
+  const handleClose = () => {
     setAnchorEl(null);
-    };
-     const handleOpen = () => {
+  };
+  const handleOpen = () => {
     setAnchorEl(true);
-     };
-  
+  };
+
   function stringAvatar() {
     var name = loginRedux.fullName;
-       var firstChar = '';
-    var secondChar = '';
+    var firstChar = "";
+    var secondChar = "";
     if (loginRedux.firstName !== undefined) {
       if (loginRedux.firstName?.length !== 0) {
         firstChar = loginRedux.firstName[0][0];
@@ -88,16 +87,15 @@ export default function Topnav(props) {
         secondChar = loginRedux.lastName[0][0];
       }
     }
-    
-  return {
-    sx: {
-      bgcolor: stringToColor(name),
-    },
- 
-    children: `${firstChar}${secondChar}`,
-  };
+
+    return {
+      sx: {
+        bgcolor: stringToColor(name),
+      },
+
+      children: `${firstChar}${secondChar}`,
+    };
   }
-  
 
   return (
     <div className="es-topnav">
@@ -115,29 +113,72 @@ export default function Topnav(props) {
             <span className="env-title">{process.env.NODE_ENV}</span>
           </Typography>
           <div>
-            <Box >
+            <Box>
               <Avatar onClick={handleOpen} {...stringAvatar()} />
-            <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem ><b>{loginRedux.firstName !== undefined ? loginRedux.fullName : "" }</b></MenuItem>
-                <MenuItem >{loginRedux.email}</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-              </Menu>
-
             </Box>
+          </div>
+          <div className="profile-menu">
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              onClick={handleClose}
+              PaperProps={{
+                elevation: 0,
+                className: "profile-menu",
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              <MenuItem>
+                <Avatar /> Profile
+              </MenuItem>
+              <MenuItem>
+                <Avatar /> My account
+              </MenuItem>
+              <Divider />
+              <MenuItem>
+                <ListItemIcon>
+                  <PersonAdd fontSize="small" />
+                </ListItemIcon>
+                &nbsp; Add another account
+              </MenuItem>
+              <MenuItem>
+                <ListItemIcon>
+                  <Settings fontSize="small" />
+                </ListItemIcon>
+                &nbsp; Settings
+              </MenuItem>
+              <MenuItem>
+                <ListItemIcon>
+                  <ExitToApp fontSize="small" />
+                </ListItemIcon>
+                &nbsp; Logout
+              </MenuItem>
+            </Menu>
           </div>
         </Toolbar>
       </AppBar>
