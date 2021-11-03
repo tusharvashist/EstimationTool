@@ -2,7 +2,7 @@ import { Button, Container } from "@material-ui/core";
 import { Box, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { EditOutlined, Add, SaveOutlined } from "@material-ui/icons";
+import { EditOutlined, Add, SaveOutlined, Edit } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./EstimationDetail.css";
 
@@ -10,6 +10,7 @@ import { useParams, useLocation } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
+import { display } from "@material-ui/system";
 
 const EstimationDetail = () => {
   const location = useLocation();
@@ -338,22 +339,23 @@ const EstimationDetail = () => {
           title="Summary"
           columns={summaryHeaderArray}
           data={summaryDataArray}
-          editable={{
-            onBulkUpdate: (changes) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-                }, 1000);
-              }),
-            onRowDelete: (oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-                }, 1000);
-              }),
-          }}
+          // editable={{
+          //   onBulkUpdate: (changes) =>
+          //     new Promise((resolve, reject) => {
+          //       setTimeout(() => {
+          //         resolve();
+          //       }, 1000);
+          //     }),
+          //   onRowDelete: (oldData) =>
+          //     new Promise((resolve, reject) => {
+          //       setTimeout(() => {
+          //         resolve();
+          //       }, 1000);
+          //     }),
+          // }}
           options={{
             search: false,
+            paging: false,
             headerStyle: {
               backgroundColor: "#e5ebf7",
               fontWeight: "bold",

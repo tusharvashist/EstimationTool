@@ -7,7 +7,15 @@ import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import AuthSer from "../../service/auth";
 // import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import { PersonAdd, Settings, ExitToApp } from "@material-ui/icons";
+import {
+  PersonAdd,
+  Settings,
+  ExitToApp,
+  MailOutlineRounded,
+  MailRounded,
+  Mail,
+  AddCircle,
+} from "@material-ui/icons";
 import { Box, Divider } from "@material-ui/core";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import logo from "../../../login/img/logo.png";
@@ -157,21 +165,13 @@ export default function Topnav(props) {
                 <Avatar /> Profile
               </MenuItem>
               <MenuItem>
-                <Avatar /> My account
+                <MailOutlineRounded />
+                &nbsp;
+                {loginRedux.email == "undefined"
+                  ? "dummy.dummy@dummy.com"
+                  : loginRedux.email}
               </MenuItem>
               <Divider />
-              <MenuItem>
-                <ListItemIcon>
-                  <PersonAdd fontSize="small" />
-                </ListItemIcon>
-                &nbsp; Add another account
-              </MenuItem>
-              <MenuItem>
-                <ListItemIcon>
-                  <Settings fontSize="small" />
-                </ListItemIcon>
-                &nbsp; Settings
-              </MenuItem>
               <MenuItem>
                 <ListItemIcon>
                   <ExitToApp fontSize="small" />
