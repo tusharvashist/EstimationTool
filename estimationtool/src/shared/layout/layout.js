@@ -84,7 +84,10 @@ export default class Layout extends Component {
                       />
                     )}
                   />
-                  <Route exact path="/Estimation-Detail">
+                  <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/Estimation-Detail"
+                  >
                     <EstimationDetail />
                   </Route>
                 </Switch>

@@ -13,9 +13,10 @@ import AddRequirements from "./AddRequirements";
 
 const EstimationDetail = () => {
   const location = useLocation();
+  console.log(location);
 
-  const params = useParams(),
-    { estimationId } = "61800391ba98bdf33f0d1447";
+  const params = useParams();
+  const estimationId = location.state.projectId;
 
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
@@ -123,7 +124,7 @@ const EstimationDetail = () => {
   const saveAddRequirementsgFun = () => {};
 
   const getById = () => {
-    EstimationService.getById("61800391ba98bdf33f0d1447")
+    EstimationService.getById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
         console.log("dataResponse: ", dataResponse);

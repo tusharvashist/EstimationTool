@@ -13,7 +13,24 @@ import AddIcon from "@material-ui/icons/Add";
 export default function ClientDetails(props) {
   const location = useLocation();
 
-  const projectId = location.state.projectId;
+  let projectIdForFun;
+  const [projectId, setProjectId] = useState();
+
+  const pastProjectId = [];
+
+  const checkUrl = () => {
+    if (location.state == undefined) {
+      console.log("comeback");
+      projectIdForFun = pastProjectId[0];
+      console.log(pastProjectId);
+      console.log(location);
+      setProjectId(projectIdForFun);
+      console.log(projectIdForFun);
+    } else {
+      projectIdForFun = location.state.projectId;
+      setProjectId(location.state.projectId);
+    }
+  };
 
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
@@ -34,11 +51,21 @@ export default function ClientDetails(props) {
   const [tableDataWithoutFilter, setTableDataWithoutFilter] = useState([]);
   const [tableData, setTableData] = useState([]);
   useEffect(() => {
+    checkUrl();
     getProjectById();
-  }, [projectId]);
+
+    return function cleanup() {
+      console.log("cleanup");
+      pastProjectId.pop();
+      pastProjectId.push(projectIdForFun);
+      console.log(pastProjectId);
+    };
+  }, [projectIdForFun]);
+
+  console.log(pastProjectId, projectId);
 
   const getProjectById = () => {
-    ProjectSer.getProjectById(projectId)
+    ProjectSer.getProjectById(projectIdForFun)
       .then((res) => {
         let dataResponse = res.data.body;
         setProjectDetails({ ...dataResponse });
@@ -155,9 +182,16 @@ export default function ClientDetails(props) {
             />
             <Link
               to={{
-                pathname: "/create-estimation",
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/Estimation-Detail",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                },
               }}
             >
               <Button variant="outlined">

@@ -89,7 +89,6 @@ export default function ClientDetails(props) {
 
   console.log("clients", clients);
   console.log("clientID", clientId);
-  console.log("clientDetails", clientDetails);
 
   return (
     <div className="client-deatils-wrp">
@@ -146,7 +145,11 @@ export default function ClientDetails(props) {
         </Grid>
       </Box>
       <Box p={3} pt={0}>
-        <ProjectView data={clientId} clientName={clientUrlName} />
+        <ProjectView
+          data={clientId}
+          clientName={clientUrlName}
+          clients={clients}
+        />
       </Box>
     </div>
   );
