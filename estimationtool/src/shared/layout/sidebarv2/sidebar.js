@@ -30,7 +30,7 @@ const Sidebarv2 = (props) => {
           <ListItemIcon>
             <HomeIcon className="link-icon" />
           </ListItemIcon>
-          <span>Dashboard</span>
+          <span>&nbsp;Dashboard</span>
         </ListItem>
         {/* </Link> */}
         {/* <Link className="link-item" to="/allclient"> */}
@@ -42,7 +42,7 @@ const Sidebarv2 = (props) => {
           <ListItemIcon>
             <AssignmentIndIcon className="link-icon" />
           </ListItemIcon>
-          <span>Clients</span>
+          <span>&nbsp;Clients</span>
         </ListItem>
         {/* </Link> */}
       </List>

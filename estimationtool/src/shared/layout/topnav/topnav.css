@@ -25,3 +25,6 @@
 .user-name {
   font-size: 12px;
 }
+.profile-menu {
+  top: 52px !important;
+}
