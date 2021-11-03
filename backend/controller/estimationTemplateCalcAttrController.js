@@ -43,6 +43,21 @@ module.exports.getAllEstimationTemplateCalcAttr = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
+//--------------------------------------------
+//Get All Attribute based on EstHeader or EstType
+// module.exports.getAllEstimationAttributes = async (req, res) => {
+//     let responce = { ...constant.defaultResponce };
+//     try {
+//         const responceFromestimationSer = await estimationAttSer.getAllEstimationAttributes(req.query);        
+//         responce.status = 200;
+//         responce.message = constant.EstimationAttributeMessage.ATTRIBUTE_FETCH;
+//         responce.body = responceFromestimationSer;
+//     } catch (err) {
+//         responce.message = err.message;
+//     }
+//     return res.status(responce.status).send(responce);
+//------------
+
 //----------------- Update estimationTemplateCalcAttr
 module.exports.estimationTemplateCalcAttrUpdate = async (req, res) => {
     let responce = { ...constant.defaultResponce };

@@ -31,6 +31,7 @@ router.get("/",
     estimationTemplateCalcAttrController.getAllEstimationTemplateCalcAttr
 );
 
+
 //----- Delete EstimationTemplateCalcAttr -----------
 router.delete("/:id",
     tokenValidation.validateToken,
