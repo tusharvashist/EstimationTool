@@ -13,10 +13,11 @@ import AddRequirements from "./AddRequirements";
 
 const EstimationDetail = () => {
   const location = useLocation();
-  console.log(location);
+  //console.log(location);
 
   const params = useParams();
-  const estimationId = location.state.projectId;
+  const estimationId = location.state.estId;
+  //console.log(location.state.estId);
 
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
@@ -97,7 +98,7 @@ const EstimationDetail = () => {
 
   useEffect(() => {
     getById();
-  }, []);
+  }, [estimationId]);
 
   const openEditConfigConfig = () => {
     openFun();
@@ -127,7 +128,7 @@ const EstimationDetail = () => {
     EstimationService.getById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
-        console.log("dataResponse: ", dataResponse);
+        //console.log("dataResponse: ", dataResponse);
 
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
@@ -157,6 +158,7 @@ const EstimationDetail = () => {
         console.log("get Client by id error", err);
       });
   };
+  console.log(headerData);
 
   return (
     <React.Fragment>

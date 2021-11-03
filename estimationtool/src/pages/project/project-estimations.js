@@ -43,7 +43,7 @@ function ProjectEstimations(props) {
                 "/" +
                 projectDeatils.projectName +
                 "/Estimation-Detail",
-              state: { projectId: rowData._id },
+              state: { estId: rowData._id },
             }}
           >
             {" "}
