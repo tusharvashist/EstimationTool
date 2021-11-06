@@ -14,8 +14,18 @@ const EstimationService = {
             },
             data:{}
         })
-    }
+    },
         
+    createRequirement:  function(clientData){
+        let url = Url.allestimation+"/requirement";
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        return axios.post(url,clientData,{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            }
+           })
+    }
 
 }
 export default EstimationService;

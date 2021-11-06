@@ -5,7 +5,16 @@ const { Schema } = require('mongoose');
 const projectRequirementSchema = new mongoose.Schema({
     title: String,
     description: String,
-    type: String,
+    type: {
+        type: Schema.Types.ObjectId,
+        ref: 'requirementType',
+        required: true
+    },
+    tag: {
+        type: Schema.Types.ObjectId,
+        ref: 'requirementTag',
+        required: true
+    },
     mitigation: String,
     isDeleted: Boolean,
     project: {

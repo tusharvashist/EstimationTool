@@ -21,11 +21,13 @@ const EstimationDetail = () => {
   //console.log(location.state.estId);
 
   const [clientDetails, setClientDetails] = useState({
+     _id:"",
     clientName: "",
     description: "",
     website: "",
   });
   const [projectDetails, setProjectDetails] = useState({
+    _id:"",
     projectName: "",
     projectDescription: "",
     businessDomain: "",
@@ -78,12 +80,17 @@ const EstimationDetail = () => {
       title: "Requirement",
       field: "Requirement",
       editable: false,
+    },{
+      title: "Tag",
+      field: "Tag",
+      editable: false,
     },
     {
       title: "Description",
       field: "Description",
       editable: false,
     },
+    
     {
       title: "UI(Days)",
       field: "UI",
@@ -92,13 +99,14 @@ const EstimationDetail = () => {
     },
   ]);
   const [requirmentDataArray, setRequirementDataArray] = useState([]);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
 
   const [openEditConfigurationBox, setOpenEditConfigurationBox] =
     useState(false);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
 
   useEffect(() => {
-    console.log("estimationId", estimationId);
     getById();
   }, [estimationId]);
 
@@ -112,7 +120,10 @@ const EstimationDetail = () => {
   const closeFun = () => {
     setOpenEditConfigurationBox(false);
   };
-  const saveEditConfigFun = () => {};
+  const saveEditConfigFun = () => {
+    closeAddFun();
+    getById();  
+  };
 
   const openAddRequirement = () => {
     openAddFun();
@@ -124,22 +135,30 @@ const EstimationDetail = () => {
   const closeAddFun = () => {
     setOpenAddRequirementsBox(false);
   };
-  const saveAddRequirementsgFun = () => {};
+  const saveAddRequirementsgFun = () => {
+        closeAddFun();
+    getById(); 
+  };
 
   const getById = () => {
     EstimationService.getById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
-        //console.log("dataResponse: ", dataResponse);
 
         setHeaderData({ ...dataResponse.basicDetails });
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
+
+        setRequirementTagArray([ ...dataResponse.requirementTag ]);
+        setRequirementTypeArray([ ...dataResponse.requirementType ]);
+
+
         var arrayRequirent = [];
         dataResponse.featureList.forEach((item, i) => {
           var requirment = {
-            Requirement: item.requirement.requirement,
+            Requirement: item.requirement.title,
             Description: item.requirement.description,
+            Tag:item.requirement.tag.name,
             _id: item.requirement._id,
           };
 
@@ -149,18 +168,20 @@ const EstimationDetail = () => {
         var requirment = {
           Requirement: "Total",
           Description: "",
+          Tag: "",
           _id: -1,
         };
 
         arrayRequirent.push(requirment);
         console.log("arrayRequirent", arrayRequirent);
         setRequirementDataArray(arrayRequirent);
+
+
       })
       .catch((err) => {
         console.log("get Client by id error", err);
       });
   };
-  console.log(headerData);
 
   return (
     <React.Fragment>
@@ -169,7 +190,7 @@ const EstimationDetail = () => {
           isOpen={openEditConfigurationBox}
           openF={openFun}
           closeF={closeFun}
-          title="Add Cal Attribute"
+          title="Edit Requirement"
           oktitle="Save"
           saveFun={saveEditConfigFun}
           cancelTitle="Cancel"
@@ -180,9 +201,13 @@ const EstimationDetail = () => {
           isOpen={openAddRequirementsBox}
           openF={openAddFun}
           closeF={closeAddFun}
-          title="Add Cal Attribute"
+          title="Add Requirement"
           oktitle="Save"
           saveFun={saveAddRequirementsgFun}
+          requirementTagArray={ requirementTagArray}
+          requirementTypeArray={requirementTypeArray}
+          project={projectDetails._id}
+          estHeader={headerData._id}
           cancelTitle="Cancel"
         />
       ) : null}

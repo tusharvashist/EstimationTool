@@ -13,14 +13,15 @@ const mongoose = require("mongoose")
 module.exports.create = async (serviceData) => {
   try {
     let projectRequirement = new ProjectRequirement({ ...serviceData })
-    const findProject = await ProjectRequirement.find({title :  projectRequirement.title },{project :  projectRequirement.project },);
-    if(findProject.length != 0){
-         throw new Error(constant.requirmentMessage.DUPLICATE_REQUIREMENT);
-    }  
+    // const findProject = await ProjectRequirement.find({title :  projectRequirement.title },{project :  projectRequirement.project },);
+    // if(findProject.length != 0){
+    //      throw new Error(constant.requirmentMessage.DUPLICATE_REQUIREMENT);
+    // }
+    
     let result = await projectRequirement.save();
-    const savedProjectRequirement = await ProjectRequirement.find({title :  projectRequirement.title },{project :  projectRequirement.project },);
+    
+    const savedProjectRequirement = await ProjectRequirement.find({ title: projectRequirement.title }, { project: projectRequirement.project },);
      
-
     const estHeaderModel = await EstHeaderModel.findById({ _id: serviceData.estHeader })
     if (estHeaderModel.length == 0) {
        throw new Error(constant.estimationMessage.INVALID_ID);

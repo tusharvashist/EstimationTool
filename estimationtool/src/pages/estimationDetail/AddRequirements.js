@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useRef ,useImperativeHandle} from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -8,19 +8,70 @@ import {
   MenuItem,
   Select,
 } from "@material-ui/core";
+import EstimationService from "./estimation.service";
 
 const AddRequirements = (props) => {
-  const [showError, setShowError] = useState(false);
+  const [showError] = useState(false);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [selectedRequirementTag, setSelectedRequirementTag] = useState({});
+  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
+  const [selectedRequirementType, setSelectedRequirementType] = useState({});
+  const [isRequirementTag, setIsRequirementTag] = useState(false);
 
-  const onSubmitForm = (e) => {};
+  const [isRequirementTitle, setIsRequirementTitle] = useState("");
+  const [isRequirementDescription, setIsRequirementDescription] = useState("");
 
-  const handelRequirement = () => {};
+    const[formData, setFormData] = React.useState({
+        title:"",
+        description: "",
+        tag:"",
+        type : "",
+        mitigation: "",
+        project: "",
+        estHeader:"",
+        isDeleted: false 
+    });
+  
+  const onSubmitForm = (e) => {
+    setFormData({
+        title: isRequirementTitle,
+        description: isRequirementDescription,
+        tag: selectedRequirementTag._id,
+        type: selectedRequirementType._id,
+        mitigation: "mitigation",
+        project: props.project,
+        estHeader:props.estHeader,
+        isDeleted: false 
+    });
 
-  const handelDescription = () => {};
+    EstimationService.createRequirement(formData).then((res) => {
+      props.saveFun();
+      })
+     .catch((err) => {
+        console.log("get Client by id error", err);
+      });
+  };
 
-  const handleRequirementGroupChange = () => {};
+  const handelRequirement = (event) => {
+    setIsRequirementTitle(event.target.value);
+  };
 
-  const handleRequirementTypeChange = () => {};
+  const handelDescription = (event) => {
+    setIsRequirementDescription(event.target.value);
+  };
+   const handleRequirementTagChange = (event) => {
+  
+    setSelectedRequirementTag(event.target.value);
+  };
+  const handleRequirementTypeChange = (event) => {
+    setSelectedRequirementType(event.target.value);
+  };
+   useEffect(() => {
+    setRequirementTagArray([...props.requirementTagArray]);
+    setRequirementTypeArray([...props.requirementTypeArray]);
+  }, [props.requirementTagArray, props.requirementTypeArray]);
+  
+
 
   return (
     <CustomizedDialogs
@@ -35,35 +86,36 @@ const AddRequirements = (props) => {
       <Grid container spacing={2}>
         <Grid item md={6}>
           <FormControl fullWidth>
-            <InputLabel id="requirement-group">Requirement Group</InputLabel>
+            <InputLabel id="requirement-group">Tag</InputLabel>
             <Select
-              labelId="requirement-group"
-              id="requirement-group"
-              value="10"
-              label="Requirement Group"
-              onChange={handleRequirementGroupChange}
-              required
+               labelId="requirement-tag"
+              id="requirement-tag"
+              value= {selectedRequirementTag.name}
+              onChange={(e) => { handleRequirementTagChange(e) }}
+              error={isRequirementTag}
             >
-              <MenuItem value={10}>Requirement Gathering</MenuItem>
-              <MenuItem value={20}>Development</MenuItem>
-              <MenuItem value={30}>UAT</MenuItem>
+               {requirementTagArray.map((item) => (
+                 <MenuItem name={item._id}  value={item}  >
+                        {item.name} 
+                     </MenuItem>  
+                  ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item md={6}>
           <FormControl fullWidth>
-            <InputLabel id="requirement-type">Requirement Type</InputLabel>
+            <InputLabel id="requirement-type">Type</InputLabel>
             <Select
               labelId="requirement-type"
               id="requirement-type"
-              value="10"
-              label="Requirement Type"
-              onChange={handleRequirementTypeChange}
-              required
+              value={ selectedRequirementType.name}
+              onChange={(e) => { handleRequirementTypeChange(e) }}
             >
-              <MenuItem value={10}>Epic</MenuItem>
-              <MenuItem value={20}>Feature</MenuItem>
-              <MenuItem value={30}>Story</MenuItem>
+              {requirementTypeArray.map((item) => (
+                       <MenuItem key={item._id}  value={item}>
+                        {item.name} 
+                     </MenuItem>  
+                  ))}
             </Select>
           </FormControl>
         </Grid>
@@ -75,7 +127,7 @@ const AddRequirements = (props) => {
             id="standard-basic"
             label="Requirement"
             className="full-width"
-            onChange={handelRequirement}
+            onChange={(e) => { handelRequirement(e) }}
             variant="outlined"
           />
         </Grid>
@@ -86,7 +138,7 @@ const AddRequirements = (props) => {
             id="standard-basic"
             label="Description"
             className="full-width"
-            onChange={handelDescription}
+            onChange={(e) => { handelDescription(e) }}
             variant="outlined"
           />
         </Grid>

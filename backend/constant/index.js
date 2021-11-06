@@ -8,6 +8,10 @@ module.exports = {
     requirmentResponce: {
         basicDetails: {},
         featureList: [],
+        requirementTag:[],
+        requirementType: [],
+        estHeaderAttribute: [],
+        estHeaderCalculatedAttribute: [],
     },
        
     userMessage: {

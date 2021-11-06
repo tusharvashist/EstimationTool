@@ -10,7 +10,9 @@ const EstimationHeaderAtrribute = require("../database/models/estimationHeaderAt
 const EstimationHeaderAtrributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
 const EstimationHeaderAtrributeSchema = require("../database/models/estimationHeaderAtrributeModel")
 const EstHeaderRequirement = require("../database/models/estHeaderRequirement")
-
+const RequirementType = require("../database/models/requirementType")
+const RequirementTag = require("../database/models/requirementTag")
+const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel")
 
 // module.exports.createEstimation = async(serviceData)=>{
 //   try{
@@ -111,19 +113,37 @@ module.exports.getById = async ({ id }) => {
         path: 'estTypeId'
       });
 
-
-
     let responce = { ...constant.requirmentResponce };
     responce.basicDetails = estimations;
 
-    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { _id: 0, requirement: 1 }).populate({
-      path: 'requirement'
-    })
+    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { _id: 0, requirement: 1 })
+      .populate({
+      path: 'requirement',
+      populate: { path: 'tag' }
+      })
+    
     if (estHeaderRequirement.length != 0) {
       responce.featureList = estHeaderRequirement
     }
 
+    let requirementType = await RequirementType.find({});
+    if (requirementType.length != 0) {
+      responce.requirementType = requirementType
+    }
 
+     let requirementTag = await RequirementTag.find({});
+    if (requirementTag.length != 0) {
+      responce.requirementTag = requirementTag
+    }
+let estimationHeaderAtrributeModel = await EstimationHeaderAtrributeModel.find({ estHeaderId
+: id })
+      .populate({
+      path: 'estAttributeId',
+      })
+      if (estimationHeaderAtrributeModel.length != 0) {
+      responce.estHeaderAttribute = estimationHeaderAtrributeModel
+    }
+//EstimationHeaderAtrributeModel
     return formatMongoData(responce)
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
