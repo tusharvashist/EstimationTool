@@ -254,21 +254,39 @@ module.exports.estimationHeaderAtrributeDelete = async ({ id }) => {
 //============================EstimationHeaderAtrributeCalc=======================================================================
 module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
   try {
-    let estimationHeaderAtrributeCalc = new EstimationHeaderAtrributeCalc({ ...serviceData })
-    console.log(">>>>>estimationHeaderAtrributeCalc>>>", estimationHeaderAtrributeCalc)
-    let findRecord = await EstimationHeaderAtrributeCalc.find({ estHeaderId: estimationHeaderAtrributeCalc.estHeaderId });
-    console.log
-      (">>>>>>>11111>>>>>>>" + findRecord + ">>>>>>>>>>>>>>>>>>>>>>>>")
-    if (findRecord.length != 0) {
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc);
+    // let estimationHeaderAtrributeCalc = new EstimationHeaderAtrributeCalc({ ...serviceData })
+    // console.log(">>>>>estimationHeaderAtrributeCalc>>>", estimationHeaderAtrributeCalc)
+    // let findRecord = await EstimationHeaderAtrributeCalc.find({ estHeaderId: estimationHeaderAtrributeCalc.estHeaderId });
+    // if (findRecord.length != 0) {
+    //   throw new Error(constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc);
 
+    // }
+    // let result = await estimationHeaderAtrributeCalc.save();
+    // return formatMongoData(result)
+    console.log(serviceData)
+    if (serviceData) {
+
+      let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
+      let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
+      return formatMongoData(result)
     }
-    let result = await estimationHeaderAtrributeCalc.save();
-    console.log(">>>>>>>>>>>>>>>234234234", result + ">>>>>>>>>>>>>>>")
-    return formatMongoData(result)
+    else
+      throw new Error(constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_ERROR);
 
-  } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+  }
+
+  // if (serviceData) {
+  //   let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
+  //   let result = await EstimationHeaderAtrribute.insertMany(serviceData);
+
+  //   return formatMongoData(result)
+  // }
+  // else
+  // throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR);
+  //}
+  //------
+  catch (err) {
+    console.log("something went wrong: service 12121`22> createEstimation ", err);
     throw new Error(err)
   }
 }

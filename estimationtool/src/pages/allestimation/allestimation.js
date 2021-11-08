@@ -2,9 +2,10 @@ import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import "./allestimation.css";
 import AllestimationSer from "./allestimation.service";
-import Link from "@material-ui/core/Link";
+import { Link } from "react-router-dom";
 import { fontSize, style } from "@material-ui/system";
 import { createMuiTheme, Paper } from "@material-ui/core";
+
 function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
@@ -20,25 +21,57 @@ function Home() {
       setTableData([...dataResponce]);
     });
   }, []);
+
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const clientDetailsUrl = "/clientdetails/" + "614f3c6790a42ca5a74bebf6";
   //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
   // render:(rowData)=>{ return (<Link  href={projectDetailsUrl}> { rowData.projectName}</Link>)}
+
   const columns = [
     {
       title: "Estimation Name",
       field: "estName",
       sorting: false,
       render: (rowData) => {
-        return <Link href={"/createEstimate" + "/" + rowData.id}> {rowData.estName}</Link>;
-        
+        console.log(rowData);
+        return (
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                rowData.projectId.client.clientName +
+                "/" +
+                rowData.projectId.projectName +
+                "/Estimation-Detail",
+              state: { estId: rowData.id },
+            }}
+          >
+            {" "}
+            {rowData.estName}
+          </Link>
+        );
       },
     },
     {
       title: "Estimation Description",
       field: "estDescription",
       render: (rowData) => {
-        return <Link href={"/createEstimate"}> {rowData.estDescription}</Link>;
+        return (
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                rowData.projectId.client.clientName +
+                "/" +
+                rowData.projectId.projectName +
+                "/Estimation-Detail",
+              state: { estId: rowData.id },
+            }}
+          >
+            {" "}
+            {rowData.estDescription}
+          </Link>
+        );
       },
       width: "15%",
     },
@@ -47,10 +80,13 @@ function Home() {
       title: "Client Name",
       field: "projectId.client.clientName",
       render: (rowData) => {
-        console.log(rowData);
+        //console.log(rowData);
         return (
           <Link
-            href={"/All-Clients" + "/" + rowData.projectId.client.clientName}
+            to={{
+              pathname:
+                "/All-Clients" + "/" + rowData.projectId.client.clientName,
+            }}
           >
             {" "}
             {rowData.projectId.client.clientName}
@@ -62,14 +98,17 @@ function Home() {
       title: "Project Name",
       field: "projectId.projectName",
       render: (rowData) => {
+        console.log(rowData);
         return (
           <Link
-            href={
-              "/All-Clients/" +
-              rowData.projectId.client.clientName +
-              "/" +
-              rowData.projectId.id
-            }
+            to={{
+              pathname:
+                "/All-Clients/" +
+                rowData.projectId.client.clientName +
+                "/" +
+                rowData.projectId.projectName,
+              state: { projectId: rowData.projectId.id },
+            }}
           >
             {" "}
             {rowData.projectId.projectName}

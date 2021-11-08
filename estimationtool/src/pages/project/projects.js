@@ -14,7 +14,6 @@ import "./project.css";
 function Projects(props) {
   // const { clientid } = useParams();
   const clientid = props.data;
-  const { projectid } = useParams();
   const [tableData, setTableData] = useState([]);
   const [clientDeatils, setClientDeatils] = useState({});
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -93,15 +92,15 @@ function Projects(props) {
     setDeleteProjectDailog(true);
   };
 
-  const getAllProject = () => {
-    ProjectSer.getAllProject()
-      .then((res) => {
-        let dataResponce = res.data.body;
-      })
-      .catch((err) => {
-        console.log("Project error", err);
-      });
-  };
+  // const getAllProject = () => {
+  //   ProjectSer.getAllProject()
+  //     .then((res) => {
+  //       let dataResponce = res.data.body;
+  //     })
+  //     .catch((err) => {
+  //       console.log("Project error", err);
+  //     });
+  // };
 
   const getClientById = () => {
     ProjectSer.getClientById(clientid)
@@ -155,6 +154,8 @@ function Projects(props) {
   const confirmDeleteProjectFun = () => {
     deleteProject();
   };
+
+  console.log(props.clients);
 
   return (
     <div className="all-project-wrap">

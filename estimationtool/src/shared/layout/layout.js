@@ -62,9 +62,9 @@ export default class Layout extends Component {
                   <Route path="/project">
                     <Projects />
                   </Route>
-                  <Route path="/createEstimate">
+                  {/* <Route path="/createEstimate">
                     <EstimationDetail />
-                  </Route>
+                  </Route> */}
                   <Route
                     exact
                     path="/All-Clients/:clientName"
@@ -84,7 +84,10 @@ export default class Layout extends Component {
                       />
                     )}
                   />
-                  <Route exact path="/Estimation-Detail">
+                  <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/Estimation-Detail"
+                  >
                     <EstimationDetail />
                   </Route>
                 </Switch>

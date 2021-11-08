@@ -21,15 +21,85 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
     }
 }
 
+//-------------------------
+// module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => {
+//     try {
+//         let estAtt = await EstimationAttribute.aggregate().addFields({ selected: false });
+//         if (estheaderid) {
+//             let estSelAtt = await EstimationHeaderAttributes.find({ estHeaderId: estheaderid });
+//             var index = 0;
+//             estAtt.forEach(element => {
+//                 estSelAtt.forEach(estSelAttElement => {
+//                     if (String(estSelAttElement.estAttributeId) == String(element._id)) {
+//                         estAtt[index].selected = true;
+//                     }
+//                 });
+//                 index = index + 1;
+//             });
+//         }
 
-module.exports.getAllEstimationTemplateCalcAttr = async ({ skip = 0, limit = 10 }) => {
+//         if (esttype) {
+//             let estSelAtt = await EstimationTemplateAttribute.find({ estTypeId: esttype });
+//             var index = 0;
+//             estAtt.forEach(element => {
+//                 estSelAtt.forEach(estSelAttElement => {
+//                     if (String(estSelAttElement.estAttrId) == String(element._id)) {
+//                         estAtt[index].selected = true;
+//                     }
+//                 });
+//                 index = index + 1;
+//             });
+//         }
+//         return (estAtt);
+//         // var est = ObjectID(esttype);      
+//         // console.log(est); 
+//         // let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
+//         // console.log(estSelAtt);
+
+//     } catch (err) {
+//         console.log("something went wrong: service > Get All Estimation Attribute Service ", err);
+//         throw new Error(err)
+//     }
+// }
+
+
+
+//-----------------------------
+
+
+
+module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid }) => {
     try {
-        let estimationTemplateCalcAttr = await EstimationTemplateCalcAttr.find({ isDeleted: false }).skip(parseInt(skip)).limit(parseInt(limit));
+        let estAttCalc = await EstimationTemplateCalcAttr.aggregate().addFields({ selected: false });
         //.addFields({ selected: true })
         // skip n limit remove, put est type id and est header id
         // if we get est header id- means get all est header calc attr table
+        if (estheaderid) {
+            let estSelAtt = await EstimationTemplateCalcAttr.find({ estHeaderId: estheaderid });
+            var index = 0;
+            estAttCalc.forEach(element => {
+                estSelAtt.forEach(estSelAttElement => {
+                    if (String(estSelAttElement.estAttributeId) == String(element._id)) {
+                        estAttCalc[index].selected = true;
+                    }
+                });
+                index = index + 1;
+            })
+        }
+        if (esttype) {
+            let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
+            var index = 0;
+            estAttCalc.forEach(element => {
+                estSelAtt.forEach(estSelAttElement => {
+                    if (String(estSelAttElement.estAttrId) == String(element._id)) {
+                        estAttCalc[index].selected = true;
+                    }
+                });
+                index = index + 1;
+            });
+        }
 
-        return formatMongoData(estimationTemplateCalcAttr)
+        return (estAttCalc)
     } catch (err) {
         console.log("something went wrong: service > estimationTemplateCalcAttrService ", err);
         throw new Error(err)

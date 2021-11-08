@@ -23,18 +23,33 @@ function ProjectEstimations(props) {
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
 
-
   useEffect(() => {
     setTableData([...props.tableData1]);
     setClientDeatils({ ...props.clientInfo });
-    setProjectDeatils({ ...props.projectInfo })
+    setProjectDeatils({ ...props.projectInfo });
   }, [props.tableData1]);
 
   const columns = [
     {
       title: "Estimation Name",
-      field: "estName",render: (rowData) => {
-        return <Link href={"/createEstimate"}> {rowData.estName}</Link>;
+      field: "estName",
+      render: (rowData) => {
+        return (
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                clientDeatils.clientName +
+                "/" +
+                projectDeatils.projectName +
+                "/Estimation-Detail",
+              state: { estId: rowData._id },
+            }}
+          >
+            {" "}
+            {rowData.estName}
+          </Link>
+        );
       },
     },
     { title: "Estimation Type", field: "estTypeId.estType" },
@@ -52,33 +67,31 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => { };
+  const openCreateDailog = () => {};
 
-  const openUpdateDailog = () => { };
+  const openUpdateDailog = () => {};
 
   const openDeleteDailog = () => {
     openFun();
   };
 
   const confirmDeleteEstimationFun = () => {
-    EstimationService.delete(actionId).then((res) => {
-      props.refreshData();
-      closeFun();
-    }).catch((err) => {
-
-    });
+    EstimationService.delete(actionId)
+      .then((res) => {
+        props.refreshData();
+        closeFun();
+      })
+      .catch((err) => {});
   };
-
 
   let history = useHistory();
 
-  const actionArry = (rowData) => {
+  const actionArry = (rowData) => {};
 
-  }
+  console.log(clientDeatils, projectDeatils, tableData);
 
   return (
     <div className="all-project-wrap">
-
       {deleteEstimationDailog === true && isOpenDailog === true ? (
         <DeleteProjectdailog
           isOpen={isOpenDailog}
@@ -101,7 +114,7 @@ function ProjectEstimations(props) {
             icon: "edit",
             tooltip: "Edit Estimation",
             onClick: (event, rowData) => {
-              let url = "/createEstimate";
+              let url = "/Estimation-Detail";
               history.push(url);
               setEditRow({ ...rowData });
               setActionId(rowData.id);
@@ -115,7 +128,7 @@ function ProjectEstimations(props) {
               setEditRow({ ...rowData });
               setActionId(rowData._id);
               console.log("Row : ", rowData._id);
-              setDeleteRecordName(rowData.estName)
+              setDeleteRecordName(rowData.estName);
               openDeleteDailog();
             },
           },
@@ -131,7 +144,7 @@ function ProjectEstimations(props) {
             backgroundColor: "#e5ebf7",
             fontWeight: "bold",
             fontSize: "0.9rem",
-          }
+          },
         }}
         data={tableData}
         title="Estimations:"
