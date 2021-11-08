@@ -1,19 +1,19 @@
-.client-deatils-wrp {
-
+.project-deatils-wrp {
+  margin: 20px 15px;
 }
-.title-stl{
-    font-weight: bold;
-    font-size: 14px;
-    margin-right: 5px;
+.title-stl {
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 5px;
 }
 .section-title {
-    margin: 0;
-    padding: 0;
-    color: #656060;
+  margin: 0;
+  padding: 0;
+  color: #656060;
 }
-.block-section{
-    margin: 15px 0;
-    padding: 8px 0;
+.block-section {
+  margin: 15px 0;
+  padding: 8px 0;
 
-    border-bottom: 1px solid gray;
+  border-bottom: 1px solid gray;
 }

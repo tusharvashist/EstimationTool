@@ -187,7 +187,7 @@ const EstimationDetail = () => {
         />
       ) : null}
       <Container>
-        <Box sx={{ width: "100%" }} className="estimation-detail-box">
+        <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
           <Button
             variant="outlined"
             className="estimation-detail-button"

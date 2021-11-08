@@ -117,8 +117,8 @@ export default function ClientDetails(props) {
   };
 
   return (
-    <div className="client-deatils-wrp">
-      <Box p={5}>
+    <div className="project-deatils-wrp">
+      <Box>
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
             <Grid item xs={10} sm={4}>
