@@ -33,6 +33,27 @@ const AllestimationService = {
                 'Authorization': `Bearer ${token}` 
             }
            })
+    },
+
+    saveEffortAttribute: function(data){
+        let url = Url.allEffortAttribute
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        return axios.post(url,data,{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            }
+           })
+    },
+    saveCalculativeAttribute: function(data){
+        let url = Url.allCalculativeAttribute
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        return axios.post(url,data,{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            }
+           })
     }
 }
 export default AllestimationService;

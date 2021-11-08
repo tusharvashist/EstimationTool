@@ -14,11 +14,11 @@ const ClientService = {
            })
     },
 // TODO: estimationHeaderID optional
-    getAllAttribute:  function(id){
+    getAllAttribute:  function(id,headerId){
         let url = Url.createAttribute;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.get(url+`?esttype=`+id,{
+        return axios.get(url+`?esttype=`+id+`&estheaderid=`+headerId,{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }

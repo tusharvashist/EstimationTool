@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
@@ -18,25 +17,39 @@ import AddIcon from "@material-ui/icons/Add";
 import AddAttributeEstimation from "../estimationCreation/add-attribute-estimation";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+
+import { useSelector, useDispatch } from 'react-redux'
+import { setEstAttributeData } from '../../Redux/effortAttributeSaveRedux'
+
+
 
 const SecondStep = (props) => {
-
+  console.log(props)
   useEffect(() => {
     getAttribute()
   }, []);
 
-  const [checkboxValues, setCheckboxValues] = useState(null);
+  const saveAttribute = useSelector((state) => state.effortAttribute);
  
+  const dispatch = useDispatch();
 
+  const [checkboxValues, setCheckboxValues] = useState(null);
+  const [attributes, setAttributes] = useState(saveAttribute.data || []);
+
+  const [finalIds, setFinalIds] = useState([]);
+  const [isOpen, setOpen] = React.useState({});
+  const [estHeaderID, setEstimationHeaderId] = React.useState(props.estimatioHeaderId)
 
   const getAttribute = () => {
-    SecondStepServ.getAllAttribute(props.estimationTypeId).then((res) => {
+    SecondStepServ.getAllAttribute(props.estimationTypeId, estHeaderID).then((res) => {
       let dataResponse = res.data.body;
       let checkboxValues = {}
+      console.log("dataResponse", dataResponse)
       setAttributes(dataResponse.map(ob => {
         checkboxValues[ob.attributeName] = ob.selected;
         console.log("")
-        return ({ name: ob.attributeName, label: ob.attributeName })
+        return ({ ...ob, name: ob.attributeName, label: ob.attributeName })
       }));
 
       setCheckboxValues(checkboxValues)
@@ -45,7 +58,6 @@ const SecondStep = (props) => {
     })
   }
 
-  const [attributes, setAttributes] = useState([]);
 
   const [dialog, setDialog] = useState(false);
 
@@ -64,14 +76,39 @@ const SecondStep = (props) => {
 
   const createAttribute = (Data) => {
     SecondStepServ.createAttribute(Data).then((res) => {
-      console.log("response", Data)
+      console.log("response", res)
+      setOpen({ open: true, severity: 'success', message: res.data.message });
       getAttribute()
       closeDialog()
     }).catch((err) => {
     });
   }
 
-  console.log("checkboxValues", checkboxValues)
+  const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
+
+    const updatedValues = attributes.map((obj) => {
+      if (obj._id === checkConfig._id) {
+        const newobj = { ...obj, selected: checked }
+        return newobj;
+      } else {
+        return obj;
+      }
+    })
+    console.log("updatedValues", updatedValues)
+    setAttributes(updatedValues)
+    const newData = updatedValues.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: estHeaderID }))
+    setFinalIds(newData)
+    
+    dispatch(setEstAttributeData(newData));
+
+    console.log("attributeid",saveAttribute.estAttributeId)
+  }
+
+  const handleClose = () => {
+    setOpen({})
+  }
+  console.log("finalIds", finalIds)
+  const { message, severity, open } = isOpen || {}
   return (
     <React.Fragment>
       {dialog &&
@@ -104,13 +141,24 @@ const SecondStep = (props) => {
       <BorderedContainer>
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Effort Attribute</FormLabel>
-         {checkboxValues && (
-           <Checkboxes defaultValues={checkboxValues} config={attributes} onChange={(data) => {
-            setCheckboxValues(data);
-          }} />
-         )} 
+          {checkboxValues && (
+            <Checkboxes defaultValues={checkboxValues} config={attributes} onChange={(data) => {
+
+              setCheckboxValues(data);
+            }} onChangeField={updateCheckboxes} />
+          )}
         </FormControl>
       </BorderedContainer>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+
+      )}
     </React.Fragment>
   );
 };

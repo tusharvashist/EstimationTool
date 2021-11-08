@@ -1,10 +1,10 @@
 .border-container {
   margin: 10px;
   padding: 20px;
-  border: 1px solid #cccccc;
   background-color: white;
   border-radius: 14px;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 .no-shadow {
   box-shadow: none;
