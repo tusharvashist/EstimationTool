@@ -62,9 +62,9 @@ export default class Layout extends Component {
                   <Route path="/project">
                     <Projects />
                   </Route>
-                  {/* <Route path="/createEstimate">
-                    <EstimationDetail />
-                  </Route> */}
+                  <Route path="/createEstimate">
+                    <EstimationCreation />
+                  </Route>
                   <Route
                     exact
                     path="/All-Clients/:clientName"
