@@ -15,7 +15,7 @@ import { withRouter } from "react-router";
 
 function AllClient(props) {
   const { history } = props;
-  console.log(props);
+  // console.log(props);
 
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -38,7 +38,7 @@ function AllClient(props) {
     ClientSer.getAllClient()
       .then((res) => {
         let dataResponce = res.data.body;
-        console.log(dataResponce);
+        // console.log(dataResponce);
         setTableData([...dataResponce]);
         setFilteredData(dataResponce.filter((op) => op.isDeleted === false));
       })
