@@ -155,7 +155,7 @@ function Projects(props) {
     deleteProject();
   };
 
-  console.log(props.clients);
+  // console.log(props.clients);
 
   return (
     <div className="all-project-wrap">

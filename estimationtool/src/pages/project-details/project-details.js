@@ -10,21 +10,22 @@ import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 
+const pastProjectId = [];
+
 export default function ClientDetails(props) {
   const location = useLocation();
 
   let projectIdForFun;
-  const [projectId, setProjectId] = useState();
 
   const checkUrl = () => {
     if (location.state == undefined) {
       console.log("comeback");
-      console.log(location);
-      setProjectId(projectIdForFun);
-      console.log(projectIdForFun);
+      // console.log(location);
+      projectIdForFun = pastProjectId[0];
+      // console.log(projectIdForFun);
+      console.log("pastProjectId----", pastProjectId[0]);
     } else {
       projectIdForFun = location.state.projectId;
-      setProjectId(location.state.projectId);
     }
   };
 
@@ -52,6 +53,9 @@ export default function ClientDetails(props) {
 
     return function cleanup() {
       console.log("cleanup");
+      pastProjectId.pop();
+      pastProjectId.push(projectIdForFun);
+      console.log(pastProjectId);
     };
   }, [projectIdForFun]);
 
@@ -85,16 +89,16 @@ export default function ClientDetails(props) {
   ]);
 
   const filterEstimation = (value) => {
-    console.log("estimationSelectedState :", value);
+    // console.log("estimationSelectedState :", value);
     switch (value) {
       case "Active":
-        console.log("set Active data ");
+        // console.log("set Active data ");
         return tableDataWithoutFilter.filter((op) => op.isDeleted === false);
       case "In-Active":
-        console.log("set In- Active data ");
+        // console.log("set In- Active data ");
         return tableDataWithoutFilter.filter((op) => op.isDeleted === true);
       default:
-        console.log("set default data ");
+        // console.log("set default data ");
         return tableDataWithoutFilter;
     }
   };

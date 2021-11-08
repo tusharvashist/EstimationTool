@@ -87,8 +87,8 @@ export default function ClientDetails(props) {
     // history.replace({ pathname: cId });
   };
 
-  console.log("clients", clients);
-  console.log("clientID", clientId);
+  // console.log("clients", clients);
+  // console.log("clientID", clientId);
 
   return (
     <div className="client-deatils-wrp">

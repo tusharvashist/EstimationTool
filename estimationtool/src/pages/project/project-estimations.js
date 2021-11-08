@@ -88,7 +88,7 @@ function ProjectEstimations(props) {
 
   const actionArry = (rowData) => {};
 
-  console.log(clientDeatils, projectDeatils, tableData);
+  // console.log(clientDeatils, projectDeatils, tableData);
 
   return (
     <div className="all-project-wrap">
