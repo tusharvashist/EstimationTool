@@ -79,8 +79,8 @@ export default class Layout extends Component {
                     path="/create-estimation"
                     render={(props) => (
                       <EstimationCreation
-                        clientInfo={props.clientInfo}
-                        projectInfo={props.projectInfo}
+                        clientInfo={props.state.clientInfo}
+                        projectInfo={props.state.projectInfo}
                       />
                     )}
                   />
