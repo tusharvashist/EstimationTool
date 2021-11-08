@@ -92,7 +92,7 @@ export default function ClientDetails(props) {
 
   return (
     <div className="client-deatils-wrp">
-      <Box p={5}>
+      <Box>
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
             {/* <Grid item xs={5} sm={1}>
@@ -144,7 +144,7 @@ export default function ClientDetails(props) {
           </Grid>
         </Grid>
       </Box>
-      <Box p={3} pt={0}>
+      <Box>
         <ProjectView
           data={clientId}
           clientName={clientUrlName}

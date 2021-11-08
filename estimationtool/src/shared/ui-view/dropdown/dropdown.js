@@ -1,7 +1,7 @@
 /* eslint-disable no-use-before-define */
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import React from "react";
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 export default function Dropdown(props) {
   return (
@@ -9,14 +9,17 @@ export default function Dropdown(props) {
       size="small"
       id="combo-box-demo"
       options={props.list}
-      onChange={(event, value) => { props.getVal(value) }}
+      onChange={(event, value) => {
+        props.getVal(value);
+      }}
       getOptionLabel={(option) => {
-        return option.title
+        return option.title;
       }}
       style={{ width: 300 }}
-      defaultValue={props.defaultValue || ''}
+      defaultValue={props.defaultValue || ""}
       renderInput={(params) => {
-      return <TextField {...params} label={props.title} variant="outlined" />}}
+        return <TextField {...params} label={props.title} variant="outlined" />;
+      }}
     />
   );
 }
