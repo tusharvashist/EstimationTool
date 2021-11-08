@@ -50,7 +50,7 @@ module.exports.signup = async ({
 //   }
 // }
 
-module.exports.login = async (req) => {
+module.exports.login1 = async (req) => {
   try {
     const headresEmailAndPass = req.headers.authorization
       .split("Basic ")[1]
@@ -81,7 +81,7 @@ module.exports.login = async (req) => {
 };
 
 //Do Not Delete this Code
-module.exports.login1 = async (req) => {
+module.exports.login = async (req) => {
   try {
     const headresEmailAndPass = req.headers.authorization
       .split("Basic ")[1]
