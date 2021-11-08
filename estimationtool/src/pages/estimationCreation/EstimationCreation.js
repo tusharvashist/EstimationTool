@@ -29,8 +29,8 @@ const EstimationCreation = (props) => {
   const [location, setLocation] = React.useState(location1);
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  const clientInfo = {...location1.state.clientInfo }
-  const projecttInfo  = {...location1.state.projectInfo }
+  const clientInfo = {...location1.clientInfo }
+  const projecttInfo  = {...location1.projectInfo }
   const [estimationHeaderId, setEstimationHeaderId] = React.useState();
 
  const childRef = useRef();
@@ -105,9 +105,8 @@ const updateEstimationBasicDetail = (reqData) => {
   };
 
   const handleSaveEffortAttribute = () => {
-    if (effortAttributeSave.estAttributeId && effortAttributeSave.estHeaderId) {
-      estimationHeaderId ? updateEffortAttribute(getEffortAttributeRequestPayload()) : createSaveEffortAttribute(getEffortAttributeRequestPayload())
-
+    if (effortAttributeSave.data) {
+     createSaveEffortAttribute(getEffortAttributeRequestPayload()) 
     }
   }
 
@@ -119,7 +118,6 @@ const createSaveEffortAttribute = (reqData) => {
   estimationServices.saveEffortAttribute(reqData)
     .then((res) => {
       let dataResponce = res.data.body;
-      console.log("Save Basic Details APi response:" +JSON.stringify(dataResponce));
       setEstimationHeaderId(dataResponce._id);
      //TODO:// show response and move next step
      setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -130,22 +128,7 @@ const createSaveEffortAttribute = (reqData) => {
     });
 };
 
-// update effort Atrribute Api call
-const updateEffortAttribute = (reqData) => {
-  
-  estimationServices.updateEffortAttribute(estimationHeaderId,reqData)
-    .then((res) => {
-      let dataResponce = res.data.body;
-      console.log("Update Basic Details APi response:" +JSON.stringify(dataResponce));
-      setEstimationHeaderId(dataResponce._id);
-     //TODO:// show response and move next step
-     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((err) => {
-      // console.log("Update estimation header detail error : ", err);
-      // childRef.current.showError(err);
-    });
-};
+
 
 
   const handleBasicDetailSaveUpdate = () =>{
@@ -160,10 +143,7 @@ const updateEffortAttribute = (reqData) => {
   
 const getEffortAttributeRequestPayload = () =>{
   return {
-    estattlist :[{
-      "estHeaderId": effortAttributeSave.estHeaderId,
-      "estAttributeId": effortAttributeSave.estAttributeId
-      }]
+    estattlist : effortAttributeSave.data
   }
 }
 
@@ -293,8 +273,8 @@ const getEffortAttributeRequestPayload = () =>{
                  projectName={projecttInfo.projectName}
                  ref={childRef}
                  />}
-                {activeStep == 1 && <SecondStep estimatioHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId} />}
-                {activeStep == 2 && <ThirdStep estimatioHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId}/>}
+                {activeStep == 1 && <SecondStep estimationHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId} />}
+                {activeStep == 2 && <ThirdStep estimationHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId}/>}
 
             <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
               <Button
