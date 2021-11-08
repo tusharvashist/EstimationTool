@@ -7,7 +7,8 @@ export const basicDetailSlice = createSlice({
       estimationType: '',
       estimationTypeId: '',
       efforUnit: '',
-      esttimationDesc: ''
+      esttimationDesc: '',
+      estimationHeaderId: '',
   },
   reducers: {
     setEstimationName: (state, estimationName) => {
@@ -24,7 +25,10 @@ export const basicDetailSlice = createSlice({
                 },
      setEsttimationDesc: (state, esttimationDesc) => {
                     state.esttimationDesc = esttimationDesc.payload;
-                    },  
+                    },
+                    setEstimationHeaderId: (state, estimationHeaderId) => {
+                      state.estimationHeaderId = estimationHeaderId.payload;
+                      },   
    
   },
 })

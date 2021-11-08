@@ -93,13 +93,17 @@ export default function ClientDetails(props) {
     // history.replace({ pathname: cId });
   };
 
-  console.log("clients", clients);
-  console.log("clientID", clientId);
+  // console.log("clients", clients);
+  // console.log("clientID", clientId);
 
   return (
     <div className="client-deatils-wrp">
 
-      <Box p={5}>
+
+
+
+
+      <Box>
 
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
@@ -163,7 +167,7 @@ export default function ClientDetails(props) {
           </Grid>
         </Grid>
       </Box>
-      <Box p={3} pt={0}>
+      <Box>
         <ProjectView
           data={clientId}
           clientName={clientUrlName}

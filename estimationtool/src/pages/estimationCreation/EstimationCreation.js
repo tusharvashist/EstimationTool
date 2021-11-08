@@ -15,7 +15,7 @@ import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useParams, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
@@ -23,6 +23,9 @@ const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 const EstimationCreation = (props) => {
   console.log(props);
   const basicDetailRedux = useSelector((state) => state.basicDetail);
+  const dispatch = useDispatch();
+  const effortAttributeSave = useSelector((state) => state.effortAttribute);
+  const calcAttributeSave = useSelector((state) => state.calcAttribute);
 
   const location1 = useLocation();
   const [location, setLocation] = React.useState(location1);
@@ -56,6 +59,7 @@ const EstimationCreation = (props) => {
           "Save Basic Details APi response:" + JSON.stringify(dataResponce)
         );
         setEstimationHeaderId(dataResponce._id);
+        // dispatch(setEstimationHeaderId(dataResponce._id))
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
@@ -71,6 +75,7 @@ const EstimationCreation = (props) => {
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
         let dataResponce = res.data.body;
+        // dispatch(setEstimationHeaderId(dataResponce._id))
         console.log(
           "Update Basic Details APi response:" + JSON.stringify(dataResponce)
         );
@@ -93,13 +98,75 @@ const EstimationCreation = (props) => {
     //TODO: handle edit basic detail API & error
     if (activeStep == 0) {
       handleBasicDetailSaveUpdate();
-    } else {
+    } else if (activeStep == 1) {
+      handleSaveEffortAttribute();
+     } else if (activeStep == 2) {
+      handleSaveCalcAttribute();
+     }
+     else {
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
     if (activeStep > 0) setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
   };
+
+const handleSaveCalcAttribute = () => {
+  if (calcAttributeSave.data) {
+    createSaveCalctAttribute(getCalcAttributeRequestPayload()) 
+   }
+}
+
+  const handleSaveEffortAttribute = () => {
+    if (effortAttributeSave.data) {
+     createSaveEffortAttribute(getEffortAttributeRequestPayload()) 
+    }
+  }
+
+
+  // Save calc attribute data
+
+  const createSaveCalctAttribute = (reqData) => {
+  
+    estimationServices.saveCalculativeAttribute(reqData)
+      .then((res) => {
+        let dataResponce = res.data.body;
+       //TODO:// show response and move next step
+      })
+      .catch((err) => {
+        // console.log("save estimation header detail error : ", err);
+        // childRef.current.showError(err);
+      });
+    };
+  // save effort Attribute data 
+const createSaveEffortAttribute = (reqData) => {
+  
+  estimationServices.saveEffortAttribute(reqData)
+    .then((res) => {
+      let dataResponce = res.data.body;
+      setEstimationHeaderId(dataResponce._id);
+     //TODO:// show response and move next step
+    })
+    .catch((err) => {
+      // console.log("save estimation header detail error : ", err);
+      // childRef.current.showError(err);
+    });
+};
+
+
+const getEffortAttributeRequestPayload = () =>{
+  return {
+    estattlist : effortAttributeSave.data
+  }
+}
+
+
+const getCalcAttributeRequestPayload = () =>{
+  return {
+    estattcalclist : calcAttributeSave.data
+  }
+}
+
 
   const handleBasicDetailSaveUpdate = () => {
     if (

@@ -1,7 +1,7 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
-import { Box, Grid } from "@material-ui/core";
+import { Box, Grid, Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
@@ -9,6 +9,7 @@ import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from "@material-ui/icons/Add";
 // import Link from "@material-ui/core/Link";
 import { useParams, Link } from "react-router-dom";
+import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./project.css";
 
 function Projects(props) {
@@ -155,7 +156,7 @@ function Projects(props) {
     deleteProject();
   };
 
-  console.log(props.clients);
+  // console.log(props.clients);
 
   return (
     <div className="all-project-wrap">
@@ -199,7 +200,7 @@ function Projects(props) {
           cancelTitle="Cancel"
         />
       ) : null}
-      <Box mb={1}>
+      <Box>
         <Grid container justify="flex-end">
           {/* <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/> */}
           <Button variant="outlined" onClick={openCreateDailog}>
@@ -209,46 +210,51 @@ function Projects(props) {
           </Button>
         </Grid>
       </Box>
-      <MaterialTable
-        columns={columns}
-        actions={[
-          {
-            icon: "edit",
-            tooltip: "Edit project",
-            onClick: (event, rowData) => {
-              setEditRow({ ...rowData });
-              setActionId(rowData._id);
-              openUpdateDailog();
+      <BorderedContainer className="full-width no-rl-margin">
+        <MaterialTable
+          columns={columns}
+          components={{
+            Container: (props) => <Paper {...props} elevation={0} />,
+          }}
+          actions={[
+            {
+              icon: "edit",
+              tooltip: "Edit project",
+              onClick: (event, rowData) => {
+                setEditRow({ ...rowData });
+                setActionId(rowData._id);
+                openUpdateDailog();
+              },
             },
-          },
-          {
-            icon: "delete",
-            tooltip: "Delete project",
-            onClick: (event, rowData) => {
-              setEditRow({ ...rowData });
-              setActionId(rowData._id);
-              setDeleteRecordName(rowData.projectName);
-              openDeleteDailog();
+            {
+              icon: "delete",
+              tooltip: "Delete project",
+              onClick: (event, rowData) => {
+                setEditRow({ ...rowData });
+                setActionId(rowData._id);
+                setDeleteRecordName(rowData.projectName);
+                openDeleteDailog();
+              },
             },
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-          sorting: true,
-          search: false,
-          filtering: false,
-          pageSize: 5,
-          paging: false,
-          headerStyle: {
-            backgroundColor: "#e5ebf7",
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-            color: "#113c91",
-          },
-        }}
-        data={tableData}
-        title={`Project${tableData.length > 1 ? "s" : ""}`}
-      />
+          ]}
+          options={{
+            actionsColumnIndex: -1,
+            sorting: true,
+            search: false,
+            filtering: false,
+            pageSize: 5,
+            paging: false,
+            headerStyle: {
+              backgroundColor: "#e5ebf7",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+              color: "#113c91",
+            },
+          }}
+          data={tableData}
+          title={`Project${tableData.length > 1 ? "s" : ""}`}
+        />
+      </BorderedContainer>
     </div>
   );
 }
