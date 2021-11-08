@@ -1,19 +1,20 @@
-.breadcrumb-wrp{
-    padding:5px 15px;
-    background: #e8e8e8;
+.breadcrumb-wrp {
+  padding: 5px 15px;
+  background: #e8e8e8;
+  margin-top: 55px;
 }
 .item-icon {
-    margin-right: 5px;
+  margin-right: 5px;
 }
-.breadcrumb-item{
-    line-height: 30px;
+.breadcrumb-item {
+  line-height: 30px;
 }
 
-.MuiBreadcrumbs-li .MuiLink-root{
-    display: flex;
-    align-items: center;
-    font-size: 15px;
+.MuiBreadcrumbs-li .MuiLink-root {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
 }
-.MuiBreadcrumbs-li .MuiLink-root svg{
-    font-size: 21px;
+.MuiBreadcrumbs-li .MuiLink-root svg {
+  font-size: 21px;
 }

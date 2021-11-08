@@ -1,9 +1,9 @@
 import axios from "axios";
 import Url from "../../shared/service/urls.service";
 const ProjectService = {
-    getClientById:  function(){
+    getClientById:  function(clientid){
         let url = Url.allClient;
-        let clientId= "/614f3c6790a42ca5a74bebf6";
+        let clientId= "/" +clientid;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
         return axios.get(url+clientId,{

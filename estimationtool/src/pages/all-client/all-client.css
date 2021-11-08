@@ -1,13 +1,12 @@
-.page-sub-title{
-    font-size: 18px;
-    padding:10px 35px;
+.page-sub-title {
+  font-size: 18px;
+  padding: 10px 35px;
 }
 
 .all-client-wrap {
-    margin:30px;
-    
+  margin: 20px 15px;
 }
 
-.all-client-wrap .MTableToolbar-root-13  {
-    display: none;
+.all-client-wrap .MTableToolbar-root-13 {
+  display: none;
 }

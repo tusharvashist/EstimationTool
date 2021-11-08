@@ -1,0 +1,7 @@
+.estimation-detail-button {
+  margin: 15px 0;
+}
+.estimation-detail-box {
+  display: flex;
+  justify-content: flex-end;
+}

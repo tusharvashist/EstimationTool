@@ -14,9 +14,10 @@ const ClientService = {
            })
     },
     
-    getProjectById:  function(){
+    getProjectById:  function(projectid){
         let url = Url.getProjectById;
-        let projectId= "/614fefd74d9da71851f36df4";
+        //let projectId= "/61715f3b72f71839f8c18a8e";
+        let projectId = "/"+projectid;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
         return axios.get(url+projectId,{

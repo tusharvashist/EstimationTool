@@ -1,16 +1,64 @@
-.MuiDrawer-paper {
-    width: 220px !important;
+.sidebar-bg {
+  background-color: white;
+  color: #000;
+  top: 55px;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  width: 16%;
+  height: 100vh;
 }
-.sidebar-bg{
-    background-color: #3549b5;
-    color: #fff;
+@media (max-width: 1130px) {
+  .link-item {
+    font-size: 14px;
+    margin-left: -10px;
+  }
+  .listitem span {
+    font-size: 14px;
+  }
 }
-.link-item {
-    color: #fff;
-    text-decoration: none;
+@media (max-width: 960px) {
+  .link-item {
+    display: none;
+  }
+  .listitem {
+    margin: auto;
+  }
+  .listitem span {
+    display: none;
+  }
+}
 
+.list {
+  position: fixed !important;
+}
+.list * {
+  margin: 2px 0;
+}
+
+.link-item {
+  color: #000;
+  text-decoration: none;
+}
+.listitem:hover > span {
+  color: #fff;
 }
 .link-icon {
-    color: #fff;
-
+  color: #000;
+}
+.MuiListItem-button {
+  border-radius: 7px !important;
+}
+.MuiListItem-button:hover {
+  background-color: #1d1660 !important;
+  border-radius: 7px;
+  transition: 1s all ease;
+}
+.MuiListItemIcon-root {
+  min-width: 0px !important;
+}
+.MuiListItem-button:hover .link-icon,
+.MuiListItem-button:hover .link-item {
+  color: white;
 }
