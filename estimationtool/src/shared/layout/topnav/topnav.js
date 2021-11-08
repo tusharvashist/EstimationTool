@@ -162,7 +162,9 @@ export default function Topnav(props) {
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
               <MenuItem>
-                <Avatar /> Profile
+                <Avatar /> {loginRedux.fullName == "undefined"
+                  ? ""
+                  : loginRedux.fullName}
               </MenuItem>
               <MenuItem>
                 <MailOutlineRounded />
@@ -172,7 +174,7 @@ export default function Topnav(props) {
                   : loginRedux.email}
               </MenuItem>
               <Divider />
-              <MenuItem>
+              <MenuItem onClick={handleLogout}>
                 <ListItemIcon>
                   <ExitToApp fontSize="small" />
                 </ListItemIcon>
