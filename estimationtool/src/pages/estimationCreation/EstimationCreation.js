@@ -7,21 +7,21 @@ import {
   Typography,
   Grid,
   ListItem,
-  FormControl
-
+  FormControl,
 } from "@material-ui/core";
-import React,  { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useParams, useLocation } from "react-router-dom";
-import { useSelector } from 'react-redux'
-import estimationServices from "../allestimation/allestimation.service"
+import { useSelector } from "react-redux";
+import estimationServices from "../allestimation/allestimation.service";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = (props) => {
+  console.log(props);
   const basicDetailRedux = useSelector((state) => state.basicDetail);
 
   const effortAttributeSave = useSelector((state) => state.effortAttribute);
@@ -29,12 +29,12 @@ const EstimationCreation = (props) => {
   const [location, setLocation] = React.useState(location1);
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  const clientInfo = {...location1.clientInfo }
-  const projecttInfo  = {...location1.projectInfo }
+  const clientInfo = { ...location1.state.clientInfo };
+  const projecttInfo = { ...location1.state.projectInfo };
   const [estimationHeaderId, setEstimationHeaderId] = React.useState();
 
- const childRef = useRef();
-  
+  const childRef = useRef();
+
   const isStepOptional = (step) => {
     return step === null;
   };
@@ -44,43 +44,46 @@ const EstimationCreation = (props) => {
   };
 
   useEffect(() => {
-    setLocation(location)
+    setLocation(location);
   }, [clientInfo]);
 
+  // save Estimation Basic detail data to post request to generating estimation header APi
+  const createEstimationBasicDetail = (reqData) => {
+    estimationServices
+      .saveEstimationBasicDetail(reqData)
+      .then((res) => {
+        let dataResponce = res.data.body;
+        console.log(
+          "Save Basic Details APi response:" + JSON.stringify(dataResponce)
+        );
+        setEstimationHeaderId(dataResponce._id);
+        //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      })
+      .catch((err) => {
+        console.log("save estimation header detail error : ", err);
+        childRef.current.showError(err);
+      });
+  };
 
-// save Estimation Basic detail data to post request to generating estimation header APi
-const createEstimationBasicDetail = (reqData) => {
-  
-  estimationServices.saveEstimationBasicDetail(reqData)
-    .then((res) => {
-      let dataResponce = res.data.body;
-      console.log("Save Basic Details APi response:" +JSON.stringify(dataResponce));
-      setEstimationHeaderId(dataResponce._id);
-     //TODO:// show response and move next step
-     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((err) => {
-      console.log("save estimation header detail error : ", err);
-      childRef.current.showError(err);
-    });
-};
-
-// update estimation basic detals Api call
-const updateEstimationBasicDetail = (reqData) => {
-  
-  estimationServices.updateEstimationBasicDetail(estimationHeaderId,reqData)
-    .then((res) => {
-      let dataResponce = res.data.body;
-      console.log("Update Basic Details APi response:" +JSON.stringify(dataResponce));
-      setEstimationHeaderId(dataResponce._id);
-     //TODO:// show response and move next step
-     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((err) => {
-      console.log("Update estimation header detail error : ", err);
-      childRef.current.showError(err);
-    });
-};
+  // update estimation basic detals Api call
+  const updateEstimationBasicDetail = (reqData) => {
+    estimationServices
+      .updateEstimationBasicDetail(estimationHeaderId, reqData)
+      .then((res) => {
+        let dataResponce = res.data.body;
+        console.log(
+          "Update Basic Details APi response:" + JSON.stringify(dataResponce)
+        );
+        setEstimationHeaderId(dataResponce._id);
+        //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      })
+      .catch((err) => {
+        console.log("Update estimation header detail error : ", err);
+        childRef.current.showError(err);
+      });
+  };
 
   const handleNext = () => {
     let newSkipped = skipped;
@@ -89,82 +92,51 @@ const updateEstimationBasicDetail = (reqData) => {
       newSkipped.delete(activeStep);
     }
     //TODO: handle edit basic detail API & error
-    if(activeStep == 0 ){
+    if (activeStep == 0) {
       handleBasicDetailSaveUpdate();
-     } else if (activeStep == 1) {
-      handleSaveEffortAttribute();
-     }
-    else{
+    } else {
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
-    if(activeStep > 0)
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (activeStep > 0) setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
-    
   };
 
-  const handleSaveEffortAttribute = () => {
-    if (effortAttributeSave.data) {
-     createSaveEffortAttribute(getEffortAttributeRequestPayload()) 
-    }
-  }
-
-
-
-// save effort Attribute data 
-const createSaveEffortAttribute = (reqData) => {
-  
-  estimationServices.saveEffortAttribute(reqData)
-    .then((res) => {
-      let dataResponce = res.data.body;
-      setEstimationHeaderId(dataResponce._id);
-     //TODO:// show response and move next step
-     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    })
-    .catch((err) => {
-      // console.log("save estimation header detail error : ", err);
-      // childRef.current.showError(err);
-    });
-};
-
-
-
-
-  const handleBasicDetailSaveUpdate = () =>{
-    if(projecttInfo._id && basicDetailRedux.estimationName && basicDetailRedux.estimationTypeId && basicDetailRedux.esttimationDesc
-      && basicDetailRedux.efforUnit){ 
-        estimationHeaderId ? updateEstimationBasicDetail(getRequestPayload()) : createEstimationBasicDetail(getRequestPayload())
-    } else{
+  const handleBasicDetailSaveUpdate = () => {
+    if (
+      projecttInfo._id &&
+      basicDetailRedux.estimationName &&
+      basicDetailRedux.estimationTypeId &&
+      basicDetailRedux.esttimationDesc &&
+      basicDetailRedux.efforUnit
+    ) {
+      estimationHeaderId
+        ? updateEstimationBasicDetail(getRequestPayload())
+        : createEstimationBasicDetail(getRequestPayload());
+    } else {
       console.log("Please fill all mandatory fields");
       childRef.current.showError("Please fill all mandatory fields");
     }
-  }
-  
-const getEffortAttributeRequestPayload = () =>{
-  return {
-    estattlist : effortAttributeSave.data
-  }
-}
+  };
 
-  const getRequestPayload = () =>{
+  const getRequestPayload = () => {
     return {
-      "estheaderParentid": "-1",
-      "estVersionno": "1",
-      "projectId" : projecttInfo._id,
-      "estName" : basicDetailRedux.estimationName,
-      "estTypeId": basicDetailRedux.estimationTypeId,
-      "estDescription": basicDetailRedux.esttimationDesc,
-      "effortUnit": basicDetailRedux.efforUnit,
-      "manCount": 0,
-      "contigency": "25",
-      "totalCost": 0,
-      "estCalcColumns": "NA",
-      "estColumns": "NA",
-      "isDeleted": false,
-    }
-  }
- 
+      estheaderParentid: "-1",
+      estVersionno: "1",
+      projectId: projecttInfo._id,
+      estName: basicDetailRedux.estimationName,
+      estTypeId: basicDetailRedux.estimationTypeId,
+      estDescription: basicDetailRedux.esttimationDesc,
+      effortUnit: basicDetailRedux.efforUnit,
+      manCount: 0,
+      contigency: "25",
+      totalCost: 0,
+      estCalcColumns: "NA",
+      estColumns: "NA",
+      isDeleted: false,
+    };
+  };
+
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
@@ -190,7 +162,6 @@ const getEffortAttributeRequestPayload = () =>{
 
   return (
     <BorderedContainer>
-      
       <Box sx={{ width: "100%" }}>
         <Stepper activeStep={activeStep}>
           {steps.map((label, index) => {
@@ -213,45 +184,62 @@ const getEffortAttributeRequestPayload = () =>{
         </Stepper>
 
         <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <ListItem>Client Name: {clientInfo.clientName}</ListItem>
+          <Grid
+            container
+            rowSpacing={1}
+            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+          >
+            <Grid item xs={6}>
+              <ListItem>Client Name: {clientInfo.clientName}</ListItem>
+            </Grid>
+            <Grid item xs={6}>
+              <ListItem>
+                Client Website:&nbsp;
+                <a target="_blank" href={clientInfo.website}>
+                  {clientInfo.website}
+                </a>
+              </ListItem>
+            </Grid>
+            <Grid item xs={6}>
+              <ListItem>Project Name: {projecttInfo.projectName}</ListItem>
+            </Grid>
+            <Grid item xs={6}>
+              <ListItem>Business Domain: {projecttInfo.domain}</ListItem>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <ListItem>Client Website: <a target="_blank" href={clientInfo.website} >{clientInfo.website} </a></ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Project Name:{projecttInfo.projectName}</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Business Domain: {projecttInfo.domain}</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
+        </BorderedContainer>
 
-      {activeStep != 0 && 
-      <BorderedContainer className="no-shadow">
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Name: {basicDetailRedux.estimationName}</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <div className="field-width">
-              <FormControl fullWidth>
-                <ListItem>Estimation Type: {basicDetailRedux.estimationType}</ListItem>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={4}>
-            <ListItem>Effort Unit: {basicDetailRedux.efforUnit}</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
-        }
+        {activeStep != 0 && (
+          <BorderedContainer className="no-shadow">
+            <Grid
+              container
+              rowSpacing={1}
+              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+            >
+              <Grid item xs={4}>
+                <div className="field-width">
+                  <FormControl fullWidth>
+                    <ListItem>
+                      Estimation Name: {basicDetailRedux.estimationName}
+                    </ListItem>
+                  </FormControl>
+                </div>
+              </Grid>
+              <Grid item xs={4}>
+                <div className="field-width">
+                  <FormControl fullWidth>
+                    <ListItem>
+                      Estimation Type: {basicDetailRedux.estimationType}
+                    </ListItem>
+                  </FormControl>
+                </div>
+              </Grid>
+              <Grid item xs={4}>
+                <ListItem>Effort Unit: {basicDetailRedux.efforUnit}</ListItem>
+              </Grid>
+            </Grid>
+          </BorderedContainer>
+        )}
 
         {activeStep === steps.length ? (
           <React.Fragment>
@@ -265,38 +253,47 @@ const getEffortAttributeRequestPayload = () =>{
           </React.Fragment>
         ) : (
           <>
-
             <React.Fragment>
-            {activeStep == 0 && 
-                <FirstStep 
-                 clientName={clientInfo.clientName}
-                 projectName={projecttInfo.projectName}
-                 ref={childRef}
-                 />}
-                {activeStep == 1 && <SecondStep estimationHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId} />}
-                {activeStep == 2 && <ThirdStep estimationHeaderId={estimationHeaderId} estimationTypeId={basicDetailRedux.estimationTypeId}/>}
-
-            <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-              <Button
-                color="inherit"
-                disabled={activeStep === 0}
-                onClick={handleBack}
-                sx={{ mr: 1 }}
-              >
-                Back
-              </Button>
-              <Box sx={{ flex: "1 1 auto" }} />
-              {isStepOptional(activeStep) && (
-                <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-                  Skip
-                </Button>
+              {activeStep == 0 && (
+                <FirstStep
+                  clientName={clientInfo.clientName}
+                  projectName={projecttInfo.projectName}
+                  ref={childRef}
+                />
+              )}
+              {activeStep == 1 && (
+                <SecondStep
+                  estimatioHeaderId={estimationHeaderId}
+                  estimationTypeId={basicDetailRedux.estimationTypeId}
+                />
+              )}
+              {activeStep == 2 && (
+                <ThirdStep
+                  estimatioHeaderId={estimationHeaderId}
+                  estimationTypeId={basicDetailRedux.estimationTypeId}
+                />
               )}
 
-              <Button 
-              onClick={handleNext} >
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </Button>
-            </Box>
+              <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
+                <Button
+                  color="inherit"
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
+                >
+                  Back
+                </Button>
+                <Box sx={{ flex: "1 1 auto" }} />
+                {isStepOptional(activeStep) && (
+                  <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                    Skip
+                  </Button>
+                )}
+
+                <Button onClick={handleNext}>
+                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                </Button>
+              </Box>
             </React.Fragment>
           </>
         )}

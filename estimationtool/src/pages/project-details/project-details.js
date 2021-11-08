@@ -173,7 +173,12 @@ export default function ClientDetails(props) {
             />
             <Link
               to={{
-                pathname: "/createEstimate",
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/createEstimate",
                 state: {
                   clientInfo: clientDetails,
                   projectInfo: projectDetails,
