@@ -20,31 +20,32 @@ import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 import { useSelector, useDispatch } from 'react-redux'
-import { setEstAttributeId, setEstHeaderId } from '../../Redux/effortAttributeSaveRedux'
+import { setEstAttributeData } from '../../Redux/effortAttributeSaveRedux'
 
 
 
 const SecondStep = (props) => {
-
+  console.log(props)
   useEffect(() => {
     getAttribute()
   }, []);
 
   const saveAttribute = useSelector((state) => state.effortAttribute);
+ 
   const dispatch = useDispatch();
 
   const [checkboxValues, setCheckboxValues] = useState(null);
-  const [attributes, setAttributes] = useState([]);
+  const [attributes, setAttributes] = useState(saveAttribute.data || []);
 
   const [finalIds, setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
-
-  console.log("props", props)
+  const [estHeaderID, setEstimationHeaderId] = React.useState(props.estimatioHeaderId)
 
   const getAttribute = () => {
-    SecondStepServ.getAllAttribute(props.estimationTypeId, props.estimationHeaderId).then((res) => {
+    SecondStepServ.getAllAttribute(props.estimationTypeId, estHeaderID).then((res) => {
       let dataResponse = res.data.body;
       let checkboxValues = {}
+      console.log("dataResponse", dataResponse)
       setAttributes(dataResponse.map(ob => {
         checkboxValues[ob.attributeName] = ob.selected;
         console.log("")
@@ -95,10 +96,10 @@ const SecondStep = (props) => {
     })
     console.log("updatedValues", updatedValues)
     setAttributes(updatedValues)
-    setFinalIds(updatedValues.map((ob) => ({ estAttributeId: ob._id, estHeaderId: props.estimatioHeaderId, selected: ob.selected })).filter(ob => ob.selected))
+    const newData = updatedValues.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: estHeaderID }))
+    setFinalIds(newData)
     
-    dispatch(setEstAttributeId("6177d49fb6e42413fe1baf18"));
-    dispatch(setEstHeaderId(props.estimatioHeaderId))
+    dispatch(setEstAttributeData(newData));
 
     console.log("attributeid",saveAttribute.estAttributeId)
   }

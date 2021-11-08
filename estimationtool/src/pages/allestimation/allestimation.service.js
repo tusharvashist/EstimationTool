@@ -45,13 +45,11 @@ const AllestimationService = {
             }
            })
     },
-
-    updateEffortAttribute: function(estimationHeaderId,data){
-        let url = Url.allEffortAttribute
-        let actionId = "/"+estimationHeaderId
+    saveCalculativeAttribute: function(data){
+        let url = Url.allCalculativeAttribute
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.put(url+actionId,data,{
+        return axios.post(url,data,{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }

@@ -21,7 +21,16 @@ import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import { setEstimationTypeId } from "../../Redux/basicDetailRedux";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
+import { useSelector, useDispatch } from 'react-redux'
+import { setCalcAttributeData } from '../../Redux/CalcAttributeRedux'
+
+
 const ThirdStep = (props) => {
+
+  const saveCalcAttribute = useSelector((state) => state.calcAttribute);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getCalcAttribute();
   }, []);
@@ -78,7 +87,7 @@ const ThirdStep = (props) => {
     newObject.estTypeId = props.estimationTypeId;
     SecondStepServ.createCalAttribute(newObject).then((res) => {
       console.log("Calculative Attribute Created", res);
-      setOpen({open:true, severity:'success',message:res.data.message});  
+      setOpen({ open: true, severity: 'success', message: res.data.message });
       getCalcAttribute();
       closeFun()
     })
@@ -89,7 +98,7 @@ const ThirdStep = (props) => {
   }
 
   const onChangeField = ({ data }) => ({ target }) => {
-   // console.log("data, target", data, target, attributes)
+    // console.log("data, target", data, target, attributes)
 
     setAttributes(attributes.map((obj) => {
       if (obj._id === data._id) {
@@ -100,7 +109,7 @@ const ThirdStep = (props) => {
       }
     }))
   }
-  const updateCheckboxes = ({checkConfig, data: {name, checked}}) => {
+  const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
 
     setAttributes(attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -110,11 +119,14 @@ const ThirdStep = (props) => {
         return obj;
       }
     }))
+    const newObj = attributes.map(({ calcAttribute, calcAttributeName, isFormula, formula, operator, unit, description }) => ({ estHeaderId: props.estimatioHeaderId, calcAttribute, calcAttributeName, isFormula, formula, operator, unit, description }))
 
+    dispatch(setCalcAttributeData(newObj));
   }
 
-  const {message, severity,open}= isOpen || {}
-  console.log("calculative",JSON.stringify(attributes))
+  const { message, severity, open } = isOpen || {}
+  console.log("props", props)
+  console.log("calculative", attributes.map(({ calcAttribute, calcAttributeName, isFormula, formula, operator, unit, description }) => ({ estHeaderId: props.estimatioHeaderId, calcAttribute, calcAttributeName, isFormula, formula, operator, unit, description })))
   return (
     <React.Fragment>
       {openAddCalAttributeBox ? (
@@ -191,14 +203,14 @@ const ThirdStep = (props) => {
         </FormControl>
       </BorderedContainer>
       {open && (
-              <Snackbar
-              isOpen={open}
-              severity={severity}
-              autoHideDuration={6000}
-              onClose={handleClose}
-              message={message}
-            />
-      
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+
       )}
     </React.Fragment>
   );

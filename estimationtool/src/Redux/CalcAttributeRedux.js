@@ -1,13 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const effortAttributeSave = createSlice({
-    name: 'effortAttribute',
+export const calcAttributeSave = createSlice({
+    name: 'calcAttribute',
     initialState:
     {
            data:[]
     },
     reducers: {
-        setEstAttributeData: (state, data) => {
+        setCalcAttributeData: (state, data) => {
             state.data = data.payload;
         }
 
@@ -15,6 +15,6 @@ export const effortAttributeSave = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setEstAttributeData } = effortAttributeSave.actions
+export const { setCalcAttributeData } = calcAttributeSave.actions
 
-export default effortAttributeSave.reducer
+export default calcAttributeSave.reducer
