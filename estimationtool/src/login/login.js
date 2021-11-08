@@ -22,6 +22,7 @@ import {
   setFirstName,
   setLastName,
   setFullName,
+  setRole
 } from "../Redux/loginRedux";
 
 function Alert(props) {
@@ -74,6 +75,7 @@ export default function Login(props) {
         dispatch(setEmail(result.data.body.email));
         dispatch(setFirstName(result.data.body.firstName));
         dispatch(setLastName(result.data.body.lastName));
+        dispatch(setRole(result.data.body.roles.roleName));
         dispatch(
           setFullName(
             result.data.body.firstName + " " + result.data.body.lastName

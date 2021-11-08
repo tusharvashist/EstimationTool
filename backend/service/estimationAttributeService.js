@@ -63,11 +63,6 @@ module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => 
             });
         }
         return (estAtt);
-        // var est = ObjectID(esttype);      
-        // console.log(est); 
-        // let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
-        // console.log(estSelAtt);
-
     } catch (err) {
         console.log("something went wrong: service > Get All Estimation Attribute Service ", err);
         throw new Error(err)
