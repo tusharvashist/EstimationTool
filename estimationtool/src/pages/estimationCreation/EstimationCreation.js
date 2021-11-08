@@ -28,8 +28,8 @@ const EstimationCreation = (props) => {
   const [location, setLocation] = React.useState(location1);
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  const clientInfo = {...location1.clientInfo }
-  const projecttInfo  = {...location1.projectInfo }
+  const clientInfo = {...location1.state.clientInfo }
+  const projecttInfo  = {...location1.state.projectInfo }
   const [estimationHeaderId, setEstimationHeaderId] = React.useState();
 
  const childRef = useRef();
