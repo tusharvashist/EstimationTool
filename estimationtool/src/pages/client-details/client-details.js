@@ -113,7 +113,7 @@ export default function ClientDetails(props) {
               </p>
             </Grid> */}
             <Grid item xs={5} sm={5}>
-              <Box mb={3}>
+              {/* <Box mb={3}>
                 <Grid container justify="space-between" alignItems="center">
                   <Dropdown
                     defaultValue={{ title: "Active", value: "active" }}
@@ -123,6 +123,28 @@ export default function ClientDetails(props) {
                   />
 
                 </Grid>
+              </Box> */}
+              <Box sx={{ maxWidth: 200 }}>
+                <FormControl width="300px">
+                  <InputLabel id="client-simple-select">
+                    Client Status{" "}
+                  </InputLabel>
+
+                  <Select
+                    labelId="client-simple-select"
+                    id="client-simple-select"
+                    value={clientStatus.title}
+                    label={clientStatus.title}
+                    defaultValue={false}
+                    onChange={getDropDownvalue}
+                  >
+                    {clientStatus.map((item) => (
+                      <MenuItem key={item.title} value={item.value}>
+                        {item.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
