@@ -2,7 +2,7 @@ import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
 import EstimationService from "../estimationCreation/estimation.service";
-import { Box, Grid } from "@material-ui/core";
+import { Box, Grid, Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { Link } from "react-router-dom";
@@ -11,6 +11,7 @@ import "./project.css";
 import DeleteProjectdailog from "./delete-project.dailog";
 
 import { useHistory } from "react-router-dom";
+import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 function ProjectEstimations(props) {
   const [tableData, setTableData] = useState();
@@ -107,48 +108,53 @@ function ProjectEstimations(props) {
           cancelTitle="Cancel"
         />
       ) : null}
-      <MaterialTable
-        columns={columns}
-        actions={[
-          {
-            icon: "edit",
-            tooltip: "Edit Estimation",
-            onClick: (event, rowData) => {
-              let url = "/Estimation-Detail";
-              history.push(url);
-              setEditRow({ ...rowData });
-              setActionId(rowData.id);
-              openUpdateDailog();
+      <BorderedContainer className="no-rl-margin">
+        <MaterialTable
+          columns={columns}
+          components={{
+            Container: (props) => <Paper {...props} elevation={0} />,
+          }}
+          actions={[
+            {
+              icon: "edit",
+              tooltip: "Edit Estimation",
+              onClick: (event, rowData) => {
+                let url = "/Estimation-Detail";
+                history.push(url);
+                setEditRow({ ...rowData });
+                setActionId(rowData.id);
+                openUpdateDailog();
+              },
             },
-          },
-          {
-            icon: "delete",
-            tooltip: "Delete Estimation",
-            onClick: (event, rowData) => {
-              setEditRow({ ...rowData });
-              setActionId(rowData._id);
-              console.log("Row : ", rowData._id);
-              setDeleteRecordName(rowData.estName);
-              openDeleteDailog();
+            {
+              icon: "delete",
+              tooltip: "Delete Estimation",
+              onClick: (event, rowData) => {
+                setEditRow({ ...rowData });
+                setActionId(rowData._id);
+                console.log("Row : ", rowData._id);
+                setDeleteRecordName(rowData.estName);
+                openDeleteDailog();
+              },
             },
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-          sorting: true,
-          search: false,
-          filtering: false,
-          pageSize: 5,
-          paging: false,
-          headerStyle: {
-            backgroundColor: "#e5ebf7",
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-          },
-        }}
-        data={tableData}
-        title="Estimations:"
-      />
+          ]}
+          options={{
+            actionsColumnIndex: -1,
+            sorting: true,
+            search: false,
+            filtering: false,
+            pageSize: 5,
+            paging: false,
+            headerStyle: {
+              backgroundColor: "#e5ebf7",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+            },
+          }}
+          data={tableData}
+          title="Estimations:"
+        />
+      </BorderedContainer>
     </div>
   );
 }

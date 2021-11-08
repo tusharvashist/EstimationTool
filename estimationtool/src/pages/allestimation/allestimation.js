@@ -5,6 +5,7 @@ import AllestimationSer from "./allestimation.service";
 import { Link } from "react-router-dom";
 import { fontSize, style } from "@material-ui/system";
 import { createMuiTheme, Paper } from "@material-ui/core";
+import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 function Home() {
   const [tableData, setTableData] = useState([]);
@@ -17,7 +18,7 @@ function Home() {
           return;
         }
       }
-      console.log("dataResponce", res.data.body);
+      // console.log("dataResponce", res.data.body);
       setTableData([...dataResponce]);
     });
   }, []);
@@ -33,7 +34,7 @@ function Home() {
       field: "estName",
       sorting: false,
       render: (rowData) => {
-        console.log(rowData);
+        // console.log(rowData);
         return (
           <Link
             to={{
@@ -127,10 +128,11 @@ function Home() {
   };
 
   return (
-    <div className="wrap">
+    <BorderedContainer>
       <MaterialTable
+        elevation={0}
         components={{
-          Container: (props) => <Paper {...props} elevation={2} />,
+          Container: (props) => <Paper {...props} elevation={0} />,
         }}
         columns={columns}
         options={{
@@ -151,7 +153,7 @@ function Home() {
         title={`Recent Estimation${tableData.length > 1 ? "s" : ""}`}
         style={{ fontSize: "0.9rem" }}
       />
-    </div>
+    </BorderedContainer>
   );
 }
 export default Home;

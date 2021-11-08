@@ -8,9 +8,12 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.createEstimationAttribute = async (serviceData) => {
     try {
-        let page = new EstimationAttribute({ ...serviceData })
-
-        let result = await page.save();
+        let attribute = new EstimationAttribute({ ...serviceData })        
+        const exists = await EstimationAttribute.find({attributeName :  attribute.attributeName });
+        if(exists.length != 0){
+             throw new Error(constant.EstimationAttributeMessage.ATTRIBUTE_DUPLICATE);
+        }
+        let result = await attribute.save();
         return formatMongoData(result)
     } catch (err) {
         console.log("something went wrong: service > Estimation Attribute Service ", err);
@@ -60,11 +63,6 @@ module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => 
             });
         }
         return (estAtt);
-        // var est = ObjectID(esttype);      
-        // console.log(est); 
-        // let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
-        // console.log(estSelAtt);
-
     } catch (err) {
         console.log("something went wrong: service > Get All Estimation Attribute Service ", err);
         throw new Error(err)
