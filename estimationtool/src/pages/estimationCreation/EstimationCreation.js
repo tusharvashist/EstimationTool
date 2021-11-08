@@ -125,8 +125,8 @@ const createSaveEffortAttribute = (reqData) => {
      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     })
     .catch((err) => {
-      console.log("save estimation header detail error : ", err);
-      childRef.current.showError(err);
+      // console.log("save estimation header detail error : ", err);
+      // childRef.current.showError(err);
     });
 };
 
@@ -142,8 +142,8 @@ const updateEffortAttribute = (reqData) => {
      setActiveStep((prevActiveStep) => prevActiveStep + 1);
     })
     .catch((err) => {
-      console.log("Update estimation header detail error : ", err);
-      childRef.current.showError(err);
+      // console.log("Update estimation header detail error : ", err);
+      // childRef.current.showError(err);
     });
 };
 

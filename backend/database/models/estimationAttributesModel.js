@@ -4,7 +4,7 @@ const { Schema } = require('mongoose');
 
 const estimationAttributeSchema = new mongoose.Schema({
     attributeCode: {
-        type: String,
+        type: String,        
         required: 'Attribute Code is required!'
     }, attributeName: {
         type: String,

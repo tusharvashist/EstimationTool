@@ -25,6 +25,10 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
 module.exports.getAllEstimationTemplateCalcAttr = async ({ skip = 0, limit = 10 }) => {
     try {
         let estimationTemplateCalcAttr = await EstimationTemplateCalcAttr.find({ isDeleted: false }).skip(parseInt(skip)).limit(parseInt(limit));
+        //.addFields({ selected: true })
+        // skip n limit remove, put est type id and est header id
+        // if we get est header id- means get all est header calc attr table
+
         return formatMongoData(estimationTemplateCalcAttr)
     } catch (err) {
         console.log("something went wrong: service > estimationTemplateCalcAttrService ", err);

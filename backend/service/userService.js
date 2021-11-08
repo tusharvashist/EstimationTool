@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 
 
 
-module.exports.signup = async ({ email, password, roleId }) => {
+module.exports.signup = async ({ email, password, roleId,firstname,lastname }) => {
   try {
     const user = await userModel.findOne({ email });
     if (user) {
       throw new Error(constant.userMessage.DUPLICATE_EMAIL);
     }
     pass = await bcrypt.hash(password, 12);
-    const newUser = new userModel({ email: email, password: pass, roleId: roleId });
+    const newUser = new userModel({ email: email, password: pass, roleId: roleId,firstName: firstname,lastName: lastname });
     let result = await newUser.save();
     return formatMongoData(result)
   } catch (err) {
@@ -42,7 +42,7 @@ module.exports.signup = async ({ email, password, roleId }) => {
 //   }
 // }
 
-module.exports.login = async(req)=>{
+module.exports.login_old = async(req)=>{
   try{
     const headresEmailAndPass = req.headers.authorization.split('Basic ')[1].replace('"','');
     const emailNpass = Buffer.from(headresEmailAndPass, 'base64').toString().split(":");
@@ -65,7 +65,7 @@ module.exports.login = async(req)=>{
 }
 
 //Do Not Delete this Code
-module.exports.login_new = async (req) => {
+module.exports.login = async (req) => {
   try {
     const headresEmailAndPass = req.headers.authorization.split('Basic ')[1].replace('"', '');
     const emailNpass = Buffer.from(headresEmailAndPass, 'base64').toString().split(":");

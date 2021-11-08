@@ -17,32 +17,39 @@ import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
 import AddCalAttributeDialog from "./AddCalAttributeDialog";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
-import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
+import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import { setEstimationTypeId } from "../../Redux/basicDetailRedux";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const ThirdStep = (props) => {
-
   useEffect(() => {
-    getCalcAttribute()
+    getCalcAttribute();
   }, []);
 
   const getCalcAttribute = () => {
-    SecondStepServ.getAllCalculativeAttribute().then((res) => {
-      let dataResponse = res.data.body;
-      console.log(dataResponse)
+    SecondStepServ.getAllCalculativeAttribute()
+      .then((res) => {
+        let dataResponse = res.data.body;
+        console.log(dataResponse);
 
-      let calAttriValues = {}
-      setAttributes(dataResponse.map(ob => {
-        calAttriValues[ob.calcAttributeName] = ob.isFormula;
-        return ({ ...ob, name: ob.calcAttributeName, label: ob.calcAttributeName })
-      }));
+        let calAttriValues = {};
+        setAttributes(
+          dataResponse.map((ob) => {
+            calAttriValues[ob.calcAttributeName] = ob.isFormula;
+            return {
+              ...ob,
+              name: ob.calcAttributeName,
+              label: ob.calcAttributeName,
+            };
+          })
+        );
 
-      setcalAttriValues(calAttriValues)
-    }).catch((err) => {
-      console.log("Not getting Attribute", err)
-    })
-  }
+        setcalAttriValues(calAttriValues);
+      })
+      .catch((err) => {
+        console.log("Not getting Attribute", err);
+      });
+  };
 
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
 
@@ -122,7 +129,6 @@ const ThirdStep = (props) => {
         />
       ) : null}
 
-
       <Grid
         container
         rowSpacing={1}
@@ -142,8 +148,9 @@ const ThirdStep = (props) => {
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
 
-          <FormGroup className="">
+          <FormGroup>
             <FormControlLabel
+              className="form"
               control={
                 <>
                   {calAttriValues && (
@@ -177,10 +184,8 @@ const ThirdStep = (props) => {
                     }
                     } />
                   )}
-
                 </>
               }
-
             />
           </FormGroup>
         </FormControl>

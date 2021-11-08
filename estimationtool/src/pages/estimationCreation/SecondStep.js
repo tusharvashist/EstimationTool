@@ -42,7 +42,7 @@ const SecondStep = (props) => {
   console.log("props", props)
 
   const getAttribute = () => {
-    SecondStepServ.getAllAttribute(props.estimationTypeId).then((res) => {
+    SecondStepServ.getAllAttribute(props.estimationTypeId, props.estimationHeaderId).then((res) => {
       let dataResponse = res.data.body;
       let checkboxValues = {}
       setAttributes(dataResponse.map(ob => {
@@ -97,8 +97,10 @@ const SecondStep = (props) => {
     setAttributes(updatedValues)
     setFinalIds(updatedValues.map((ob) => ({ estAttributeId: ob._id, estHeaderId: props.estimatioHeaderId, selected: ob.selected })).filter(ob => ob.selected))
     
-    dispatch(setEstAttributeId(updatedValues._id));
+    dispatch(setEstAttributeId("6177d49fb6e42413fe1baf18"));
     dispatch(setEstHeaderId(props.estimatioHeaderId))
+
+    console.log("attributeid",saveAttribute.estAttributeId)
   }
 
   const handleClose = () => {
