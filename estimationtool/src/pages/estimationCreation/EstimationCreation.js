@@ -47,6 +47,7 @@ const EstimationCreation = (props) => {
 
   useEffect(() => {
     setLocation(location);
+
   }, [clientInfo]);
 
   // save Estimation Basic detail data to post request to generating estimation header APi
@@ -59,7 +60,7 @@ const EstimationCreation = (props) => {
           "Save Basic Details APi response:" + JSON.stringify(dataResponce)
         );
         setEstimationHeaderId(dataResponce._id);
-        // dispatch(setEstimationHeaderId(dataResponce._id))
+      localStorage.setItem('estimationHeaderId', dataResponce._id);
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
@@ -75,11 +76,13 @@ const EstimationCreation = (props) => {
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
         let dataResponce = res.data.body;
-        // dispatch(setEstimationHeaderId(dataResponce._id))
+        
         console.log(
           "Update Basic Details APi response:" + JSON.stringify(dataResponce)
         );
         setEstimationHeaderId(dataResponce._id);
+      localStorage.setItem('estimationHeaderId', dataResponce._id);
+
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
@@ -329,13 +332,13 @@ const getCalcAttributeRequestPayload = () =>{
               )}
               {activeStep == 1 && (
                 <SecondStep
-                  estimatioHeaderId={estimationHeaderId}
+                  estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
                 />
               )}
               {activeStep == 2 && (
                 <ThirdStep
-                  estimatioHeaderId={estimationHeaderId}
+                  estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
                 />
               )}

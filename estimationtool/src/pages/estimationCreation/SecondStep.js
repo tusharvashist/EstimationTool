@@ -25,12 +25,13 @@ import { setEstAttributeData } from '../../Redux/effortAttributeSaveRedux'
 
 
 const SecondStep = (props) => {
-  console.log(props)
   useEffect(() => {
     getAttribute()
   }, []);
 
   const saveAttribute = useSelector((state) => state.effortAttribute);
+  const basicDetail = useSelector((state) => state.basicDetail);
+  console.log("basicDetail",basicDetail)
  
   const dispatch = useDispatch();
 
@@ -39,10 +40,9 @@ const SecondStep = (props) => {
 
   const [finalIds, setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
-  const [estHeaderID, setEstimationHeaderId] = React.useState(props.estimatioHeaderId)
 
   const getAttribute = () => {
-    SecondStepServ.getAllAttribute(props.estimationTypeId, estHeaderID).then((res) => {
+    SecondStepServ.getAllAttribute(props.estimationTypeId, localStorage.estimationHeaderId).then((res) => {
       let dataResponse = res.data.body;
       let checkboxValues = {}
       console.log("dataResponse", dataResponse)
@@ -96,7 +96,7 @@ const SecondStep = (props) => {
     })
     console.log("updatedValues", updatedValues)
     setAttributes(updatedValues)
-    const newData = updatedValues.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: estHeaderID }))
+    const newData = updatedValues.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: localStorage.estimationHeaderId }))
     setFinalIds(newData)
     
     dispatch(setEstAttributeData(newData));
