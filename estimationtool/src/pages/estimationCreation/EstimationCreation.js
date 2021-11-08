@@ -14,9 +14,10 @@ import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
+import "./EstimationCreation.css";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
@@ -34,6 +35,11 @@ const EstimationCreation = (props) => {
   const clientInfo = { ...location1.state.clientInfo };
   const projecttInfo = { ...location1.state.projectInfo };
   const [estimationHeaderId, setEstimationHeaderId] = React.useState();
+  const [estimationIdFinish, setEstimationIdFinish] = React.useState();
+
+  const getHeaderIdChild = (p) => {
+    setEstimationIdFinish(p);
+  };
 
   const childRef = useRef();
 
@@ -47,7 +53,6 @@ const EstimationCreation = (props) => {
 
   useEffect(() => {
     setLocation(location);
-
   }, [clientInfo]);
 
   // save Estimation Basic detail data to post request to generating estimation header APi
@@ -60,7 +65,7 @@ const EstimationCreation = (props) => {
           "Save Basic Details APi response:" + JSON.stringify(dataResponce)
         );
         setEstimationHeaderId(dataResponce._id);
-      localStorage.setItem('estimationHeaderId', dataResponce._id);
+        localStorage.setItem("estimationHeaderId", dataResponce._id);
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
@@ -76,12 +81,12 @@ const EstimationCreation = (props) => {
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
         let dataResponce = res.data.body;
-        
+
         console.log(
           "Update Basic Details APi response:" + JSON.stringify(dataResponce)
         );
         setEstimationHeaderId(dataResponce._id);
-      localStorage.setItem('estimationHeaderId', dataResponce._id);
+        localStorage.setItem("estimationHeaderId", dataResponce._id);
 
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -103,10 +108,9 @@ const EstimationCreation = (props) => {
       handleBasicDetailSaveUpdate();
     } else if (activeStep == 1) {
       handleSaveEffortAttribute();
-     } else if (activeStep == 2) {
+    } else if (activeStep == 2) {
       handleSaveCalcAttribute();
-     }
-     else {
+    } else {
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
@@ -114,62 +118,58 @@ const EstimationCreation = (props) => {
     setSkipped(newSkipped);
   };
 
-const handleSaveCalcAttribute = () => {
-  if (calcAttributeSave.data) {
-    createSaveCalctAttribute(getCalcAttributeRequestPayload()) 
-   }
-}
+  const handleSaveCalcAttribute = () => {
+    if (calcAttributeSave.data) {
+      createSaveCalctAttribute(getCalcAttributeRequestPayload());
+    }
+  };
 
   const handleSaveEffortAttribute = () => {
     if (effortAttributeSave.data) {
-     createSaveEffortAttribute(getEffortAttributeRequestPayload()) 
+      createSaveEffortAttribute(getEffortAttributeRequestPayload());
     }
-  }
-
+  };
 
   // Save calc attribute data
 
   const createSaveCalctAttribute = (reqData) => {
-  
-    estimationServices.saveCalculativeAttribute(reqData)
+    estimationServices
+      .saveCalculativeAttribute(reqData)
       .then((res) => {
         let dataResponce = res.data.body;
-       //TODO:// show response and move next step
+        //TODO:// show response and move next step
       })
       .catch((err) => {
         // console.log("save estimation header detail error : ", err);
         // childRef.current.showError(err);
       });
+  };
+  // save effort Attribute data
+  const createSaveEffortAttribute = (reqData) => {
+    estimationServices
+      .saveEffortAttribute(reqData)
+      .then((res) => {
+        let dataResponce = res.data.body;
+        setEstimationHeaderId(dataResponce._id);
+        //TODO:// show response and move next step
+      })
+      .catch((err) => {
+        // console.log("save estimation header detail error : ", err);
+        // childRef.current.showError(err);
+      });
+  };
+
+  const getEffortAttributeRequestPayload = () => {
+    return {
+      estattlist: effortAttributeSave.data,
     };
-  // save effort Attribute data 
-const createSaveEffortAttribute = (reqData) => {
-  
-  estimationServices.saveEffortAttribute(reqData)
-    .then((res) => {
-      let dataResponce = res.data.body;
-      setEstimationHeaderId(dataResponce._id);
-     //TODO:// show response and move next step
-    })
-    .catch((err) => {
-      // console.log("save estimation header detail error : ", err);
-      // childRef.current.showError(err);
-    });
-};
+  };
 
-
-const getEffortAttributeRequestPayload = () =>{
-  return {
-    estattlist : effortAttributeSave.data
-  }
-}
-
-
-const getCalcAttributeRequestPayload = () =>{
-  return {
-    estattcalclist : calcAttributeSave.data
-  }
-}
-
+  const getCalcAttributeRequestPayload = () => {
+    return {
+      estattcalclist: calcAttributeSave.data,
+    };
+  };
 
   const handleBasicDetailSaveUpdate = () => {
     if (
@@ -338,6 +338,7 @@ const getCalcAttributeRequestPayload = () =>{
               )}
               {activeStep == 2 && (
                 <ThirdStep
+                  getHeaderId={getHeaderIdChild}
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
                 />
@@ -360,7 +361,25 @@ const getCalcAttributeRequestPayload = () =>{
                 )}
 
                 <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                  {activeStep === steps.length - 1 ? (
+                    <Link
+                      className="finish-link"
+                      to={{
+                        pathname:
+                          "/All-Clients/" +
+                          clientInfo.clientName +
+                          "/" +
+                          projecttInfo.projectName +
+                          "/Estimation-Detail",
+                        state: { estId: estimationIdFinish },
+                      }}
+                    >
+                      {" "}
+                      Finish
+                    </Link>
+                  ) : (
+                    "Next"
+                  )}
                 </Button>
               </Box>
             </React.Fragment>
