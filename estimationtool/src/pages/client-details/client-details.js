@@ -21,6 +21,12 @@ import ProjectServ from "../project/project.service";
 export default function ClientDetails(props) {
   const location = useLocation();
   const history = useHistory();
+  const [clientStatus, setClientStatus] = useState([
+    { title: "All", value: true },
+    { title: "Active", value: false },
+    { title: "In-Active", value: true },
+
+  ]);
 
   const params = useParams(),
     { clientName } = params;
@@ -92,7 +98,9 @@ export default function ClientDetails(props) {
 
   return (
     <div className="client-deatils-wrp">
+
       <Box p={5}>
+
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
             {/* <Grid item xs={5} sm={1}>
@@ -101,6 +109,17 @@ export default function ClientDetails(props) {
               </p>
             </Grid> */}
             <Grid item xs={5} sm={5}>
+              <Box mb={3}>
+                <Grid container justify="space-between" alignItems="center">
+                  <Dropdown
+                    defaultValue={{ title: "Active", value: "active" }}
+                    title="client status"
+                    list={clientStatus}
+                    getVal={getDropDownvalue}
+                  />
+
+                </Grid>
+              </Box>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
                   <InputLabel id="client-simple-select">
