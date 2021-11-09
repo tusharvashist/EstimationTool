@@ -102,8 +102,8 @@ module.exports.login = async (req) => {
       .unwind("roles")
       .lookup({
         from: "permissions",
-        localField: "roleId._id",
-        foreignField: "roleId",
+        localField: "roles._id",
+        foreignField: "typeId",
         as: "tokenPermission",
       })
       .unwind("tokenPermission")

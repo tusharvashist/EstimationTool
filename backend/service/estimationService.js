@@ -10,6 +10,7 @@ const EstimationHeaderAtrribute = require("../database/models/estimationHeaderAt
 const EstimationHeaderAtrributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
 const EstimationHeaderAtrributeSchema = require("../database/models/estimationHeaderAtrributeModel")
 const EstHeaderRequirement = require("../database/models/estHeaderRequirement")
+const { estimationHeaderAtrributeMessage } = require("../constant")
 
 
 // module.exports.createEstimation = async(serviceData)=>{
@@ -82,7 +83,7 @@ module.exports.estimationDelete = async ({ id }) => {
 
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
-    let estimations = await EstimationHeader.find({isDeleted : false}).
+    let estimations = await EstimationHeader.find({ isDeleted: false }).
       populate({
         path: 'projectId',
         populate: { path: 'client' }
@@ -135,7 +136,7 @@ module.exports.getById = async ({ id }) => {
 module.exports.createEstimationHeader = async (serviceData) => {
   try {
     let estimation = new EstimationHeader({ ...serviceData })
-
+    estimation.estStep = "1";
     let result = await estimation.save();
 
     const projectModel = await ProjectModel.findById({ _id: estimation.projectId })
@@ -172,6 +173,11 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
     //Remove All Attributes from Estimation Header
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({ serviceData })
     if (serviceData) {
+      let estimation = await EstimationHeader.findById(serviceData[0].estHeaderId);
+      if (estimation) {
+        estimation.estStep="2";
+        estimation.save();
+      }
       let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
       let result = await EstimationHeaderAtrribute.insertMany(serviceData, forceServerObjectId = true);
 
@@ -265,7 +271,11 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     // return formatMongoData(result)
     console.log(serviceData)
     if (serviceData) {
-
+      let estimation = await EstimationHeader.findById(serviceData[0].estHeaderId);
+      if (estimation) {
+        estimation.estStep="3";
+        estimation.save();
+      }
       let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
       let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
       return formatMongoData(result)
