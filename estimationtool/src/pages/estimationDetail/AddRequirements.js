@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect,useRef ,useImperativeHandle} from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -8,19 +8,98 @@ import {
   MenuItem,
   Select,
 } from "@material-ui/core";
+import EstimationService from "./estimation.service";
 
 const AddRequirements = (props) => {
-  const [showError, setShowError] = useState(false);
+  const [showError] = useState(false);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [selectedRequirementTag, setSelectedRequirementTag] = useState({});
+  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
+  const [selectedRequirementType, setSelectedRequirementType] = useState({});
+  const [isRequirementTag, setIsRequirementTag] = useState(false);
+  const [requirementTitle, setrequirementTitle] = useState();
+  const [requirementDescription, setrequirementDescription] = useState();
+  const [editData, setEditData] = useState({});
+    const[formData, setFormData] = React.useState({
+        title:"",
+        description: "",
+        tag:"",
+        type : "",
+        mitigation: "",
+        project: "",
+        estHeader:"",
+        isDeleted: false 
+    });
+  
+  const onSubmitForm = (e) => {
 
-  const onSubmitForm = (e) => {};
 
-  const handelRequirement = () => {};
+    EstimationService.createRequirement(formData).then((res) => {
+      props.saveFun();
+      })
+     .catch((err) => {
+        console.log("get Client by id error", err);
+      });
+  };
+  const setFormdata  = () => {
+      setFormData({
+        title: requirementTitle,
+        description: requirementDescription,
+        tag: selectedRequirementTag._id,
+        type: selectedRequirementType._id,
+        mitigation: "mitigation",
+        project: props.project,
+        estHeader:props.estHeader,
+        isDeleted: false 
+    });
+}
+  const handelRequirement = (event) => {
+    setrequirementTitle(event.target.value);
+    setFormdata();
+  };
 
-  const handelDescription = () => {};
+  const handelDescription = (event) => {
+    setrequirementDescription(event.target.value);
+    setFormdata();
+  };
+   const handleRequirementTagChange = (event) => {
+  
+     setSelectedRequirementTag(event.target.value);
+     setFormdata();
+  };
+  const handleRequirementTypeChange = (event) => {
+    setSelectedRequirementType(event.target.value);
+    setFormdata();
+  };
 
-  const handleRequirementGroupChange = () => {};
+  
+  const newLocal = [props.requirementTagArray, props.requirementTypeArray];
+   useEffect(() => {
+    setRequirementTagArray([...props.requirementTagArray]);
+     setRequirementTypeArray([...props.requirementTypeArray]);
+     console.log("props.editData");
+     if (props.editData) {
+     
 
-  const handleRequirementTypeChange = () => {};
+      }
+  }, newLocal);
+  
+  useEffect(() => {
+        console.log("props.editData3",editData);
+    if (props.editData) {
+      console.log("props.editData4");
+        setEditData(...props.editData);
+     
+       return () => {
+             console.log("props.editData2",editData.Requirement);
+             setrequirementTitle(editData.Requirement);
+            // setrequirementDescription(props.editData[1]);
+           // setSelectedRequirementTag({_id:});
+        };
+    }
+  }, props.editData);
+  
+   console.log("Edit data:", editData,requirementTitle);
 
   return (
     <CustomizedDialogs
@@ -35,47 +114,49 @@ const AddRequirements = (props) => {
       <Grid container spacing={2}>
         <Grid item md={6}>
           <FormControl fullWidth>
-            <InputLabel id="requirement-group">Requirement Group</InputLabel>
+            <InputLabel id="requirement-group">Tag</InputLabel>
             <Select
-              labelId="requirement-group"
-              id="requirement-group"
-              value="10"
-              label="Requirement Group"
-              onChange={handleRequirementGroupChange}
-              required
+               labelId="requirement-tag"
+              id="requirement-tag"
+              value= {selectedRequirementTag.name}
+              onChange={(e) => { handleRequirementTagChange(e) }}
+              error={isRequirementTag}
             >
-              <MenuItem value={10}>Requirement Gathering</MenuItem>
-              <MenuItem value={20}>Development</MenuItem>
-              <MenuItem value={30}>UAT</MenuItem>
+               {requirementTagArray.map((item) => (
+                 <MenuItem name={item._id}  value={item}  >
+                        {item.name} 
+                     </MenuItem>  
+                  ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item md={6}>
           <FormControl fullWidth>
-            <InputLabel id="requirement-type">Requirement Type</InputLabel>
+            <InputLabel id="requirement-type">Type</InputLabel>
             <Select
               labelId="requirement-type"
               id="requirement-type"
-              value="10"
-              label="Requirement Type"
-              onChange={handleRequirementTypeChange}
-              required
+              value={ selectedRequirementType.name}
+              onChange={(e) => { handleRequirementTypeChange(e) }}
             >
-              <MenuItem value={10}>Epic</MenuItem>
-              <MenuItem value={20}>Feature</MenuItem>
-              <MenuItem value={30}>Story</MenuItem>
+              {requirementTypeArray.map((item) => (
+                       <MenuItem key={item._id}  value={item}>
+                        {item.name} 
+                     </MenuItem>  
+                  ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item md={12}>
           <TextField
             required
-            error={showError}
-            autoFocus
+            error={showError && !requirementTitle}
+            
             id="standard-basic"
             label="Requirement"
             className="full-width"
-            onChange={handelRequirement}
+            value={requirementTitle}
+            onChange={(e) => { handelRequirement(e) }}
             variant="outlined"
           />
         </Grid>
@@ -86,7 +167,8 @@ const AddRequirements = (props) => {
             id="standard-basic"
             label="Description"
             className="full-width"
-            onChange={handelDescription}
+            value={requirementDescription}
+            onChange={(e) => { handelDescription(e) }}
             variant="outlined"
           />
         </Grid>

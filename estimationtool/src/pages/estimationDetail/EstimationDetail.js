@@ -14,18 +14,16 @@ import { display } from "@material-ui/system";
 
 const EstimationDetail = () => {
   const location = useLocation();
-  //console.log(location);
-
   const params = useParams();
   const estimationId = location.state.estId;
-  //console.log(location.state.estId);
-
   const [clientDetails, setClientDetails] = useState({
+     _id:"",
     clientName: "",
     description: "",
     website: "",
   });
   const [projectDetails, setProjectDetails] = useState({
+    _id:"",
     projectName: "",
     projectDescription: "",
     businessDomain: "",
@@ -37,72 +35,39 @@ const EstimationDetail = () => {
     totalCost: 0,
     estTypeId: {},
   });
-
+  const [requirementDataArray, setRequirementDataArray] = useState([]);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
+  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
     [
-      {
-        title: "Requirement",
-        field: "Requirement",
-        editable: false,
-      },
-      { title: "Description", field: "Description", editable: false },
-      {
-        title: "UI(Days)",
-        field: "UI",
-        type: "numeric",
-      },
-      {
-        title: "Frontend(Days)",
-        field: "Frontend",
-        type: "numeric",
-      },
-      {
-        title: "Backend(Days)",
-        field: "Backend",
-        type: "numeric",
-      },
+      {title: "Requirement", field: "Requirement",  editable: false, },
+      {title: "Description", field: "Description", editable: false },
+      {title: "UI(Days)",field: "UI", type: "numeric",},
+      {title: "Frontend(Days)", field: "Frontend", type: "numeric",},
+      {title: "Backend(Days)", field: "Backend", type: "numeric",},
     ],
   ]);
+
   const [summaryDataArray, setSummaryDataArray] = useState([
-    {
-      Requirement: "Clients",
-      Description: "POC",
-      UI: 12,
-      Frontend: 63,
-      Backend: 63,
-    },
+    { Requirement: "Clients",Description: "POC", UI: 12, Frontend: 63, Backend: 63,},
   ]);
 
-  const [requirmentHeaderArray, setRequirmentArray] = useState([
-    {
-      title: "Requirement",
-      field: "Requirement",
-      editable: false,
-    },
-    {
-      title: "Description",
-      field: "Description",
-      editable: false,
-    },
-    {
-      title: "UI(Days)",
-      field: "UI",
-      id: 1,
-      type: "numeric",
-    },
-  ]);
-  const [requirmentDataArray, setRequirementDataArray] = useState([]);
-
-  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
-    useState(false);
-  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+  const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
+ 
 
   useEffect(() => {
-    console.log("estimationId", estimationId);
     getById();
   }, [estimationId]);
 
-  const openEditConfigConfig = () => {
+  const openEditRequirement = (event, rowData) => {
+   
+    const updatedRows = [...requirementDataArray];
+   //  var rows = Object.values(updatedRows[rowData.tableData.id])
+    console.log("rowData: ", updatedRows);
+    setEditData( updatedRows);
     openFun();
   };
 
@@ -112,7 +77,10 @@ const EstimationDetail = () => {
   const closeFun = () => {
     setOpenEditConfigurationBox(false);
   };
-  const saveEditConfigFun = () => {};
+  const saveEditConfigFun = () => {
+    closeAddFun();
+    getById();  
+  };
 
   const openAddRequirement = () => {
     openAddFun();
@@ -121,57 +89,129 @@ const EstimationDetail = () => {
   const openAddFun = () => {
     setOpenAddRequirementsBox(true);
   };
+
   const closeAddFun = () => {
     setOpenAddRequirementsBox(false);
   };
-  const saveAddRequirementsgFun = () => {};
-
+  
+  const saveAddRequirementsFun = () => {
+        closeAddFun();
+        getById(); 
+  };
+ 
   const getById = () => {
     EstimationService.getById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
-        //console.log("dataResponse: ", dataResponse);
-
         setHeaderData({ ...dataResponse.basicDetails });
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
-        var arrayRequirent = [];
-        dataResponse.featureList.forEach((item, i) => {
-          var requirment = {
-            Requirement: item.requirement.requirement,
-            Description: item.requirement.description,
-            _id: item.requirement._id,
-          };
+        setRequirementTagArray([ ...dataResponse.requirementTag ]);
+        setRequirementTypeArray([...dataResponse.requirementType]);
+        var estHeaderAttribute = [
+          { title: "Requirement", field: "Requirement", id: 1, editable: false, },
+          { title: "Tag", field: "Tag", editable: false, id: 2, },
+          { title: "Description", field: "Description", editable: false, id: 3, },
+        ];
 
-          arrayRequirent.push(requirment);
+        dataResponse.estHeaderAttribute.forEach((item, i) => {
+          estHeaderAttribute.push(item);
         });
 
-        var requirment = {
-          Requirement: "Total",
-          Description: "",
-          _id: -1,
-        };
+        setRequirementHeaderArray(estHeaderAttribute);
+        
+        var arrayRequirement = [];
+        dataResponse.featureList.forEach((item, i) => {
+          console.log("item:", item);
+          if (item.isDeleted === false) {
+            var requirement = {
+              Requirement: item.requirement.title,
+              Description: item.requirement.description,
+              Tag: item.requirement.tag.name,
+              Tagid: item.requirement.tag._id,
+              Type: item.requirement.type,
+              _id: item._id,
+              
+            };
+            item.estRequirementData.forEach((item, i) => {
+              requirement[item.ESTAttributeID.attributeCode] = item.ESTData;
+            });
+         
+            arrayRequirement.push(requirement);
+          }
+        });
+        setRequirementDataArray(arrayRequirement);
 
-        arrayRequirent.push(requirment);
-        console.log("arrayRequirent", arrayRequirent);
-        setRequirementDataArray(arrayRequirent);
       })
       .catch((err) => {
-        console.log("get Client by id error", err);
+        console.log("get EstimationService by id error", err);
       });
   };
-  console.log(headerData);
+  console.log("requirementDataArray: ", requirementDataArray);
 
+  const updateAttributeValue = async (changes) => {
+    var rows = Object.values(changes);
+    const updatedRows = [...requirementDataArray];
+    let index;
+    var updateEstRequirementData = []
+     var requirementHeaderRow = Object.values(requirementHeaderArray);
+    console.log("requirementHeaderRow:",requirementHeaderRow);
+    rows.map(row => {
+      index = row.oldData.tableData.id;
+      updatedRows[index] = row.newData;
+      console.log(row.newData);
+      for (let i = 3; i < requirementHeaderRow.length; i++) {
+       
+      var requirementData = {
+        ESTAttributeID: requirementHeaderRow[i].id,
+        ESTHeaderRequirementID: row.newData._id,
+        ESTData: row.newData[requirementHeaderRow[i].field],
+        ESTHeaderID:headerData._id
+        };
+        updateEstRequirementData.push(requirementData);
+      }
+    });
+
+    console.log("updateEstRequirementData: ",updateEstRequirementData);
+    setRequirementDataArray(updatedRows);
+    EstimationService.updateEstRequirementData(updateEstRequirementData).then((res) => {
+       console.log("deleteRequirement");
+         getById(); 
+      })
+      .catch((err) => {
+        console.log("get deleteRequirement by id error", err);
+         getById(); 
+      });
+
+  };
+
+  const deleteRow = async (changes,resolve) => {
+    console.log(changes);
+    resolve();
+    EstimationService.deleteRequirement(changes._id).then((res) => {
+       console.log("deleteRequirement");
+         getById(); 
+      })
+      .catch((err) => {
+        console.log("get deleteRequirement by id error", err);
+         getById(); 
+      });
+  };
   return (
     <React.Fragment>
       {openEditConfigurationBox ? (
-        <EditConfiguration
+        <AddRequirements
           isOpen={openEditConfigurationBox}
-          openF={openFun}
+          openF={openAddFun}
           closeF={closeFun}
-          title="Add Cal Attribute"
-          oktitle="Save"
-          saveFun={saveEditConfigFun}
+          title="Edit Requirement"
+          oktitle="Update"
+          saveFun={saveAddRequirementsFun}
+          requirementTagArray={requirementTagArray}
+          requirementTypeArray={requirementTypeArray}
+          project={projectDetails._id}
+          estHeader={headerData._id}
+          editData= {editData}
           cancelTitle="Cancel"
         />
       ) : null}
@@ -180,9 +220,13 @@ const EstimationDetail = () => {
           isOpen={openAddRequirementsBox}
           openF={openAddFun}
           closeF={closeAddFun}
-          title="Add Cal Attribute"
+          title="Add Requirement"
           oktitle="Save"
-          saveFun={saveAddRequirementsgFun}
+          saveFun={saveAddRequirementsFun}
+          requirementTagArray={ requirementTagArray}
+          requirementTypeArray={requirementTypeArray}
+          project={projectDetails._id}
+          estHeader={headerData._id}
           cancelTitle="Cancel"
         />
       ) : null}
@@ -191,7 +235,7 @@ const EstimationDetail = () => {
           <Button
             variant="outlined"
             className="estimation-detail-button"
-            onClick={openEditConfigConfig}
+            onClick={openEditRequirement}
           >
             {" "}
             <EditOutlined /> Edit Configuration
@@ -298,20 +342,25 @@ const EstimationDetail = () => {
         <MaterialTable
           style={{ boxShadow: "none" }}
           title="Estimation Efforts"
-          columns={requirmentHeaderArray}
-          data={requirmentDataArray}
+          columns={requirementHeaderArray}
+          data={requirementDataArray}
+          onRowClick={(event, rowData, togglePanel) => openEditRequirement(event, rowData)}
           editable={{
             onBulkUpdate: (changes) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
+              updateAttributeValue(changes);  
+              setTimeout(() => {
                   resolve();
                 }, 1000);
-              }),
+              })
+            
+            ,
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-                }, 1000);
+                deleteRow(oldData, resolve);
+                // setTimeout(() => {
+                //   resolve();
+                // }, 1000);
               }),
           }}
           options={{

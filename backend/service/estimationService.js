@@ -11,6 +11,9 @@ const EstimationHeaderAtrributeCalc = require("../database/models/estimationHead
 const EstimationHeaderAtrributeSchema = require("../database/models/estimationHeaderAtrributeModel")
 const EstHeaderRequirement = require("../database/models/estHeaderRequirement")
 const { estimationHeaderAtrributeMessage } = require("../constant")
+const RequirementType = require("../database/models/requirementType")
+const RequirementTag = require("../database/models/requirementTag")
+const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel")
 
 
 // module.exports.createEstimation = async(serviceData)=>{
@@ -91,41 +94,6 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
         path: 'estTypeId'
       }).skip(parseInt(skip)).limit(parseInt(limit));
     return formatMongoData(estimations)
-  } catch (err) {
-    console.log("something went wrong: service > createEstimation Header", err);
-    throw new Error(err)
-  }
-}
-
-
-module.exports.getById = async ({ id }) => {
-  try {
-    if (!mongoose.Types.ObjectId(id)) {
-      throw new Error(constant.estimationMessage.INVALID_ID)
-    }
-
-    let estimations = await EstimationHeader.findById({ _id: id }).
-      populate({
-        path: 'projectId',
-        populate: { path: 'client' }
-      }).populate({
-        path: 'estTypeId'
-      });
-
-
-
-    let responce = { ...constant.requirmentResponce };
-    responce.basicDetails = estimations;
-
-    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { _id: 0, requirement: 1 }).populate({
-      path: 'requirement'
-    })
-    if (estHeaderRequirement.length != 0) {
-      responce.featureList = estHeaderRequirement
-    }
-
-
-    return formatMongoData(responce)
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
     throw new Error(err)

@@ -5,9 +5,18 @@ module.exports = {
         body: {}
     },
 
-    requirmentResponce: {
+    requirementResponse: {
         basicDetails: {},
         featureList: [],
+        requirementTag:[],
+        requirementType: [],
+        estHeaderAttribute: [],
+        estHeaderCalculatedAttribute: [],
+    },
+      estimationAttribute: {
+        _id: '',
+        attributeCode: '',
+        description:'',
     },
        
     userMessage: {
