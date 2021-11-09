@@ -82,7 +82,7 @@ module.exports.estimationDelete = async ({ id }) => {
 
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
-    let estimations = await EstimationHeader.find({}).
+    let estimations = await EstimationHeader.find({isDeleted : false}).
       populate({
         path: 'projectId',
         populate: { path: 'client' }
