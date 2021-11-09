@@ -17,7 +17,7 @@ import "./step.css";
 import masterServices from "../masterservices/master.service"
 
 import { useSelector, useDispatch } from 'react-redux'
-import { setEstimationName,setEstimationType, setEstimationTypeId,setEfforUnit,setEsttimationDesc} from '../../Redux/basicDetailRedux'
+import { setEstimationName,setEstimationType, setEstimationTypeId,setEfforUnit,setEsttimationDesc, setEstimationHeaderId} from '../../Redux/basicDetailRedux'
 
 
 const FirstStep = forwardRef((props, ref) =>  {

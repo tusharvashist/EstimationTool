@@ -50,7 +50,7 @@ module.exports.signup = async ({
 //   }
 // }
 
-module.exports.login = async (req) => {
+module.exports.login1 = async (req) => {
   try {
     const headresEmailAndPass = req.headers.authorization
       .split("Basic ")[1]
@@ -81,7 +81,7 @@ module.exports.login = async (req) => {
 };
 
 //Do Not Delete this Code
-module.exports.login1 = async (req) => {
+module.exports.login = async (req) => {
   try {
     const headresEmailAndPass = req.headers.authorization
       .split("Basic ")[1]
@@ -91,30 +91,65 @@ module.exports.login1 = async (req) => {
       .split(":");
     const email = emailNpass[0].trim();
     const pass = emailNpass[1].trim();
-    const users = await userModel
-      .aggregate([
-        {
-          $match: { email: email },
-        },
-        {
-          $lookup: {
-            from: "rolemasters",
-            localField: "roleId",
-            foreignField: "_id",
-            as: "roles",
-          },
-        },
-        { $unwind: "$roles" },
-        {
-          $lookup: {
-            from: "permissions",
-            localField: "roleId._id",
-            foreignField: "roleId",
-            as: "tokenPermission",
-          },
-        },
-      ])
+    const users = await userModel.aggregate()
+      .match({ email: email })
+      .lookup({
+        from: "rolemasters",
+        localField: "roleId",
+        foreignField: "_id",
+        as: "roles",
+      })
+      .unwind("roles")
+      .lookup({
+        from: "permissions",
+        localField: "roleId._id",
+        foreignField: "roleId",
+        as: "tokenPermission",
+      })
+      .unwind("tokenPermission")
+      .lookup({
+        from: "moduletokens",
+        localField: "moduletokens._id",
+        foreignField: "tokenPermission.tokenID",
+        as: "RolePermission"
+      })
       .addFields({ token: "" });
+
+
+    // const users = await userModel
+    //   .aggregate([
+    //     {
+    //       $match: { email: email },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "rolemasters",
+    //         localField: "roleId",
+    //         foreignField: "_id",
+    //         as: "roles",
+    //       },
+    //     },
+    //     { $unwind: "$roles" },
+    //     {
+    //       $lookup: {
+    //         from: "permissions",
+    //         localField: "roleId._id",
+    //         foreignField: "roleId",
+    //         as: "tokenPermission",
+    //       },
+    //     },
+    //     { $unwind: "$tokenPermission" },
+    //     {
+    //       $lookup: {
+    //         from: "moduletokens",
+    //         localField: "moduletokens._id",
+    //         foreignField: "tokenPermission.tokenID",
+    //         as: "RolePermission",
+    //       },
+    //     },
+    //     //{$unwind : "$tokenPermission"}
+    //   ])
+    //   .addFields({ token: "" });
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);

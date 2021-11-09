@@ -26,7 +26,8 @@ module.exports.UpdateEstimationHeaderSchema = Joi.object({
     estColumns: Joi.string(),
     isDeleted: Joi.boolean(),
     createdBy: Joi.string(),
-    updatedBy: Joi.string()
+    updatedBy: Joi.string(),
+    estStep : Joi.string()
 })
 
 
@@ -46,5 +47,6 @@ module.exports.createEstimationHeaderSchema = Joi.object({
     estColumns: Joi.string(),
     isDeleted: Joi.boolean(),
     createdBy: Joi.string(),
-    updatedBy: Joi.string()
+    updatedBy: Joi.string(),
+    estStep : Joi.string()
 })

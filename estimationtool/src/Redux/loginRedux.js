@@ -7,6 +7,7 @@ export const loginSlice = createSlice({
       firstName: localStorage.firstName,
       lastName: localStorage.lastName,
       fullName:localStorage.fullName,
+      role: localStorage.role
   },
   reducers: {
     setEmail: (state, email) => {
@@ -25,10 +26,14 @@ export const loginSlice = createSlice({
        state.fullName = fullName.payload;
         localStorage.setItem('fullName', fullName.payload);
     },
+    setRole: (state, role) => {
+      state.role = role.payload;
+       localStorage.setItem('role', role.payload);
+   }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setEmail,setFirstName, setLastName,setFullName} = loginSlice.actions
+export const { setEmail,setFirstName, setLastName,setFullName,setRole} = loginSlice.actions
 
 export default loginSlice.reducer

@@ -23,7 +23,7 @@ module.exports.login = async (req,res)=>{
        const responceFromUserService = await signupSer.login(req);
         responce.status = 200;
         responce.message = constant.userMessage.LOGIN_SUCCESS;
-        responce.body = responceFromUserService;
+        responce.body = responceFromUserService.user;
     }catch(err){
         responce.message = err.message;
     }

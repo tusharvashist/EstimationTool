@@ -1,7 +1,15 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ClientSer from "./client.service";
-import { Box, Grid } from "@material-ui/core";
+import {
+  Box,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import CreateClientDailog from "./create-client.dailog";
@@ -12,10 +20,12 @@ import "./all-client.css";
 
 import Link from "@material-ui/core/Link";
 import { withRouter } from "react-router";
+import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
+import { grid } from "@material-ui/system";
 
 function AllClient(props) {
   const { history } = props;
-  console.log(props);
+  // console.log(props);
 
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -38,7 +48,7 @@ function AllClient(props) {
     ClientSer.getAllClient()
       .then((res) => {
         let dataResponce = res.data.body;
-        console.log(dataResponce);
+        // console.log(dataResponce);
         setTableData([...dataResponce]);
         setFilteredData(dataResponce.filter((op) => op.isDeleted === false));
       })
@@ -82,10 +92,14 @@ function AllClient(props) {
   const closeFun = () => {
     setIsOpenDailog(false);
   };
-  const getDropDownvalue = ({ value } = {}) => {
-    let dataResponce = tableData.filter((op) => op.isDeleted === value);
+  const getDropDownvalue = (event) => {
+    console.log("get dropdown value", event.target.value);
+    let dataResponce = tableData.filter(
+      (op) => op.isDeleted === event.target.value
+    );
     setFilteredData([...dataResponce]);
   };
+  console.log("table data", tableData);
 
   const openCreateDailog = () => {
     openFun();
@@ -148,99 +162,132 @@ function AllClient(props) {
   };
 
   return (
-    <div className="all-client-wrap">
-      {createClinetDailog === true && isOpenDailog === true ? (
-        <CreateClientDailog
-          isOpen={isOpenDailog}
-          openF={openFun}
-          closeF={closeFun}
-          title="Create client"
-          oktitle="Save"
-          saveFun={saveCreateClientFun}
-          cancelTitle="Cancel"
-        />
-      ) : null}
-
-      {editClinetDailog === true && isOpenDailog === true ? (
-        <UpdateClientdailog
-          isOpen={isOpenDailog}
-          openF={openFun}
-          closeF={closeFun}
-          editRowObj={editRow}
-          title="Edit Estimation"
-          oktitle="Save"
-          saveFun={saveUpdateClientFun}
-          cancelTitle="Cancel"
-        />
-      ) : null}
-
-      {deleteClinetDailog === true && isOpenDailog === true ? (
-        <DeleteClientdailog
-          isOpen={isOpenDailog}
-          openF={openFun}
-          closeF={closeFun}
-          editRowObj={editRow}
-          title="Delete Client"
-          oktitle="Ok"
-          saveFun={confirmDeleteClientFun}
-          cancelTitle="Cancel"
-        />
-      ) : null}
-      <Box mb={3}>
-        <Grid container justify="space-between" alignItems="center">
-          <Dropdown
-            defaultValue={{ title: "Active", value: "active" }}
-            title="client status"
-            list={clientStatus}
-            getVal={getDropDownvalue}
+    <>
+      <div className="all-client-wrap">
+        {createClinetDailog === true && isOpenDailog === true ? (
+          <CreateClientDailog
+            isOpen={isOpenDailog}
+            openF={openFun}
+            closeF={closeFun}
+            title="Create client"
+            oktitle="Save"
+            saveFun={saveCreateClientFun}
+            cancelTitle="Cancel"
           />
-          <Button variant="outlined" onClick={openCreateDailog}>
-            {" "}
-            <AddIcon />
-            create client
-          </Button>
-        </Grid>
-      </Box>
-      <MaterialTable
-        columns={columns}
-        actions={[
-          {
-            icon: "edit",
-            tooltip: "edit client",
-            onClick: (event, rowData) => {
-              setEditRow({ ...rowData });
-              setActionId(rowData.id);
-              openUpdateDailog();
-            },
-          },
-          {
-            icon: "delete",
-            tooltip: "delete client",
-            onClick: (event, rowData) => {
-              setEditRow({ ...rowData });
-              setActionId(rowData.id);
-              openDeleteDailog();
-            },
-          },
-        ]}
-        options={{
-          actionsColumnIndex: -1,
-          sorting: true,
-          search: false,
-          filtering: false,
-          pageSize: 5,
-          paging: false,
-          headerStyle: {
-            backgroundColor: "#e5ebf7",
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-            color: "#113c91",
-          },
-        }}
-        data={filteredData}
-        title={`Client${tableData.length > 1 ? "s" : ""}`}
-      />
-    </div>
+        ) : null}
+
+        {editClinetDailog === true && isOpenDailog === true ? (
+          <UpdateClientdailog
+            isOpen={isOpenDailog}
+            openF={openFun}
+            closeF={closeFun}
+            editRowObj={editRow}
+            title="Edit Estimation"
+            oktitle="Save"
+            saveFun={saveUpdateClientFun}
+            cancelTitle="Cancel"
+          />
+        ) : null}
+
+        {deleteClinetDailog === true && isOpenDailog === true ? (
+          <DeleteClientdailog
+            isOpen={isOpenDailog}
+            openF={openFun}
+            closeF={closeFun}
+            editRowObj={editRow}
+            title="Delete Client"
+            oktitle="Ok"
+            saveFun={confirmDeleteClientFun}
+            cancelTitle="Cancel"
+          />
+        ) : null}
+        <Box>
+          <Grid container justify="space-between" alignItems="center">
+            <Grid item xs={5} sm={5}>
+              <Box sx={{ maxWidth: 200 }}>
+                <FormControl width="300px">
+                  <InputLabel id="client-simple-select">
+                    Client Status{" "}
+                  </InputLabel>
+
+                  <Select
+                    labelId="client-simple-select"
+                    id="client-simple-select"
+                    value={clientStatus.title}
+                    label={clientStatus.title}
+                    defaultValue={false}
+                    onChange={getDropDownvalue}
+                  >
+                    {clientStatus.map((item) => (
+                      <MenuItem key={item.title} value={item.value}>
+                        {item.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+            {/* <Dropdown
+              defaultValue={{ title: "Active", value: "active" }}
+              title="client status"
+              list={clientStatus}
+              getVal={getDropDownvalue}
+            /> */}
+            <Button variant="outlined" onClick={openCreateDailog}>
+              {" "}
+              <AddIcon />
+              create client
+            </Button>
+          </Grid>
+        </Box>
+      </div>
+      <Grid container>
+        <BorderedContainer className="full-width">
+          <MaterialTable
+            columns={columns}
+            components={{
+              Container: (props) => <Paper {...props} elevation={0} />,
+            }}
+            actions={[
+              {
+                icon: "edit",
+                tooltip: "edit client",
+                onClick: (event, rowData) => {
+                  setEditRow({ ...rowData });
+                  setActionId(rowData.id);
+                  openUpdateDailog();
+                },
+              },
+              {
+                icon: "delete",
+                tooltip: "delete client",
+                onClick: (event, rowData) => {
+                  setEditRow({ ...rowData });
+                  setActionId(rowData.id);
+                  openDeleteDailog();
+                },
+              },
+            ]}
+            options={{
+              actionsColumnIndex: -1,
+              sorting: true,
+              search: false,
+              filtering: false,
+              pageSize: 5,
+              paging: false,
+              headerStyle: {
+                backgroundColor: "#e5ebf7",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                color: "#113c91",
+              },
+            }}
+            data={filteredData}
+            title={`Client${tableData.length > 1 ? "s" : ""}`}
+          />
+        </BorderedContainer>
+      </Grid>
+    </>
   );
 }
 export default withRouter(AllClient);

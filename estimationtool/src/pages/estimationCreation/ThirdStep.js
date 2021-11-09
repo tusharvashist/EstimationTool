@@ -19,9 +19,19 @@ import AddCalAttributeDialog from "./AddCalAttributeDialog";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import { setEstimationTypeId } from "../../Redux/basicDetailRedux";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+
+import { useSelector, useDispatch } from "react-redux";
+import { setCalcAttributeData } from "../../Redux/CalcAttributeRedux";
+
 const ThirdStep = (props) => {
+  const saveCalcAttribute = useSelector((state) => state.calcAttribute);
+
+  const dispatch = useDispatch();
+
   useEffect(() => {
     getCalcAttribute();
+    passHeaderId();
   }, []);
 
   const getCalcAttribute = () => {
@@ -53,6 +63,7 @@ const ThirdStep = (props) => {
 
   const [attributes, setAttributes] = useState([]);
 
+  const [isOpen, setOpen] = React.useState({});
   const [calAttriValues, setcalAttriValues] = useState(null);
 
   const openAddCalAttribute = () => {
@@ -75,15 +86,20 @@ const ThirdStep = (props) => {
     newObject.estTypeId = props.estimationTypeId;
     SecondStepServ.createCalAttribute(newObject).then((res) => {
       console.log("Calculative Attribute Created", res);
+      setOpen({ open: true, severity: "success", message: res.data.message });
       getCalcAttribute();
       closeFun();
     });
   };
 
+  const handleClose = () => {
+    setOpen({});
+  };
+
   const onChangeField =
     ({ data }) =>
     ({ target }) => {
-      console.log("data, target", data, target);
+      // console.log("data, target", data, target, attributes)
 
       setAttributes(
         attributes.map((obj) => {
@@ -96,6 +112,71 @@ const ThirdStep = (props) => {
         })
       );
     };
+  const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
+    setAttributes(
+      attributes.map((obj) => {
+        if (obj._id === checkConfig._id) {
+          const newobj = { ...obj, isFormula: checked };
+          return newobj;
+        } else {
+          return obj;
+        }
+      })
+    );
+    const newObj = attributes.map(
+      ({
+        calcAttribute,
+        calcAttributeName,
+        isFormula,
+        formula,
+        operator,
+        unit,
+        description,
+      }) => ({
+        estHeaderId: props.estimatioHeaderId,
+        calcAttribute,
+        calcAttributeName,
+        isFormula,
+        formula,
+        operator,
+        unit,
+        description,
+      })
+    );
+
+    dispatch(setCalcAttributeData(newObj));
+  };
+
+  const { message, severity, open } = isOpen || {};
+  console.log("props", props);
+  console.log(
+    "calculative",
+    attributes.map(
+      ({
+        calcAttribute,
+        calcAttributeName,
+        isFormula,
+        formula,
+        operator,
+        unit,
+        description,
+      }) => ({
+        estHeaderId: props.estimatioHeaderId,
+        calcAttribute,
+        calcAttributeName,
+        isFormula,
+        formula,
+        operator,
+        unit,
+        description,
+      })
+    )
+  );
+
+  const passHeaderId = () => {
+    props.getHeaderId(props.estimatioHeaderId);
+  };
+
   return (
     <React.Fragment>
       {openAddCalAttributeBox ? (
@@ -141,13 +222,15 @@ const ThirdStep = (props) => {
                       onChange={(data) => {
                         setcalAttriValues(data);
                       }}
+                      onChangeField={updateCheckboxes}
                       customComponent={({ data }) => {
                         return (
                           <>
                             <TextField
                               name="unit"
                               type={"number"}
-                              max={2}
+                              min={1}
+                              max={99}
                               className="text-box"
                               label="%"
                               variant="outlined"
@@ -173,6 +256,15 @@ const ThirdStep = (props) => {
           </FormGroup>
         </FormControl>
       </BorderedContainer>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </React.Fragment>
   );
 };

@@ -21,6 +21,12 @@ import ProjectServ from "../project/project.service";
 export default function ClientDetails(props) {
   const location = useLocation();
   const history = useHistory();
+  const [clientStatus, setClientStatus] = useState([
+    { title: "All", value: true },
+    { title: "Active", value: false },
+    { title: "In-Active", value: true },
+
+  ]);
 
   const params = useParams(),
     { clientName } = params;
@@ -87,12 +93,18 @@ export default function ClientDetails(props) {
     // history.replace({ pathname: cId });
   };
 
-  console.log("clients", clients);
-  console.log("clientID", clientId);
+  // console.log("clients", clients);
+  // console.log("clientID", clientId);
 
   return (
     <div className="client-deatils-wrp">
-      <Box p={5}>
+
+
+
+
+
+      <Box>
+
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
             {/* <Grid item xs={5} sm={1}>
@@ -101,6 +113,39 @@ export default function ClientDetails(props) {
               </p>
             </Grid> */}
             <Grid item xs={5} sm={5}>
+              {/* <Box mb={3}>
+                <Grid container justify="space-between" alignItems="center">
+                  <Dropdown
+                    defaultValue={{ title: "Active", value: "active" }}
+                    title="client status"
+                    list={clientStatus}
+                    getVal={getDropDownvalue}
+                  />
+
+                </Grid>
+              </Box> */}
+              <Box sx={{ maxWidth: 200 }}>
+                <FormControl width="300px">
+                  <InputLabel id="client-simple-select">
+                    Client Status{" "}
+                  </InputLabel>
+
+                  <Select
+                    labelId="client-simple-select"
+                    id="client-simple-select"
+                    value={clientStatus.title}
+                    label={clientStatus.title}
+                    defaultValue={false}
+                    onChange={getDropDownvalue}
+                  >
+                    {clientStatus.map((item) => (
+                      <MenuItem key={item.title} value={item.value}>
+                        {item.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
                   <InputLabel id="client-simple-select">
@@ -144,7 +189,7 @@ export default function ClientDetails(props) {
           </Grid>
         </Grid>
       </Box>
-      <Box p={3} pt={0}>
+      <Box>
         <ProjectView
           data={clientId}
           clientName={clientUrlName}

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project-details.service";
-import { Box, Grid } from "@material-ui/core";
+import {
+  Box,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
 import ProjectEstimationsGridView from "../project/project-estimations";
 import "./project-details.css";
 import { useParams, useLocation } from "react-router-dom";
@@ -10,21 +17,22 @@ import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 
+const pastProjectId = [];
+
 export default function ClientDetails(props) {
   const location = useLocation();
 
   let projectIdForFun;
-  const [projectId, setProjectId] = useState();
 
   const checkUrl = () => {
     if (location.state == undefined) {
       console.log("comeback");
-      console.log(location);
-      setProjectId(projectIdForFun);
-      console.log(projectIdForFun);
+      // console.log(location);
+      projectIdForFun = pastProjectId[0];
+      // console.log(projectIdForFun);
+      console.log("pastProjectId----", pastProjectId[0]);
     } else {
       projectIdForFun = location.state.projectId;
-      setProjectId(location.state.projectId);
     }
   };
 
@@ -52,6 +60,9 @@ export default function ClientDetails(props) {
 
     return function cleanup() {
       console.log("cleanup");
+      pastProjectId.pop();
+      pastProjectId.push(projectIdForFun);
+      console.log(pastProjectId);
     };
   }, [projectIdForFun]);
 
@@ -88,29 +99,26 @@ export default function ClientDetails(props) {
     console.log("estimationSelectedState :", value);
     switch (value) {
       case "Active":
-        console.log("set Active data ");
+        // console.log("set Active data ");
         return tableDataWithoutFilter.filter((op) => op.isDeleted === false);
       case "In-Active":
-        console.log("set In- Active data ");
+        // console.log("set In- Active data ");
         return tableDataWithoutFilter.filter((op) => op.isDeleted === true);
       default:
-        console.log("set default data ");
+        // console.log("set default data ");
         return tableDataWithoutFilter;
     }
   };
 
-  const getDropDownvalue = (dropDownvalue) => {
-    console.log("this is an download vlaue", dropDownvalue);
-    if (dropDownvalue !== null) {
-      setTableData(filterEstimation(dropDownvalue.title));
-    } else {
-      setTableData(filterEstimation("Active"));
-    }
+  const getDropDownvalue = (event) => {
+    console.log("this is an download vlaue", event.target.value);
+
+    setTableData(filterEstimation(event.target.value));
   };
 
   return (
-    <div className="client-deatils-wrp">
-      <Box p={5}>
+    <div className="project-deatils-wrp">
+      <Box>
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
             <Grid item xs={10} sm={4}>
@@ -165,12 +173,36 @@ export default function ClientDetails(props) {
             </p>
           </Grid>
           <Grid container justify="space-between" alignItems="center">
-            <Dropdown
+            <Grid item xs={5} sm={5}>
+              <Box sx={{ maxWidth: 200 }}>
+                <FormControl width="300px">
+                  <InputLabel id="client-simple-select">
+                    Client Status{" "}
+                  </InputLabel>
+
+                  <Select
+                    labelId="client-simple-select"
+                    id="client-simple-select"
+                    value={clientStatus.title}
+                    label={clientStatus.title}
+                    defaultValue={"All"}
+                    onChange={getDropDownvalue}
+                  >
+                    {clientStatus.map((item) => (
+                      <MenuItem key={item.title} value={item.title}>
+                        {item.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
+            {/* <Dropdown
               defaultValue={{ title: "All", value: "All" }}
               title="Estimation status"
               list={clientStatus}
               getVal={getDropDownvalue}
-            />
+            /> */}
             <Link
               to={{
                 pathname:
@@ -178,7 +210,7 @@ export default function ClientDetails(props) {
                   clientDetails.clientName +
                   "/" +
                   projectDetails.projectName +
-                  "/Estimation-Detail",
+                  "/createEstimate",
                 state: {
                   clientInfo: clientDetails,
                   projectInfo: projectDetails,
