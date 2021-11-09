@@ -25,7 +25,6 @@ export default function ClientDetails(props) {
     { title: "All", value: true },
     { title: "Active", value: false },
     { title: "In-Active", value: true },
-
   ]);
 
   const params = useParams(),
@@ -98,13 +97,7 @@ export default function ClientDetails(props) {
 
   return (
     <div className="client-deatils-wrp">
-
-
-
-
-
       <Box>
-
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
             {/* <Grid item xs={5} sm={1}>
@@ -124,28 +117,7 @@ export default function ClientDetails(props) {
 
                 </Grid>
               </Box> */}
-              <Box sx={{ maxWidth: 200 }}>
-                <FormControl width="300px">
-                  <InputLabel id="client-simple-select">
-                    Client Status{" "}
-                  </InputLabel>
 
-                  <Select
-                    labelId="client-simple-select"
-                    id="client-simple-select"
-                    value={clientStatus.title}
-                    label={clientStatus.title}
-                    defaultValue={false}
-                    onChange={getDropDownvalue}
-                  >
-                    {clientStatus.map((item) => (
-                      <MenuItem key={item.title} value={item.value}>
-                        {item.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
                   <InputLabel id="client-simple-select">

@@ -1,7 +1,15 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
-import { Box, Grid, Paper } from "@material-ui/core";
+import {
+  Box,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
@@ -27,19 +35,21 @@ function Projects(props) {
 
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [projectStatus, setProjectStatus] = useState([
-    { title: "Active" },
-    { title: "In-Active" },
+    { title: "All", value: "All" },
+    { title: "Active", value: false },
+    { title: "In-Active", value: true },
   ]);
   const [isOpen, setOpen] = React.useState({});
 
+  const [projectByClient, setProjectByClient] = useState();
+  const [secondProjectByClient, setSecondProjectByClient] = useState();
+  const [allProjectByClient, setAllProjectByClient] = useState();
+
   useEffect(() => {
     getClientById();
-  }, []);
-  useEffect(() => {
-    getClientById();
+    getAllProjects(clientid);
   }, [clientid]);
-  const projectDetailsUrl =
-    "/projectdetails/" + props.data + "/" + "614fefd74d9da71851f36df4";
+
   const columns = [
     {
       title: "Project Name",
@@ -50,7 +60,7 @@ function Projects(props) {
             to={{
               pathname:
                 "/All-Clients/" + props.clientName + "/" + rowData.projectName,
-              state: { projectId: rowData._id },
+              state: { projectId: rowData.id },
             }}
           >
             {" "}
@@ -70,8 +80,17 @@ function Projects(props) {
   const closeFun = () => {
     setIsOpenDailog(false);
   };
-  const getDropDownvalue = (val) => {
-    console.log("this is an download vlaue", val);
+
+  const getDropDownvalue = (event) => {
+    console.log("this is an download vlaue", event.target.value);
+    if (event.target.value == "All") {
+      setProjectByClient(allProjectByClient);
+    } else {
+      const dropdownEl = secondProjectByClient.filter(
+        (el) => el.isDeleted == event.target.value
+      );
+      setProjectByClient(dropdownEl);
+    }
   };
 
   const openCreateDailog = () => {
@@ -96,8 +115,8 @@ function Projects(props) {
   };
 
   const handleClose = () => {
-    setOpen({})
-  }
+    setOpen({});
+  };
   // const getAllProject = () => {
   //   ProjectSer.getAllProject()
   //     .then((res) => {
@@ -112,23 +131,34 @@ function Projects(props) {
     ProjectSer.getClientById(clientid)
       .then((res) => {
         let dataResponce = res.data.body.projects;
-        setTableData([...dataResponce.filter((op) => op.isDeleted === false)]);
+        setTableData([...dataResponce]);
+        getAllProjects(clientid);
       })
       .catch((err) => {
         console.log("Project error", err);
       });
   };
 
+  const getAllProjects = (clientid) => {
+    ProjectSer.getAllProject().then((res) => {
+      let dataResponce = res.data.body;
+
+      const filteredData = dataResponce.filter((el) => el.client == clientid);
+      setProjectByClient([...filteredData]);
+      setSecondProjectByClient([...filteredData]);
+      setAllProjectByClient([...filteredData]);
+    });
+  };
+
   const createProject = (projectData) => {
     ProjectSer.createProject(projectData)
       .then((res) => {
         getClientById();
-      setOpen({ open: true, severity: 'success', message: res.data.message });
+        setOpen({ open: true, severity: "success", message: res.data.message });
         closeFun();
       })
       .catch((err) => {
-      setOpen({ open: true, severity: 'error', message: err.message });
-
+        setOpen({ open: true, severity: "error", message: err.message });
       });
   };
 
@@ -136,13 +166,12 @@ function Projects(props) {
     ProjectSer.updateProject(actionId, projectData)
       .then((res) => {
         getClientById();
-      setOpen({ open: true, severity: 'success', message: res.data.message });
+        setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-      setOpen({ open: true, severity: 'error', message: err.message });
-
+        setOpen({ open: true, severity: "error", message: err.message });
       });
   };
 
@@ -150,13 +179,12 @@ function Projects(props) {
     ProjectSer.deleteProject(actionId)
       .then((res) => {
         getClientById();
-      setOpen({ open: true, severity: 'success', message: res.data.message });
+        setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-      setOpen({ open: true, severity: 'error', message: err.message });
-
+        setOpen({ open: true, severity: "error", message: err.message });
       });
   };
 
@@ -175,8 +203,9 @@ function Projects(props) {
     deleteProject();
   };
 
-  // console.log(props.clients);
-  const { message, severity, open } = isOpen || {}
+  console.log(projectByClient);
+
+  const { message, severity, open } = isOpen || {};
 
   return (
     <div className="all-project-wrap">
@@ -221,13 +250,41 @@ function Projects(props) {
         />
       ) : null}
       <Box>
-        <Grid container justify="flex-end">
-          {/* <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/> */}
-          <Button variant="outlined" onClick={openCreateDailog}>
-            {" "}
-            <AddIcon />
-            Create Project
-          </Button>
+        <Grid container justify="space-between">
+          <Grid item>
+            <FormControl>
+              <InputLabel
+                id="client-simple-select"
+                className="select-label-width"
+              >
+                Project Status{" "}
+              </InputLabel>
+
+              <Select
+                labelId="client-simple-select"
+                className="select-label-width"
+                id="client-simple-select"
+                value={projectStatus.title}
+                label={projectStatus.title}
+                defaultValue={"All"}
+                onChange={getDropDownvalue}
+              >
+                {projectStatus.map((item) => (
+                  <MenuItem key={item.title} value={item.value}>
+                    {item.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item>
+            <Button variant="outlined" onClick={openCreateDailog}>
+              {" "}
+              <AddIcon />
+              Create Project
+            </Button>
+          </Grid>
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
@@ -271,7 +328,7 @@ function Projects(props) {
               color: "#113c91",
             },
           }}
-          data={tableData}
+          data={projectByClient}
           title={`Project${tableData.length > 1 ? "s" : ""}`}
         />
       </BorderedContainer>
@@ -283,7 +340,6 @@ function Projects(props) {
           onClose={handleClose}
           message={message}
         />
-
       )}
     </div>
   );
