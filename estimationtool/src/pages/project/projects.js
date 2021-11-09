@@ -11,6 +11,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { useParams, Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./project.css";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 function Projects(props) {
   // const { clientid } = useParams();
@@ -29,6 +30,7 @@ function Projects(props) {
     { title: "Active" },
     { title: "In-Active" },
   ]);
+  const [isOpen, setOpen] = React.useState({});
 
   useEffect(() => {
     getClientById();
@@ -93,6 +95,9 @@ function Projects(props) {
     setDeleteProjectDailog(true);
   };
 
+  const handleClose = () => {
+    setOpen({})
+  }
   // const getAllProject = () => {
   //   ProjectSer.getAllProject()
   //     .then((res) => {
@@ -118,27 +123,41 @@ function Projects(props) {
     ProjectSer.createProject(projectData)
       .then((res) => {
         getClientById();
+      setOpen({ open: true, severity: 'success', message: res.data.message });
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+      setOpen({ open: true, severity: 'error', message: err.message });
+
+      });
   };
 
   const updateProject = (projectData) => {
     ProjectSer.updateProject(actionId, projectData)
       .then((res) => {
         getClientById();
+      setOpen({ open: true, severity: 'success', message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+      setOpen({ open: true, severity: 'error', message: err.message });
+
+      });
   };
 
   const deleteProject = () => {
     ProjectSer.deleteProject(actionId)
       .then((res) => {
         getClientById();
+      setOpen({ open: true, severity: 'success', message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+      setOpen({ open: true, severity: 'error', message: err.message });
+
+      });
   };
 
   const saveCreateProjectFun = (data) => {
@@ -157,6 +176,7 @@ function Projects(props) {
   };
 
   // console.log(props.clients);
+  const { message, severity, open } = isOpen || {}
 
   return (
     <div className="all-project-wrap">
@@ -255,6 +275,16 @@ function Projects(props) {
           title={`Project${tableData.length > 1 ? "s" : ""}`}
         />
       </BorderedContainer>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+
+      )}
     </div>
   );
 }

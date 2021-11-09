@@ -17,6 +17,7 @@ import UpdateClientdailog from "./update-client.dailog";
 import DeleteClientdailog from "./delete-client.dailog";
 import AddIcon from "@material-ui/icons/Add";
 import "./all-client.css";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 import Link from "@material-ui/core/Link";
 import { withRouter } from "react-router";
@@ -39,7 +40,8 @@ function AllClient(props) {
     { title: "Active", value: false },
     { title: "In-Active", value: true },
   ]);
-
+  const [isOpen, setOpen] = React.useState({});
+  const [selectedOption, setSelectedOption] = useState({ title: 'Active', value: false },);
   useEffect(() => {
     getAllClient();
   }, []);
@@ -123,31 +125,50 @@ function AllClient(props) {
     setDeleteClinetDailog(true);
   };
 
+  const handleClose = () => {
+    setOpen({})
+  }
+
   const createClient = (clientData) => {
     ClientSer.createClient(clientData)
       .then((res) => {
         getAllClient();
+      setOpen({ open: true, severity: 'success', message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+      setOpen({ open: true, severity: 'error', message: err.message });
+
+      });
   };
 
   const updateClient = (clientData) => {
     ClientSer.updateClient(actionId, clientData)
       .then((res) => {
         getAllClient();
+      setOpen({ open: true, severity: 'success', message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+      setOpen({ open: true, severity: 'error', message: err.message });
+
+      });
   };
 
   const deleteClient = () => {
     ClientSer.deleteClient(actionId)
       .then((res) => {
         getAllClient();
+      setOpen({ open: true, severity: 'success', message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+      setOpen({ open: true, severity: 'error', message: err.message });
+
+      });
   };
 
   const saveCreateClientFun = (data) => {
@@ -161,6 +182,38 @@ function AllClient(props) {
     deleteClient();
   };
 
+
+  
+  const actions = [
+    {
+      icon: 'edit',
+      tooltip: 'edit client',
+      onClick: (event, rowData) => {
+        setEditRow({ ...rowData });
+        setActionId(rowData.id);
+        openUpdateDailog();
+      },
+
+    },
+    {
+      icon: 'delete',
+      tooltip: 'delete client',
+      onClick: (event, rowData) => {
+        setEditRow({ ...rowData });
+        setActionId(rowData.id);
+        openDeleteDailog();
+      }
+    }
+
+  ];
+  // console.log("selectedOption.label", selectedOption.title)
+  if (selectedOption.value === true) {
+    actions.push(
+    )
+  }
+
+
+  const { message, severity, open } = isOpen || {}
   return (
     <>
       <div className="all-client-wrap">
@@ -248,26 +301,7 @@ function AllClient(props) {
             components={{
               Container: (props) => <Paper {...props} elevation={0} />,
             }}
-            actions={[
-              {
-                icon: "edit",
-                tooltip: "edit client",
-                onClick: (event, rowData) => {
-                  setEditRow({ ...rowData });
-                  setActionId(rowData.id);
-                  openUpdateDailog();
-                },
-              },
-              {
-                icon: "delete",
-                tooltip: "delete client",
-                onClick: (event, rowData) => {
-                  setEditRow({ ...rowData });
-                  setActionId(rowData.id);
-                  openDeleteDailog();
-                },
-              },
-            ]}
+            actions={actions}
             options={{
               actionsColumnIndex: -1,
               sorting: true,
@@ -286,6 +320,16 @@ function AllClient(props) {
             title={`Client${tableData.length > 1 ? "s" : ""}`}
           />
         </BorderedContainer>
+        {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+
+      )}
       </Grid>
     </>
   );
