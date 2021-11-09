@@ -66,7 +66,7 @@ function Home() {
                 "/" +
                 rowData.projectId.projectName +
                 "/Estimation-Detail",
-              state: { estId: rowData.id },
+              state: { stIde: rowData.id },
             }}
           >
             {" "}
