@@ -17,10 +17,9 @@ const AddRequirements = (props) => {
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
   const [selectedRequirementType, setSelectedRequirementType] = useState({});
   const [isRequirementTag, setIsRequirementTag] = useState(false);
-
-  const [isRequirementTitle, setIsRequirementTitle] = useState("");
-  const [isRequirementDescription, setIsRequirementDescription] = useState("");
-
+  const [requirementTitle, setrequirementTitle] = useState();
+  const [requirementDescription, setrequirementDescription] = useState();
+  const [editData, setEditData] = useState({});
     const[formData, setFormData] = React.useState({
         title:"",
         description: "",
@@ -33,16 +32,7 @@ const AddRequirements = (props) => {
     });
   
   const onSubmitForm = (e) => {
-    setFormData({
-        title: isRequirementTitle,
-        description: isRequirementDescription,
-        tag: selectedRequirementTag._id,
-        type: selectedRequirementType._id,
-        mitigation: "mitigation",
-        project: props.project,
-        estHeader:props.estHeader,
-        isDeleted: false 
-    });
+
 
     EstimationService.createRequirement(formData).then((res) => {
       props.saveFun();
@@ -51,27 +41,65 @@ const AddRequirements = (props) => {
         console.log("get Client by id error", err);
       });
   };
-
+  const setFormdata  = () => {
+      setFormData({
+        title: requirementTitle,
+        description: requirementDescription,
+        tag: selectedRequirementTag._id,
+        type: selectedRequirementType._id,
+        mitigation: "mitigation",
+        project: props.project,
+        estHeader:props.estHeader,
+        isDeleted: false 
+    });
+}
   const handelRequirement = (event) => {
-    setIsRequirementTitle(event.target.value);
+    setrequirementTitle(event.target.value);
+    setFormdata();
   };
 
   const handelDescription = (event) => {
-    setIsRequirementDescription(event.target.value);
+    setrequirementDescription(event.target.value);
+    setFormdata();
   };
    const handleRequirementTagChange = (event) => {
   
-    setSelectedRequirementTag(event.target.value);
+     setSelectedRequirementTag(event.target.value);
+     setFormdata();
   };
   const handleRequirementTypeChange = (event) => {
     setSelectedRequirementType(event.target.value);
+    setFormdata();
   };
+
+  
+  const newLocal = [props.requirementTagArray, props.requirementTypeArray];
    useEffect(() => {
     setRequirementTagArray([...props.requirementTagArray]);
-    setRequirementTypeArray([...props.requirementTypeArray]);
-  }, [props.requirementTagArray, props.requirementTypeArray]);
-  
+     setRequirementTypeArray([...props.requirementTypeArray]);
+     console.log("props.editData");
+     if (props.editData) {
+     
 
+      }
+  }, newLocal);
+  
+  useEffect(() => {
+        console.log("props.editData3",editData);
+    if (props.editData) {
+      console.log("props.editData4");
+        setEditData(...props.editData);
+     
+       return () => {
+             console.log("props.editData2",editData.Requirement);
+             setrequirementTitle(editData.Requirement);
+            // setrequirementDescription(props.editData[1]);
+           // setSelectedRequirementTag({_id:});
+        };
+    }
+  }, props.editData);
+  
+   console.log("Edit data:", editData,requirementTitle);
 
   return (
     <CustomizedDialogs
@@ -122,11 +150,12 @@ const AddRequirements = (props) => {
         <Grid item md={12}>
           <TextField
             required
-            error={showError}
-            autoFocus
+            error={showError && !requirementTitle}
+            
             id="standard-basic"
             label="Requirement"
             className="full-width"
+            value={requirementTitle}
             onChange={(e) => { handelRequirement(e) }}
             variant="outlined"
           />
@@ -138,6 +167,7 @@ const AddRequirements = (props) => {
             id="standard-basic"
             label="Description"
             className="full-width"
+            value={requirementDescription}
             onChange={(e) => { handelDescription(e) }}
             variant="outlined"
           />

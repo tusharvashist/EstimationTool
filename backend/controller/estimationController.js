@@ -74,18 +74,6 @@ module.exports.estimationDelete = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
-module.exports.getById = async (req, res) => {
-    let responce = { ...constant.defaultResponce };
-    try {
-        const responceGetById = await estimationSer.getById(req.params);
-        responce.status = 200;
-        responce.message = constant.estimationMessage.ESTIMATION_FETCH;
-        responce.body = responceGetById;
-    } catch (err) {
-        responce.message = err.message;
-    }
-    return res.status(responce.status).send(responce);
-}
 
 module.exports.createEstimationHeader = async (req, res) => {
     let responce = { ...constant.defaultResponce };

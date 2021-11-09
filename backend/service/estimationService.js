@@ -98,59 +98,6 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   }
 }
 
-
-module.exports.getById = async ({ id }) => {
-  try {
-    if (!mongoose.Types.ObjectId(id)) {
-      throw new Error(constant.estimationMessage.INVALID_ID)
-    }
-
-    let estimations = await EstimationHeader.findById({ _id: id }).
-      populate({
-        path: 'projectId',
-        populate: { path: 'client' }
-      }).populate({
-        path: 'estTypeId'
-      });
-
-    let responce = { ...constant.requirmentResponce };
-    responce.basicDetails = estimations;
-
-    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { _id: 0, requirement: 1 })
-      .populate({
-      path: 'requirement',
-      populate: { path: 'tag' }
-      })
-    
-    if (estHeaderRequirement.length != 0) {
-      responce.featureList = estHeaderRequirement
-    }
-
-    let requirementType = await RequirementType.find({});
-    if (requirementType.length != 0) {
-      responce.requirementType = requirementType
-    }
-
-     let requirementTag = await RequirementTag.find({});
-    if (requirementTag.length != 0) {
-      responce.requirementTag = requirementTag
-    }
-let estimationHeaderAtrributeModel = await EstimationHeaderAtrributeModel.find({ estHeaderId
-: id })
-      .populate({
-      path: 'estAttributeId',
-      })
-      if (estimationHeaderAtrributeModel.length != 0) {
-      responce.estHeaderAttribute = estimationHeaderAtrributeModel
-    }
-//EstimationHeaderAtrributeModel
-    return formatMongoData(responce)
-  } catch (err) {
-    console.log("something went wrong: service > createEstimation Header", err);
-    throw new Error(err)
-  }
-}
-
 // create new estimation header configration
 module.exports.createEstimationHeader = async (serviceData) => {
   try {

@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 const { Schema } = require('mongoose');
 
-const estHeaderRequirement = new mongoose.Schema({
-    requirement: {
+const estRequirementDataSchema = new mongoose.Schema({
+    ESTAttributeID: {
         type: Schema.Types.ObjectId,
-        ref: 'ProjectRequirement'
+        ref: 'EstimationAttributes',
     },
-    estHeader: {
+    ESTHeaderRequirementID: {
         type: Schema.Types.ObjectId,
-        ref: 'EstHeader'
+        ref: 'ESTHeaderRequirement',
     },
-    estRequirementData: [{
+    ESTHeaderID: {
         type: Schema.Types.ObjectId,
-        ref: 'estRequirementData'
-    }],
-    isDeleted: Boolean,
+        ref: 'ESTHeaderRequirement',
+    },
+    ESTData: Number,
 }, {
     timestamps: true,
     toObject: {
@@ -26,4 +26,4 @@ const estHeaderRequirement = new mongoose.Schema({
         }
     }
 })
-module.exports = mongoose.model("ESTHeaderRequirement", estHeaderRequirement)
+module.exports = mongoose.model("estRequirementData", estRequirementDataSchema)
