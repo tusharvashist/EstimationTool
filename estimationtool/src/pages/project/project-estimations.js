@@ -88,6 +88,10 @@ function ProjectEstimations(props) {
   let history = useHistory();
 
   const actionArry = (rowData) => {};
+  const rowBackgroundColor = {
+    true: "#ededed",
+    false: "#fff",
+  };
 
   // console.log(clientDeatils, projectDeatils, tableData);
 
@@ -149,6 +153,12 @@ function ProjectEstimations(props) {
               backgroundColor: "#e5ebf7",
               fontWeight: "bold",
               fontSize: "0.9rem",
+            },
+            rowStyle: (rowData) => {
+              return {
+                backgroundColor:
+                  rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+              };
             },
           }}
           data={tableData}

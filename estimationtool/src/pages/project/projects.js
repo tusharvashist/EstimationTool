@@ -127,6 +127,12 @@ function Projects(props) {
   //     });
   // };
 
+  //For Rowdata background color according to active state
+  const rowBackgroundColor = {
+    true: "#ededed",
+    false: "#fff",
+  };
+
   const getClientById = () => {
     ProjectSer.getClientById(clientid)
       .then((res) => {
@@ -326,6 +332,12 @@ function Projects(props) {
               fontWeight: "bold",
               fontSize: "0.9rem",
               color: "#113c91",
+            },
+            rowStyle: (rowData) => {
+              return {
+                backgroundColor:
+                  rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+              };
             },
           }}
           data={projectByClient}

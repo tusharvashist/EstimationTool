@@ -41,7 +41,10 @@ function AllClient(props) {
     { title: "In-Active", value: true },
   ]);
   const [isOpen, setOpen] = React.useState({});
-  const [selectedOption, setSelectedOption] = useState({ title: 'Active', value: false },);
+  const [selectedOption, setSelectedOption] = useState({
+    title: "Active",
+    value: false,
+  });
   useEffect(() => {
     getAllClient();
   }, []);
@@ -126,20 +129,19 @@ function AllClient(props) {
   };
 
   const handleClose = () => {
-    setOpen({})
-  }
+    setOpen({});
+  };
 
   const createClient = (clientData) => {
     ClientSer.createClient(clientData)
       .then((res) => {
         getAllClient();
-      setOpen({ open: true, severity: 'success', message: res.data.message });
+        setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-      setOpen({ open: true, severity: 'error', message: err.message });
-
+        setOpen({ open: true, severity: "error", message: err.message });
       });
   };
 
@@ -147,13 +149,12 @@ function AllClient(props) {
     ClientSer.updateClient(actionId, clientData)
       .then((res) => {
         getAllClient();
-      setOpen({ open: true, severity: 'success', message: res.data.message });
+        setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-      setOpen({ open: true, severity: 'error', message: err.message });
-
+        setOpen({ open: true, severity: "error", message: err.message });
       });
   };
 
@@ -161,13 +162,12 @@ function AllClient(props) {
     ClientSer.deleteClient(actionId)
       .then((res) => {
         getAllClient();
-      setOpen({ open: true, severity: 'success', message: res.data.message });
+        setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-      setOpen({ open: true, severity: 'error', message: err.message });
-
+        setOpen({ open: true, severity: "error", message: err.message });
       });
   };
 
@@ -182,38 +182,32 @@ function AllClient(props) {
     deleteClient();
   };
 
-
-  
   const actions = [
     {
-      icon: 'edit',
-      tooltip: 'edit client',
+      icon: "edit",
+      tooltip: "edit client",
       onClick: (event, rowData) => {
         setEditRow({ ...rowData });
         setActionId(rowData.id);
         openUpdateDailog();
       },
-
     },
     {
-      icon: 'delete',
-      tooltip: 'delete client',
+      icon: "delete",
+      tooltip: "delete client",
       onClick: (event, rowData) => {
         setEditRow({ ...rowData });
         setActionId(rowData.id);
         openDeleteDailog();
-      }
-    }
-
+      },
+    },
   ];
   // console.log("selectedOption.label", selectedOption.title)
   if (selectedOption.value === true) {
-    actions.push(
-    )
+    actions.push();
   }
 
-
-  const { message, severity, open } = isOpen || {}
+  const { message, severity, open } = isOpen || {};
   return (
     <>
       <div className="all-client-wrap">
@@ -321,15 +315,14 @@ function AllClient(props) {
           />
         </BorderedContainer>
         {open && (
-        <Snackbar
-          isOpen={open}
-          severity={severity}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          message={message}
-        />
-
-      )}
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        )}
       </Grid>
     </>
   );
