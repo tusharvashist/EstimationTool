@@ -4,21 +4,6 @@ module.exports = {
         message: "",
         body: {}
     },
-
-    requirementResponse: {
-        basicDetails: {},
-        featureList: [],
-        requirementTag:[],
-        requirementType: [],
-        estHeaderAttribute: [],
-        estHeaderCalculatedAttribute: [],
-    },
-      estimationAttribute: {
-        _id: '',
-        attributeCode: '',
-        description:'',
-    },
-       
     userMessage: {
         SIGNUP_SUCCESS: "Signup successfully",
         DUPLICATE_EMAIL: "User alrady exsist with given email",
@@ -32,7 +17,7 @@ module.exports = {
         ESTIMATION_FETCH: "All estimation fetch successfully",
         ESTIMATION_GET_ERROR: "All estimation featch error",
         ESTIMATION_NOT_FOUND: "Estimation not found",
-        INVALID_ID: "Invalid Estimation id",
+        INVALID_ID: "Invalid id",
         ESTIMATION_UPDATE: "Estimation update successfully",
         ESTIMATION_DELETE: "Estimation delete successfully",
     },
@@ -82,18 +67,7 @@ module.exports = {
         DUPLICATE_estimationHeaderAtrributeCalc: "estimationHeaderAtrributeCalc already exist with given name.",
 
     },
-    wizard2Message: {
-        WIZARD2_CREATED: "Wizard 2 created successfully",
-        WIZARD2_ERROR: "Wizard 2 create fail",
-        WIZARD2_FETCH: "All Wizard 2 fetch successfully",
-        WIZARD2_GET_ERROR: "All Wizard 2 featch error",
-        WIZARD2_NOT_FOUND: "Wizard 2 not found",
-        INVALID_ID: "Invalid id",
-        WIZARD2_UPDATE: "Wizard 2 update successfully",
-        WIZARD2_DELETE: "Wizard 2 delete successfully",
-        DUPLICATE_Wizard2: "Wizard 2 already exist with given name.",
 
-    },
     projectMessage: {
         PROJECT_CREATED: "Project created successfully",
         PROJECT_ERROR: "Project create fail",
@@ -104,19 +78,6 @@ module.exports = {
         PROJECT_UPDATE: "Project update successfully",
         PROJECT_DELETE: "Project delete successfully",
         DUPLICATE_PROJECT: "Project already exist with given name.",
-    },
-    
-    requirmentMessage: {
-        REQUIREMENT_CREATED: "Requirement created successfully",
-        REQUIREMENT_ERROR: "Requirement create fail",
-        REQUIREMENT_FETCH: "All Requirement fetch successfully",
-        REQUIREMENT_GET_ERROR: "All Requirement fetch error",
-        REQUIREMENT_NOT_FOUND: "Requirement not found",
-        INVALID_ID: "Invalid id",
-        REQUIREMENT_UPDATE: "Requirement update successfully",
-        REQUIREMENT_DELETE: "Requirement delete successfully",
-        DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
-        REQUIREMENT_ESTHEADER_REQUIRED: "estHeader paramater requied. ",
     },
 
     estimationTemplateMessage: {
@@ -137,6 +98,7 @@ module.exports = {
         INVALID_ID: "Invalid id",
         ESTIMATIONCALCATTR_UPDATE: "Estimation Calculate Attribute update successfully",
         ESTIMATIONCALCATTR_DELETE: "Estimation Calculate Attribute delete successfully",
+        ESTIMATIONCALCATTR_DUPLICATE: "Estimation Calculate Attribute duplicacy",
 
     },
 
@@ -177,7 +139,6 @@ module.exports = {
         INVALID_ID: "Invalid id",
         ATTRIBUTE_UPDATE: "Estimation Attribute update successfully",
         ATTRIBUTE_DELETE: "Estimation Attribute delete successfully",
-        ATTRIBUTE_DUPLICATE: "Estimation Attribute already exist with given name."
     },
 
     TokenMessage: {
