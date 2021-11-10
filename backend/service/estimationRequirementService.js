@@ -139,7 +139,7 @@ module.exports.getById = async ({ id }) => {
     let response = { ...constant.requirementResponse };
     response.basicDetails = estimations;
 
-    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { estHeader: 0 })
+    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { estHeader: 0 },{ isDeleted: false })
       .populate({
         path: 'requirement',
         populate: [{ path: 'tag' }, { path: 'type' }],
@@ -157,6 +157,7 @@ module.exports.getById = async ({ id }) => {
     var GrandTotal = 0;
     var DevTotal = 0;
     estHeaderRequirement.forEach(element => {
+      if(element.isDeleted == false){
       var totalEffortOfElement = 0;
       element.estRequirementData.forEach(effort => {
         if (typeof effort.ESTData === 'number') {
@@ -180,7 +181,7 @@ module.exports.getById = async ({ id }) => {
               return true;
           });
         
-          if (index > 0) {
+          if (index >= 0) {
             summaryTagList[index].Effort = summaryTagList[index].Effort + totalEffortOfElement
           } else {
             summaryTagList.push({
@@ -190,10 +191,11 @@ module.exports.getById = async ({ id }) => {
             });
           }
         }
+        }
       }
     });
     var calAttributeTotal = 0;
-    let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeader: id });
+    let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeader: id },{ isDeleted: false });
     if (estHeaderAttributeCalc.length != 0) {
       estHeaderAttributeCalc.forEach(element => {
         var effort = DevTotal * (element.unit / 100);
@@ -258,10 +260,6 @@ module.exports.getById = async ({ id }) => {
           });
         }
       });
-
-
-      
-
     }
     return formatMongoData(response)
   } catch (err) {

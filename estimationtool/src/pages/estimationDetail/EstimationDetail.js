@@ -49,10 +49,23 @@ const EstimationDetail = () => {
   ]);
 
   const [summaryDataArray, setSummaryDataArray] = useState([
-    { Title: "Dev",Effort: 12},
   ]);
 
-  const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
+  const [requirementHeaderArray, setRequirementHeaderArray] = useState([
+          {
+            title: "Requirement",
+            field: "Requirement",
+            id: 1,
+            editable: false,
+          },
+          { title: "Tag", field: "Tag", editable: false, id: 2 },
+          {
+            title: "Description",
+            field: "Description",
+            editable: false,
+            id: 3,
+          },
+        ]);
  
   useEffect(() => {
     getById();
@@ -105,21 +118,7 @@ const EstimationDetail = () => {
         setRequirementTagArray([...dataResponse.requirementTag]);
         setRequirementTypeArray([...dataResponse.requirementType]);
          setSummaryDataArray([...dataResponse.summaryTagList]);
-        var estHeaderAttribute = [
-          {
-            title: "Requirement",
-            field: "Requirement",
-            id: 1,
-            editable: false,
-          },
-          { title: "Tag", field: "Tag", editable: false, id: 2 },
-          {
-            title: "Description",
-            field: "Description",
-            editable: false,
-            id: 3,
-          },
-        ];
+        var estHeaderAttribute = requirementHeaderArray;
         dataResponse.estHeaderAttribute.forEach((item, i) => {
           estHeaderAttribute.push(item);
         });
