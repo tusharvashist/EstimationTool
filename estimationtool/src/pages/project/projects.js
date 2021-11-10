@@ -129,7 +129,7 @@ function Projects(props) {
 
   //For Rowdata background color according to active state
   const rowBackgroundColor = {
-    true: "#ededed",
+    true: "#eef5e9",
     false: "#fff",
   };
 
@@ -150,7 +150,8 @@ function Projects(props) {
       let dataResponce = res.data.body;
 
       const filteredData = dataResponce.filter((el) => el.client == clientid);
-      setProjectByClient([...filteredData]);
+      const activeEl = filteredData.filter((el) => el.isDeleted == false);
+      setProjectByClient(activeEl);
       setSecondProjectByClient([...filteredData]);
       setAllProjectByClient([...filteredData]);
     });
@@ -272,7 +273,7 @@ function Projects(props) {
                 id="client-simple-select"
                 value={projectStatus.title}
                 label={projectStatus.title}
-                defaultValue={"All"}
+                defaultValue={false}
                 onChange={getDropDownvalue}
               >
                 {projectStatus.map((item) => (

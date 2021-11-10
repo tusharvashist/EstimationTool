@@ -18,6 +18,7 @@ import masterServices from "../masterservices/master.service"
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setEstimationName,setEstimationType, setEstimationTypeId,setEfforUnit,setEsttimationDesc, setEstimationHeaderId} from '../../Redux/basicDetailRedux'
+import estimationServices from "../allestimation/allestimation.service";
 
 
 const FirstStep = forwardRef((props, ref) =>  {
@@ -31,6 +32,9 @@ const FirstStep = forwardRef((props, ref) =>  {
   //const [estimationNameAutoGen, setEstimationNameAutoGen] = useState();
   const [clientName, setClientName] = useState();
   const [projectName, setProjectName] = useState();
+ //const estHeaderID = {...props.estimationHeaderId};
+
+  //const [estimationHeaderId, setEstimationHeaderId] = useState({estHeaderID});
   //const [estimationDescription, setEstimationDescription] = useState();
   //const { forwardRef, useRef, useImperativeHandle } = React;
   const [isEstimationTypeInvalid, setIsEstimationTypeInvalid] = useState(false);
@@ -42,9 +46,10 @@ const FirstStep = forwardRef((props, ref) =>  {
   useEffect(()=>{
     setClientName(props.clientName);
     setProjectName(props.projectName);
+    //setEstimationHeaderId(estHeaderId);
     getAllMasterEstimationTypes();
-
-    remainingCharCount(basicDetailRedux.esttimationDesc);
+    getEstimationBasicInfo();
+   //remainingCharCount(basicDetailRedux.esttimationDesc);
   },[])
 
   useImperativeHandle(ref, () => ({
@@ -60,6 +65,43 @@ const handleFieldsError = ()=>{
         setEstimationNameInvalid(basicDetailRedux.estimationName == "");
         setDescriptionInvalid(basicDetailRedux.esttimationDesc === "");
 } 
+
+  // get estimation basic info
+  const getEstimationBasicInfo = () => {
+    //let estHeaderId = '6189e7ca1bdec59514481b47'
+    let estHeaderId = props.estimationHeaderId
+    console.log("props Estimation Header Id: " + "::"+ estHeaderId);
+    dispatch(setEstimationHeaderId(estHeaderId));
+    localStorage.setItem("estimationHeaderId", estHeaderId);
+    if(!estHeaderId){
+      dispatch(setEstimationTypeId(''));
+      dispatch(setEsttimationDesc(''));
+      dispatch(setEstimationType(''));
+      dispatch(setEstimationName(''));
+      dispatch(setEfforUnit(''));
+      dispatch(setEstimationHeaderId(''));
+      localStorage.setItem("estimationHeaderId", '');
+     return;
+    }
+    
+    estimationServices
+    .getEstimationBasicDetail(estHeaderId)
+    .then((res) => {
+      let dataResponce = res.data.body;
+      dispatch(setEstimationTypeId(dataResponce.basicDetails.estTypeId._id));
+      dispatch(setEsttimationDesc(dataResponce.basicDetails.estDescription));
+      dispatch(setEstimationType(dataResponce.basicDetails.estTypeId.estType));
+      dispatch(setEstimationName(dataResponce.basicDetails.estName));
+      dispatch(setEfforUnit(dataResponce.basicDetails.effortUnit));
+     // dispatch(setEstimationHeaderId(dataResponce.basicDetails._id));
+     console.log(
+       "get Basic Details APi response:" + JSON.stringify(dataResponce)
+     );
+    })
+    .catch((err) => {
+      console.log("get estimation header detail error : ", err);
+    });
+  }
 
   // get all estimation types master list
   const getAllMasterEstimationTypes = () => {
