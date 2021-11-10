@@ -361,7 +361,7 @@ const EstimationDetail = () => {
       <BorderedContainer>
         <MaterialTable
           style={{ boxShadow: "none" }}
-          title="Estimation Efforts"
+          title={`Estimation Efforts (${headerData.effortUnit})`}  
           columns={requirementHeaderArray}
           data={requirementDataArray}
           onRowClick={(event, rowData, togglePanel) =>
@@ -402,7 +402,7 @@ const EstimationDetail = () => {
       <BorderedContainer>
         <MaterialTable
           style={{ boxShadow: "none" }}
-          title="Summary"
+          title= {`Summary (${headerData.effortUnit})`}  
           columns={summaryHeaderArray}
           data={summaryDataArray}
           options={{

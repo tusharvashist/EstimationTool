@@ -307,7 +307,7 @@ function Projects(props) {
               tooltip: "Edit project",
               onClick: (event, rowData) => {
                 setEditRow({ ...rowData });
-                setActionId(rowData._id);
+                setActionId(rowData.id);
                 openUpdateDailog();
               },
               disabled: rowData.isDeleted
@@ -317,7 +317,7 @@ function Projects(props) {
               tooltip: "Delete project",
               onClick: (event, rowData) => {
                 setEditRow({ ...rowData });
-                setActionId(rowData._id);
+                setActionId(rowData.id);
                 setDeleteRecordName(rowData.projectName);
                 openDeleteDailog();
               },
