@@ -35,7 +35,8 @@ const EstimationCreation = (props) => {
   const clientInfo = { ...location1.state.clientInfo };
   const projecttInfo = { ...location1.state.projectInfo };
   const estionHeaderId = location1.state.estimationHeaderId;
-  const [estimationHeaderId, setEstimationHeaderId] = React.useState(estionHeaderId);
+  const [estimationHeaderId, setEstimationHeaderId] =
+    React.useState(estionHeaderId);
   const [estimationIdFinish, setEstimationIdFinish] = React.useState();
 
   const getHeaderIdChild = (p) => {
@@ -61,8 +62,13 @@ const EstimationCreation = (props) => {
 
   useEffect(() => {
     setLocation(location);
-    setEstimationHeaderId(location1.state.estimationHeaderId)
-    console.log("prop est id:"+location1.state.estimationHeaderId +":"+ estimationHeaderId )
+    setEstimationHeaderId(location1.state.estimationHeaderId);
+    console.log(
+      "prop est id:" +
+        location1.state.estimationHeaderId +
+        ":" +
+        estimationHeaderId
+    );
     //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
   }, location1.state.estimationHeaderId);
 
@@ -72,6 +78,7 @@ const EstimationCreation = (props) => {
       .saveEstimationBasicDetail(reqData)
       .then((res) => {
         let dataResponce = res.data.body;
+        console.log(dataResponce);
         console.log(
           "Save Basic Details APi response:" + JSON.stringify(dataResponce)
         );
@@ -240,6 +247,8 @@ const EstimationCreation = (props) => {
     setActiveStep(0);
   };
 
+  console.log(estimationHeaderId, estimationIdFinish);
+
   return (
     <BorderedContainer>
       <Box sx={{ width: "100%" }}>
@@ -383,7 +392,9 @@ const EstimationCreation = (props) => {
                           "/" +
                           projecttInfo.projectName +
                           "/Estimation-Detail",
-                        state: { estId: estimationIdFinish },
+                        state: {
+                          estId: estimationIdFinish,
+                        },
                       }}
                     >
                       {" "}

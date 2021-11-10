@@ -14,8 +14,10 @@ import { display } from "@material-ui/system";
 
 const EstimationDetail = () => {
   const location = useLocation();
-  const params = useParams();
+  console.log(location);
   const estimationId = location.state.estId;
+  // const estimationId = localStorage.estimationHeaderId;
+  console.log(estimationId);
   const [clientDetails, setClientDetails] = useState({
     _id: "",
     clientName: "",
@@ -245,28 +247,25 @@ const EstimationDetail = () => {
       ) : null}
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
-        <Link
-              to={{
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/createEstimate",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: estimationId
-                },
-              }}
-            >
-          <Button
-            variant="outlined"
-            className="estimation-detail-button"
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                clientDetails.clientName +
+                "/" +
+                projectDetails.projectName +
+                "/createEstimate",
+              state: {
+                clientInfo: clientDetails,
+                projectInfo: projectDetails,
+                estimationHeaderId: estimationId,
+              },
+            }}
           >
-            {" "}
-            <EditOutlined /> Edit Configuration
-          </Button>
+            <Button variant="outlined" className="estimation-detail-button">
+              {" "}
+              <EditOutlined /> Edit Configuration
+            </Button>
           </Link>
         </Box>
       </Container>

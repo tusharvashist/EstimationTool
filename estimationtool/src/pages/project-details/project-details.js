@@ -185,7 +185,7 @@ export default function ClientDetails(props) {
                     id="client-simple-select"
                     value={clientStatus.title}
                     label={clientStatus.title}
-                    defaultValue={"All"}
+                    defaultValue={"Active"}
                     onChange={getDropDownvalue}
                   >
                     {clientStatus.map((item) => (
@@ -214,7 +214,7 @@ export default function ClientDetails(props) {
                 state: {
                   clientInfo: clientDetails,
                   projectInfo: projectDetails,
-                  estimationHeaderId: ''
+                  estimationHeaderId: "",
                 },
               }}
             >
