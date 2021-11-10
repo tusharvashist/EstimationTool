@@ -214,6 +214,7 @@ export default function ClientDetails(props) {
                 state: {
                   clientInfo: clientDetails,
                   projectInfo: projectDetails,
+                  estimationHeaderId: ''
                 },
               }}
             >

@@ -245,28 +245,28 @@ const EstimationDetail = () => {
       ) : null}
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                clientDetails.clientName +
-                "/" +
-                projectDetails.projectName +
-                "/createEstimate",
-              state: {
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
-              },
-            }}
-          >
-            <Button
-              variant="outlined"
-              className="estimation-detail-button"
-              // onClick={openEditRequirement}
+        <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/createEstimate",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: estimationId
+                },
+              }}
             >
-              {" "}
-              <EditOutlined /> Edit Configuration
-            </Button>
+          <Button
+            variant="outlined"
+            className="estimation-detail-button"
+          >
+            {" "}
+            <EditOutlined /> Edit Configuration
+          </Button>
           </Link>
         </Box>
       </Container>
