@@ -31,7 +31,7 @@ function ProjectEstimations(props) {
   }, [props.tableData1]);
 
   const checkStep = (data) => {
-    if (data.estStep === undefined) {
+    if (data.estStep == "3") {
       return (
         <Link
           to={{

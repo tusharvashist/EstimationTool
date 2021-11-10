@@ -10,6 +10,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
+
   useEffect(() => {
     AllestimationSer.getAllEstimation().then((res) => {
       let dataResponce = res.data.body;
@@ -23,10 +24,136 @@ function Home() {
     });
   }, []);
 
+  console.log(tableData);
+
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const clientDetailsUrl = "/clientdetails/" + "614f3c6790a42ca5a74bebf6";
   //const projectDetailsUrl = "/projectdetails/"+"614f3c6790a42ca5a74bebf6"+"/"+"614fefd74d9da71851f36df4";
   // render:(rowData)=>{ return (<Link  href={projectDetailsUrl}> { rowData.projectName}</Link>)}
+
+  const checkStep = (data) => {
+    if (data.estStep == "3") {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              data.projectId.client.clientName +
+              "/" +
+              data.projectId.projectName +
+              "/Estimation-Detail",
+            state: { estId: data._id },
+          }}
+        >
+          {" "}
+          {data.estName}
+        </Link>
+      );
+    } else if (data.estStep == "2" || data.estStep == "1") {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              data.projectId.client.clientName +
+              "/" +
+              data.projectId.projectName +
+              "/createEstimate",
+            state: {
+              estimationHeaderId: data._id,
+              clientInfo: data.projectId.client,
+              projectInfo: data.projectId,
+              step: data.estStep,
+            },
+          }}
+        >
+          {" "}
+          {data.estName}
+        </Link>
+      );
+    } else if (data.estStep == undefined) {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              data.projectId.client.clientName +
+              "/" +
+              data.projectId.projectName +
+              "/Estimation-Detail",
+            state: {
+              estId: data.id,
+            },
+          }}
+        >
+          {" "}
+          {data.estName}
+        </Link>
+      );
+    }
+  };
+
+  const checkStepDes = (data) => {
+    if (data.estStep == "3") {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              data.projectId.client.clientName +
+              "/" +
+              data.projectId.projectName +
+              "/Estimation-Detail",
+            state: { estId: data._id },
+          }}
+        >
+          {" "}
+          {data.estDescription}
+        </Link>
+      );
+    } else if (data.estStep == "2" || data.estStep == "1") {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              data.projectId.client.clientName +
+              "/" +
+              data.projectId.projectName +
+              "/createEstimate",
+            state: {
+              estimationHeaderId: data._id,
+              clientInfo: data.projectId.client,
+              projectInfo: data.projectId,
+              step: data.estStep,
+            },
+          }}
+        >
+          {" "}
+          {data.estDescription}
+        </Link>
+      );
+    } else if (data.estStep == undefined) {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              data.projectId.client.clientName +
+              "/" +
+              data.projectId.projectName +
+              "/Estimation-Detail",
+            state: {
+              estId: data.id,
+            },
+          }}
+        >
+          {" "}
+          {data.estDescription}
+        </Link>
+      );
+    }
+  };
 
   const columns = [
     {
@@ -35,44 +162,42 @@ function Home() {
       sorting: false,
       render: (rowData) => {
         // console.log(rowData);
-        return (
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                rowData.projectId.client.clientName +
-                "/" +
-                rowData.projectId.projectName +
-                "/Estimation-Detail",
-              state: { estId: rowData.id },
-            }}
-          >
-            {" "}
-            {rowData.estName}
-          </Link>
-        );
+        return checkStep(rowData);
+        // <Link
+        //   to={{
+        //     pathname:
+        //       "/All-Clients/" +
+        //       rowData.projectId.client.clientName +
+        //       "/" +
+        //       rowData.projectId.projectName +
+        //       "/Estimation-Detail",
+        //     state: { estId: rowData.id },
+        //   }}
+        // >
+        //   {" "}
+        //   {rowData.estName}
+        // </Link>
       },
     },
     {
       title: "Estimation Description",
       field: "estDescription",
       render: (rowData) => {
-        return (
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                rowData.projectId.client.clientName +
-                "/" +
-                rowData.projectId.projectName +
-                "/Estimation-Detail",
-              state: { stIde: rowData.id },
-            }}
-          >
-            {" "}
-            {rowData.estDescription}
-          </Link>
-        );
+        return checkStepDes(rowData);
+        // <Link
+        //   to={{
+        //     pathname:
+        //       "/All-Clients/" +
+        //       rowData.projectId.client.clientName +
+        //       "/" +
+        //       rowData.projectId.projectName +
+        //       "/Estimation-Detail",
+        //     state: { stIde: rowData.id },
+        //   }}
+        // >
+        //   {" "}
+        //   {rowData.estDescription}
+        // </Link>
       },
       width: "15%",
     },
