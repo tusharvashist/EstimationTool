@@ -102,8 +102,7 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
             let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
             var index = 0;
             estAttCalc.forEach(element => {
-                estSelAtt.forEach(estSelAttElement => {
-                    console.log(String(estSelAttElement.calcAttributeName));
+                estSelAtt.forEach(estSelAttElement => {                    
                     if (String(estSelAttElement.estCalcId) == String(element._id)) {
                         element.selected = true;
                     }
