@@ -30,27 +30,69 @@ function ProjectEstimations(props) {
     setProjectDeatils({ ...props.projectInfo });
   }, [props.tableData1]);
 
+  const checkStep = (data) => {
+    if (data.estStep == "3") {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              clientDeatils.clientName +
+              "/" +
+              projectDeatils.projectName +
+              "/Estimation-Detail",
+            state: { estId: data._id },
+          }}
+        >
+          {" "}
+          {data.estName}
+        </Link>
+      );
+    } else if (data.estStep == "2" || data.estStep == "1") {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              clientDeatils.clientName +
+              "/" +
+              projectDeatils.projectName +
+              "/createEstimate",
+            state: {
+              estimationHeaderId: data._id,
+              clientInfo: clientDeatils,
+              projectInfo: projectDeatils,
+              step: data.estStep,
+            },
+          }}
+        >
+          {" "}
+          {data.estName}
+        </Link>
+      );
+    }
+  };
+
   const columns = [
     {
       title: "Estimation Name",
       field: "estName",
       render: (rowData) => {
-        return (
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                clientDeatils.clientName +
-                "/" +
-                projectDeatils.projectName +
-                "/Estimation-Detail",
-              state: { estId: rowData._id },
-            }}
-          >
-            {" "}
-            {rowData.estName}
-          </Link>
-        );
+        return checkStep(rowData);
+        // <Link
+        //   to={{
+        //     pathname:
+        //       "/All-Clients/" +
+        //       clientDeatils.clientName +
+        //       "/" +
+        //       projectDeatils.projectName +
+        //       "/Estimation-Detail",
+        //     state: { estId: rowData._id },
+        //   }}
+        // >
+        //   {" "}
+        //   {rowData.estName}
+        // </Link>
       },
     },
     { title: "Estimation Type", field: "estTypeId.estType" },
@@ -93,7 +135,7 @@ function ProjectEstimations(props) {
     false: "#fff",
   };
 
-  // console.log(clientDeatils, projectDeatils, tableData);
+  console.log(clientDeatils, projectDeatils, tableData);
 
   return (
     <div className="all-project-wrap">
@@ -119,18 +161,22 @@ function ProjectEstimations(props) {
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           actions={[
-            {
+            rowData => ({
               icon: "edit",
               tooltip: "Edit Estimation",
               onClick: (event, rowData) => {
-                let url = "/Estimation-Detail";
-                history.push(url);
-                setEditRow({ ...rowData });
-                setActionId(rowData.id);
-                openUpdateDailog();
+                console.log(event);
+                const el = event.nativeEvent.path[5].childNodes[0].firstChild;
+                el.click();
+                // let url = "/Estimation-Detail";
+                // history.push(url);
+                // setEditRow({ ...rowData });
+                // setActionId(rowData.id);
+                // openUpdateDailog();
               },
-            },
-            {
+              disabled: rowData.isDeleted
+            }),
+            rowData => ({
               icon: "delete",
               tooltip: "Delete Estimation",
               onClick: (event, rowData) => {
@@ -140,7 +186,8 @@ function ProjectEstimations(props) {
                 setDeleteRecordName(rowData.estName);
                 openDeleteDailog();
               },
-            },
+              disabled: rowData.isDeleted
+            }),
           ]}
           options={{
             actionsColumnIndex: -1,

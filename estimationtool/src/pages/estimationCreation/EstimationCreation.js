@@ -75,6 +75,16 @@ const EstimationCreation = (props) => {
         ":" +
         estimationHeaderId
     );
+
+    if (location1.state.step !== undefined && location1.state.step === "2") {
+      setActiveStep(2);
+    } else if (
+      location1.state.step !== undefined &&
+      location1.state.step === "1"
+    ) {
+      setActiveStep(1);
+    }
+
     //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
   }, location1.state.estimationHeaderId);
 
