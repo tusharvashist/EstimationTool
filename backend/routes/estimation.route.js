@@ -67,29 +67,6 @@ router.put("/:id",
 );
 
 
-//------Requirment ------
-
-//----- Create -----------
-router.post("/requirement/",
-    tokenValidation.validateToken,
-    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
-    estimationRequirementController.create
-);
-
-
-router.put("/requirement/data/",
-    tokenValidation.validateToken,
-    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
-    estimationRequirementController.updateRequirementData
-);
-
-//----- Delete est header attr-----------
-router.delete("/requirement/:id",
-    tokenValidation.validateToken,
-   estimationRequirementController.requirementDelete
-);
-
-
 //=====================================estimationHeaderAtrribute=====================
 //----- Create -----------
 router.post("/atrribute/",

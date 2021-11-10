@@ -100,6 +100,7 @@ function AllClient(props) {
     setIsOpenDailog(false);
   };
   const getDropDownvalue = (event) => {
+    
     console.log("get dropdown value", event.target.value);
     if (event.target.value === "All") {
       setFilteredData([...tableData]);

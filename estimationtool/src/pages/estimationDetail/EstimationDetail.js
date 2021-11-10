@@ -5,7 +5,6 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { EditOutlined, Add, SaveOutlined, Edit } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./EstimationDetail.css";
-
 import { useParams, useLocation, Link } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import EditConfiguration from "./EditConfigurationDialog";
@@ -45,34 +44,22 @@ const EstimationDetail = () => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
-    [
-      { title: "Requirement", field: "Requirement", editable: false },
-      { title: "Description", field: "Description", editable: false },
-      { title: "UI(Days)", field: "UI", type: "numeric" },
-      { title: "Frontend(Days)", field: "Frontend", type: "numeric" },
-      { title: "Backend(Days)", field: "Backend", type: "numeric" },
-    ],
+      {title: "Title", field: "Title",  editable: false, },
+      {title: "Effort", field: "Effort", editable: false },
   ]);
 
   const [summaryDataArray, setSummaryDataArray] = useState([
-    {
-      Requirement: "Clients",
-      Description: "POC",
-      UI: 12,
-      Frontend: 63,
-      Backend: 63,
-    },
+    { Title: "Dev",Effort: 12},
   ]);
 
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
-
+ 
   useEffect(() => {
     getById();
   }, [estimationId]);
 
   const openEditRequirement = (event, rowData) => {
-    const updatedRows = [...requirementDataArray];
-    //  var rows = Object.values(updatedRows[rowData.tableData.id])
+    const updatedRows = [requirementDataArray[rowData.tableData.id]];
     console.log("rowData: ", updatedRows);
     setEditData(updatedRows);
     openFun();
@@ -81,12 +68,14 @@ const EstimationDetail = () => {
   const openFun = () => {
     setOpenEditConfigurationBox(true);
   };
+
   const closeFun = () => {
     setOpenEditConfigurationBox(false);
   };
+
   const saveEditConfigFun = () => {
-    closeAddFun();
-    getById();
+    closeFun();
+    getById();  
   };
 
   const openAddRequirement = () => {
@@ -115,6 +104,7 @@ const EstimationDetail = () => {
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
         setRequirementTagArray([...dataResponse.requirementTag]);
         setRequirementTypeArray([...dataResponse.requirementType]);
+         setSummaryDataArray([...dataResponse.summaryTagList]);
         var estHeaderAttribute = [
           {
             title: "Requirement",
@@ -130,16 +120,12 @@ const EstimationDetail = () => {
             id: 3,
           },
         ];
-
         dataResponse.estHeaderAttribute.forEach((item, i) => {
           estHeaderAttribute.push(item);
         });
-
         setRequirementHeaderArray(estHeaderAttribute);
-
         var arrayRequirement = [];
         dataResponse.featureList.forEach((item, i) => {
-          console.log("item:", item);
           if (item.isDeleted === false) {
             var requirement = {
               Requirement: item.requirement.title,
@@ -147,12 +133,12 @@ const EstimationDetail = () => {
               Tag: item.requirement.tag.name,
               Tagid: item.requirement.tag._id,
               Type: item.requirement.type,
+              requirementId: item.requirement._id,
               _id: item._id,
             };
             item.estRequirementData.forEach((item, i) => {
-              requirement[item.ESTAttributeID.attributeCode] = item.ESTData;
+              requirement[item.ESTAttributeID._id] = item.ESTData;
             });
-
             arrayRequirement.push(requirement);
           }
         });
@@ -162,36 +148,30 @@ const EstimationDetail = () => {
         console.log("get EstimationService by id error", err);
       });
   };
-  console.log("requirementDataArray: ", requirementDataArray);
 
   const updateAttributeValue = async (changes) => {
     var rows = Object.values(changes);
     const updatedRows = [...requirementDataArray];
     let index;
-    var updateEstRequirementData = [];
-    var requirementHeaderRow = Object.values(requirementHeaderArray);
-    console.log("requirementHeaderRow:", requirementHeaderRow);
-    rows.map((row) => {
+    var updateEstRequirementData = []
+     var requirementHeaderRow = Object.values(requirementHeaderArray);
+    rows.map(row => {
       index = row.oldData.tableData.id;
       updatedRows[index] = row.newData;
-      console.log(row.newData);
       for (let i = 3; i < requirementHeaderRow.length; i++) {
-        var requirementData = {
-          ESTAttributeID: requirementHeaderRow[i].id,
-          ESTHeaderRequirementID: row.newData._id,
-          ESTData: row.newData[requirementHeaderRow[i].field],
-          ESTHeaderID: headerData._id,
+      var requirementData = {
+        ESTAttributeID: requirementHeaderRow[i].id,
+        ESTHeaderRequirementID: row.newData._id,
+        ESTData: row.newData[requirementHeaderRow[i].field],
+        ESTHeaderID:headerData._id
         };
         updateEstRequirementData.push(requirementData);
       }
     });
 
-    console.log("updateEstRequirementData: ", updateEstRequirementData);
     setRequirementDataArray(updatedRows);
-    EstimationService.updateEstRequirementData(updateEstRequirementData)
-      .then((res) => {
-        console.log("deleteRequirement");
-        getById();
+    EstimationService.updateEstRequirementData(updateEstRequirementData).then((res) => {
+         getById(); 
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
@@ -199,13 +179,10 @@ const EstimationDetail = () => {
       });
   };
 
-  const deleteRow = async (changes, resolve) => {
-    console.log(changes);
+  const deleteRow = async (changes,resolve) => {
     resolve();
-    EstimationService.deleteRequirement(changes._id)
-      .then((res) => {
-        console.log("deleteRequirement");
-        getById();
+    EstimationService.deleteRequirement(changes._id).then((res) => {
+         getById(); 
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
@@ -221,7 +198,7 @@ const EstimationDetail = () => {
           closeF={closeFun}
           title="Edit Requirement"
           oktitle="Update"
-          saveFun={saveAddRequirementsFun}
+          saveFun={saveEditConfigFun}
           requirementTagArray={requirementTagArray}
           requirementTypeArray={requirementTypeArray}
           project={projectDetails._id}
@@ -230,6 +207,22 @@ const EstimationDetail = () => {
           cancelTitle="Cancel"
         />
       ) : null} */}
+      {openEditConfigurationBox ? (
+        <AddRequirements
+          isOpen={openEditConfigurationBox}
+          openF={openAddFun}
+          closeF={closeFun}
+          title="Edit Requirement"
+          oktitle="Update"
+          saveFun={saveEditConfigFun}
+          requirementTagArray={requirementTagArray}
+          requirementTypeArray={requirementTypeArray}
+          project={projectDetails._id}
+          estHeader={headerData._id}
+          editData={editData}
+          cancelTitle="Cancel"
+        />
+      ) : null}
       {openAddRequirementsBox ? (
         <AddRequirements
           isOpen={openAddRequirementsBox}
@@ -282,7 +275,7 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Estimation Type :</span>{" "}
-              {/* {headerData.estTypeId.estType} */}
+              {headerData.estTypeId.estType} 
             </p>
           </Grid>
         </Grid>
@@ -404,10 +397,6 @@ const EstimationDetail = () => {
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
-          <Button variant="outlined" className="estimation-detail-button">
-            {" "}
-            <SaveOutlined /> Save
-          </Button>
         </Box>
       </Container>
       <BorderedContainer>
@@ -416,20 +405,6 @@ const EstimationDetail = () => {
           title="Summary"
           columns={summaryHeaderArray}
           data={summaryDataArray}
-          // editable={{
-          //   onBulkUpdate: (changes) =>
-          //     new Promise((resolve, reject) => {
-          //       setTimeout(() => {
-          //         resolve();
-          //       }, 1000);
-          //     }),
-          //   onRowDelete: (oldData) =>
-          //     new Promise((resolve, reject) => {
-          //       setTimeout(() => {
-          //         resolve();
-          //       }, 1000);
-          //     }),
-          // }}
           options={{
             search: false,
             paging: false,
@@ -442,6 +417,7 @@ const EstimationDetail = () => {
           }}
         />
       </BorderedContainer>
+     
     </React.Fragment>
   );
 };

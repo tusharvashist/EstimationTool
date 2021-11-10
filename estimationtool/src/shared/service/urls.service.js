@@ -2,6 +2,7 @@ const Url = {
    login: process.env.REACT_APP_URL+'user/login',
    user: `${process.env.REACT_APP_URL}user`,
    allestimation: `${process.env.REACT_APP_URL}estimation`,
+   estimationDetail: `${process.env.REACT_APP_URL}estimationDetail`,
    masterEstimationTypes: `${process.env.REACT_APP_URL}estimationTemplate`,
 
    createClient: `${process.env.REACT_APP_URL}client`,

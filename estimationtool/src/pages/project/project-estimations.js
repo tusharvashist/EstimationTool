@@ -29,7 +29,7 @@ function ProjectEstimations(props) {
     setClientDeatils({ ...props.clientInfo });
     setProjectDeatils({ ...props.projectInfo });
   }, [props.tableData1]);
-
+  console.log(tableData);
   const checkStep = (data) => {
     if (data.estStep == "3") {
       return (
