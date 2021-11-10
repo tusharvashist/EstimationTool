@@ -210,7 +210,7 @@ function Projects(props) {
     deleteProject();
   };
 
-  console.log(projectByClient);
+  //console.log(projectByClient);
 
   const { message, severity, open } = isOpen || {};
 
