@@ -14,6 +14,7 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
     operator: String,
     unit: Number,
     description: String,
+    value: String
 
 }, {
     timestamps: true,

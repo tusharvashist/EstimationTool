@@ -1,6 +1,14 @@
 
 const constant = require("../constant")
 const EstimationTemplateCalcAttr = require("../database/models/estimationTemplateCalcAttrModel")
+
+const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel")
+//const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
+// estimationHeaderAtrributeCalc- header plus more
+// estimationHeaderAtrribute
+// EstimationCalcAttr
+
+const EstimationHeaderTemplateCalcAttr = require("../database/models/estimationHeaderAtrributeCalcModel")
 const Client = require("../database/models/clientModel")
 const { formatMongoData } = require("../helper/dbhelper")
 const mongoose = require("mongoose")
@@ -70,12 +78,14 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
 
 module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid }) => {
     try {
-        let estAttCalc = await EstimationTemplateCalcAttr.aggregate().addFields({ selected: false });
+        let estAttCalc = await EstimationHeaderTemplateCalcAttr.aggregate().addFields({ selected: false, value: "" });
+        let estCalcId1 = await EstimationTemplateCalcAttr();
+        let a1 = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" })
         //.addFields({ selected: true })
         // skip n limit remove, put est type id and est header id
         // if we get est header id- means get all est header calc attr table
         if (estheaderid) {
-            let estSelAtt = await EstimationTemplateCalcAttr.find({ estHeaderId: estheaderid });
+            let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: estheaderid });
             var index = 0;
             estAttCalc.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
@@ -87,12 +97,13 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
             })
         }
         if (esttype) {
-            let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
+
+            let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
             var index = 0;
-            estAttCalc.forEach(element => {
+            estCalcId1.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
-                    if (String(estSelAttElement.estAttrId) == String(element._id)) {
-                        estAttCalc[index].selected = true;
+                    if (String(estSelAttElement._id) == String(estCalcId1.estCalcId)) {
+                        estSelAtt[index].selected = true;
                     }
                 });
                 index = index + 1;

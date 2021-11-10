@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const { Schema } = require('mongoose');
 
 const estimationTemplateCalcAttrSchema = new mongoose.Schema({
-    estCalcId: String,
+    estCalcId: {
+        type: Schema.Types.ObjectId,
+        ref: 'estimationCalcAttr'
+
+    },
     estTypeId: {
         type: Schema.Types.ObjectId,
         ref: 'EstimationTemplate'
