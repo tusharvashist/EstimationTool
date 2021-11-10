@@ -200,5 +200,6 @@ module.exports = {
         INVALID_ID: "Invalid id",
         PERMISSION_UPDATE: "User Permission update successfully",
         PERMISSION_DELETE: "User Permission delete successfully",
+        PERMISSION_DUPLICATE: "User Permission already exist.",
     },
 }
