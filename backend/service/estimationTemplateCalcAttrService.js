@@ -81,6 +81,7 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
         let estAttCalc = await EstimationHeaderTemplateCalcAttr.aggregate().addFields({ selected: false, value: "" });
         let estCalcId1 = await EstimationTemplateCalcAttr();
         let a1 = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" })
+        let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
         //.addFields({ selected: true })
         // skip n limit remove, put est type id and est header id
         // if we get est header id- means get all est header calc attr table
@@ -98,7 +99,7 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
         }
         if (esttype) {
 
-            let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
+            // let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
             var index = 0;
             estCalcId1.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
