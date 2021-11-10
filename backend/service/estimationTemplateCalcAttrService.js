@@ -1,7 +1,7 @@
 
 const constant = require("../constant")
 const EstimationTemplateCalcAttr = require("../database/models/estimationTemplateCalcAttrModel")
-
+const ObjectId = require('mongodb').ObjectId;
 const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel")
 //const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
 // estimationHeaderAtrributeCalc- header plus more
@@ -78,39 +78,39 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
 
 module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid }) => {
     try {
-        let estAttCalc = await EstimationHeaderTemplateCalcAttr.aggregate().addFields({ selected: false, value: "" });
-        let estCalcId1 = await EstimationTemplateCalcAttr();
-        let a1 = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" })
-        //.addFields({ selected: true })
-        // skip n limit remove, put est type id and est header id
-        // if we get est header id- means get all est header calc attr table
         if (estheaderid) {
-            let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: estheaderid });
+            let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
+            let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: ObjectId(estheaderid) });
             var index = 0;
             estAttCalc.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
-                    if (String(estSelAttElement.estAttributeId) == String(element._id)) {
-                        estAttCalc[index].selected = true;
+                    if (String(estSelAttElement.calcAttributeName) == String(element.calcAttributeName)) {
+                        element.selected=true;
+                        element.isFormula=estSelAttElement.isFormula;
+                        element.formula=estSelAttElement.formula;
+                        element.operator=estSelAttElement.operator;
+                        element.unit=estSelAttElement.unit;
+                        element.description=estSelAttElement.description;
+                        element.value==estSelAttElement.value;
                     }
                 });
-                index = index + 1;
-            })
-        }
-        if (esttype) {
-
-            let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
-            var index = 0;
-            estCalcId1.forEach(element => {
-                estSelAtt.forEach(estSelAttElement => {
-                    if (String(estSelAttElement._id) == String(estCalcId1.estCalcId)) {
-                        estSelAtt[index].selected = true;
-                    }
-                });
-                index = index + 1;
             });
+            return (estAttCalc)
         }
-
-        return (estAttCalc)
+        if (esttype) {            
+            let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
+            let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
+            var index = 0;
+            estAttCalc.forEach(element => {
+                estSelAtt.forEach(estSelAttElement => {
+                    console.log(String(estSelAttElement.calcAttributeName));
+                    if (String(estSelAttElement.estCalcId) == String(element._id)) {
+                        element.selected = true;
+                    }
+                });
+            });
+            return (estAttCalc)
+        }
     } catch (err) {
         console.log("something went wrong: service > estimationTemplateCalcAttrService ", err);
         throw new Error(err)
