@@ -37,6 +37,7 @@ function AllClient(props) {
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
   const [clientStatus, setClientStatus] = useState([
+    { title: "All", value: "All" },
     { title: "Active", value: false },
     { title: "In-Active", value: true },
   ]);
@@ -99,12 +100,17 @@ function AllClient(props) {
   };
   const getDropDownvalue = (event) => {
     console.log("get dropdown value", event.target.value);
-    let dataResponce = tableData.filter(
-      (op) => op.isDeleted === event.target.value
-    );
-    setFilteredData([...dataResponce]);
+    if (event.target.value === "All") {
+      setFilteredData([...tableData]);
+    } else {
+      let dataResponce = tableData.filter(
+        (op) => op.isDeleted === event.target.value
+      );
+      setFilteredData([...dataResponce]);
+    }
   };
   console.log("table data", tableData);
+  console.log("filtered data", filteredData);
 
   const openCreateDailog = () => {
     openFun();
@@ -208,6 +214,12 @@ function AllClient(props) {
   }
 
   const { message, severity, open } = isOpen || {};
+
+  const rowBackgroundColor = {
+    true: "#eef5e9",
+    false: "#fff",
+  };
+
   return (
     <>
       <div className="all-client-wrap">
@@ -308,6 +320,12 @@ function AllClient(props) {
                 fontWeight: "bold",
                 fontSize: "0.9rem",
                 color: "#113c91",
+              },
+              rowStyle: (rowData) => {
+                return {
+                  backgroundColor:
+                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                };
               },
             }}
             data={filteredData}

@@ -14,8 +14,10 @@ import { display } from "@material-ui/system";
 
 const EstimationDetail = () => {
   const location = useLocation();
-  const params = useParams();
+  console.log(location);
   const estimationId = location.state.estId;
+  // const estimationId = localStorage.estimationHeaderId;
+  console.log(estimationId);
   const [clientDetails, setClientDetails] = useState({
     _id: "",
     clientName: "",
@@ -256,14 +258,11 @@ const EstimationDetail = () => {
               state: {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
+                estimationHeaderId: estimationId,
               },
             }}
           >
-            <Button
-              variant="outlined"
-              className="estimation-detail-button"
-              // onClick={openEditRequirement}
-            >
+            <Button variant="outlined" className="estimation-detail-button">
               {" "}
               <EditOutlined /> Edit Configuration
             </Button>

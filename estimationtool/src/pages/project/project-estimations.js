@@ -89,7 +89,7 @@ function ProjectEstimations(props) {
 
   const actionArry = (rowData) => {};
   const rowBackgroundColor = {
-    true: "#ededed",
+    true: "#eef5e9",
     false: "#fff",
   };
 

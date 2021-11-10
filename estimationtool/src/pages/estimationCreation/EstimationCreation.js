@@ -34,7 +34,9 @@ const EstimationCreation = (props) => {
   const [skipped, setSkipped] = React.useState(new Set());
   const clientInfo = { ...location1.state.clientInfo };
   const projecttInfo = { ...location1.state.projectInfo };
-  const [estimationHeaderId, setEstimationHeaderId] = React.useState();
+  const estionHeaderId = location1.state.estimationHeaderId;
+  const [estimationHeaderId, setEstimationHeaderId] =
+    React.useState(estionHeaderId);
   const [estimationIdFinish, setEstimationIdFinish] = React.useState();
 
   const getHeaderIdChild = (p) => {
@@ -51,9 +53,24 @@ const EstimationCreation = (props) => {
     return skipped.has(step);
   };
 
+  // useEffect(() => {
+  //   setLocation(location);
+  //   //setEstimationHeaderId(estionHeaderId)
+  //   //console.log("prop est id:"+location1.state.estimationHeaderId )
+  //   //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
+  // }, [clientInfo]);
+
   useEffect(() => {
     setLocation(location);
-  }, [clientInfo]);
+    setEstimationHeaderId(location1.state.estimationHeaderId);
+    console.log(
+      "prop est id:" +
+        location1.state.estimationHeaderId +
+        ":" +
+        estimationHeaderId
+    );
+    //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
+  }, location1.state.estimationHeaderId);
 
   // save Estimation Basic detail data to post request to generating estimation header APi
   const createEstimationBasicDetail = (reqData) => {
@@ -61,6 +78,7 @@ const EstimationCreation = (props) => {
       .saveEstimationBasicDetail(reqData)
       .then((res) => {
         let dataResponce = res.data.body;
+        console.log(dataResponce);
         console.log(
           "Save Basic Details APi response:" + JSON.stringify(dataResponce)
         );
@@ -229,6 +247,8 @@ const EstimationCreation = (props) => {
     setActiveStep(0);
   };
 
+  console.log(estimationHeaderId, estimationIdFinish);
+
   return (
     <BorderedContainer>
       <Box sx={{ width: "100%" }}>
@@ -327,6 +347,7 @@ const EstimationCreation = (props) => {
                 <FirstStep
                   clientName={clientInfo.clientName}
                   projectName={projecttInfo.projectName}
+                  estimationHeaderId={estimationHeaderId}
                   ref={childRef}
                 />
               )}
@@ -371,7 +392,9 @@ const EstimationCreation = (props) => {
                           "/" +
                           projecttInfo.projectName +
                           "/Estimation-Detail",
-                        state: { estId: estimationIdFinish },
+                        state: {
+                          estId: estimationIdFinish,
+                        },
                       }}
                     >
                       {" "}

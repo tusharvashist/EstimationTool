@@ -133,7 +133,7 @@ const ThirdStep = (props) => {
         unit,
         description,
       }) => ({
-        estHeaderId: props.estimatioHeaderId,
+        estHeaderId: localStorage.estimationHeaderId,
         calcAttribute,
         calcAttributeName,
         isFormula,
@@ -161,7 +161,7 @@ const ThirdStep = (props) => {
         unit,
         description,
       }) => ({
-        estHeaderId: props.estimatioHeaderId,
+        estHeaderId: localStorage.estimationHeaderId,
         calcAttribute,
         calcAttributeName,
         isFormula,
@@ -174,7 +174,7 @@ const ThirdStep = (props) => {
   );
 
   const passHeaderId = () => {
-    props.getHeaderId(props.estimatioHeaderId);
+    props.getHeaderId(localStorage.estimationHeaderId);
   };
 
   return (

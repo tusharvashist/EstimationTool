@@ -8,7 +8,7 @@ export const basicDetailSlice = createSlice({
     estimationTypeId: '',
     efforUnit: '',
     esttimationDesc: '',
-    estimationHeaderId: localStorage.estimationHeaderId,
+    estimationHeaderId: '',
   },
   reducers: {
     setEstimationName: (state, estimationName) => {
@@ -28,13 +28,13 @@ export const basicDetailSlice = createSlice({
     },
     setEstimationHeaderId: (state, estimationHeaderId) => {
       state.estimationHeaderId = estimationHeaderId.payload;
-      localStorage.setItem('estimationHeaderId', estimationHeaderId.payload);
+      //localStorage.setItem('estimationHeaderId', estimationHeaderId.payload);
     },
 
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setEstimationName, setEstimationType, setEstimationTypeId, setEfforUnit, setEsttimationDesc } = basicDetailSlice.actions
+export const { setEstimationName, setEstimationType, setEstimationTypeId, setEfforUnit, setEsttimationDesc,setEstimationHeaderId } = basicDetailSlice.actions
 
 export default basicDetailSlice.reducer
