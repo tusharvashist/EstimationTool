@@ -56,6 +56,7 @@ function Projects(props) {
       field: "projectName",
       render: (rowData) => {
         return (
+          rowData.isDeleted ?  <>{rowData.projectName} </> :
           <Link
             to={{
               pathname:
