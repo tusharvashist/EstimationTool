@@ -161,7 +161,7 @@ function ProjectEstimations(props) {
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           actions={[
-            {
+            rowData => ({
               icon: "edit",
               tooltip: "Edit Estimation",
               onClick: (event, rowData) => {
@@ -174,8 +174,9 @@ function ProjectEstimations(props) {
                 // setActionId(rowData.id);
                 // openUpdateDailog();
               },
-            },
-            {
+              disabled: rowData.isDeleted
+            }),
+            rowData => ({
               icon: "delete",
               tooltip: "Delete Estimation",
               onClick: (event, rowData) => {
@@ -185,7 +186,8 @@ function ProjectEstimations(props) {
                 setDeleteRecordName(rowData.estName);
                 openDeleteDailog();
               },
-            },
+              disabled: rowData.isDeleted
+            }),
           ]}
           options={{
             actionsColumnIndex: -1,

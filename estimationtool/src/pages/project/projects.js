@@ -301,7 +301,7 @@ function Projects(props) {
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           actions={[
-            {
+            rowData => ({
               icon: "edit",
               tooltip: "Edit project",
               onClick: (event, rowData) => {
@@ -309,8 +309,9 @@ function Projects(props) {
                 setActionId(rowData._id);
                 openUpdateDailog();
               },
-            },
-            {
+              disabled: rowData.isDeleted
+            }),
+            rowData => ({
               icon: "delete",
               tooltip: "Delete project",
               onClick: (event, rowData) => {
@@ -319,7 +320,8 @@ function Projects(props) {
                 setDeleteRecordName(rowData.projectName);
                 openDeleteDailog();
               },
-            },
+              disabled: rowData.isDeleted
+            }),
           ]}
           options={{
             actionsColumnIndex: -1,
