@@ -70,10 +70,13 @@ export default function ClientDetails(props) {
     ProjectSer.getProjectById(projectIdForFun)
       .then((res) => {
         let dataResponse = res.data.body;
+        console.log(dataResponse);
         setProjectDetails({ ...dataResponse });
         setClientDetails({ ...dataResponse.client });
         setTableDataWithoutFilter([...dataResponse.estimates]);
-        setTableData([...dataResponse.estimates]);
+        setTableData(
+          dataResponse.estimates.filter((el) => el.isDeleted === false)
+        );
       })
       .catch((err) => {
         console.log("get Client by id error", err);
@@ -89,7 +92,7 @@ export default function ClientDetails(props) {
     });
   };
 
-  const [clientStatus, setClientStatus] = useState([
+  const [projectStatus, setProjectStatus] = useState([
     { title: "All" },
     { title: "Active" },
     { title: "In-Active" },
@@ -99,7 +102,7 @@ export default function ClientDetails(props) {
     console.log("estimationSelectedState :", value);
     switch (value) {
       case "Active":
-        // console.log("set Active data ");
+        console.log("set Active data ");
         return tableDataWithoutFilter.filter((op) => op.isDeleted === false);
       case "In-Active":
         // console.log("set In- Active data ");
@@ -111,7 +114,7 @@ export default function ClientDetails(props) {
   };
 
   const getDropDownvalue = (event) => {
-    console.log("this is an download vlaue", event.target.value);
+    console.log("this is an download vlaue", event);
 
     setTableData(filterEstimation(event.target.value));
   };
@@ -177,18 +180,18 @@ export default function ClientDetails(props) {
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
                   <InputLabel id="client-simple-select">
-                    Client Status{" "}
+                    Project Status{" "}
                   </InputLabel>
 
                   <Select
                     labelId="client-simple-select"
                     id="client-simple-select"
-                    value={clientStatus.title}
-                    label={clientStatus.title}
+                    value={projectStatus.title}
+                    label={projectStatus.title}
                     defaultValue={"Active"}
                     onChange={getDropDownvalue}
                   >
-                    {clientStatus.map((item) => (
+                    {projectStatus.map((item) => (
                       <MenuItem key={item.title} value={item.title}>
                         {item.title}
                       </MenuItem>
