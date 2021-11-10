@@ -70,6 +70,23 @@ function ProjectEstimations(props) {
           {data.estName}
         </Link>
       );
+    } else if (data.estStep == undefined) {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              clientDeatils.clientName +
+              "/" +
+              projectDeatils.projectName +
+              "/Estimation-Detail",
+            state: { estId: data._id },
+          }}
+        >
+          {" "}
+          {data.estName}
+        </Link>
+      );
     }
   };
 
@@ -161,7 +178,7 @@ function ProjectEstimations(props) {
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           actions={[
-            rowData => ({
+            (rowData) => ({
               icon: "edit",
               tooltip: "Edit Estimation",
               onClick: (event, rowData) => {
@@ -174,9 +191,9 @@ function ProjectEstimations(props) {
                 // setActionId(rowData.id);
                 // openUpdateDailog();
               },
-              disabled: rowData.isDeleted
+              disabled: rowData.isDeleted,
             }),
-            rowData => ({
+            (rowData) => ({
               icon: "delete",
               tooltip: "Delete Estimation",
               onClick: (event, rowData) => {
@@ -186,7 +203,7 @@ function ProjectEstimations(props) {
                 setDeleteRecordName(rowData.estName);
                 openDeleteDailog();
               },
-              disabled: rowData.isDeleted
+              disabled: rowData.isDeleted,
             }),
           ]}
           options={{
