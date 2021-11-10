@@ -68,6 +68,7 @@ function AllClient(props) {
       field: "clientName",
       render: (rowData) => {
         return (
+          rowData.isDeleted ?  <>{rowData.clientName} </>:
           <Link
             onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
           >
