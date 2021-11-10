@@ -129,7 +129,7 @@ function Projects(props) {
 
   //For Rowdata background color according to active state
   const rowBackgroundColor = {
-    true: "#ededed",
+    true: "#eef5e9",
     false: "#fff",
   };
 
