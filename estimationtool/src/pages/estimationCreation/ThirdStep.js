@@ -34,16 +34,40 @@ const ThirdStep = (props) => {
     passHeaderId();
   }, []);
 
+  const updateStore = (list) => {
+    const newList = list.map(
+      ({
+        calcAttribute,
+        calcAttributeName,
+        isFormula,
+        formula,
+        operator,
+        unit,
+        description,
+      }) => ({
+        estHeaderId: localStorage.estimationHeaderId,
+        calcAttribute,
+        calcAttributeName,
+        isFormula,
+        formula,
+        operator,
+        unit,
+        description,
+      })
+    );
+    dispatch(setCalcAttributeData(newList));
+  }
+
   const getCalcAttribute = () => {
-    SecondStepServ.getAllCalculativeAttribute()
+    SecondStepServ.getAllCalculativeAttribute(props.estimationTypeId, localStorage.estimationHeaderId)
       .then((res) => {
         let dataResponse = res.data.body;
         console.log(dataResponse);
-
+        setAllCalcValues(dataResponse)
         let calAttriValues = {};
         setAttributes(
           dataResponse.map((ob) => {
-            calAttriValues[ob.calcAttributeName] = ob.isFormula;
+            calAttriValues[ob.calcAttributeName] = ob.selected;
             return {
               ...ob,
               name: ob.calcAttributeName,
@@ -51,8 +75,8 @@ const ThirdStep = (props) => {
             };
           })
         );
-
         setcalAttriValues(calAttriValues);
+        updateStore(dataResponse);
       })
       .catch((err) => {
         console.log("Not getting Attribute", err);
@@ -65,7 +89,7 @@ const ThirdStep = (props) => {
 
   const [isOpen, setOpen] = React.useState({});
   const [calAttriValues, setcalAttriValues] = useState(null);
-
+  const [allCalcValues, setAllCalcValues] = useState([]);
   const openAddCalAttribute = () => {
     openFun();
   };
@@ -98,11 +122,10 @@ const ThirdStep = (props) => {
 
   const onChangeField =
     ({ data }) =>
-    ({ target }) => {
-      // console.log("data, target", data, target, attributes)
+      ({ target }) => {
+        // console.log("data, target", data, target, attributes)
 
-      setAttributes(
-        attributes.map((obj) => {
+        const newData = attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
@@ -110,69 +133,49 @@ const ThirdStep = (props) => {
             return obj;
           }
         })
-      );
-    };
+        setAttributes(newData);
+        updateStore(newData);
+      };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
-    setAttributes(
-      attributes.map((obj) => {
-        if (obj._id === checkConfig._id) {
-          const newobj = { ...obj, isFormula: checked };
-          return newobj;
-        } else {
-          return obj;
-        }
-      })
-    );
-    const newObj = attributes.map(
-      ({
-        calcAttribute,
-        calcAttributeName,
-        isFormula,
-        formula,
-        operator,
-        unit,
-        description,
-      }) => ({
-        estHeaderId: localStorage.estimationHeaderId,
-        calcAttribute,
-        calcAttributeName,
-        isFormula,
-        formula,
-        operator,
-        unit,
-        description,
-      })
-    );
-
-    dispatch(setCalcAttributeData(newObj));
+    const newData = attributes.map((obj) => {
+      if (obj._id === checkConfig._id) {
+        const newobj = { ...obj, selected: checked };
+        return newobj;
+      } else {
+        return obj;
+      }
+    })
+    setAttributes(newData);
+    updateStore(newData);
   };
 
   const { message, severity, open } = isOpen || {};
-  console.log("props", props);
-  console.log(
-    "calculative",
-    attributes.map(
-      ({
-        calcAttribute,
-        calcAttributeName,
-        isFormula,
-        formula,
-        operator,
-        unit,
-        description,
-      }) => ({
-        estHeaderId: localStorage.estimationHeaderId,
-        calcAttribute,
-        calcAttributeName,
-        isFormula,
-        formula,
-        operator,
-        unit,
-        description,
-      })
-    )
-  );
+  // console.log("props", props);
+  // console.log(
+  //   "saveCalcAttribute",
+  //   attributes.map(
+  //     ({
+  //       calcAttribute,
+  //       calcAttributeName,
+  //       isFormula,
+  //       formula,
+  //       operator,
+  //       unit,
+  //       description,
+  //     }) => ({
+  //       estHeaderId: localStorage.estimationHeaderId,
+  //       calcAttribute,
+  //       calcAttributeName,
+  //       isFormula,
+  //       formula,
+  //       operator,
+  //       unit,
+  //       description,
+  //     })
+  //   )
+  // );
 
+  console.log("saveCalcAttribute", saveCalcAttribute)
   const passHeaderId = () => {
     props.getHeaderId(localStorage.estimationHeaderId);
   };

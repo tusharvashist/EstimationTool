@@ -53,6 +53,11 @@ const SecondStep = (props) => {
       }));
 
       setCheckboxValues(checkboxValues)
+      const newData = dataResponse.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: localStorage.estimationHeaderId }))
+ 
+      
+      dispatch(setEstAttributeData(newData));
+  
     }).catch((err) => {
       console.log("Not getting Attribute", err)
     })

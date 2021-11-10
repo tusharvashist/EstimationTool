@@ -18,6 +18,7 @@ import { useParams, useLocation, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
 import "./EstimationCreation.css";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
@@ -38,12 +39,17 @@ const EstimationCreation = (props) => {
   const [estimationHeaderId, setEstimationHeaderId] =
     React.useState(estionHeaderId);
   const [estimationIdFinish, setEstimationIdFinish] = React.useState();
+  const [isOpen, setOpen] = React.useState({});
 
   const getHeaderIdChild = (p) => {
     setEstimationIdFinish(p);
   };
 
+  const handleClose = () => {
+    setOpen({})
+  }
   const childRef = useRef();
+  // const secondChildRef = useRef();
 
   const isStepOptional = (step) => {
     return step === null;
@@ -139,12 +145,20 @@ const EstimationCreation = (props) => {
   const handleSaveCalcAttribute = () => {
     if (calcAttributeSave.data) {
       createSaveCalctAttribute(getCalcAttributeRequestPayload());
+    } else {
+      setOpen({ open: true, severity: 'error', message: "No Data Changed" });
+
     }
   };
 
   const handleSaveEffortAttribute = () => {
-    if (effortAttributeSave.data) {
+    if (effortAttributeSave.data.length !== 0) {
       createSaveEffortAttribute(getEffortAttributeRequestPayload());
+    }else {
+      // childRef.current.showError("Please fill all mandatory fields");
+
+      setOpen({ open: true, severity: 'error', message: "Please select atleast one checkbox" });
+
     }
   };
 
@@ -248,6 +262,7 @@ const EstimationCreation = (props) => {
   };
 
   console.log(estimationHeaderId, estimationIdFinish);
+  const { message, severity, open } = isOpen || {}
 
   return (
     <BorderedContainer>
@@ -355,6 +370,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
+                  // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (
@@ -409,6 +425,16 @@ const EstimationCreation = (props) => {
           </>
         )}
       </Box>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+
+      )}
     </BorderedContainer>
   );
 };
