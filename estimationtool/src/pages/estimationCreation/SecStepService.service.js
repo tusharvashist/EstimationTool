@@ -25,11 +25,11 @@ const ClientService = {
            })
     },
 
-    getAllCalculativeAttribute: function(){
+    getAllCalculativeAttribute: function(typeId,headerId){
         let url = Url.getCalculativeAttribute;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.get(url+"?skip=0&limit=12",{
+        return axios.get(url+`?esttype=`+typeId+`&estheaderid=`+headerId,{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }
@@ -37,7 +37,7 @@ const ClientService = {
     },
 
     createCalAttribute: function(attributeData){
-        let url = Url.getCalculativeAttribute;
+        let url = Url.saveCalcAttribute;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
         return axios.post(url,attributeData,{

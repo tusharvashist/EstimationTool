@@ -92,7 +92,8 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
         populate: { path: 'client' }
       }).populate({
         path: 'estTypeId'
-      }).skip(parseInt(skip)).limit(parseInt(limit));
+      }).skip(parseInt(skip)).limit(parseInt(limit))
+      .sort({updatedAt : 'desc'});
     return formatMongoData(estimations)
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);

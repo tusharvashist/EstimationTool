@@ -4,6 +4,22 @@ module.exports = {
         message: "",
         body: {}
     },
+
+    requirementResponse: {
+        basicDetails: {},
+        featureList: [],
+        requirementTag:[],
+        requirementType: [],
+        summaryTagList:[],
+        estHeaderAttribute: [],
+        estHeaderCalculatedAttribute: [],
+    },
+      estimationAttribute: {
+        _id: '',
+        attributeCode: '',
+        description:'',
+    },
+       
     userMessage: {
         SIGNUP_SUCCESS: "Signup successfully",
         DUPLICATE_EMAIL: "User alrady exsist with given email",
@@ -20,6 +36,17 @@ module.exports = {
         INVALID_ID: "Invalid id",
         ESTIMATION_UPDATE: "Estimation update successfully",
         ESTIMATION_DELETE: "Estimation delete successfully",
+    },
+    requirementMessage: {
+        REQUIREMENT_CREATED: "Requirement created successfully",
+        REQUIREMENT_ERROR: "Requirement create fail",
+        REQUIREMENT_FETCH: "All requirement fetch successfully",
+        REQUIREMENT_GET_ERROR: "All requirement featch error",
+        REQUIREMENT_NOT_FOUND: "Requirement not found",
+        INVALID_ID: "Invalid id",
+        REQUIREMENT_UPDATE: "Requirement update successfully",
+        REQUIREMENT_DELETE: "Requirement delete successfully",
+         DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
     },
     estimationTemplateCalcAttrMessage: {
         ESTIMATIONTEMPLATECALCATTR_CREATED: "Estimation Template Calc Attr created successfully",

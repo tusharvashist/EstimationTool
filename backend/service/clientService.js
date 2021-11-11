@@ -55,8 +55,18 @@ module.exports.getClientById = async ({ id }) => {
 module.exports.clientUpdate = async ({ id, updateInfo }) => {
   try {
     const findRecord = await Client.find({clientName :  updateInfo.clientName });
-    if(findRecord.length != 0){
+    if (findRecord.length != 0) {
+      if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
+         let clients = await Client.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
+          if (!clients) {
+               throw new Error(constant.clientMessage.CLIENT_NOT_FOUND)
+           }
+          return formatMongoData(clients)
+      } else {
+        
       throw new Error(constant.clientMessage.DUPLICATE_CLIENT);
+      }
+
       }
 
     let clients = await Client.findOneAndUpdate({ _id: id }, updateInfo, { new: true });

@@ -68,6 +68,7 @@ function AllClient(props) {
       field: "clientName",
       render: (rowData) => {
         return (
+          rowData.isDeleted ?  <>{rowData.clientName} </>:
           <Link
             onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
           >
@@ -99,6 +100,7 @@ function AllClient(props) {
     setIsOpenDailog(false);
   };
   const getDropDownvalue = (event) => {
+    
     console.log("get dropdown value", event.target.value);
     if (event.target.value === "All") {
       setFilteredData([...tableData]);
@@ -189,16 +191,7 @@ function AllClient(props) {
   };
 
   const actions = [
-    {
-      icon: "edit",
-      tooltip: "edit client",
-      onClick: (event, rowData) => {
-        setEditRow({ ...rowData });
-        setActionId(rowData.id);
-        openUpdateDailog();
-      },
-    },
-    {
+    rowData => ({
       icon: "delete",
       tooltip: "delete client",
       onClick: (event, rowData) => {
@@ -206,7 +199,18 @@ function AllClient(props) {
         setActionId(rowData.id);
         openDeleteDailog();
       },
-    },
+      disabled: rowData.isDeleted
+    }),
+    rowData => ({
+      icon: "edit",
+      tooltip: "edit client",
+      onClick: (event, rowData) => {
+        setEditRow({ ...rowData });
+        setActionId(rowData.id);
+        openUpdateDailog();
+      },
+      disabled: rowData.isDeleted
+    })
   ];
   // console.log("selectedOption.label", selectedOption.title)
   if (selectedOption.value === true) {

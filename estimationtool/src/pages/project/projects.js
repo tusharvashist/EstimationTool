@@ -56,6 +56,7 @@ function Projects(props) {
       field: "projectName",
       render: (rowData) => {
         return (
+          rowData.isDeleted ?  <>{rowData.projectName} </> :
           <Link
             to={{
               pathname:
@@ -210,7 +211,7 @@ function Projects(props) {
     deleteProject();
   };
 
-  console.log(projectByClient);
+  //console.log(projectByClient);
 
   const { message, severity, open } = isOpen || {};
 
@@ -301,25 +302,27 @@ function Projects(props) {
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
           actions={[
-            {
+            rowData => ({
               icon: "edit",
               tooltip: "Edit project",
               onClick: (event, rowData) => {
                 setEditRow({ ...rowData });
-                setActionId(rowData._id);
+                setActionId(rowData.id);
                 openUpdateDailog();
               },
-            },
-            {
+              disabled: rowData.isDeleted
+            }),
+            rowData => ({
               icon: "delete",
               tooltip: "Delete project",
               onClick: (event, rowData) => {
                 setEditRow({ ...rowData });
-                setActionId(rowData._id);
+                setActionId(rowData.id);
                 setDeleteRecordName(rowData.projectName);
                 openDeleteDailog();
               },
-            },
+              disabled: rowData.isDeleted
+            }),
           ]}
           options={{
             actionsColumnIndex: -1,

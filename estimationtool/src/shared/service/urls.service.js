@@ -2,6 +2,7 @@ const Url = {
    login: process.env.REACT_APP_URL+'user/login',
    user: `${process.env.REACT_APP_URL}user`,
    allestimation: `${process.env.REACT_APP_URL}estimation`,
+   estimationDetail: `${process.env.REACT_APP_URL}estimationDetail`,
    masterEstimationTypes: `${process.env.REACT_APP_URL}estimationTemplate`,
 
    createClient: `${process.env.REACT_APP_URL}client`,
@@ -16,7 +17,8 @@ const Url = {
    updateProject: `${process.env.REACT_APP_URL}project`,
    deleteProject: `${process.env.REACT_APP_URL}project`,
    createAttribute :   `${process.env.REACT_APP_URL}estimationattribute`,
-   getCalculativeAttribute : `${process.env.REACT_APP_URL}estimationCalcAttr`,
+   getCalculativeAttribute : `${process.env.REACT_APP_URL}estimationTemplateCalcAttr`,
+   saveCalcAttribute: `${process.env.REACT_APP_URL}estimationCalcAttr`,
    allEffortAttribute: `${process.env.REACT_APP_URL}estimation/atrribute`,
    allCalculativeAttribute: `${process.env.REACT_APP_URL}estimation/atrributeCalc`
 

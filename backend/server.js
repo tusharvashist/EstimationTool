@@ -27,6 +27,8 @@ app.use("/api/v1/user", require("./routes/userRoute"));
 //----------- allestimation Route
 app.use("/api/v1/estimation", require("./routes/estimation.route"));
 
+//----------- estimationDetail Route
+app.use("/api/v1/estimationDetail", require("./routes/estimationDetail.route"));
 //----------- Client Route
 app.use("/api/v1/client", require("./routes/client.route"));
 
