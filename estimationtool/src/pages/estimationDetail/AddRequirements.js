@@ -166,7 +166,6 @@ const AddRequirements = (props) => {
         <Grid item md={12}>
           <TextField
             required
-            error={requirementTitle.length<=0}
             
             id="standard-basic"
             label="Requirement"
@@ -179,7 +178,7 @@ const AddRequirements = (props) => {
         <Grid item xs={12}>
           <TextField
             required
-            error={requirementDescription.length<=0}
+           
             id="standard-basic"
             label="Description"
             className="full-width"

@@ -67,7 +67,19 @@ module.exports.projectUpdate = async ({ id, updateInfo }) => {
       { client: updateInfo.client }
     );
     if (findProject.length != 0) {
-      throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
+      if (findProject.length == 1 && String(findProject[0]._id) == id) {
+         let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
+      new: true,
+    });
+    if (!project) {
+      throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
+    }
+        return formatMongoData(project);
+        
+      } else {
+      
+        throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
+      }
     }
 
     let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
