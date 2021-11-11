@@ -54,7 +54,7 @@ function AllClient(props) {
     ClientSer.getAllClient()
       .then((res) => {
         let dataResponce = res.data.body;
-        // console.log(dataResponce);
+        console.log(dataResponce + ">>>>>>>>>>>>>>.");
         setTableData([...dataResponce]);
         setFilteredData(dataResponce.filter((op) => op.isDeleted === false));
       })
@@ -68,12 +68,12 @@ function AllClient(props) {
       field: "clientName",
       render: (rowData) => {
         return (
-          rowData.isDeleted ?  <>{rowData.clientName} </>:
-          <Link
-            onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
-          >
-            {rowData.clientName}
-          </Link>
+          rowData.isDeleted ? <>{rowData.clientName} </> :
+            <Link
+              onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
+            >
+              {rowData.clientName}
+            </Link>
         );
       },
       sorting: false,
@@ -83,8 +83,10 @@ function AllClient(props) {
       title: "Client Website",
       field: "website",
       render: (dataRow) => {
+
         return (
-          <a target="blank" href={dataRow.website}>
+          <a target="blank" href={`//${dataRow.website}`}>
+            {/* <Link target="_blank" to={dataRow.website}>{dataRow.website}</Link> */}
             {dataRow.website}
           </a>
         );
@@ -100,7 +102,7 @@ function AllClient(props) {
     setIsOpenDailog(false);
   };
   const getDropDownvalue = (event) => {
-    
+
     console.log("get dropdown value", event.target.value);
     if (event.target.value === "All") {
       setFilteredData([...tableData]);

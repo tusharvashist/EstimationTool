@@ -49,6 +49,7 @@ export default function ClientDetails(props) {
     ClientSer.getAllClient()
       .then((res) => {
         let dataResponce = res.data.body;
+
         setClients(dataResponce.filter((op) => op.isDeleted === false));
         setClientId(
           dataResponce.find((x) => x.clientName === clientUrlName).id
