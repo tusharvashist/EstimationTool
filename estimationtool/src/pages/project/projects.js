@@ -166,7 +166,7 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: "error", message: err.response.data.message });
       });
   };
 
@@ -179,7 +179,7 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: "error", message: err.response.data.message });
       });
   };
 
@@ -192,7 +192,7 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: "error", message: err.response.data.message });
       });
   };
 

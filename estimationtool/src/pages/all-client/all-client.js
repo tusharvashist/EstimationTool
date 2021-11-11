@@ -149,7 +149,7 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: "error", message: err.response.data.message });
       });
   };
 
@@ -162,7 +162,7 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: "error", message: err.response.data.message });
       });
   };
 
@@ -175,7 +175,7 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: "error", message: err.response.data.message });
       });
   };
 
