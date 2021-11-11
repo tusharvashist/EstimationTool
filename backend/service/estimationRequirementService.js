@@ -139,7 +139,8 @@ module.exports.getById = async ({ id }) => {
     let response = { ...constant.requirementResponse };
     response.basicDetails = estimations;
 
-    let estHeaderRequirement = await EstHeaderRequirement.find({ estHeader: id }, { estHeader: 0 },{ isDeleted: false })
+    let estHeaderRequirement = await EstHeaderRequirement
+      .find({ estHeader: id, isDeleted: false }, { estHeader: 0 })
       .populate({
         path: 'requirement',
         populate: [{ path: 'tag' }, { path: 'type' }],
@@ -158,14 +159,26 @@ module.exports.getById = async ({ id }) => {
     var DevTotal = 0;
     estHeaderRequirement.forEach(element => {
       if(element.isDeleted == false){
-      var totalEffortOfElement = 0;
-      element.estRequirementData.forEach(effort => {
+        var totalEffortOfElement = 0;
+        
+        element.estRequirementData = element.estRequirementData.filter(function(item, pos) {
+    return element.estRequirementData.indexOf(item) == pos;
+        })
+        
+        element.estRequirementData.forEach(effort => {
+          if (element.requirement.tag.name == "DESIGN") {
+            var data = effort.ESTData;
+             var dataid = effort._id;
+            console.log("data:", data, "id" ,dataid);
+          }
         if (typeof effort.ESTData === 'number') {
               totalEffortOfElement = totalEffortOfElement + effort.ESTData;
           }
         
       })
-      DevTotal = DevTotal + totalEffortOfElement;
+        DevTotal = DevTotal + totalEffortOfElement;
+        
+
       if (DevTotal) {
         if (summaryTagList.length == 0) {
           summaryTagList.push({
@@ -242,7 +255,7 @@ module.exports.getById = async ({ id }) => {
     let estimationHeaderAttributeModel = await EstimationHeaderAttributeModel.find(
       {
         estHeaderId: id
-      }).populate({
+      },{ isDeleted: false }).populate({
         path: 'estAttributeId',
       })
     
