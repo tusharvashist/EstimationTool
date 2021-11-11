@@ -24,7 +24,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setAdmin,
+  setContributor,
+  setSuperAdmin,
+} from "../../../Redux/roleRedux";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -67,6 +72,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function Topnav(props) {
+  const dispatch = useDispatch();
   const loginRedux = useSelector((state) => state.login);
   let history = useHistory();
   const classes = useStyles();
@@ -80,6 +86,9 @@ export default function Topnav(props) {
   };
 
   const handleLogout = () => {
+    dispatch(setAdmin(false));
+    dispatch(setContributor(false));
+    dispatch(setSuperAdmin(false));
     AuthSer.logout();
     redirectLogin();
   };

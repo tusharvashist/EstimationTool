@@ -22,12 +22,13 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import Link from "@material-ui/core/Link";
 import { withRouter } from "react-router";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { grid } from "@material-ui/system";
+// import { rolePermission } from "../../shared/commonUtility/rolePermission";
+import { useSelector } from "react-redux";
 
 function AllClient(props) {
   const { history } = props;
   // console.log(props);
-
+  const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -46,6 +47,7 @@ function AllClient(props) {
     title: "Active",
     value: false,
   });
+
   useEffect(() => {
     getAllClient();
   }, []);
@@ -67,13 +69,14 @@ function AllClient(props) {
       title: "Client Name",
       field: "clientName",
       render: (rowData) => {
-        return (
-          rowData.isDeleted ? <>{rowData.clientName} </> :
-            <Link
-              onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
-            >
-              {rowData.clientName}
-            </Link>
+        return rowData.isDeleted ? (
+          <>{rowData.clientName} </>
+        ) : (
+          <Link
+            onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
+          >
+            {rowData.clientName}
+          </Link>
         );
       },
       sorting: false,
@@ -83,7 +86,6 @@ function AllClient(props) {
       title: "Client Website",
       field: "website",
       render: (dataRow) => {
-
         return (
           <a target="blank" href={`//${dataRow.website}`}>
             {/* <Link target="_blank" to={dataRow.website}>{dataRow.website}</Link> */}
@@ -102,7 +104,6 @@ function AllClient(props) {
     setIsOpenDailog(false);
   };
   const getDropDownvalue = (event) => {
-
     console.log("get dropdown value", event.target.value);
     if (event.target.value === "All") {
       setFilteredData([...tableData]);
@@ -113,8 +114,6 @@ function AllClient(props) {
       setFilteredData([...dataResponce]);
     }
   };
-  console.log("table data", tableData);
-  console.log("filtered data", filteredData);
 
   const openCreateDailog = () => {
     openFun();
@@ -151,7 +150,11 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
@@ -164,7 +167,11 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
@@ -177,7 +184,11 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
@@ -193,7 +204,7 @@ function AllClient(props) {
   };
 
   const actions = [
-    rowData => ({
+    (rowData) => ({
       icon: "delete",
       tooltip: "delete client",
       onClick: (event, rowData) => {
@@ -201,9 +212,9 @@ function AllClient(props) {
         setActionId(rowData.id);
         openDeleteDailog();
       },
-      disabled: rowData.isDeleted
+      disabled: rowData.isDeleted,
     }),
-    rowData => ({
+    (rowData) => ({
       icon: "edit",
       tooltip: "edit client",
       onClick: (event, rowData) => {
@@ -211,8 +222,8 @@ function AllClient(props) {
         setActionId(rowData.id);
         openUpdateDailog();
       },
-      disabled: rowData.isDeleted
-    })
+      disabled: rowData.isDeleted,
+    }),
   ];
   // console.log("selectedOption.label", selectedOption.title)
   if (selectedOption.value === true) {
@@ -228,9 +239,15 @@ function AllClient(props) {
 
   return (
     <>
-      <div className="all-client-wrap" data-backdrop="static" data-keyboard="false">
+      <div
+        className="all-client-wrap"
+        data-backdrop="static"
+        data-keyboard="false"
+      >
         {createClinetDailog === true && isOpenDailog === true ? (
-          <CreateClientDailog data-backdrop="static" data-keyboard="false"
+          <CreateClientDailog
+            data-backdrop="static"
+            data-keyboard="false"
             isOpen={isOpenDailog}
             openF={openFun}
             closeF={closeFun}
@@ -298,11 +315,13 @@ function AllClient(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
-            <Button variant="outlined" onClick={openCreateDailog}>
-              {" "}
-              <AddIcon />
-              create client
-            </Button>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openCreateDailog}>
+                {" "}
+                <AddIcon />
+                create client
+              </Button>
+            )}
           </Grid>
         </Box>
       </div>
