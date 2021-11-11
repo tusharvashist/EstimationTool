@@ -210,6 +210,11 @@ module.exports.getById = async ({ id }) => {
     var calAttributeTotal = 0;
     let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeader: id },{ isDeleted: false });
     if (estHeaderAttributeCalc.length != 0) {
+
+        estHeaderAttributeCalc = estHeaderAttributeCalc.filter(function(item, pos) {
+    return estHeaderAttributeCalc.indexOf(item) == pos;
+        })
+      
       estHeaderAttributeCalc.forEach(element => {
         var effort = DevTotal * (element.unit / 100);
          effort = Math.round(effort);
@@ -224,6 +229,8 @@ module.exports.getById = async ({ id }) => {
         });
       });
     }
+
+
 
     GrandTotal = DevTotal + calAttributeTotal; 
     GrandTotal =  Math.round(GrandTotal);
@@ -240,7 +247,9 @@ module.exports.getById = async ({ id }) => {
           Effort: GrandTotal,
           id: 0
         });
-
+   summaryTagList = summaryTagList.filter(function(item, pos) {
+    return summaryTagList.indexOf(item) == pos;
+        })
     response.summaryTagList = summaryTagList;
 
     let requirementType = await RequirementType.find({}).sort({name : 1});
