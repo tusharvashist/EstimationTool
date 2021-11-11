@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,7 +8,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import  './dailog.css';
+import './dailog.css';
 
 const styles = (theme) => ({
   root: {
@@ -56,41 +56,41 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 export default function CustomizedDialogs(props) {
-    // const handleClickOpen = () => {
-    //     props.openFun();
-    //   };
+  // const handleClickOpen = () => {
+  //     props.openFun();
+  //   };
 
-      const handleClose = () => {
-        props.closeFun();
-      };
-    
-      const okFun = ()=>{
-          props.saveFun(props.saveFun)
-      }
+  const handleClose = () => {
+    props.closeFun();
+  };
 
-    useEffect(() => {
-    }, [props.isOpen])
-    
-    
-    
-    return (
-      <Dialog fullWidth maxWidth="sm" onClose={handleClose} aria-labelledby="customized-dialog-title" open={props.isOpen}>
-          <DialogTitle className="modal-header" id="customized-dialog-title" >
-            <Typography align="center"> {props.title}</Typography>
-          </DialogTitle>
-          <DialogContent dividers>
-              {props.children}
-          </DialogContent>
-          <DialogActions>
-         
-          <Button size="small" color="primary" onClick={okFun} >
-            {props.oktitle}
-          </Button>
+  const okFun = () => {
+    props.saveFun(props.saveFun)
+  }
 
-          <Button onClick={handleClose} color="primary">
-            {props.cancelTitle}
-          </Button>
-        </DialogActions>
-      </Dialog>
+  useEffect(() => {
+  }, [props.isOpen])
+
+
+
+  return (
+    <Dialog fullWidth maxWidth="sm" onClose={handleClose} aria-labelledby="customized-dialog-title" open={props.isOpen} disableBackdropClick>
+      <DialogTitle className="modal-header" id="customized-dialog-title" >
+        <Typography align="center"> {props.title}</Typography>
+      </DialogTitle>
+      <DialogContent dividers>
+        {props.children}
+      </DialogContent>
+      <DialogActions>
+
+        <Button size="small" color="primary" onClick={okFun} >
+          {props.oktitle}
+        </Button>
+
+        <Button onClick={handleClose} color="primary">
+          {props.cancelTitle}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
