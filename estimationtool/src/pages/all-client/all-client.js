@@ -228,9 +228,9 @@ function AllClient(props) {
 
   return (
     <>
-      <div className="all-client-wrap">
+      <div className="all-client-wrap" data-backdrop="static" data-keyboard="false">
         {createClinetDailog === true && isOpenDailog === true ? (
-          <CreateClientDailog
+          <CreateClientDailog data-backdrop="static" data-keyboard="false"
             isOpen={isOpenDailog}
             openF={openFun}
             closeF={closeFun}
