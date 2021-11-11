@@ -147,23 +147,26 @@ const EstimationCreation = (props) => {
     } else {
       //setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
-
-    if (activeStep > 0) setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
+    // setSkipped(newSkipped);
+    return ;
+   
   };
 
   const handleSaveCalcAttribute = () => {
-    if (calcAttributeSave.data) {
+    if (calcAttributeSave.data.length !== 0) {
       createSaveCalctAttribute(getCalcAttributeRequestPayload());
+     console.log("thirdstep validation",calcAttributeSave.data)
     } else {
-      setOpen({ open: true, severity: 'error', message: "No Data Changed" });
+      setOpen({ open: true, severity: 'error', message: "Select Atleast One checkbox" });
 
     }
   };
 
   const handleSaveEffortAttribute = () => {
     if (effortAttributeSave.data.length !== 0) {
+
       createSaveEffortAttribute(getEffortAttributeRequestPayload());
+     
     }else {
       // childRef.current.showError("Please fill all mandatory fields");
 
@@ -179,7 +182,8 @@ const EstimationCreation = (props) => {
       .saveCalculativeAttribute(reqData)
       .then((res) => {
         let dataResponce = res.data.body;
-        //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        handleFinish()
       })
       .catch((err) => {
         // console.log("save estimation header detail error : ", err);
@@ -192,8 +196,9 @@ const EstimationCreation = (props) => {
       .saveEffortAttribute(reqData)
       .then((res) => {
         let dataResponce = res.data.body;
-        setEstimationHeaderId(dataResponce._id);
+        setEstimationHeaderId(dataResponce._id);  
         //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
         // console.log("save estimation header detail error : ", err);
@@ -270,6 +275,29 @@ const EstimationCreation = (props) => {
   const handleReset = () => {
     setActiveStep(0);
   };
+
+const handleFinish = () => {
+return
+  (
+    <Link
+      className="finish-link"
+      to={{
+        pathname:
+          "/All-Clients/" +
+          clientInfo.clientName +
+          "/" +
+          projecttInfo.projectName +
+          "/Estimation-Detail",
+        state: {
+          estId: estimationIdFinish,
+        },
+      }}
+    >
+      {" "}
+      Finish
+    </Link>
+  )
+}
 
   console.log(estimationHeaderId, estimationIdFinish);
   const { message, severity, open } = isOpen || {}
@@ -408,25 +436,7 @@ const EstimationCreation = (props) => {
                 )}
 
                 <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? (
-                    <Link
-                      className="finish-link"
-                      to={{
-                        pathname:
-                          "/All-Clients/" +
-                          clientInfo.clientName +
-                          "/" +
-                          projecttInfo.projectName +
-                          "/Estimation-Detail",
-                        state: {
-                          estId: estimationIdFinish,
-                        },
-                      }}
-                    >
-                      {" "}
-                      Finish
-                    </Link>
-                  ) : (
+                  {activeStep === steps.length - 1 ? handleFinish : (
                     "Next"
                   )}
                 </Button>
