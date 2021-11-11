@@ -78,15 +78,6 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
 
 module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid }) => {
     try {
-        let estAttCalc = await EstimationHeaderTemplateCalcAttr.aggregate().addFields({ selected: false, value: "" });
-        let estCalcId1 = await EstimationTemplateCalcAttr();
-        let a1 = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" })
-        let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
-        //.addFields({ selected: true })
-        // skip n limit remove, put est type id and est header id
-        // if we get est header id- means get all est header calc attr table
-
-
         if (estheaderid) {
             let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
             let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: ObjectId(estheaderid) });
@@ -106,11 +97,7 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
             });
             return (estAttCalc)
         }
-
-
-
-        // let estSelAtt = await EstimationCalcAttr.aggregate().addFields({ selected: false, value: "" }).find({ estTypeId: esttype });
-
+        
         if (esttype) {
             let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
             let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
