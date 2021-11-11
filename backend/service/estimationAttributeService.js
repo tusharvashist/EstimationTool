@@ -8,10 +8,10 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.createEstimationAttribute = async (serviceData) => {
     try {
-        let attribute = new EstimationAttribute({ ...serviceData })        
-        const exists = await EstimationAttribute.find({attributeName :  attribute.attributeName });
-        if(exists.length != 0){
-             throw new Error(constant.EstimationAttributeMessage.ATTRIBUTE_DUPLICATE);
+        let attribute = new EstimationAttribute({ ...serviceData })
+        const exists = await EstimationAttribute.find({ attributeName: attribute.attributeName });
+        if (exists.length != 0) {
+            throw new Error(constant.EstimationAttributeMessage.ATTRIBUTE_DUPLICATE);
         }
         let result = await attribute.save();
         return formatMongoData(result)

@@ -139,6 +139,7 @@ module.exports = {
         INVALID_ID: "Invalid id",
         ATTRIBUTE_UPDATE: "Estimation Attribute update successfully",
         ATTRIBUTE_DELETE: "Estimation Attribute delete successfully",
+        ATTRIBUTE_DUPLICATE: "Estimation Attribute Duplicacy",
     },
 
     TokenMessage: {

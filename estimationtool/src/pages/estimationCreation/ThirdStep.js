@@ -89,8 +89,29 @@ const ThirdStep = (props) => {
       setOpen({ open: true, severity: "success", message: res.data.message });
       getCalcAttribute();
       closeFun();
-    });
+    })
+      .catch((err) => {
+        setOpen({ open: true, severity: "error", message: err.message });
+      });
+
   };
+
+  // const createProject = (projectData) => {
+  //   ProjectSer.createProject(projectData)
+  //     .then((res) => {
+  //       getClientById();
+  //       setOpen({ open: true, severity: "success", message: res.data.message });
+  //       closeFun();
+  //     })
+  //     .catch((err) => {
+  //       setOpen({ open: true, severity: "error", message: err.message });
+  //     });
+  // };
+
+
+
+
+
 
   const handleClose = () => {
     setOpen({});
@@ -98,20 +119,20 @@ const ThirdStep = (props) => {
 
   const onChangeField =
     ({ data }) =>
-    ({ target }) => {
-      // console.log("data, target", data, target, attributes)
+      ({ target }) => {
+        // console.log("data, target", data, target, attributes)
 
-      setAttributes(
-        attributes.map((obj) => {
-          if (obj._id === data._id) {
-            const newobj = { ...obj, [target.name]: target.value };
-            return newobj;
-          } else {
-            return obj;
-          }
-        })
-      );
-    };
+        setAttributes(
+          attributes.map((obj) => {
+            if (obj._id === data._id) {
+              const newobj = { ...obj, [target.name]: target.value };
+              return newobj;
+            } else {
+              return obj;
+            }
+          })
+        );
+      };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     setAttributes(
       attributes.map((obj) => {
