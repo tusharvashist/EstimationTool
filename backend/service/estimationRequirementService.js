@@ -128,16 +128,8 @@ module.exports.getById = async ({ id }) => {
       throw new Error(constant.requirementMessage.INVALID_ID)
     }
 
-    let estimations = await EstHeaderModel.findById({ _id: id }).
-      populate({
-        path: 'projectId',
-        populate: { path: 'client' }
-      }).populate({
-        path: 'estTypeId'
-      });
-
     let response = { ...constant.requirementResponse };
-    response.basicDetails = estimations;
+  
 
     let estHeaderRequirement = await EstHeaderRequirement
       .find({ estHeader: id, isDeleted: false }, { estHeader: 0 })
@@ -279,6 +271,18 @@ module.exports.getById = async ({ id }) => {
         }
       });
     }
+
+      let estimations = await EstHeaderModel.findById({ _id: id }).
+      populate({
+        path: 'projectId',
+        populate: { path: 'client' }
+      }).populate({
+        path: 'estTypeId'
+      });
+
+    response.basicDetails = estimations;
+
+    
     return formatMongoData(response)
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
