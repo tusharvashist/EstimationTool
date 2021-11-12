@@ -1,4 +1,4 @@
-import React, { useState,useEffect,useRef ,useImperativeHandle} from "react";
+import React, { useState, useEffect, useRef, useImperativeHandle } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -11,83 +11,99 @@ import {
 import EstimationService from "./estimation.service";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+
 const AddRequirements = (props) => {
- 
   const [showError, setShowError] = React.useState(false);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [selectedRequirementTag, setSelectedRequirementTag] = useState({});
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
   const [selectedRequirementType, setSelectedRequirementType] = useState({});
   const [isRequirementTag, setIsRequirementTag] = useState(false);
-  const [requirementTitle, setrequirementTitle] = useState('');
-  const [requirementDescription, setrequirementDescription] = useState('');
+  const [requirementTitle, setrequirementTitle] = useState("");
+  const [requirementDescription, setrequirementDescription] = useState("");
   const [editData, setEditData] = useState([]);
   const [id, setId] = useState("");
   const [formData, setFormData] = React.useState({
-        title:"",
-        description: "",
-        tag:"",
-        type : "",
-        mitigation: "",
-        project: "",
-        estHeader:"",
-        isDeleted: false 
-    });
-  
+    title: "",
+    description: "",
+    tag: "",
+    type: "",
+    mitigation: "",
+    project: "",
+    estHeader: "",
+    isDeleted: false,
+  });
+
   const [isOpen, setOpen] = React.useState({});
 
   useEffect(() => {
-  setFormdata();
-  }, [requirementTitle,requirementDescription,selectedRequirementTag,selectedRequirementType]);
-  
-  const onSubmitForm = (e) => {
-      if (requirementTitle && requirementDescription  && selectedRequirementType && selectedRequirementTag) {
-                setShowError(false);
-                   callAPI();
+    setFormdata();
+  }, [
+    requirementTitle,
+    requirementDescription,
+    selectedRequirementTag,
+    selectedRequirementType,
+  ]);
 
-            } else {
-                setShowError(true);
-            }
+  const onSubmitForm = (e) => {
+    if (
+      requirementTitle &&
+      requirementDescription &&
+      selectedRequirementType &&
+      selectedRequirementTag
+    ) {
+      setShowError(false);
+      callAPI();
+    } else {
+      setShowError(true);
+    }
   };
 
-
   const callAPI = () => {
-      setFormdata();
-     if (props.editData) {
-      EstimationService.updateRequirement(id,formData).then((res) => {
-        props.saveFun();
-        // setOpen({ open: true, severity: "success", message: res.data.message });
-
-      })
-     .catch((err) => {
-       console.log("get updateRequirement by id error", err);
-        setOpen({ open: true, severity: "error", message: err.response.data.message  });
-     });
+    setFormdata();
+    if (props.editData) {
+      EstimationService.updateRequirement(id, formData)
+        .then((res) => {
+          props.saveFun();
+          // setOpen({ open: true, severity: "success", message: res.data.message });
+        })
+        .catch((err) => {
+          console.log("get updateRequirement by id error", err);
+          setOpen({
+            open: true,
+            severity: "error",
+            message: err.response.data.message,
+          });
+        });
     } else {
-      EstimationService.createRequirement(formData).then((res) => {
-        props.saveFun();
-        // setOpen({ open: true, severity: "success", message: res.data.message });
-      })
-     .catch((err) => {
-       console.log("get createRequirement by id error", err);
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
-     });
+      EstimationService.createRequirement(formData)
+        .then((res) => {
+          props.saveFun();
+          // setOpen({ open: true, severity: "success", message: res.data.message });
+        })
+        .catch((err) => {
+          console.log("get createRequirement by id error", err);
+          setOpen({
+            open: true,
+            severity: "error",
+            message: err.response.data.message,
+          });
+        });
     }
-  }
-
+  };
 
   const setFormdata = () => {
     setFormData({
-        title: requirementTitle,
-        description: requirementDescription,
-        tag: selectedRequirementTag._id,
-        type: selectedRequirementType._id,
-        mitigation: "mitigation",
-        project: props.project,
-        estHeader:props.estHeader,
-        isDeleted: false 
+      title: requirementTitle,
+      description: requirementDescription,
+      tag: selectedRequirementTag._id,
+      type: selectedRequirementType._id,
+      mitigation: "mitigation",
+      project: props.project,
+      estHeader: props.estHeader,
+      isDeleted: false,
     });
-}
+  };
   const handelRequirement = (event) => {
     setrequirementTitle(event.target.value);
   };
@@ -95,39 +111,52 @@ const AddRequirements = (props) => {
   const handelDescription = (event) => {
     setrequirementDescription(event.target.value);
   };
-   const handleRequirementTagChange = (event) => {
-     setSelectedRequirementTag(event.target.value);
+  const handleRequirementTagChange = (event) => {
+    setSelectedRequirementTag(event.target.value);
   };
   const handleRequirementTypeChange = (event) => {
     setSelectedRequirementType(event.target.value);
   };
 
-  
   const newLocal = [props.requirementTagArray, props.requirementTypeArray];
-   useEffect(() => {
+  useEffect(() => {
     setRequirementTagArray([...props.requirementTagArray]);
-     setRequirementTypeArray([...props.requirementTypeArray]);
-     console.log("props.editData0",props.editData);
-     if (props.editData) {
-       setEditData(props.editData);
-       setrequirementTitle(props.editData[0].Requirement);
-       setrequirementDescription(props.editData[0].Description);
-       setSelectedRequirementTag({ _id: props.editData[0].Tagid, name: props.editData[0].Tag });
-       setSelectedRequirementType(props.editData[0].Type);
-       setId(props.editData[0].requirementId);
-       setFormdata();
-      }
-  }, [props.requirementTagArray, props.requirementTypeArray, props.editData, editData]);
-  
-  console.log("Edit data ----- :", editData,
-    "selectedRequirementTag: ", selectedRequirementTag.name,
-   "selectedRequirementType : ", selectedRequirementType.name);
+    setRequirementTypeArray([...props.requirementTypeArray]);
+    console.log("props.editData0", props.editData);
+    if (props.editData) {
+      setEditData(props.editData);
+      setrequirementTitle(props.editData[0].Requirement);
+      setrequirementDescription(props.editData[0].Description);
+      setSelectedRequirementTag({
+        _id: props.editData[0].Tagid,
+        name: props.editData[0].Tag,
+      });
+      setSelectedRequirementType(props.editData[0].Type);
+      setId(props.editData[0].requirementId);
+      setFormdata();
+    }
+  }, [
+    props.requirementTagArray,
+    props.requirementTypeArray,
+    props.editData,
+    editData,
+  ]);
+
+  console.log(
+    "Edit data ----- :",
+    editData,
+    "selectedRequirementTag: ",
+    selectedRequirementTag.name,
+    "selectedRequirementType : ",
+    selectedRequirementType.name
+  );
 
   const { message, severity, open } = isOpen || {};
   const handleClose = () => {
     setOpen({});
   };
-
+  console.log(props.editData, props.oktitle, props.editData[0].Tag);
+  console.log(requirementTagArray);
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}
@@ -144,19 +173,24 @@ const AddRequirements = (props) => {
             <InputLabel id="requirement-group">Tag</InputLabel>
             <Select
               required
-              error={showError && !selectedRequirementTag.name} 
-               labelId="requirement-tag"
+              error={showError && !selectedRequirementTag.name}
+              labelId="requirement-tag"
               id="requirement-tag"
-              value={selectedRequirementTag.name}
-              defaultValue={selectedRequirementTag.name}
-              onChange={(e) => { handleRequirementTagChange(e) }}
-             
+              value={
+                props.oktitle === "Update"
+                  ? props.editData[0].Tag
+                  : selectedRequirementTag.name
+              }
+              // defaultValue={props.editData[0].Tag}
+              onChange={(e) => {
+                handleRequirementTagChange(e);
+              }}
             >
-               {requirementTagArray.map((item) => (
-                 <MenuItem name={item._id}  value={item}  >
-                        {item.name} 
-                     </MenuItem>  
-                  ))}
+              {requirementTagArray.map((item) => (
+                <MenuItem name={item._id} value={item.name}>
+                  {item.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -165,55 +199,64 @@ const AddRequirements = (props) => {
             <InputLabel id="requirement-type">Type</InputLabel>
             <Select
               required
-              error={showError && !selectedRequirementType.name} 
+              error={showError && !selectedRequirementType.name}
               labelId="requirement-type"
               id="requirement-type"
-              defaultValue={selectedRequirementType.name}
-              value={ selectedRequirementType.name}
-              onChange={(e) => { handleRequirementTypeChange(e) }}
+              value={
+                props.oktitle === "Update"
+                  ? props.editData[0].Type.name
+                  : selectedRequirementTag.name
+              }
+              onChange={(e) => {
+                handleRequirementTypeChange(e);
+              }}
             >
               {requirementTypeArray.map((item) => (
-                       <MenuItem key={item._id}  value={item}>
-                        {item.name} 
-                     </MenuItem>  
-                  ))}
+                <MenuItem key={item._id} value={item.name}>
+                  {item.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item md={12}>
           <TextField
             required
-             error={showError && !requirementTitle} 
+            error={showError && !requirementTitle}
             id="standard-basic"
             label="Requirement"
             className="full-width"
             value={requirementTitle}
-            onChange={(e) => { handelRequirement(e) }}
+            onChange={(e) => {
+              handelRequirement(e);
+            }}
             variant="outlined"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
             required
-            error={showError && !requirementDescription} 
+            error={showError && !requirementDescription}
             id="standard-basic"
             label="Description"
             className="full-width"
             value={requirementDescription}
-            onChange={(e) => { handelDescription(e) }}
+            onChange={(e) => {
+              handelDescription(e);
+            }}
             variant="outlined"
           />
         </Grid>
       </Grid>
       {open && (
-          <Snackbar
-            isOpen={open}
-            severity={severity}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            message={message}
-          />
-        )}
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </CustomizedDialogs>
   );
 };

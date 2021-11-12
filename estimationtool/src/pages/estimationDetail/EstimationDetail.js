@@ -10,11 +10,9 @@ import EstimationService from "./estimation.service";
 import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
 import { display } from "@material-ui/system";
-import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 
 const EstimationDetail = () => {
-  const roleState = useSelector((state) => state.role);
   const location = useLocation();
   console.log(location);
   const estimationId = location.state.estId;
@@ -98,10 +96,10 @@ const EstimationDetail = () => {
   };
 
   const getById = () => {
-    setLoader(true)
+    setLoader(true);
     EstimationService.getById(estimationId)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
         let dataResponse = res.data.body;
         setHeaderData({ ...dataResponse.basicDetails });
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
@@ -179,11 +177,11 @@ const EstimationDetail = () => {
     });
 
     setRequirementDataArray(updatedRows);
-    setLoader(true)
+    setLoader(true);
 
     EstimationService.updateEstRequirementData(updateEstRequirementData)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
         getById();
       })
@@ -195,10 +193,10 @@ const EstimationDetail = () => {
 
   const deleteRow = async (changes, resolve) => {
     resolve();
-    setLoader(true)
+    setLoader(true);
     EstimationService.deleteRequirement(changes._id)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
         getById();
       })
@@ -377,64 +375,70 @@ const EstimationDetail = () => {
         </Box>
       </Container>
       <BorderedContainer>
-        {loaderComponent ? loaderComponent : <MaterialTable
-          style={{ boxShadow: "none" }}
-          title={`Estimation Efforts (${headerData.effortUnit})`}
-          columns={requirementHeaderArray}
-          data={requirementDataArray}
-          onRowClick={(event, rowData, togglePanel) =>
-            openEditRequirement(event, rowData)
-          }
-          editable={{
-            onBulkUpdate: (changes) =>
-              new Promise((resolve, reject) => {
-                updateAttributeValue(changes);
-                setTimeout(() => {
-                  resolve();
-                }, 1000);
-              }),
+        {loaderComponent ? (
+          loaderComponent
+        ) : (
+          <MaterialTable
+            style={{ boxShadow: "none" }}
+            title={`Estimation Efforts (${headerData.effortUnit})`}
+            columns={requirementHeaderArray}
+            data={requirementDataArray}
+            onRowClick={(event, rowData, togglePanel) =>
+              openEditRequirement(event, rowData)
+            }
+            editable={{
+              onBulkUpdate: (changes) =>
+                new Promise((resolve, reject) => {
+                  updateAttributeValue(changes);
+                  setTimeout(() => {
+                    resolve();
+                  }, 1000);
+                }),
 
-            onRowDelete: (oldData) =>
-              new Promise((resolve, reject) => {
-                deleteRow(oldData, resolve);
-                // setTimeout(() => {
-                //   resolve();
-                // }, 1000);
-              }),
-          }}
-          options={{
-            search: false,
-            headerStyle: {
-              backgroundColor: "#e5ebf7",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-              color: "#113c91",
-            },
-          }}
-        />
-        }
+              onRowDelete: (oldData) =>
+                new Promise((resolve, reject) => {
+                  deleteRow(oldData, resolve);
+                  // setTimeout(() => {
+                  //   resolve();
+                  // }, 1000);
+                }),
+            }}
+            options={{
+              search: false,
+              headerStyle: {
+                backgroundColor: "#e5ebf7",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                color: "#113c91",
+              },
+            }}
+          />
+        )}
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>
       </Container>
       <BorderedContainer>
-        {loaderComponent ? loaderComponent : <MaterialTable
-          style={{ boxShadow: "none" }}
-          title={`Summary (${headerData.effortUnit})`}
-          columns={summaryHeaderArray}
-          data={summaryDataArray}
-          options={{
-            search: false,
-            paging: false,
-            headerStyle: {
-              backgroundColor: "#e5ebf7",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-              color: "#113c91",
-            },
-          }}
-        />
-        }
+        {loaderComponent ? (
+          loaderComponent
+        ) : (
+          <MaterialTable
+            style={{ boxShadow: "none" }}
+            title={`Summary (${headerData.effortUnit})`}
+            columns={summaryHeaderArray}
+            data={summaryDataArray}
+            options={{
+              search: false,
+              paging: false,
+              headerStyle: {
+                backgroundColor: "#e5ebf7",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                color: "#113c91",
+              },
+            }}
+          />
+        )}
       </BorderedContainer>
     </React.Fragment>
   );

@@ -55,11 +55,10 @@ function AllClient(props) {
   }, []);
 
   const getAllClient = () => {
-    setLoader(true)
-    setTimeout(() => {
-      ClientSer.getAllClient()
+    setLoader(true);
+    ClientSer.getAllClient()
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
         let dataResponce = res.data.body;
         console.log(dataResponce + ">>>>>>>>>>>>>>.");
@@ -69,8 +68,6 @@ function AllClient(props) {
       .catch((err) => {
         console.log("estimation error", err);
       });
-    }, 3000);
-   
   };
   const columns = [
     {
@@ -150,11 +147,11 @@ function AllClient(props) {
   };
 
   const createClient = (clientData) => {
-    setLoader(true)
+    setLoader(true);
 
     ClientSer.createClient(clientData)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
@@ -171,11 +168,11 @@ function AllClient(props) {
   };
 
   const updateClient = (clientData) => {
-    setLoader(true)
+    setLoader(true);
 
     ClientSer.updateClient(actionId, clientData)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
@@ -192,11 +189,11 @@ function AllClient(props) {
   };
 
   const deleteClient = () => {
-    setLoader(true)
+    setLoader(true);
 
     ClientSer.deleteClient(actionId)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
@@ -347,36 +344,39 @@ function AllClient(props) {
       </div>
       <Grid container>
         <BorderedContainer className="full-width">
-          {loaderComponent ? loaderComponent : <MaterialTable
-            columns={columns}
-            components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-            }}
-            actions={!roleState.isContributor ? actions : false}
-            options={{
-              actionsColumnIndex: -1,
-              sorting: true,
-              search: false,
-              filtering: false,
-              pageSize: 5,
-              paging: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-              rowStyle: (rowData) => {
-                return {
-                  backgroundColor:
-                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
-                };
-              },
-            }}
-            data={filteredData}
-            title={`Client${tableData.length > 1 ? "s" : ""}`}
-          />
-          }
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <MaterialTable
+              columns={columns}
+              components={{
+                Container: (props) => <Paper {...props} elevation={0} />,
+              }}
+              actions={!roleState.isContributor ? actions : false}
+              options={{
+                actionsColumnIndex: -1,
+                sorting: true,
+                search: false,
+                filtering: false,
+                pageSize: 5,
+                paging: false,
+                headerStyle: {
+                  backgroundColor: "#e5ebf7",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  color: "#113c91",
+                },
+                rowStyle: (rowData) => {
+                  return {
+                    backgroundColor:
+                      rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                  };
+                },
+              }}
+              data={filteredData}
+              title={`Client${tableData.length > 1 ? "s" : ""}`}
+            />
+          )}
         </BorderedContainer>
         {open && (
           <Snackbar
