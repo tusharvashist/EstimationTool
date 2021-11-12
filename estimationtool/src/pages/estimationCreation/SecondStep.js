@@ -86,6 +86,8 @@ const SecondStep = (props) => {
       getAttribute()
       closeDialog()
     }).catch((err) => {
+      setOpen({ open: true, severity: 'error', message:  err.response.data.message });
+     
     });
   }
 

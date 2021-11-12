@@ -24,4 +24,5 @@ const estimationAttributeSchema = new mongoose.Schema({
         }
     }
 })
+estimationAttributeSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("EstimationAttributes", estimationAttributeSchema)

@@ -33,4 +33,5 @@ const projectRequirementSchema = new mongoose.Schema({
         }
     }
 })
+projectRequirementSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ProjectRequirement", projectRequirementSchema)

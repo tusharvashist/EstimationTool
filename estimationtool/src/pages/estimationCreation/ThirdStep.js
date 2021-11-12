@@ -35,7 +35,7 @@ const ThirdStep = (props) => {
   }, []);
 
   const updateStore = (list) => {
-    const newList = list.map(
+    const newList = list.filter(ob => ob.selected).map(
       ({
         calcAttribute,
         calcAttributeName,
@@ -115,7 +115,7 @@ const ThirdStep = (props) => {
       closeFun();
     })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.message });
+        setOpen({ open: true, severity: 'error', message:  err.response.data.message });
       });
 
   };

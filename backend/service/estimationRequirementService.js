@@ -166,11 +166,7 @@ module.exports.getById = async ({ id }) => {
         })
         
         element.estRequirementData.forEach(effort => {
-          if (element.requirement.tag.name == "DESIGN") {
-            var data = effort.ESTData;
-             var dataid = effort._id;
-            console.log("data:", data, "id" ,dataid);
-          }
+       
         if (typeof effort.ESTData === 'number') {
               totalEffortOfElement = totalEffortOfElement + effort.ESTData;
           }
@@ -208,14 +204,19 @@ module.exports.getById = async ({ id }) => {
       }
     });
     var calAttributeTotal = 0;
-    let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeader: id },{ isDeleted: false });
+    let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeaderId: id });
     if (estHeaderAttributeCalc.length != 0) {
+
+    //     estHeaderAttributeCalc = estHeaderAttributeCalc.filter(function(item, pos) {
+    // return estHeaderAttributeCalc.indexOf(item) == pos;
+    //     })
+      
       estHeaderAttributeCalc.forEach(element => {
         var effort = DevTotal * (element.unit / 100);
          effort = Math.round(effort);
         calAttributeTotal = calAttributeTotal + effort;
        
-        var formula = element.calcAttributeName + " @" +element.unit +"% All"
+        var formula = element.calcAttributeName + " @" +element.unit +"% All " 
         
          summaryTagList.push({
           Title: formula,
@@ -224,6 +225,8 @@ module.exports.getById = async ({ id }) => {
         });
       });
     }
+
+
 
     GrandTotal = DevTotal + calAttributeTotal; 
     GrandTotal =  Math.round(GrandTotal);
@@ -240,7 +243,9 @@ module.exports.getById = async ({ id }) => {
           Effort: GrandTotal,
           id: 0
         });
-
+   summaryTagList = summaryTagList.filter(function(item, pos) {
+    return summaryTagList.indexOf(item) == pos;
+        })
     response.summaryTagList = summaryTagList;
 
     let requirementType = await RequirementType.find({}).sort({name : 1});

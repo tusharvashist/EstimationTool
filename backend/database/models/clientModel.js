@@ -25,4 +25,5 @@ const clientSchema = new mongoose.Schema({
         }
     }
 })
+clientSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ClientMaster", clientSchema)

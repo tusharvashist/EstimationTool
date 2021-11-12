@@ -16,4 +16,5 @@ const estimationTemplateSchema = new mongoose.Schema({
         }
     }
 })
+estimationTemplateSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("EstimationTemplate", estimationTemplateSchema)

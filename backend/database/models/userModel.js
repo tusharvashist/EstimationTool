@@ -23,4 +23,5 @@ const userSchema = new mongoose.Schema({
         }
     }
 })
+userSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("user", userSchema)
