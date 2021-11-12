@@ -26,4 +26,5 @@ const estRequirementDataSchema = new mongoose.Schema({
         }
     }
 })
+estRequirementDataSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("estRequirementData", estRequirementDataSchema)
