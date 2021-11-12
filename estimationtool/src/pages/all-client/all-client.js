@@ -24,6 +24,7 @@ import { withRouter } from "react-router";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 // import { rolePermission } from "../../shared/commonUtility/rolePermission";
 import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 function AllClient(props) {
   const { history } = props;
@@ -47,14 +48,19 @@ function AllClient(props) {
     title: "Active",
     value: false,
   });
+  const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
     getAllClient();
   }, []);
 
   const getAllClient = () => {
-    ClientSer.getAllClient()
+    setLoader(true)
+    setTimeout(() => {
+      ClientSer.getAllClient()
       .then((res) => {
+        setLoader(false)
+
         let dataResponce = res.data.body;
         console.log(dataResponce + ">>>>>>>>>>>>>>.");
         setTableData([...dataResponce]);
@@ -63,6 +69,8 @@ function AllClient(props) {
       .catch((err) => {
         console.log("estimation error", err);
       });
+    }, 3000);
+   
   };
   const columns = [
     {
@@ -142,8 +150,12 @@ function AllClient(props) {
   };
 
   const createClient = (clientData) => {
+    setLoader(true)
+
     ClientSer.createClient(clientData)
       .then((res) => {
+        setLoader(false)
+
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
@@ -159,8 +171,12 @@ function AllClient(props) {
   };
 
   const updateClient = (clientData) => {
+    setLoader(true)
+
     ClientSer.updateClient(actionId, clientData)
       .then((res) => {
+        setLoader(false)
+
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
@@ -176,8 +192,12 @@ function AllClient(props) {
   };
 
   const deleteClient = () => {
+    setLoader(true)
+
     ClientSer.deleteClient(actionId)
       .then((res) => {
+        setLoader(false)
+
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
@@ -327,7 +347,7 @@ function AllClient(props) {
       </div>
       <Grid container>
         <BorderedContainer className="full-width">
-          <MaterialTable
+          {loaderComponent ? loaderComponent : <MaterialTable
             columns={columns}
             components={{
               Container: (props) => <Paper {...props} elevation={0} />,
@@ -356,6 +376,7 @@ function AllClient(props) {
             data={filteredData}
             title={`Client${tableData.length > 1 ? "s" : ""}`}
           />
+          }
         </BorderedContainer>
         {open && (
           <Snackbar

@@ -21,6 +21,7 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setEstAttributeData } from "../../Redux/effortAttributeSaveRedux";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 const SecondStep = (props) => {
   const roleState = useSelector((state) => state.role);
@@ -39,13 +40,17 @@ const SecondStep = (props) => {
 
   const [finalIds, setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
+  const [loaderComponent, setLoader] = useLoader();
 
   const getAttribute = () => {
+    setLoader(true)
     SecondStepServ.getAllAttribute(
       props.estimationTypeId,
       localStorage.estimationHeaderId
     )
       .then((res) => {
+    setLoader(false)
+
         let dataResponse = res.data.body;
         let checkboxValues = {};
         console.log("dataResponse", dataResponse);
@@ -86,9 +91,13 @@ const SecondStep = (props) => {
   };
 
   const createAttribute = (Data) => {
+    setLoader(true)
+
     SecondStepServ.createAttribute(Data)
       .then((res) => {
-        console.log("response", res);
+        // console.log("response", res);
+    setLoader(false)
+
         setOpen({ open: true, severity: "success", message: res.data.message });
         getAttribute();
         closeDialog();
@@ -163,7 +172,7 @@ const SecondStep = (props) => {
         </Grid>
       </Grid>
       <BorderedContainer>
-        <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
+      {loaderComponent ? loaderComponent :  <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Effort Attribute</FormLabel>
           {checkboxValues && (
             <Checkboxes
@@ -176,6 +185,7 @@ const SecondStep = (props) => {
             />
           )}
         </FormControl>
+}
       </BorderedContainer>
       {open && (
         <Snackbar

@@ -17,6 +17,7 @@ import "./client-details.css";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useParams, useHistory } from "react-router-dom";
 import ProjectServ from "../project/project.service";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 export default function ClientDetails(props) {
   const location = useLocation();
@@ -26,6 +27,7 @@ export default function ClientDetails(props) {
     { title: "Active", value: false },
     { title: "In-Active", value: true },
   ]);
+  const [loaderComponent, setLoader] = useLoader();
 
   const params = useParams(),
     { clientName } = params;
@@ -46,8 +48,12 @@ export default function ClientDetails(props) {
   }, [clientId]);
 
   const getAllClient = () => {
+    setLoader(true);
+
     ClientSer.getAllClient()
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
 
         setClients(dataResponce.filter((op) => op.isDeleted === false));
@@ -62,9 +68,12 @@ export default function ClientDetails(props) {
 
   const getClientById = () => {
     // const clientId = location.pathname.split("/")[2];
+    setLoader(true);
 
     ClientSer.getClientById(clientId)
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
         setClientDetails({ ...dataResponce });
       })
@@ -100,7 +109,7 @@ export default function ClientDetails(props) {
     <div className="client-deatils-wrp">
       <Box>
         <Grid container alignItems="center">
-          <Grid container justify="space-between" alignItems="center">
+          {loaderComponent ? loaderComponent : <Grid container justify="space-between" alignItems="center">
             {/* <Grid item xs={5} sm={1}>
               <p>
                 <span className="title-stl"> Client Name : </span>
@@ -159,8 +168,9 @@ export default function ClientDetails(props) {
                 <span className="section-title"></span>
               </p>
             </Grid>
-          </Grid>
+          </Grid>}
         </Grid>
+
       </Box>
       <Box>
         <ProjectView

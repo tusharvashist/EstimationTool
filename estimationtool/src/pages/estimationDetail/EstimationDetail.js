@@ -11,6 +11,7 @@ import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
 import { display } from "@material-ui/system";
 import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 const EstimationDetail = () => {
   const roleState = useSelector((state) => state.role);
@@ -53,6 +54,7 @@ const EstimationDetail = () => {
   const [summaryDataArray, setSummaryDataArray] = useState([]);
 
   const [requirementHeaderArray, setRequirementHeaderArray] = useState();
+  const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
     getById();
@@ -96,8 +98,10 @@ const EstimationDetail = () => {
   };
 
   const getById = () => {
+    setLoader(true)
     EstimationService.getById(estimationId)
       .then((res) => {
+        setLoader(false)
         let dataResponse = res.data.body;
         setHeaderData({ ...dataResponse.basicDetails });
         setProjectDetails({ ...dataResponse.basicDetails.projectId });
@@ -175,8 +179,12 @@ const EstimationDetail = () => {
     });
 
     setRequirementDataArray(updatedRows);
+    setLoader(true)
+
     EstimationService.updateEstRequirementData(updateEstRequirementData)
       .then((res) => {
+        setLoader(false)
+
         getById();
       })
       .catch((err) => {
@@ -187,8 +195,11 @@ const EstimationDetail = () => {
 
   const deleteRow = async (changes, resolve) => {
     resolve();
+    setLoader(true)
     EstimationService.deleteRequirement(changes._id)
       .then((res) => {
+        setLoader(false)
+
         getById();
       })
       .catch((err) => {
@@ -366,7 +377,7 @@ const EstimationDetail = () => {
         </Box>
       </Container>
       <BorderedContainer>
-        <MaterialTable
+        {loaderComponent ? loaderComponent : <MaterialTable
           style={{ boxShadow: "none" }}
           title={`Estimation Efforts (${headerData.effortUnit})`}
           columns={requirementHeaderArray}
@@ -401,12 +412,13 @@ const EstimationDetail = () => {
             },
           }}
         />
+        }
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>
       </Container>
       <BorderedContainer>
-        <MaterialTable
+        {loaderComponent ? loaderComponent : <MaterialTable
           style={{ boxShadow: "none" }}
           title={`Summary (${headerData.effortUnit})`}
           columns={summaryHeaderArray}
@@ -422,6 +434,7 @@ const EstimationDetail = () => {
             },
           }}
         />
+        }
       </BorderedContainer>
     </React.Fragment>
   );

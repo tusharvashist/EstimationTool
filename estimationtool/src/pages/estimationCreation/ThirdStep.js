@@ -23,10 +23,11 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setCalcAttributeData } from "../../Redux/CalcAttributeRedux";
-
+import useLoader from "../../shared/layout/hooks/useLoader";
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
   const saveCalcAttribute = useSelector((state) => state.calcAttribute);
+  const [loaderComponent, setLoader] = useLoader();
 
   const dispatch = useDispatch();
 
@@ -62,11 +63,14 @@ const ThirdStep = (props) => {
   };
 
   const getCalcAttribute = () => {
+    setLoader(true)
     SecondStepServ.getAllCalculativeAttribute(
       props.estimationTypeId,
       localStorage.estimationHeaderId
     )
       .then((res) => {
+    setLoader(false)
+
         let dataResponse = res.data.body;
         console.log(dataResponse);
         setAllCalcValues(dataResponse);
@@ -111,12 +115,16 @@ const ThirdStep = (props) => {
   };
 
   const createCalAttribute = (data) => {
+    setLoader(true)
+
     let newObject = { ...data };
 
     newObject.estTypeId = props.estimationTypeId;
     SecondStepServ.createCalAttribute(newObject)
       .then((res) => {
-        console.log("Calculative Attribute Created", res);
+    setLoader(false)
+
+        // console.log("Calculative Attribute Created", res);
         setOpen({ open: true, severity: "success", message: res.data.message });
         getCalcAttribute();
         closeFun();
@@ -248,7 +256,7 @@ const ThirdStep = (props) => {
         </Grid>
       </Grid>
       <BorderedContainer>
-        <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
+      {loaderComponent ? loaderComponent :      <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
 
           <FormGroup>
@@ -296,6 +304,7 @@ const ThirdStep = (props) => {
             />
           </FormGroup>
         </FormControl>
+}
       </BorderedContainer>
       {open && (
         <Snackbar

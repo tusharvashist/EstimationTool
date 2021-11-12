@@ -21,6 +21,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import "./project.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 function Projects(props) {
   // const { clientid } = useParams();
@@ -47,6 +48,7 @@ function Projects(props) {
   const [projectByClient, setProjectByClient] = useState();
   const [secondProjectByClient, setSecondProjectByClient] = useState();
   const [allProjectByClient, setAllProjectByClient] = useState();
+  const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
     getClientById();
@@ -139,8 +141,10 @@ function Projects(props) {
   };
 
   const getClientById = () => {
+    setLoader(true)
     ProjectSer.getClientById(clientid)
       .then((res) => {
+        setLoader(false)
         let dataResponce = res.data.body.projects;
         setTableData([...dataResponce]);
         getAllProjects(clientid);
@@ -151,9 +155,10 @@ function Projects(props) {
   };
 
   const getAllProjects = (clientid) => {
+    setLoader(true)
     ProjectSer.getAllProject().then((res) => {
       let dataResponce = res.data.body;
-
+      setLoader(false)
       const filteredData = dataResponce.filter((el) => el.client == clientid);
       const activeEl = filteredData.filter((el) => el.isDeleted == false);
       setProjectByClient(activeEl);
@@ -163,8 +168,12 @@ function Projects(props) {
   };
 
   const createProject = (projectData) => {
+    setLoader(true)
+
     ProjectSer.createProject(projectData)
       .then((res) => {
+        setLoader(false)
+
         getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
         closeFun();
@@ -179,8 +188,12 @@ function Projects(props) {
   };
 
   const updateProject = (projectData) => {
+    setLoader(true)
+
     ProjectSer.updateProject(actionId, projectData)
       .then((res) => {
+        setLoader(false)
+
         getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
@@ -196,8 +209,12 @@ function Projects(props) {
   };
 
   const deleteProject = () => {
+    setLoader(true)
+
     ProjectSer.deleteProject(actionId)
       .then((res) => {
+        setLoader(false)
+
         getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
@@ -314,7 +331,7 @@ function Projects(props) {
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        <MaterialTable
+        {loaderComponent ? loaderComponent : <MaterialTable
           columns={columns}
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
@@ -322,28 +339,28 @@ function Projects(props) {
           actions={
             !roleState.isContributor
               ? [
-                  (rowData) => ({
-                    icon: "edit",
-                    tooltip: "Edit project",
-                    onClick: (event, rowData) => {
-                      setEditRow({ ...rowData });
-                      setActionId(rowData.id);
-                      openUpdateDailog();
-                    },
-                    disabled: rowData.isDeleted,
-                  }),
-                  (rowData) => ({
-                    icon: "delete",
-                    tooltip: "Delete project",
-                    onClick: (event, rowData) => {
-                      setEditRow({ ...rowData });
-                      setActionId(rowData.id);
-                      setDeleteRecordName(rowData.projectName);
-                      openDeleteDailog();
-                    },
-                    disabled: rowData.isDeleted,
-                  }),
-                ]
+                (rowData) => ({
+                  icon: "edit",
+                  tooltip: "Edit project",
+                  onClick: (event, rowData) => {
+                    setEditRow({ ...rowData });
+                    setActionId(rowData.id);
+                    openUpdateDailog();
+                  },
+                  disabled: rowData.isDeleted,
+                }),
+                (rowData) => ({
+                  icon: "delete",
+                  tooltip: "Delete project",
+                  onClick: (event, rowData) => {
+                    setEditRow({ ...rowData });
+                    setActionId(rowData.id);
+                    setDeleteRecordName(rowData.projectName);
+                    openDeleteDailog();
+                  },
+                  disabled: rowData.isDeleted,
+                }),
+              ]
               : false
           }
           options={{
@@ -369,6 +386,7 @@ function Projects(props) {
           data={projectByClient}
           title={`Project${tableData.length > 1 ? "s" : ""}`}
         />
+        }
       </BorderedContainer>
       {open && (
         <Snackbar

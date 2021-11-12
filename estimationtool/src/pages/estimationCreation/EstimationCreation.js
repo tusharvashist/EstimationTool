@@ -20,6 +20,7 @@ import estimationServices from "../allestimation/allestimation.service";
 import "./EstimationCreation.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useHistory } from "react-router";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
@@ -42,6 +43,7 @@ const EstimationCreation = (props) => {
     React.useState(estionHeaderId);
   const [estimationIdFinish, setEstimationIdFinish] = React.useState();
   const [isOpen, setOpen] = React.useState({});
+  const [loaderComponent, setLoader] = useLoader();
 
   const getHeaderIdChild = (p) => {
     setEstimationIdFinish(p);
@@ -83,12 +85,12 @@ const EstimationCreation = (props) => {
   useEffect(() => {
     setLocation(location);
     setEstimationHeaderId(location1.state.estimationHeaderId);
-    console.log(
-      "prop est id:" +
-        location1.state.estimationHeaderId +
-        ":" +
-        estimationHeaderId
-    );
+    // console.log(
+    // //   "prop est id:" +
+    // //     location1.state.estimationHeaderId +
+    // //     ":" +
+    // //     estimationHeaderId
+    // // );
 
     if (location1.state.step !== undefined && location1.state.step === "2") {
       setActiveStep(2);
@@ -104,9 +106,12 @@ const EstimationCreation = (props) => {
 
   // save Estimation Basic detail data to post request to generating estimation header APi
   const createEstimationBasicDetail = (reqData) => {
+    setLoader(true)
     estimationServices
       .saveEstimationBasicDetail(reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
         console.log(dataResponce);
         console.log(
@@ -125,9 +130,13 @@ const EstimationCreation = (props) => {
 
   // update estimation basic detals Api call
   const updateEstimationBasicDetail = (reqData) => {
+    setLoader(true)
+
     estimationServices
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
 
         console.log(
@@ -175,9 +184,13 @@ const EstimationCreation = (props) => {
   // Save calc attribute data
 
   const createSaveCalctAttribute = (reqData) => {
+    setLoader(true)
+
     estimationServices
       .saveCalculativeAttribute(reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         history.push(finishLocation);
@@ -189,9 +202,13 @@ const EstimationCreation = (props) => {
   };
   // save effort Attribute data
   const createSaveEffortAttribute = (reqData) => {
+    setLoader(true)
+
     estimationServices
       .saveEffortAttribute(reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
         setEstimationHeaderId(dataResponce._id);
         //TODO:// show response and move next step
