@@ -3,9 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 export const basicDetailSlice = createSlice({
   name: "role",
   initialState: {
-    isAdmin: "",
-    isContributor: "",
-    isSuperAdmin: "",
+    isAdmin: false,
+    isContributor: false,
+    isSuperAdmin: false,
   },
   reducers: {
     setAdmin: (state, isAdmin) => {
