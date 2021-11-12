@@ -14,5 +14,5 @@ const requirementTypeSchema = new mongoose.Schema({
         }
     }
 })
-requirementTypeSchema.index({ updatedAt: '-1'});
+requirementTypeSchema.index({ updatedAt: '-1',name : '1'});
 module.exports = mongoose.model("requirementType", requirementTypeSchema)

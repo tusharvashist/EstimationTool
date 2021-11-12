@@ -14,5 +14,5 @@ const tagSchema = new mongoose.Schema({
         }
     }
 })
-tagSchema.index({ updatedAt: '-1'});
+tagSchema.index({ updatedAt: '-1', name : '1'});
 module.exports = mongoose.model("requirementTag", tagSchema)

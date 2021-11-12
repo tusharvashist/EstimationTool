@@ -24,5 +24,5 @@ const estimationAttributeSchema = new mongoose.Schema({
         }
     }
 })
-estimationAttributeSchema.index({ updatedAt: '-1'});
+estimationAttributeSchema.index({ updatedAt: '-1', attributeName :'asc'});
 module.exports = mongoose.model("EstimationAttributes", estimationAttributeSchema)
