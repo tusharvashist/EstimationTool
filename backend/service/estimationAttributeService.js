@@ -36,7 +36,7 @@ module.exports.createEstimationTempplateAttribute = async (serviceData) => {
 //To do 
 module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => {
     try {
-        let estAtt = await EstimationAttribute.aggregate().addFields({ selected: false });
+        let estAtt = await EstimationAttribute.aggregate().addFields({ selected: false }).sort({attributeName :'asc'});
         if (estheaderid) {
             let estSelAtt = await EstimationHeaderAttributes.find({ estHeaderId: estheaderid });
             var index = 0;

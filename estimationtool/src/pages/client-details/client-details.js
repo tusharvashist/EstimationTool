@@ -49,6 +49,7 @@ export default function ClientDetails(props) {
     ClientSer.getAllClient()
       .then((res) => {
         let dataResponce = res.data.body;
+
         setClients(dataResponce.filter((op) => op.isDeleted === false));
         setClientId(
           dataResponce.find((x) => x.clientName === clientUrlName).id
@@ -143,7 +144,7 @@ export default function ClientDetails(props) {
             <Grid item xs={10} sm={6}>
               <p>
                 <span className="title-stl"> Client Website :</span>{" "}
-                <a target="_blank" href={clientDetails.website}>
+                <a target="_blank" href={`//${clientDetails.website}`}>
                   {clientDetails.website}
                 </a>{" "}
               </p>

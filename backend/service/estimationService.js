@@ -89,12 +89,24 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
     let estimations = await EstimationHeader.find({ isDeleted: false }).
       populate({
         path: 'projectId',
-        populate: { path: 'client' }
+        match: { isDeleted: false },     
+        populate: { path: 'client',match: { isDeleted: false } }
       }).populate({
         path: 'estTypeId'
-      }).skip(parseInt(skip)).limit(parseInt(limit))
+      })           
+      .skip(parseInt(skip)).limit(parseInt(limit))
       .sort({updatedAt : 'desc'});
-    return formatMongoData(estimations)
+
+      let result=[];
+      estimations.forEach(element => {
+        if(element.projectId != null && element.projectId.client != null)
+        {
+        result.push(element);
+        //console.log(element)
+        }
+    });
+      
+    return formatMongoData(result)
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
     throw new Error(err)

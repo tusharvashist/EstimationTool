@@ -27,4 +27,5 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
         }
     }
 })
+estimationHeaderAtrributeCalcSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("estimationHeaderAtrributeCalc", estimationHeaderAtrributeCalcSchema)

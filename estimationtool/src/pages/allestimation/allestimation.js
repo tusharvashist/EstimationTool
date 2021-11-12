@@ -42,7 +42,7 @@ function Home() {
               "/" +
               data.projectId.projectName +
               "/Estimation-Detail",
-            state: { estId: data._id },
+            state: { estId: data.id },
           }}
         >
           {" "}
@@ -60,7 +60,7 @@ function Home() {
               data.projectId.projectName +
               "/createEstimate",
             state: {
-              estimationHeaderId: data._id,
+              estimationHeaderId: data.id,
               clientInfo: data.projectId.client,
               projectInfo: data.projectId,
               step: data.estStep,
@@ -104,7 +104,7 @@ function Home() {
               "/" +
               data.projectId.projectName +
               "/Estimation-Detail",
-            state: { estId: data._id },
+            state: { estId: data.id },
           }}
         >
           {" "}
@@ -122,7 +122,7 @@ function Home() {
               data.projectId.projectName +
               "/createEstimate",
             state: {
-              estimationHeaderId: data._id,
+              estimationHeaderId: data.id,
               clientInfo: data.projectId.client,
               projectInfo: data.projectId,
               step: data.estStep,

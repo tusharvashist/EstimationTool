@@ -159,7 +159,7 @@ export default function ClientDetails(props) {
             <Grid item xs={10} sm={6}>
               <p>
                 <span className="title-stl"> Client Website :</span>{" "}
-                <a target="_blank" href={clientDetails.website}>
+                <a target="_blank" href={`//${clientDetails.website}`}>
                   {clientDetails.website}
                 </a>{" "}
               </p>
