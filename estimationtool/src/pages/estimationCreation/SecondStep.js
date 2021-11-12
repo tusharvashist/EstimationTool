@@ -16,23 +16,22 @@ import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
 import AddAttributeEstimation from "../estimationCreation/add-attribute-estimation";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
-import Checkboxes from '../../shared/layout/checkboxes/checkboxes';
+import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
-import { useSelector, useDispatch } from 'react-redux'
-import { setEstAttributeData } from '../../Redux/effortAttributeSaveRedux'
-
-
+import { useSelector, useDispatch } from "react-redux";
+import { setEstAttributeData } from "../../Redux/effortAttributeSaveRedux";
 
 const SecondStep = (props) => {
+  const roleState = useSelector((state) => state.role);
   useEffect(() => {
-    getAttribute()
+    getAttribute();
   }, []);
 
   const saveAttribute = useSelector((state) => state.effortAttribute);
   const basicDetail = useSelector((state) => state.basicDetail);
-  console.log("basicDetail",basicDetail)
- 
+  console.log("basicDetail", basicDetail);
+
   const dispatch = useDispatch();
 
   const [checkboxValues, setCheckboxValues] = useState(null);
@@ -42,84 +41,100 @@ const SecondStep = (props) => {
   const [isOpen, setOpen] = React.useState({});
 
   const getAttribute = () => {
-    SecondStepServ.getAllAttribute(props.estimationTypeId, localStorage.estimationHeaderId).then((res) => {
-      let dataResponse = res.data.body;
-      let checkboxValues = {}
-      console.log("dataResponse", dataResponse)
-      setAttributes(dataResponse.map(ob => {
-        checkboxValues[ob.attributeName] = ob.selected;
-        console.log("")
-        return ({ ...ob, name: ob.attributeName, label: ob.attributeName })
-      }));
+    SecondStepServ.getAllAttribute(
+      props.estimationTypeId,
+      localStorage.estimationHeaderId
+    )
+      .then((res) => {
+        let dataResponse = res.data.body;
+        let checkboxValues = {};
+        console.log("dataResponse", dataResponse);
+        setAttributes(
+          dataResponse.map((ob) => {
+            checkboxValues[ob.attributeName] = ob.selected;
+            console.log("");
+            return { ...ob, name: ob.attributeName, label: ob.attributeName };
+          })
+        );
 
-      setCheckboxValues(checkboxValues)
-      const newData = dataResponse.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: localStorage.estimationHeaderId }))
- 
-      
-      dispatch(setEstAttributeData(newData));
-  
-    }).catch((err) => {
-      console.log("Not getting Attribute", err)
-    })
-  }
+        setCheckboxValues(checkboxValues);
+        const newData = dataResponse
+          .filter((ob) => ob.selected)
+          .map((ob) => ({
+            estAttributeId: ob._id,
+            estHeaderId: localStorage.estimationHeaderId,
+          }));
 
+        dispatch(setEstAttributeData(newData));
+      })
+      .catch((err) => {
+        console.log("Not getting Attribute", err);
+      });
+  };
 
   const [dialog, setDialog] = useState(false);
 
   const openDailog = () => {
-    setDialog(true)
-  },
+      setDialog(true);
+    },
     closeDialog = () => {
-      setDialog(false)
+      setDialog(false);
     };
 
-
   const saveCreateAttribute = (data) => {
-    createAttribute(data)
-  }
-
+    createAttribute(data);
+  };
 
   const createAttribute = (Data) => {
-    SecondStepServ.createAttribute(Data).then((res) => {
-      console.log("response", res)
-      setOpen({ open: true, severity: 'success', message: res.data.message });
-      getAttribute()
-      closeDialog()
-    }).catch((err) => {
-      setOpen({ open: true, severity: 'error', message:  err.response.data.message });
-     
-    });
-  }
+    SecondStepServ.createAttribute(Data)
+      .then((res) => {
+        console.log("response", res);
+        setOpen({ open: true, severity: "success", message: res.data.message });
+        getAttribute();
+        closeDialog();
+      })
+      .catch((err) => {
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
+  };
 
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
-
     const updatedValues = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
-        const newobj = { ...obj, selected: checked }
+        const newobj = { ...obj, selected: checked };
         return newobj;
       } else {
         return obj;
       }
-    })
-    console.log("updatedValues", updatedValues)
-    setAttributes(updatedValues)
-    const newData = updatedValues.filter(ob => ob.selected).map((ob) => ({ estAttributeId: ob._id, estHeaderId: localStorage.estimationHeaderId }))
-    setFinalIds(newData)
-    
+    });
+    console.log("updatedValues", updatedValues);
+    setAttributes(updatedValues);
+    const newData = updatedValues
+      .filter((ob) => ob.selected)
+      .map((ob) => ({
+        estAttributeId: ob._id,
+        estHeaderId: localStorage.estimationHeaderId,
+      }));
+    setFinalIds(newData);
+
     dispatch(setEstAttributeData(newData));
 
-    console.log("attributeid",saveAttribute.estAttributeId)
-  }
+    console.log("attributeid", saveAttribute.estAttributeId);
+  };
 
   const handleClose = () => {
-    setOpen({})
-  }
-  console.log("finalIds", finalIds)
-  const { message, severity, open } = isOpen || {}
+    setOpen({});
+  };
+  console.log("finalIds", finalIds);
+  const { message, severity, open } = isOpen || {};
   return (
     <React.Fragment>
-      {dialog &&
-        (<AddAttributeEstimation
+      {dialog && (
+        <AddAttributeEstimation
           isOpen={dialog}
           openF={openDailog}
           closeF={closeDialog}
@@ -127,8 +142,8 @@ const SecondStep = (props) => {
           oktitle="Save"
           saveFun={saveCreateAttribute}
           cancelTitle="Cancel"
-        />)}
-
+        />
+      )}
 
       <Grid
         container
@@ -138,10 +153,12 @@ const SecondStep = (props) => {
       >
         <Grid item>
           <div className="field-width add-attribute-btn">
-            <Button variant="outlined" onClick={openDailog}>
-              {" "}
-              <AddIcon /> Add Attribute
-            </Button>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openDailog}>
+                {" "}
+                <AddIcon /> Add Attribute
+              </Button>
+            )}
           </div>
         </Grid>
       </Grid>
@@ -149,10 +166,14 @@ const SecondStep = (props) => {
         <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Effort Attribute</FormLabel>
           {checkboxValues && (
-            <Checkboxes defaultValues={checkboxValues} config={attributes} onChange={(data) => {
-
-              setCheckboxValues(data);
-            }} onChangeField={updateCheckboxes} />
+            <Checkboxes
+              defaultValues={checkboxValues}
+              config={attributes}
+              onChange={(data) => {
+                setCheckboxValues(data);
+              }}
+              onChangeField={updateCheckboxes}
+            />
           )}
         </FormControl>
       </BorderedContainer>
@@ -164,7 +185,6 @@ const SecondStep = (props) => {
           onClose={handleClose}
           message={message}
         />
-
       )}
     </React.Fragment>
   );

@@ -10,8 +10,10 @@ import EstimationService from "./estimation.service";
 import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
 import { display } from "@material-ui/system";
+import { useSelector } from "react-redux";
 
 const EstimationDetail = () => {
+  const roleState = useSelector((state) => state.role);
   const location = useLocation();
   console.log(location);
   const estimationId = location.state.estId;
@@ -44,15 +46,14 @@ const EstimationDetail = () => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
-      {title: "Title", field: "Title",  editable: false, },
-      {title: "Effort", field: "Effort", editable: false },
+    { title: "Title", field: "Title", editable: false },
+    { title: "Effort", field: "Effort", editable: false },
   ]);
 
-  const [summaryDataArray, setSummaryDataArray] = useState([
-  ]);
+  const [summaryDataArray, setSummaryDataArray] = useState([]);
 
   const [requirementHeaderArray, setRequirementHeaderArray] = useState();
- 
+
   useEffect(() => {
     getById();
   }, [estimationId]);
@@ -74,7 +75,7 @@ const EstimationDetail = () => {
 
   const saveEditConfigFun = () => {
     closeFun();
-    getById();  
+    getById();
   };
 
   const openAddRequirement = () => {
@@ -103,7 +104,7 @@ const EstimationDetail = () => {
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
         setRequirementTagArray([...dataResponse.requirementTag]);
         setRequirementTypeArray([...dataResponse.requirementType]);
-         setSummaryDataArray([...dataResponse.summaryTagList]);
+        setSummaryDataArray([...dataResponse.summaryTagList]);
         var estHeaderAttribute = [
           {
             title: "Requirement",
@@ -120,10 +121,10 @@ const EstimationDetail = () => {
           },
         ];
 
-
-          dataResponse.estHeaderAttribute = dataResponse.estHeaderAttribute.filter(function(item, pos) {
-    return dataResponse.estHeaderAttribute.indexOf(item) == pos;
-        })
+        dataResponse.estHeaderAttribute =
+          dataResponse.estHeaderAttribute.filter(function (item, pos) {
+            return dataResponse.estHeaderAttribute.indexOf(item) == pos;
+          });
         dataResponse.estHeaderAttribute.forEach((item, i) => {
           estHeaderAttribute.push(item);
         });
@@ -157,25 +158,26 @@ const EstimationDetail = () => {
     var rows = Object.values(changes);
     const updatedRows = [...requirementDataArray];
     let index;
-    var updateEstRequirementData = []
-     var requirementHeaderRow = Object.values(requirementHeaderArray);
-    rows.map(row => {
+    var updateEstRequirementData = [];
+    var requirementHeaderRow = Object.values(requirementHeaderArray);
+    rows.map((row) => {
       index = row.oldData.tableData.id;
       updatedRows[index] = row.newData;
       for (let i = 3; i < requirementHeaderRow.length; i++) {
-      var requirementData = {
-        ESTAttributeID: requirementHeaderRow[i].id,
-        ESTHeaderRequirementID: row.newData._id,
-        ESTData: row.newData[requirementHeaderRow[i].field],
-        ESTHeaderID:headerData._id
+        var requirementData = {
+          ESTAttributeID: requirementHeaderRow[i].id,
+          ESTHeaderRequirementID: row.newData._id,
+          ESTData: row.newData[requirementHeaderRow[i].field],
+          ESTHeaderID: headerData._id,
         };
         updateEstRequirementData.push(requirementData);
       }
     });
 
     setRequirementDataArray(updatedRows);
-    EstimationService.updateEstRequirementData(updateEstRequirementData).then((res) => {
-         getById(); 
+    EstimationService.updateEstRequirementData(updateEstRequirementData)
+      .then((res) => {
+        getById();
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
@@ -183,10 +185,11 @@ const EstimationDetail = () => {
       });
   };
 
-  const deleteRow = async (changes,resolve) => {
+  const deleteRow = async (changes, resolve) => {
     resolve();
-    EstimationService.deleteRequirement(changes._id).then((res) => {
-         getById(); 
+    EstimationService.deleteRequirement(changes._id)
+      .then((res) => {
+        getById();
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
@@ -279,7 +282,7 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Estimation Type :</span>{" "}
-              {headerData.estTypeId.estType} 
+              {headerData.estTypeId.estType}
             </p>
           </Grid>
         </Grid>
@@ -365,7 +368,7 @@ const EstimationDetail = () => {
       <BorderedContainer>
         <MaterialTable
           style={{ boxShadow: "none" }}
-          title={`Estimation Efforts (${headerData.effortUnit})`}  
+          title={`Estimation Efforts (${headerData.effortUnit})`}
           columns={requirementHeaderArray}
           data={requirementDataArray}
           onRowClick={(event, rowData, togglePanel) =>
@@ -400,13 +403,12 @@ const EstimationDetail = () => {
         />
       </BorderedContainer>
       <Container>
-        <Box sx={{ width: "100%" }} className="estimation-detail-box">
-        </Box>
+        <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>
       </Container>
       <BorderedContainer>
         <MaterialTable
           style={{ boxShadow: "none" }}
-          title= {`Summary (${headerData.effortUnit})`}  
+          title={`Summary (${headerData.effortUnit})`}
           columns={summaryHeaderArray}
           data={summaryDataArray}
           options={{
@@ -421,7 +423,6 @@ const EstimationDetail = () => {
           }}
         />
       </BorderedContainer>
-     
     </React.Fragment>
   );
 };

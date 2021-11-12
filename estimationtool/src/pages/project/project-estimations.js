@@ -12,8 +12,10 @@ import DeleteProjectdailog from "./delete-project.dailog";
 
 import { useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
+import { useSelector } from "react-redux";
 
 function ProjectEstimations(props) {
+  const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState();
   const [clientDeatils, setClientDeatils] = useState({});
   const [projectDeatils, setProjectDeatils] = useState();
@@ -204,6 +206,7 @@ function ProjectEstimations(props) {
                 openDeleteDailog();
               },
               disabled: rowData.isDeleted,
+              disabled: roleState.isContributor,
             }),
           ]}
           options={{

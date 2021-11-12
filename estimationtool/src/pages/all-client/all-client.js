@@ -332,7 +332,7 @@ function AllClient(props) {
             components={{
               Container: (props) => <Paper {...props} elevation={0} />,
             }}
-            actions={actions}
+            actions={!roleState.isContributor ? actions : false}
             options={{
               actionsColumnIndex: -1,
               sorting: true,
