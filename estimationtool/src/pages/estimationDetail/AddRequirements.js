@@ -12,7 +12,8 @@ import EstimationService from "./estimation.service";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 const AddRequirements = (props) => {
-  const [showError] = useState(false);
+ 
+  const [showError, setShowError] = React.useState(false);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [selectedRequirementTag, setSelectedRequirementTag] = useState({});
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
@@ -34,8 +35,25 @@ const AddRequirements = (props) => {
     });
   
   const [isOpen, setOpen] = React.useState({});
+
+  useEffect(() => {
+  setFormdata();
+  }, [requirementTitle,requirementDescription,selectedRequirementTag,selectedRequirementType]);
+  
   const onSubmitForm = (e) => {
-    if (props.editData) {
+      if (requirementTitle && requirementDescription  && selectedRequirementType && selectedRequirementTag) {
+                setShowError(false);
+                   callAPI();
+
+            } else {
+                setShowError(true);
+            }
+  };
+
+
+  const callAPI = () => {
+      setFormdata();
+     if (props.editData) {
       EstimationService.updateRequirement(id,formData).then((res) => {
         props.saveFun();
         // setOpen({ open: true, severity: "success", message: res.data.message });
@@ -55,10 +73,10 @@ const AddRequirements = (props) => {
         setOpen({ open: true, severity: "error", message: err.response.data.message });
      });
     }
-  };
+  }
 
 
-  const setFormdata  = () => {
+  const setFormdata = () => {
     setFormData({
         title: requirementTitle,
         description: requirementDescription,
@@ -72,21 +90,16 @@ const AddRequirements = (props) => {
 }
   const handelRequirement = (event) => {
     setrequirementTitle(event.target.value);
-    setFormdata();
   };
 
   const handelDescription = (event) => {
     setrequirementDescription(event.target.value);
-    setFormdata();
   };
    const handleRequirementTagChange = (event) => {
-  
      setSelectedRequirementTag(event.target.value);
-     setFormdata();
   };
   const handleRequirementTypeChange = (event) => {
     setSelectedRequirementType(event.target.value);
-    setFormdata();
   };
 
   
@@ -130,12 +143,14 @@ const AddRequirements = (props) => {
           <FormControl fullWidth>
             <InputLabel id="requirement-group">Tag</InputLabel>
             <Select
+              required
+              error={showError && !selectedRequirementTag.name} 
                labelId="requirement-tag"
               id="requirement-tag"
               value={selectedRequirementTag.name}
               defaultValue={selectedRequirementTag.name}
               onChange={(e) => { handleRequirementTagChange(e) }}
-              error={isRequirementTag}
+             
             >
                {requirementTagArray.map((item) => (
                  <MenuItem name={item._id}  value={item}  >
@@ -149,6 +164,8 @@ const AddRequirements = (props) => {
           <FormControl fullWidth>
             <InputLabel id="requirement-type">Type</InputLabel>
             <Select
+              required
+              error={showError && !selectedRequirementType.name} 
               labelId="requirement-type"
               id="requirement-type"
               defaultValue={selectedRequirementType.name}
@@ -166,7 +183,7 @@ const AddRequirements = (props) => {
         <Grid item md={12}>
           <TextField
             required
-            
+             error={showError && !requirementTitle} 
             id="standard-basic"
             label="Requirement"
             className="full-width"
@@ -178,7 +195,7 @@ const AddRequirements = (props) => {
         <Grid item xs={12}>
           <TextField
             required
-           
+            error={showError && !requirementDescription} 
             id="standard-basic"
             label="Description"
             className="full-width"
