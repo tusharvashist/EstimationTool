@@ -112,13 +112,20 @@ const AddRequirements = (props) => {
     setrequirementDescription(event.target.value);
   };
   const handleRequirementTagChange = (event) => {
-    setSelectedRequirementTag(event.target.value);
+    const selectedValueObj = requirementTagArray.find(
+      (el) => el._id === event.target.value
+    );
+    setSelectedRequirementTag(selectedValueObj);
   };
   const handleRequirementTypeChange = (event) => {
-    setSelectedRequirementType(event.target.value);
+    const selectedValueObj = requirementTypeArray.find(
+      (el) => el._id === event.target.value
+    );
+    setSelectedRequirementType(selectedValueObj);
   };
 
   const newLocal = [props.requirementTagArray, props.requirementTypeArray];
+
   useEffect(() => {
     setRequirementTagArray([...props.requirementTagArray]);
     setRequirementTypeArray([...props.requirementTypeArray]);
@@ -146,16 +153,16 @@ const AddRequirements = (props) => {
     "Edit data ----- :",
     editData,
     "selectedRequirementTag: ",
-    selectedRequirementTag.name,
+    selectedRequirementTag,
     "selectedRequirementType : ",
-    selectedRequirementType.name
+    selectedRequirementType
   );
 
   const { message, severity, open } = isOpen || {};
   const handleClose = () => {
     setOpen({});
   };
-  console.log(props.editData, props.oktitle, props.editData[0].Tag);
+  console.log(requirementTypeArray);
   console.log(requirementTagArray);
   return (
     <CustomizedDialogs
@@ -176,18 +183,14 @@ const AddRequirements = (props) => {
               error={showError && !selectedRequirementTag.name}
               labelId="requirement-tag"
               id="requirement-tag"
-              value={
-                props.oktitle === "Update"
-                  ? props.editData[0].Tag
-                  : selectedRequirementTag.name
-              }
+              value={selectedRequirementTag._id}
               // defaultValue={props.editData[0].Tag}
               onChange={(e) => {
                 handleRequirementTagChange(e);
               }}
             >
               {requirementTagArray.map((item) => (
-                <MenuItem name={item._id} value={item.name}>
+                <MenuItem name={item._id} value={item._id}>
                   {item.name}
                 </MenuItem>
               ))}
@@ -202,17 +205,13 @@ const AddRequirements = (props) => {
               error={showError && !selectedRequirementType.name}
               labelId="requirement-type"
               id="requirement-type"
-              value={
-                props.oktitle === "Update"
-                  ? props.editData[0].Type.name
-                  : selectedRequirementTag.name
-              }
+              value={selectedRequirementType._id}
               onChange={(e) => {
                 handleRequirementTypeChange(e);
               }}
             >
               {requirementTypeArray.map((item) => (
-                <MenuItem key={item._id} value={item.name}>
+                <MenuItem key={item._id} value={item._id}>
                   {item.name}
                 </MenuItem>
               ))}
