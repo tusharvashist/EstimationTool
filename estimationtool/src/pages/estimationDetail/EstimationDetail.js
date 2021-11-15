@@ -128,12 +128,26 @@ const EstimationDetail = () => {
             return dataResponse.estHeaderAttribute.indexOf(item) == pos;
           });
         dataResponse.estHeaderAttribute.forEach((item, i) => {
+
+     
+          item["validate"] = (rowData) => {
+            console.log("---rowData[item.field] ----: ", rowData[item.field]);
+            if (rowData[item.field] < 0) {
+              rowData[item.field] = 0;
+              return 'Value should be >= 0 ';
+            }
+            
+          };
+
           estHeaderAttribute.push(item);
+          
         });
+         
         setRequirementHeaderArray(estHeaderAttribute);
         var arrayRequirement = [];
         dataResponse.featureList.forEach((item, i) => {
           if (item.isDeleted === false) {
+           var   field = item.requirement.title;
             var requirement = {
               Requirement: item.requirement.title,
               Description: item.requirement.description,
@@ -142,13 +156,17 @@ const EstimationDetail = () => {
               Type: item.requirement.type,
               requirementId: item.requirement._id,
               _id: item._id,
-            };
-            item.estRequirementData.forEach((item, i) => {
+               };
+          };
+          
+          item.estRequirementData.forEach((item, i) => {
+           
               requirement[item.ESTAttributeID._id] = item.ESTData;
             });
             arrayRequirement.push(requirement);
           }
-        });
+        );
+        
         setRequirementDataArray(arrayRequirement);
       })
       .catch((err) => {

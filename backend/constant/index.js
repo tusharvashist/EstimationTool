@@ -45,6 +45,7 @@ module.exports = {
         REQUIREMENT_NOT_FOUND: "Requirement not found",
         INVALID_ID: "Invalid id",
         REQUIREMENT_UPDATE: "Requirement update successfully",
+        REQUIREMENT_DATA_UPDATE: "Requirement data update successfully",
         REQUIREMENT_DELETE: "Requirement delete successfully",
          DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
     },

@@ -6,7 +6,7 @@ module.exports.create = async (req, res) => {
     try {
         const responceGetByID = await estimationRequirementService.create(req.body);
         responce.status = 200;
-        responce.message = constant.requirmentMessage.REQUIREMENT_CREATED;
+        responce.message = constant.requirementMessage.REQUIREMENT_CREATED;
         responce.body = responceGetByID;
     } catch (err) {
         responce.message = err.message;
@@ -49,7 +49,7 @@ module.exports.updateRequirementData = async (req, res) => {
     try {
         const responceGetByID = await estimationRequirementService.updateRequirementData(req.body);
         responce.status = 200;
-        responce.message = constant.requirmentMessage.REQUIREMENT_CREATED;
+        responce.message = constant.requirementMessage.REQUIREMENT_DATA_UPDATE;
         responce.body = responceGetByID;
     } catch (err) {
         responce.message = err.message;
