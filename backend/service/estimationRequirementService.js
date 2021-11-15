@@ -18,26 +18,44 @@ const mongoose = require("mongoose")
 module.exports.create = async (serviceData) => {
   try {
     let projectRequirement = new ProjectRequirement({ ...serviceData })
-
+    let requirementId = '';
     const findRecord = await ProjectRequirement.find({ title: projectRequirement.title }, { project: projectRequirement.project });
     if(findRecord.length != 0){
-         throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+      requirementId = findRecord[0]._id;
+         const record = await EstHeaderRequirement.find({estHeader: mongoose.Types.ObjectId(serviceData.estHeader), isDeleted: false}).
+         populate({
+         path: 'requirement',
+         match: { title : projectRequirement.title},
+         options: { limit: 1 }
+                 })
+         record.forEach(element => {
+          if(element.requirement != null && element.requirement.title === projectRequirement.title)
+          {
+          throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+          }
+      });
     }
 
-    let result = await projectRequirement.save();
+
+    if(findRecord.length === 0){
+      let result = await projectRequirement.save();
+      requirementId = result._id;
+    }
+
     const savedProjectRequirement = await ProjectRequirement.find({ title: projectRequirement.title }, { project: projectRequirement.project },);
     const estHeaderModel = await EstHeaderModel.findById({ _id: serviceData.estHeader })
     if (estHeaderModel.length == 0) {
        throw new Error(constant.requirementMessage.INVALID_ID);
     }
-    let estHeaderRequirement = new EstHeaderRequirement({requirement: result._id ,estHeader: estHeaderModel._id ,isDeleted: false})
+    let estHeaderRequirement = new EstHeaderRequirement({requirement: requirementId ,estHeader: estHeaderModel._id ,isDeleted: false})
     let result_estHeaderRequirement = await estHeaderRequirement.save();
-    return formatMongoData(result)
+    return formatMongoData(result_estHeaderRequirement)
   } catch (err) {
     console.log("something went wrong: service > ProjectService ", err);
     throw new Error(err)
   }
 }
+
 
 module.exports.updateRequirement = async ({ id, updateInfo }) => {
   try {
