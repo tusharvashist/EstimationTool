@@ -84,7 +84,7 @@ function AllClient(props) {
           </Link>
         );
       },
-      sorting: false,
+      sorting: true,
     },
     { title: "Client Description", field: "description" },
     {
