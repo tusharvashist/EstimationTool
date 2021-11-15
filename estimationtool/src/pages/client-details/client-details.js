@@ -102,21 +102,24 @@ export default function ClientDetails(props) {
     // history.replace({ pathname: cId });
   };
 
-  // console.log("clients", clients);
+  console.log("clients", clients);
   // console.log("clientID", clientId);
 
   return (
     <div className="client-deatils-wrp">
       <Box>
         <Grid container alignItems="center">
-          {loaderComponent ? loaderComponent : <Grid container justify="space-between" alignItems="center">
-            {/* <Grid item xs={5} sm={1}>
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <Grid container justify="space-between" alignItems="center">
+              {/* <Grid item xs={5} sm={1}>
               <p>
                 <span className="title-stl"> Client Name : </span>
               </p>
             </Grid> */}
-            <Grid item xs={5} sm={5}>
-              {/* <Box mb={3}>
+              <Grid item xs={5} sm={5}>
+                {/* <Box mb={3}>
                 <Grid container justify="space-between" alignItems="center">
                   <Dropdown
                     defaultValue={{ title: "Active", value: "active" }}
@@ -128,55 +131,56 @@ export default function ClientDetails(props) {
                 </Grid>
               </Box> */}
 
-              <Box sx={{ maxWidth: 200 }}>
-                <FormControl width="300px">
-                  <InputLabel id="client-simple-select">
-                    Client Name{" "}
-                  </InputLabel>
+                <Box sx={{ maxWidth: 200 }}>
+                  <FormControl width="300px">
+                    <InputLabel id="client-simple-select">
+                      Client Name{" "}
+                    </InputLabel>
 
-                  <Select
-                    labelId="client-simple-select"
-                    id="client-simple-select"
-                    value={clientUrlName}
-                    label={clientUrlName}
-                    onChange={getDropDownvalue}
-                  >
-                    {clients.map((item) => (
-                      <MenuItem key={item.clientName} value={item.clientName}>
-                        {item.clientName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
+                    <Select
+                      labelId="client-simple-select"
+                      id="client-simple-select"
+                      value={clientUrlName}
+                      label={clientUrlName}
+                      onChange={getDropDownvalue}
+                    >
+                      {clients.map((item) => (
+                        <MenuItem key={item.clientName} value={item.clientName}>
+                          {item.clientName}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Grid>
+              <Grid item xs={10} sm={6}>
+                <p>
+                  <span className="title-stl"> Client Website :</span>{" "}
+                  <a target="_blank" href={`//${clientDetails.website}`}>
+                    {clientDetails.website}
+                  </a>{" "}
+                </p>
+              </Grid>
+              <Grid
+                container
+                justify="space-between"
+                alignItems="center"
+                className="block-section"
+              >
+                <p>
+                  <span className="section-title"></span>
+                </p>
+              </Grid>
             </Grid>
-            <Grid item xs={10} sm={6}>
-              <p>
-                <span className="title-stl"> Client Website :</span>{" "}
-                <a target="_blank" href={`//${clientDetails.website}`}>
-                  {clientDetails.website}
-                </a>{" "}
-              </p>
-            </Grid>
-            <Grid
-              container
-              justify="space-between"
-              alignItems="center"
-              className="block-section"
-            >
-              <p>
-                <span className="section-title"></span>
-              </p>
-            </Grid>
-          </Grid>}
+          )}
         </Grid>
-
       </Box>
       <Box>
         <ProjectView
           data={clientId}
           clientName={clientUrlName}
           clients={clients}
+          thisClient={clientDetails}
         />
       </Box>
     </div>

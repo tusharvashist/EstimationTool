@@ -24,7 +24,6 @@ import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 
 function Projects(props) {
-  // const { clientid } = useParams();
   const roleState = useSelector((state) => state.role);
 
   const clientid = props.data;
@@ -51,7 +50,7 @@ function Projects(props) {
   const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
-    getClientById();
+    // getClientById();
     getAllProjects(clientid);
   }, [clientid]);
 
@@ -140,25 +139,25 @@ function Projects(props) {
     false: "#fff",
   };
 
-  const getClientById = () => {
-    setLoader(true)
-    ProjectSer.getClientById(clientid)
-      .then((res) => {
-        setLoader(false)
-        let dataResponce = res.data.body.projects;
-        setTableData([...dataResponce]);
-        getAllProjects(clientid);
-      })
-      .catch((err) => {
-        console.log("Project error", err);
-      });
-  };
+  // const getClientById = () => {
+  //   setLoader(true);
+  //   ProjectSer.getClientById(clientid)
+  //     .then((res) => {
+  //       setLoader(false);
+  //       let dataResponce = res.data.body.projects;
+  //       setTableData([...dataResponce]);
+  //       getAllProjects(clientid);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Project error", err);
+  //     });
+  // };
 
   const getAllProjects = (clientid) => {
-    setLoader(true)
+    setLoader(true);
     ProjectSer.getAllProject().then((res) => {
       let dataResponce = res.data.body;
-      setLoader(false)
+      setLoader(false);
       const filteredData = dataResponce.filter((el) => el.client == clientid);
       const activeEl = filteredData.filter((el) => el.isDeleted == false);
       setProjectByClient(activeEl);
@@ -168,13 +167,13 @@ function Projects(props) {
   };
 
   const createProject = (projectData) => {
-    setLoader(true)
+    setLoader(true);
 
     ProjectSer.createProject(projectData)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
-        getClientById();
+        // getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
         closeFun();
       })
@@ -188,13 +187,13 @@ function Projects(props) {
   };
 
   const updateProject = (projectData) => {
-    setLoader(true)
+    setLoader(true);
 
     ProjectSer.updateProject(actionId, projectData)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
-        getClientById();
+        // getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
@@ -209,13 +208,13 @@ function Projects(props) {
   };
 
   const deleteProject = () => {
-    setLoader(true)
+    setLoader(true);
 
     ProjectSer.deleteProject(actionId)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
 
-        getClientById();
+        // getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
@@ -331,62 +330,65 @@ function Projects(props) {
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        {loaderComponent ? loaderComponent : <MaterialTable
-          columns={columns}
-          components={{
-            Container: (props) => <Paper {...props} elevation={0} />,
-          }}
-          actions={
-            !roleState.isContributor
-              ? [
-                (rowData) => ({
-                  icon: "edit",
-                  tooltip: "Edit project",
-                  onClick: (event, rowData) => {
-                    setEditRow({ ...rowData });
-                    setActionId(rowData.id);
-                    openUpdateDailog();
-                  },
-                  disabled: rowData.isDeleted,
-                }),
-                (rowData) => ({
-                  icon: "delete",
-                  tooltip: "Delete project",
-                  onClick: (event, rowData) => {
-                    setEditRow({ ...rowData });
-                    setActionId(rowData.id);
-                    setDeleteRecordName(rowData.projectName);
-                    openDeleteDailog();
-                  },
-                  disabled: rowData.isDeleted,
-                }),
-              ]
-              : false
-          }
-          options={{
-            actionsColumnIndex: -1,
-            sorting: true,
-            search: false,
-            filtering: false,
-            pageSize: 5,
-            paging: false,
-            headerStyle: {
-              backgroundColor: "#e5ebf7",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-              color: "#113c91",
-            },
-            rowStyle: (rowData) => {
-              return {
-                backgroundColor:
-                  rowBackgroundColor[rowData.isDeleted] ?? "#eee",
-              };
-            },
-          }}
-          data={projectByClient}
-          title={`Project${tableData.length > 1 ? "s" : ""}`}
-        />
-        }
+        {loaderComponent ? (
+          loaderComponent
+        ) : (
+          <MaterialTable
+            columns={columns}
+            components={{
+              Container: (props) => <Paper {...props} elevation={0} />,
+            }}
+            actions={
+              !roleState.isContributor
+                ? [
+                    (rowData) => ({
+                      icon: "edit",
+                      tooltip: "Edit project",
+                      onClick: (event, rowData) => {
+                        setEditRow({ ...rowData });
+                        setActionId(rowData.id);
+                        openUpdateDailog();
+                      },
+                      disabled: rowData.isDeleted,
+                    }),
+                    (rowData) => ({
+                      icon: "delete",
+                      tooltip: "Delete project",
+                      onClick: (event, rowData) => {
+                        setEditRow({ ...rowData });
+                        setActionId(rowData.id);
+                        setDeleteRecordName(rowData.projectName);
+                        openDeleteDailog();
+                      },
+                      disabled: rowData.isDeleted,
+                    }),
+                  ]
+                : false
+            }
+            options={{
+              actionsColumnIndex: -1,
+              sorting: true,
+              search: false,
+              filtering: false,
+              pageSize: 5,
+              paging: false,
+              headerStyle: {
+                backgroundColor: "#e5ebf7",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                color: "#113c91",
+              },
+              rowStyle: (rowData) => {
+                return {
+                  backgroundColor:
+                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                };
+              },
+            }}
+            data={projectByClient}
+            title={`Project${props.thisClient.length > 1 ? "s" : ""}`}
+          />
+        )}
       </BorderedContainer>
       {open && (
         <Snackbar

@@ -31,7 +31,11 @@ export default function ClientDetails(props) {
     if (location.state == undefined) {
       console.log("comeback");
       // console.log(location);
-      projectIdForFun = pastProjectId[0];
+      if (pastProjectId[0] !== undefined) {
+        projectIdForFun = pastProjectId[0];
+      } else {
+      }
+
       // console.log(projectIdForFun);
       console.log("pastProjectId----", pastProjectId[0]);
     } else {
