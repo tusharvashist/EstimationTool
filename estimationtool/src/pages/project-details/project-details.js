@@ -16,10 +16,13 @@ import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
+import { useSelector } from "react-redux";
 
 const pastProjectId = [];
 
 export default function ClientDetails(props) {
+  const roleState = useSelector((state) => state.role);
+
   const location = useLocation();
 
   let projectIdForFun;
@@ -206,27 +209,29 @@ export default function ClientDetails(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
-            <Link
-              to={{
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/createEstimate",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: "",
-                },
-              }}
-            >
-              <Button variant="outlined">
-                {" "}
-                <AddIcon />
-                Create Estimation
-              </Button>
-            </Link>
+            {!roleState.isContributor && (
+              <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/createEstimate",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: "",
+                  },
+                }}
+              >
+                <Button variant="outlined">
+                  {" "}
+                  <AddIcon />
+                  Create Estimation
+                </Button>
+              </Link>
+            )}
           </Grid>
         </Grid>
       </Box>

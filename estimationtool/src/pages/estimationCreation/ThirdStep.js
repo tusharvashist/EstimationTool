@@ -23,9 +23,11 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setCalcAttributeData } from "../../Redux/CalcAttributeRedux";
-
+import useLoader from "../../shared/layout/hooks/useLoader";
 const ThirdStep = (props) => {
+  const roleState = useSelector((state) => state.role);
   const saveCalcAttribute = useSelector((state) => state.calcAttribute);
+  const [loaderComponent, setLoader] = useLoader();
 
   const dispatch = useDispatch();
 
@@ -35,35 +37,43 @@ const ThirdStep = (props) => {
   }, []);
 
   const updateStore = (list) => {
-    const newList = list.filter(ob => ob.selected).map(
-      ({
-        calcAttribute,
-        calcAttributeName,
-        isFormula,
-        formula,
-        operator,
-        unit,
-        description,
-      }) => ({
-        estHeaderId: localStorage.estimationHeaderId,
-        calcAttribute,
-        calcAttributeName,
-        isFormula,
-        formula,
-        operator,
-        unit,
-        description,
-      })
-    );
+    const newList = list
+      .filter((ob) => ob.selected)
+      .map(
+        ({
+          calcAttribute,
+          calcAttributeName,
+          isFormula,
+          formula,
+          operator,
+          unit,
+          description,
+        }) => ({
+          estHeaderId: localStorage.estimationHeaderId,
+          calcAttribute,
+          calcAttributeName,
+          isFormula,
+          formula,
+          operator,
+          unit,
+          description,
+        })
+      );
     dispatch(setCalcAttributeData(newList));
-  }
+  };
 
   const getCalcAttribute = () => {
-    SecondStepServ.getAllCalculativeAttribute(props.estimationTypeId, localStorage.estimationHeaderId)
+    setLoader(true)
+    SecondStepServ.getAllCalculativeAttribute(
+      props.estimationTypeId,
+      localStorage.estimationHeaderId
+    )
       .then((res) => {
+    setLoader(false)
+
         let dataResponse = res.data.body;
         console.log(dataResponse);
-        setAllCalcValues(dataResponse)
+        setAllCalcValues(dataResponse);
         let calAttriValues = {};
         setAttributes(
           dataResponse.map((ob) => {
@@ -105,19 +115,27 @@ const ThirdStep = (props) => {
   };
 
   const createCalAttribute = (data) => {
+    setLoader(true)
+
     let newObject = { ...data };
 
     newObject.estTypeId = props.estimationTypeId;
-    SecondStepServ.createCalAttribute(newObject).then((res) => {
-      console.log("Calculative Attribute Created", res);
-      setOpen({ open: true, severity: "success", message: res.data.message });
-      getCalcAttribute();
-      closeFun();
-    })
-      .catch((err) => {
-        setOpen({ open: true, severity: 'error', message:  err.response.data.message });
-      });
+    SecondStepServ.createCalAttribute(newObject)
+      .then((res) => {
+    setLoader(false)
 
+        // console.log("Calculative Attribute Created", res);
+        setOpen({ open: true, severity: "success", message: res.data.message });
+        getCalcAttribute();
+        closeFun();
+      })
+      .catch((err) => {
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   // const createProject = (projectData) => {
@@ -132,31 +150,17 @@ const ThirdStep = (props) => {
   //     });
   // };
 
-
-
-
-
-
   const handleClose = () => {
     setOpen({});
   };
 
   const onChangeField =
     ({ data }) =>
-      ({ target }) => {
-        // console.log("data, target", data, target, attributes)
+    ({ target }) => {
+      // console.log("data, target", data, target, attributes)
 
-        setAttributes(
-          attributes.map((obj) => {
-            if (obj._id === data._id) {
-              const newobj = { ...obj, [target.name]: target.value };
-              return newobj;
-            } else {
-              return obj;
-            }
-          })
-        );
-        const newData = attributes.map((obj) => {
+      setAttributes(
+        attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
@@ -164,9 +168,18 @@ const ThirdStep = (props) => {
             return obj;
           }
         })
-        setAttributes(newData);
-        updateStore(newData);
-      };
+      );
+      const newData = attributes.map((obj) => {
+        if (obj._id === data._id) {
+          const newobj = { ...obj, [target.name]: target.value };
+          return newobj;
+        } else {
+          return obj;
+        }
+      });
+      setAttributes(newData);
+      updateStore(newData);
+    };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -175,7 +188,7 @@ const ThirdStep = (props) => {
       } else {
         return obj;
       }
-    })
+    });
     setAttributes(newData);
     updateStore(newData);
   };
@@ -206,7 +219,7 @@ const ThirdStep = (props) => {
   //   )
   // );
 
-  console.log("saveCalcAttribute", saveCalcAttribute)
+  console.log("saveCalcAttribute", saveCalcAttribute);
   const passHeaderId = () => {
     props.getHeaderId(localStorage.estimationHeaderId);
   };
@@ -233,15 +246,17 @@ const ThirdStep = (props) => {
       >
         <Grid item>
           <div className="field-width add-attribute-btn">
-            <Button variant="outlined" onClick={openAddCalAttribute}>
-              {" "}
-              <AddIcon /> Add Cal Attribute
-            </Button>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openAddCalAttribute}>
+                {" "}
+                <AddIcon /> Add Cal Attribute
+              </Button>
+            )}
           </div>
         </Grid>
       </Grid>
       <BorderedContainer>
-        <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
+      {loaderComponent ? loaderComponent :      <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
 
           <FormGroup>
@@ -289,6 +304,7 @@ const ThirdStep = (props) => {
             />
           </FormGroup>
         </FormControl>
+}
       </BorderedContainer>
       {open && (
         <Snackbar

@@ -19,6 +19,8 @@ import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
 import "./EstimationCreation.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { useHistory } from "react-router";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
@@ -26,6 +28,7 @@ const EstimationCreation = (props) => {
   console.log(props);
   const basicDetailRedux = useSelector((state) => state.basicDetail);
   const dispatch = useDispatch();
+  const history = useHistory();
   const effortAttributeSave = useSelector((state) => state.effortAttribute);
   const calcAttributeSave = useSelector((state) => state.calcAttribute);
 
@@ -40,14 +43,27 @@ const EstimationCreation = (props) => {
     React.useState(estionHeaderId);
   const [estimationIdFinish, setEstimationIdFinish] = React.useState();
   const [isOpen, setOpen] = React.useState({});
+  const [loaderComponent, setLoader] = useLoader();
 
   const getHeaderIdChild = (p) => {
     setEstimationIdFinish(p);
   };
 
+  const finishLocation = {
+    pathname:
+      "/All-Clients/" +
+      clientInfo.clientName +
+      "/" +
+      projecttInfo.projectName +
+      "/Estimation-Detail",
+    state: {
+      estId: estimationIdFinish,
+    },
+  };
+
   const handleClose = () => {
-    setOpen({})
-  }
+    setOpen({});
+  };
   const childRef = useRef();
   // const secondChildRef = useRef();
 
@@ -69,12 +85,21 @@ const EstimationCreation = (props) => {
   useEffect(() => {
     setLocation(location);
     setEstimationHeaderId(location1.state.estimationHeaderId);
+<<<<<<< HEAD
     console.log(
       "prop est id:" +
       location1.state.estimationHeaderId +
       ":" +
       estimationHeaderId
     );
+=======
+    // console.log(
+    // //   "prop est id:" +
+    // //     location1.state.estimationHeaderId +
+    // //     ":" +
+    // //     estimationHeaderId
+    // // );
+>>>>>>> be9a6aa1a3797ae42f0caec8e47370ef55969f2a
 
     if (location1.state.step !== undefined && location1.state.step === "2") {
       setActiveStep(2);
@@ -90,9 +115,12 @@ const EstimationCreation = (props) => {
 
   // save Estimation Basic detail data to post request to generating estimation header APi
   const createEstimationBasicDetail = (reqData) => {
+    setLoader(true)
     estimationServices
       .saveEstimationBasicDetail(reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
         console.log(dataResponce);
         console.log(
@@ -111,9 +139,13 @@ const EstimationCreation = (props) => {
 
   // update estimation basic detals Api call
   const updateEstimationBasicDetail = (reqData) => {
+    setLoader(true)
+
     estimationServices
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
 
         console.log(
@@ -131,33 +163,16 @@ const EstimationCreation = (props) => {
       });
   };
 
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
-    //TODO: handle edit basic detail API & error
-    if (activeStep == 0) {
-      handleBasicDetailSaveUpdate();
-    } else if (activeStep == 1) {
-      handleSaveEffortAttribute();
-    } else if (activeStep == 2) {
-      handleSaveCalcAttribute();
-    } else {
-      //setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
-
-    if (activeStep > 0) setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
-  };
-
   const handleSaveCalcAttribute = () => {
-    if (calcAttributeSave.data) {
+    if (calcAttributeSave.data.length !== 0) {
       createSaveCalctAttribute(getCalcAttributeRequestPayload());
+      // console.log("thirdstep validation", calcAttributeSave.data);
     } else {
-      setOpen({ open: true, severity: 'error', message: "No Data Changed" });
-
+      setOpen({
+        open: true,
+        severity: "error",
+        message: "Select Atleast One checkbox",
+      });
     }
   };
 
@@ -167,19 +182,27 @@ const EstimationCreation = (props) => {
     } else {
       // childRef.current.showError("Please fill all mandatory fields");
 
-      setOpen({ open: true, severity: 'error', message: "Please select atleast one checkbox" });
-
+      setOpen({
+        open: true,
+        severity: "error",
+        message: "Please select atleast one checkbox",
+      });
     }
   };
 
   // Save calc attribute data
 
   const createSaveCalctAttribute = (reqData) => {
+    setLoader(true)
+
     estimationServices
       .saveCalculativeAttribute(reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
-        //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        history.push(finishLocation);
       })
       .catch((err) => {
         // console.log("save estimation header detail error : ", err);
@@ -188,12 +211,17 @@ const EstimationCreation = (props) => {
   };
   // save effort Attribute data
   const createSaveEffortAttribute = (reqData) => {
+    setLoader(true)
+
     estimationServices
       .saveEffortAttribute(reqData)
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
         setEstimationHeaderId(dataResponce._id);
         //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
         // console.log("save estimation header detail error : ", err);
@@ -252,6 +280,26 @@ const EstimationCreation = (props) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
+  const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+    //TODO: handle edit basic detail API & error
+    if (activeStep == 0) {
+      handleBasicDetailSaveUpdate();
+    } else if (activeStep == 1) {
+      handleSaveEffortAttribute();
+    }
+    // else if (activeStep == 2) {
+    // } else {
+    //   //setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // }
+    // setSkipped(newSkipped);
+    return;
+  };
+
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
       // You probably want to guard against something like this,
@@ -271,8 +319,12 @@ const EstimationCreation = (props) => {
     setActiveStep(0);
   };
 
+  const handleFinish = () => {
+    handleSaveCalcAttribute();
+  };
+
   console.log(estimationHeaderId, estimationIdFinish);
-  const { message, severity, open } = isOpen || {}
+  const { message, severity, open } = isOpen || {};
 
   return (
     <BorderedContainer>
@@ -407,29 +459,11 @@ const EstimationCreation = (props) => {
                   </Button>
                 )}
 
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? (
-                    <Link
-                      className="finish-link"
-                      to={{
-                        pathname:
-                          "/All-Clients/" +
-                          clientInfo.clientName +
-                          "/" +
-                          projecttInfo.projectName +
-                          "/Estimation-Detail",
-                        state: {
-                          estId: estimationIdFinish,
-                        },
-                      }}
-                    >
-                      {" "}
-                      Finish
-                    </Link>
-                  ) : (
-                    "Next"
-                  )}
-                </Button>
+                {activeStep === steps.length - 1 ? (
+                  <Button onClick={handleFinish}> Finish</Button>
+                ) : (
+                  <Button onClick={handleNext}>Next</Button>
+                )}
               </Box>
             </React.Fragment>
           </>
@@ -443,7 +477,6 @@ const EstimationCreation = (props) => {
           onClose={handleClose}
           message={message}
         />
-
       )}
     </BorderedContainer>
   );

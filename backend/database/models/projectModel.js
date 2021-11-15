@@ -31,4 +31,5 @@ const projectSchema = new mongoose.Schema({
         }
     }
 })
+projectSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ProjectMaster", projectSchema)

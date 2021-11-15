@@ -22,8 +22,9 @@ import {
   setFirstName,
   setLastName,
   setFullName,
-  setRole
+  setRole,
 } from "../Redux/loginRedux";
+import { setAdmin, setContributor, setSuperAdmin } from "../Redux/roleRedux";
 
 function Alert(props) {
   return (
@@ -32,7 +33,6 @@ function Alert(props) {
 }
 
 export default function Login(props) {
-  const loginRedux = useSelector((state) => state.login);
   const dispatch = useDispatch();
 
   let history = useHistory();
@@ -81,6 +81,13 @@ export default function Login(props) {
             result.data.body.firstName + " " + result.data.body.lastName
           )
         );
+        if (result.data.body.roles.roleName === "Admin") {
+          dispatch(setAdmin(true));
+        } else if (result.data.body.roles.roleName === "Super Admin") {
+          dispatch(setSuperAdmin(true));
+        } else {
+          dispatch(setContributor(true));
+        }
 
         setIsShowSpinner(false);
         redirectDashbord();

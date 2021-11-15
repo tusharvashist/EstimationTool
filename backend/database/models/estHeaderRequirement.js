@@ -26,4 +26,5 @@ const estHeaderRequirement = new mongoose.Schema({
         }
     }
 })
+estHeaderRequirement.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ESTHeaderRequirement", estHeaderRequirement)

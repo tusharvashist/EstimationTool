@@ -22,12 +22,14 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import Link from "@material-ui/core/Link";
 import { withRouter } from "react-router";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { grid } from "@material-ui/system";
+// import { rolePermission } from "../../shared/commonUtility/rolePermission";
+import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 function AllClient(props) {
   const { history } = props;
   // console.log(props);
-
+  const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -46,13 +48,18 @@ function AllClient(props) {
     title: "Active",
     value: false,
   });
+  const [loaderComponent, setLoader] = useLoader();
+
   useEffect(() => {
     getAllClient();
   }, []);
 
   const getAllClient = () => {
+    setLoader(true);
     ClientSer.getAllClient()
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
         console.log(dataResponce + ">>>>>>>>>>>>>>.");
         setTableData([...dataResponce]);
@@ -67,13 +74,14 @@ function AllClient(props) {
       title: "Client Name",
       field: "clientName",
       render: (rowData) => {
-        return (
-          rowData.isDeleted ? <>{rowData.clientName} </> :
-            <Link
-              onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
-            >
-              {rowData.clientName}
-            </Link>
+        return rowData.isDeleted ? (
+          <>{rowData.clientName} </>
+        ) : (
+          <Link
+            onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
+          >
+            {rowData.clientName}
+          </Link>
         );
       },
       sorting: false,
@@ -83,7 +91,6 @@ function AllClient(props) {
       title: "Client Website",
       field: "website",
       render: (dataRow) => {
-
         return (
           <a target="blank" href={`//${dataRow.website}`}>
             {/* <Link target="_blank" to={dataRow.website}>{dataRow.website}</Link> */}
@@ -102,7 +109,6 @@ function AllClient(props) {
     setIsOpenDailog(false);
   };
   const getDropDownvalue = (event) => {
-
     console.log("get dropdown value", event.target.value);
     if (event.target.value === "All") {
       setFilteredData([...tableData]);
@@ -113,8 +119,6 @@ function AllClient(props) {
       setFilteredData([...dataResponce]);
     }
   };
-  console.log("table data", tableData);
-  console.log("filtered data", filteredData);
 
   const openCreateDailog = () => {
     openFun();
@@ -143,41 +147,65 @@ function AllClient(props) {
   };
 
   const createClient = (clientData) => {
+    setLoader(true);
+
     ClientSer.createClient(clientData)
       .then((res) => {
+        setLoader(false);
+
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
   const updateClient = (clientData) => {
+    setLoader(true);
+
     ClientSer.updateClient(actionId, clientData)
       .then((res) => {
+        setLoader(false);
+
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
   const deleteClient = () => {
+    setLoader(true);
+
     ClientSer.deleteClient(actionId)
       .then((res) => {
+        setLoader(false);
+
         getAllClient();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
@@ -193,7 +221,7 @@ function AllClient(props) {
   };
 
   const actions = [
-    rowData => ({
+    (rowData) => ({
       icon: "delete",
       tooltip: "delete client",
       onClick: (event, rowData) => {
@@ -201,9 +229,9 @@ function AllClient(props) {
         setActionId(rowData.id);
         openDeleteDailog();
       },
-      disabled: rowData.isDeleted
+      disabled: rowData.isDeleted,
     }),
-    rowData => ({
+    (rowData) => ({
       icon: "edit",
       tooltip: "edit client",
       onClick: (event, rowData) => {
@@ -211,8 +239,8 @@ function AllClient(props) {
         setActionId(rowData.id);
         openUpdateDailog();
       },
-      disabled: rowData.isDeleted
-    })
+      disabled: rowData.isDeleted,
+    }),
   ];
   // console.log("selectedOption.label", selectedOption.title)
   if (selectedOption.value === true) {
@@ -228,9 +256,15 @@ function AllClient(props) {
 
   return (
     <>
-      <div className="all-client-wrap" data-backdrop="static" data-keyboard="false">
+      <div
+        className="all-client-wrap"
+        data-backdrop="static"
+        data-keyboard="false"
+      >
         {createClinetDailog === true && isOpenDailog === true ? (
-          <CreateClientDailog data-backdrop="static" data-keyboard="false"
+          <CreateClientDailog
+            data-backdrop="static"
+            data-keyboard="false"
             isOpen={isOpenDailog}
             openF={openFun}
             closeF={closeFun}
@@ -298,45 +332,51 @@ function AllClient(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
-            <Button variant="outlined" onClick={openCreateDailog}>
-              {" "}
-              <AddIcon />
-              create client
-            </Button>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openCreateDailog}>
+                {" "}
+                <AddIcon />
+                create client
+              </Button>
+            )}
           </Grid>
         </Box>
       </div>
       <Grid container>
         <BorderedContainer className="full-width">
-          <MaterialTable
-            columns={columns}
-            components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-            }}
-            actions={actions}
-            options={{
-              actionsColumnIndex: -1,
-              sorting: true,
-              search: false,
-              filtering: false,
-              pageSize: 5,
-              paging: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-              rowStyle: (rowData) => {
-                return {
-                  backgroundColor:
-                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
-                };
-              },
-            }}
-            data={filteredData}
-            title={`Client${tableData.length > 1 ? "s" : ""}`}
-          />
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <MaterialTable
+              columns={columns}
+              components={{
+                Container: (props) => <Paper {...props} elevation={0} />,
+              }}
+              actions={!roleState.isContributor ? actions : false}
+              options={{
+                actionsColumnIndex: -1,
+                sorting: true,
+                search: false,
+                filtering: false,
+                pageSize: 5,
+                paging: false,
+                headerStyle: {
+                  backgroundColor: "#e5ebf7",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  color: "#113c91",
+                },
+                rowStyle: (rowData) => {
+                  return {
+                    backgroundColor:
+                      rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                  };
+                },
+              }}
+              data={filteredData}
+              title={`Client${tableData.length > 1 ? "s" : ""}`}
+            />
+          )}
         </BorderedContainer>
         {open && (
           <Snackbar

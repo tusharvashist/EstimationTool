@@ -19,6 +19,7 @@ import masterServices from "../masterservices/master.service"
 import { useSelector, useDispatch } from 'react-redux'
 import { setEstimationName,setEstimationType, setEstimationTypeId,setEfforUnit,setEsttimationDesc, setEstimationHeaderId} from '../../Redux/basicDetailRedux'
 import estimationServices from "../allestimation/allestimation.service";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 
 const FirstStep = forwardRef((props, ref) =>  {
@@ -41,6 +42,7 @@ const FirstStep = forwardRef((props, ref) =>  {
   const [isEffortUnitInvalid, setIsEffortUnitInvalid] = useState(false);
   const [isEstimationNameInvalid, setEstimationNameInvalid] = useState(false);
   const [isDescriptionInvalid, setDescriptionInvalid] = useState(false);
+  const [loaderComponent, setLoader] = useLoader();
 
 
   useEffect(()=>{
@@ -83,10 +85,13 @@ const handleFieldsError = ()=>{
       localStorage.setItem("estimationHeaderId", '');
      return;
     }
+    setLoader(true)
     
     estimationServices
     .getEstimationBasicDetail(estHeaderId)
     .then((res) => {
+    setLoader(false)
+
       let dataResponce = res.data.body;
       dispatch(setEstimationTypeId(dataResponce.basicDetails.estTypeId._id));
       dispatch(setEsttimationDesc(dataResponce.basicDetails.estDescription));
@@ -105,8 +110,11 @@ const handleFieldsError = ()=>{
 
   // get all estimation types master list
   const getAllMasterEstimationTypes = () => {
+    setLoader(true)
     masterServices.getAllEstimationTypes()
       .then((res) => {
+    setLoader(false)
+
         let dataResponce = res.data.body;
         setEstimationTypes([...dataResponce]);
       })
@@ -161,7 +169,7 @@ const handleFieldsError = ()=>{
 
   return (
     <React.Fragment>
-      <BorderedContainer className="no-shadow">
+      {loaderComponent ? loaderComponent : <BorderedContainer className="no-shadow">
         <Grid container rowSpacing={7} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={6}>
             <div className="field-width">
@@ -246,6 +254,7 @@ const handleFieldsError = ()=>{
           <div><p>Remaining character limit: {characterCount}</p></div>
         </Grid>
       </BorderedContainer>
+}
     </React.Fragment>
   );
 });

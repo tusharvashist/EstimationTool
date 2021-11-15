@@ -24,4 +24,5 @@ const estimationTemplateAttrSchema = new mongoose.Schema({
         }
     }
 })
+estimationTemplateAttrSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("EstimationTemplateAttr", estimationTemplateAttrSchema)

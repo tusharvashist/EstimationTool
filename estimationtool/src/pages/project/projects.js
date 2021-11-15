@@ -20,9 +20,13 @@ import { useParams, Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./project.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
 
 function Projects(props) {
   // const { clientid } = useParams();
+  const roleState = useSelector((state) => state.role);
+
   const clientid = props.data;
   const [tableData, setTableData] = useState([]);
   const [clientDeatils, setClientDeatils] = useState({});
@@ -44,6 +48,7 @@ function Projects(props) {
   const [projectByClient, setProjectByClient] = useState();
   const [secondProjectByClient, setSecondProjectByClient] = useState();
   const [allProjectByClient, setAllProjectByClient] = useState();
+  const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
     getClientById();
@@ -55,8 +60,9 @@ function Projects(props) {
       title: "Project Name",
       field: "projectName",
       render: (rowData) => {
-        return (
-          rowData.isDeleted ?  <>{rowData.projectName} </> :
+        return rowData.isDeleted ? (
+          <>{rowData.projectName} </>
+        ) : (
           <Link
             to={{
               pathname:
@@ -135,8 +141,10 @@ function Projects(props) {
   };
 
   const getClientById = () => {
+    setLoader(true)
     ProjectSer.getClientById(clientid)
       .then((res) => {
+        setLoader(false)
         let dataResponce = res.data.body.projects;
         setTableData([...dataResponce]);
         getAllProjects(clientid);
@@ -147,9 +155,10 @@ function Projects(props) {
   };
 
   const getAllProjects = (clientid) => {
+    setLoader(true)
     ProjectSer.getAllProject().then((res) => {
       let dataResponce = res.data.body;
-
+      setLoader(false)
       const filteredData = dataResponce.filter((el) => el.client == clientid);
       const activeEl = filteredData.filter((el) => el.isDeleted == false);
       setProjectByClient(activeEl);
@@ -159,40 +168,64 @@ function Projects(props) {
   };
 
   const createProject = (projectData) => {
+    setLoader(true)
+
     ProjectSer.createProject(projectData)
       .then((res) => {
+        setLoader(false)
+
         getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
   const updateProject = (projectData) => {
+    setLoader(true)
+
     ProjectSer.updateProject(actionId, projectData)
       .then((res) => {
+        setLoader(false)
+
         getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
   const deleteProject = () => {
+    setLoader(true)
+
     ProjectSer.deleteProject(actionId)
       .then((res) => {
+        setLoader(false)
+
         getClientById();
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
       })
       .catch((err) => {
-        setOpen({ open: true, severity: "error", message: err.response.data.message });
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
 
@@ -287,43 +320,49 @@ function Projects(props) {
           </Grid>
 
           <Grid item>
-            <Button variant="outlined" onClick={openCreateDailog}>
-              {" "}
-              <AddIcon />
-              Create Project
-            </Button>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openCreateDailog}>
+                {" "}
+                <AddIcon />
+                Create Project
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        <MaterialTable
+        {loaderComponent ? loaderComponent : <MaterialTable
           columns={columns}
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
           }}
-          actions={[
-            rowData => ({
-              icon: "edit",
-              tooltip: "Edit project",
-              onClick: (event, rowData) => {
-                setEditRow({ ...rowData });
-                setActionId(rowData.id);
-                openUpdateDailog();
-              },
-              disabled: rowData.isDeleted
-            }),
-            rowData => ({
-              icon: "delete",
-              tooltip: "Delete project",
-              onClick: (event, rowData) => {
-                setEditRow({ ...rowData });
-                setActionId(rowData.id);
-                setDeleteRecordName(rowData.projectName);
-                openDeleteDailog();
-              },
-              disabled: rowData.isDeleted
-            }),
-          ]}
+          actions={
+            !roleState.isContributor
+              ? [
+                (rowData) => ({
+                  icon: "edit",
+                  tooltip: "Edit project",
+                  onClick: (event, rowData) => {
+                    setEditRow({ ...rowData });
+                    setActionId(rowData.id);
+                    openUpdateDailog();
+                  },
+                  disabled: rowData.isDeleted,
+                }),
+                (rowData) => ({
+                  icon: "delete",
+                  tooltip: "Delete project",
+                  onClick: (event, rowData) => {
+                    setEditRow({ ...rowData });
+                    setActionId(rowData.id);
+                    setDeleteRecordName(rowData.projectName);
+                    openDeleteDailog();
+                  },
+                  disabled: rowData.isDeleted,
+                }),
+              ]
+              : false
+          }
           options={{
             actionsColumnIndex: -1,
             sorting: true,
@@ -347,6 +386,7 @@ function Projects(props) {
           data={projectByClient}
           title={`Project${tableData.length > 1 ? "s" : ""}`}
         />
+        }
       </BorderedContainer>
       {open && (
         <Snackbar

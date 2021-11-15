@@ -24,7 +24,12 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setAdmin,
+  setContributor,
+  setSuperAdmin,
+} from "../../../Redux/roleRedux";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -67,6 +72,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function Topnav(props) {
+  const roleState = useSelector((state) => state.role);
+  const dispatch = useDispatch();
   const loginRedux = useSelector((state) => state.login);
   let history = useHistory();
   const classes = useStyles();
@@ -80,6 +87,9 @@ export default function Topnav(props) {
   };
 
   const handleLogout = () => {
+    dispatch(setAdmin(false));
+    dispatch(setContributor(false));
+    dispatch(setSuperAdmin(false));
     AuthSer.logout();
     redirectLogin();
   };
@@ -112,6 +122,16 @@ export default function Topnav(props) {
 
       children: `${firstChar}${secondChar}`,
     };
+  }
+
+  function roleName() {
+    if (roleState.isContributor) {
+      return "Contributor";
+    } else if (roleState.isAdmin) {
+      return "Admin";
+    } else {
+      return "Super Admin";
+    }
   }
 
   return (
@@ -172,7 +192,11 @@ export default function Topnav(props) {
             >
               <MenuItem>
                 <StyledBadge
-                  badgeContent={"Admin"}
+                  badgeContent={
+                    (roleState.isContributor && "Contributor") ||
+                    (roleState.isSuperAdmin && "Super Admin") ||
+                    (roleState.isAdmin && "Admin")
+                  }
                   color="secondary"
                   anchorOrigin={{ vertical: "top", horizontal: "left" }}
                 >

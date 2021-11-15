@@ -6,13 +6,16 @@ import { Link } from "react-router-dom";
 import { fontSize, style } from "@material-ui/system";
 import { createMuiTheme, Paper } from "@material-ui/core";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-
+import useLoader from "../../shared/layout/hooks/useLoader";
 function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
+  const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
+    setLoader(true);
     AllestimationSer.getAllEstimation().then((res) => {
+      setLoader(false);
       let dataResponce = res.data.body;
       if (tableData.length !== 0) {
         if (tableData.id == dataResponce.id) {
@@ -42,7 +45,7 @@ function Home() {
               "/" +
               data.projectId.projectName +
               "/Estimation-Detail",
-            state: { estId: data._id },
+            state: { estId: data.id },
           }}
         >
           {" "}
@@ -60,7 +63,7 @@ function Home() {
               data.projectId.projectName +
               "/createEstimate",
             state: {
-              estimationHeaderId: data._id,
+              estimationHeaderId: data.id,
               clientInfo: data.projectId.client,
               projectInfo: data.projectId,
               step: data.estStep,
@@ -104,7 +107,7 @@ function Home() {
               "/" +
               data.projectId.projectName +
               "/Estimation-Detail",
-            state: { estId: data._id },
+            state: { estId: data.id },
           }}
         >
           {" "}
@@ -122,7 +125,7 @@ function Home() {
               data.projectId.projectName +
               "/createEstimate",
             state: {
-              estimationHeaderId: data._id,
+              estimationHeaderId: data.id,
               clientInfo: data.projectId.client,
               projectInfo: data.projectId,
               step: data.estStep,
@@ -254,7 +257,7 @@ function Home() {
 
   return (
     <BorderedContainer>
-      <MaterialTable
+      {loaderComponent ? loaderComponent : <MaterialTable
         elevation={0}
         components={{
           Container: (props) => <Paper {...props} elevation={0} />,
@@ -278,6 +281,7 @@ function Home() {
         title={`Recent Estimation${tableData.length > 1 ? "s" : ""}`}
         style={{ fontSize: "0.9rem" }}
       />
+      }
     </BorderedContainer>
   );
 }
