@@ -85,12 +85,6 @@ const EstimationCreation = (props) => {
   useEffect(() => {
     setLocation(location);
     setEstimationHeaderId(location1.state.estimationHeaderId);
-    // console.log(
-    // //   "prop est id:" +
-    // //     location1.state.estimationHeaderId +
-    // //     ":" +
-    // //     estimationHeaderId
-    // // );
 
     if (location1.state.step !== undefined && location1.state.step === "2") {
       setActiveStep(2);
@@ -106,11 +100,11 @@ const EstimationCreation = (props) => {
 
   // save Estimation Basic detail data to post request to generating estimation header APi
   const createEstimationBasicDetail = (reqData) => {
-    setLoader(true)
+    setLoader(true);
     estimationServices
       .saveEstimationBasicDetail(reqData)
       .then((res) => {
-    setLoader(false)
+        setLoader(false);
 
         let dataResponce = res.data.body;
         console.log(dataResponce);
@@ -130,12 +124,12 @@ const EstimationCreation = (props) => {
 
   // update estimation basic detals Api call
   const updateEstimationBasicDetail = (reqData) => {
-    setLoader(true)
+    setLoader(true);
 
     estimationServices
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
-    setLoader(false)
+        setLoader(false);
 
         let dataResponce = res.data.body;
 
@@ -184,12 +178,12 @@ const EstimationCreation = (props) => {
   // Save calc attribute data
 
   const createSaveCalctAttribute = (reqData) => {
-    setLoader(true)
+    setLoader(true);
 
     estimationServices
       .saveCalculativeAttribute(reqData)
       .then((res) => {
-    setLoader(false)
+        setLoader(false);
 
         let dataResponce = res.data.body;
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -202,12 +196,12 @@ const EstimationCreation = (props) => {
   };
   // save effort Attribute data
   const createSaveEffortAttribute = (reqData) => {
-    setLoader(true)
+    setLoader(true);
 
     estimationServices
       .saveEffortAttribute(reqData)
       .then((res) => {
-    setLoader(false)
+        setLoader(false);
 
         let dataResponce = res.data.body;
         setEstimationHeaderId(dataResponce._id);
@@ -423,7 +417,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
-                // ref={secondChildRef}
+                  // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (
