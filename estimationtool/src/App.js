@@ -12,7 +12,7 @@ import {
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Switch>
         <Redirect exact from="/" to="/login" />
         <Route exact path="/login">
@@ -23,7 +23,7 @@ function App() {
           <Layout />
         </Route>
       </Switch>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
