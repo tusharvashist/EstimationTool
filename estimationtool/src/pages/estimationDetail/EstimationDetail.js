@@ -333,7 +333,7 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Client Website :</span>{" "}
-              <a href={`//${clientDetails.website}`}> {clientDetails.website}</a>
+              <a target="blank" href={`//${clientDetails.website}`}> {clientDetails.website}</a>
             </p>
           </Grid>
         </Grid>
