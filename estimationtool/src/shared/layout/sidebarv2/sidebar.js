@@ -42,7 +42,7 @@ const Sidebarv2 = (props) => {
       >
         <ListItem
           button
-          className="listitem"
+          className="listitem active"
           id="dashboard"
           activeClassName="active"
           onClick={dashboardClick}
