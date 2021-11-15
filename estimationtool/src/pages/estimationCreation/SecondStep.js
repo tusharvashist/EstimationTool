@@ -43,13 +43,13 @@ const SecondStep = (props) => {
   const [loaderComponent, setLoader] = useLoader();
 
   const getAttribute = () => {
-    setLoader(true)
+    setLoader(true);
     SecondStepServ.getAllAttribute(
       props.estimationTypeId,
       localStorage.estimationHeaderId
     )
       .then((res) => {
-    setLoader(false)
+        setLoader(false);
 
         let dataResponse = res.data.body;
         let checkboxValues = {};
@@ -91,12 +91,12 @@ const SecondStep = (props) => {
   };
 
   const createAttribute = (Data) => {
-    setLoader(true)
+    setLoader(true);
 
     SecondStepServ.createAttribute(Data)
       .then((res) => {
         // console.log("response", res);
-    setLoader(false)
+        setLoader(false);
 
         setOpen({ open: true, severity: "success", message: res.data.message });
         getAttribute();
@@ -172,20 +172,24 @@ const SecondStep = (props) => {
         </Grid>
       </Grid>
       <BorderedContainer>
-      {loaderComponent ? loaderComponent :  <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
-          <FormLabel component="legend">Effort Attribute</FormLabel>
-          {checkboxValues && (
-            <Checkboxes
-              defaultValues={checkboxValues}
-              config={attributes}
-              onChange={(data) => {
-                setCheckboxValues(data);
-              }}
-              onChangeField={updateCheckboxes}
-            />
-          )}
-        </FormControl>
-}
+        {loaderComponent ? (
+          loaderComponent
+        ) : (
+          <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
+            <FormLabel component="legend">Effort Attribute</FormLabel>
+            {checkboxValues && (
+              <Checkboxes
+                defaultValues={checkboxValues}
+                config={attributes}
+                className="-------el----------"
+                onChange={(data) => {
+                  setCheckboxValues(data);
+                }}
+                onChangeField={updateCheckboxes}
+              />
+            )}
+          </FormControl>
+        )}
       </BorderedContainer>
       {open && (
         <Snackbar

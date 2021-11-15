@@ -4,9 +4,7 @@
 .MuiFormControl-root {
   width: 100% !important;
 }
-.MuiFormControlLabel-root {
-  min-width: 24% !important;
-}
+
 .label-to-row {
   flex-direction: row !important;
 }
@@ -28,8 +26,9 @@
   order: 4;
   width: 60% !important;
 }
-.MuiFormControlLabel-label {
+label.MuiFormControlLabel-root {
   flex-grow: 1;
+  flex-basis: 200px;
 }
 .MuiFormGroup-root {
   width: 100%;
@@ -38,4 +37,5 @@
   display: flex;
   justify-content: center;
   margin: 5px 0;
+  width: 100% !important;
 }
