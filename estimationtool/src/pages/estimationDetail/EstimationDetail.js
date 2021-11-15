@@ -44,15 +44,15 @@ const EstimationDetail = () => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
-      {title: "Title", field: "Title",  editable: false, },
-      {title: "Effort", field: "Effort", editable: false },
+    { title: "Title", field: "Title", editable: false, },
+    { title: "Effort", field: "Effort", editable: false },
   ]);
 
   const [summaryDataArray, setSummaryDataArray] = useState([
   ]);
 
   const [requirementHeaderArray, setRequirementHeaderArray] = useState();
- 
+
   useEffect(() => {
     getById();
   }, [estimationId]);
@@ -74,7 +74,7 @@ const EstimationDetail = () => {
 
   const saveEditConfigFun = () => {
     closeFun();
-    getById();  
+    getById();
   };
 
   const openAddRequirement = () => {
@@ -103,7 +103,7 @@ const EstimationDetail = () => {
         setClientDetails({ ...dataResponse.basicDetails.projectId.client });
         setRequirementTagArray([...dataResponse.requirementTag]);
         setRequirementTypeArray([...dataResponse.requirementType]);
-         setSummaryDataArray([...dataResponse.summaryTagList]);
+        setSummaryDataArray([...dataResponse.summaryTagList]);
         var estHeaderAttribute = [
           {
             title: "Requirement",
@@ -121,8 +121,8 @@ const EstimationDetail = () => {
         ];
 
 
-          dataResponse.estHeaderAttribute = dataResponse.estHeaderAttribute.filter(function(item, pos) {
-    return dataResponse.estHeaderAttribute.indexOf(item) == pos;
+        dataResponse.estHeaderAttribute = dataResponse.estHeaderAttribute.filter(function (item, pos) {
+          return dataResponse.estHeaderAttribute.indexOf(item) == pos;
         })
         dataResponse.estHeaderAttribute.forEach((item, i) => {
           estHeaderAttribute.push(item);
@@ -158,16 +158,16 @@ const EstimationDetail = () => {
     const updatedRows = [...requirementDataArray];
     let index;
     var updateEstRequirementData = []
-     var requirementHeaderRow = Object.values(requirementHeaderArray);
+    var requirementHeaderRow = Object.values(requirementHeaderArray);
     rows.map(row => {
       index = row.oldData.tableData.id;
       updatedRows[index] = row.newData;
       for (let i = 3; i < requirementHeaderRow.length; i++) {
-      var requirementData = {
-        ESTAttributeID: requirementHeaderRow[i].id,
-        ESTHeaderRequirementID: row.newData._id,
-        ESTData: row.newData[requirementHeaderRow[i].field],
-        ESTHeaderID:headerData._id
+        var requirementData = {
+          ESTAttributeID: requirementHeaderRow[i].id,
+          ESTHeaderRequirementID: row.newData._id,
+          ESTData: row.newData[requirementHeaderRow[i].field],
+          ESTHeaderID: headerData._id
         };
         updateEstRequirementData.push(requirementData);
       }
@@ -175,19 +175,19 @@ const EstimationDetail = () => {
 
     setRequirementDataArray(updatedRows);
     EstimationService.updateEstRequirementData(updateEstRequirementData).then((res) => {
-         getById(); 
-      })
+      getById();
+    })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
         getById();
       });
   };
 
-  const deleteRow = async (changes,resolve) => {
+  const deleteRow = async (changes, resolve) => {
     resolve();
     EstimationService.deleteRequirement(changes._id).then((res) => {
-         getById(); 
-      })
+      getById();
+    })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
         getById();
@@ -279,7 +279,7 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Estimation Type :</span>{" "}
-              {headerData.estTypeId.estType} 
+              {headerData.estTypeId.estType}
             </p>
           </Grid>
         </Grid>
@@ -321,7 +321,7 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Client Website :</span>{" "}
-              <a href="#"> {clientDetails.website}</a>
+              <a href={`//${clientDetails.website}`}> {clientDetails.website}</a>
             </p>
           </Grid>
         </Grid>
@@ -365,7 +365,7 @@ const EstimationDetail = () => {
       <BorderedContainer>
         <MaterialTable
           style={{ boxShadow: "none" }}
-          title={`Estimation Efforts (${headerData.effortUnit})`}  
+          title={`Estimation Efforts (${headerData.effortUnit})`}
           columns={requirementHeaderArray}
           data={requirementDataArray}
           onRowClick={(event, rowData, togglePanel) =>
@@ -406,7 +406,7 @@ const EstimationDetail = () => {
       <BorderedContainer>
         <MaterialTable
           style={{ boxShadow: "none" }}
-          title= {`Summary (${headerData.effortUnit})`}  
+          title={`Summary (${headerData.effortUnit})`}
           columns={summaryHeaderArray}
           data={summaryDataArray}
           options={{
@@ -421,7 +421,7 @@ const EstimationDetail = () => {
           }}
         />
       </BorderedContainer>
-     
+
     </React.Fragment>
   );
 };

@@ -71,9 +71,9 @@ const EstimationCreation = (props) => {
     setEstimationHeaderId(location1.state.estimationHeaderId);
     console.log(
       "prop est id:" +
-        location1.state.estimationHeaderId +
-        ":" +
-        estimationHeaderId
+      location1.state.estimationHeaderId +
+      ":" +
+      estimationHeaderId
     );
 
     if (location1.state.step !== undefined && location1.state.step === "2") {
@@ -164,7 +164,7 @@ const EstimationCreation = (props) => {
   const handleSaveEffortAttribute = () => {
     if (effortAttributeSave.data.length !== 0) {
       createSaveEffortAttribute(getEffortAttributeRequestPayload());
-    }else {
+    } else {
       // childRef.current.showError("Please fill all mandatory fields");
 
       setOpen({ open: true, severity: 'error', message: "Please select atleast one checkbox" });
@@ -309,7 +309,7 @@ const EstimationCreation = (props) => {
             <Grid item xs={6}>
               <ListItem>
                 Client Website:&nbsp;
-                <a target="_blank" href={clientInfo.website}>
+                <a target="_blank" href={`//${clientInfo.website}`}>
                   {clientInfo.website}
                 </a>
               </ListItem>
@@ -380,7 +380,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
-                  // ref={secondChildRef}
+                // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (
