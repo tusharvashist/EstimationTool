@@ -221,16 +221,7 @@ function AllClient(props) {
   };
 
   const actions = [
-    (rowData) => ({
-      icon: "delete",
-      tooltip: "delete client",
-      onClick: (event, rowData) => {
-        setEditRow({ ...rowData });
-        setActionId(rowData.id);
-        openDeleteDailog();
-      },
-      disabled: rowData.isDeleted,
-    }),
+
     (rowData) => ({
       icon: "edit",
       tooltip: "edit client",
@@ -238,6 +229,16 @@ function AllClient(props) {
         setEditRow({ ...rowData });
         setActionId(rowData.id);
         openUpdateDailog();
+      },
+      disabled: rowData.isDeleted,
+    }),
+    (rowData) => ({
+      icon: "delete",
+      tooltip: "delete client",
+      onClick: (event, rowData) => {
+        setEditRow({ ...rowData });
+        setActionId(rowData.id);
+        openDeleteDailog();
       },
       disabled: rowData.isDeleted,
     }),
