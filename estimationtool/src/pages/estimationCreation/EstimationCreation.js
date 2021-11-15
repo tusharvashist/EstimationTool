@@ -85,21 +85,12 @@ const EstimationCreation = (props) => {
   useEffect(() => {
     setLocation(location);
     setEstimationHeaderId(location1.state.estimationHeaderId);
-<<<<<<< HEAD
-    console.log(
-      "prop est id:" +
-      location1.state.estimationHeaderId +
-      ":" +
-      estimationHeaderId
-    );
-=======
     // console.log(
     // //   "prop est id:" +
     // //     location1.state.estimationHeaderId +
     // //     ":" +
     // //     estimationHeaderId
     // // );
->>>>>>> be9a6aa1a3797ae42f0caec8e47370ef55969f2a
 
     if (location1.state.step !== undefined && location1.state.step === "2") {
       setActiveStep(2);

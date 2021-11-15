@@ -21,7 +21,7 @@ const AddCalAttributeDialog = (props) => {
 
     description: " ",
   });
-
+  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
   const [showError, setShowError] = useState(false);
 
   const handelCalAttributeName = (e) => {
@@ -31,22 +31,30 @@ const AddCalAttributeDialog = (props) => {
   };
 
   const onSubmitForm = (e) => {
-    if (formData.calcAttributeName && formData.formula) {
-      setShowError(false);
-      props.saveFun({ ...formData });
-    } else {
-      setShowError(true);
-    }
+   
+      if (formData.calcAttributeName && formData.formula) {
+     
+        props.saveFun({ ...formData });
+      } else {
+        setShowError(true);
+      }
+    
   };
 
   const handelFormula = (e) => {
+    if (e.target.value > 99) {
+      setShowError(true);
+    } else {
+      setShowError(false);
     let newObject = { ...formData };
     newObject.unit = e.target.value;
     setFormData({ ...newObject });
+    }
   };
 
   const { calcAttributeName, unit } = formData;
 
+  console.log("showError", showError)
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}
@@ -88,13 +96,16 @@ const AddCalAttributeDialog = (props) => {
           <TextField
             required
             error={showError && !unit}
+            helperText={showError ? 'Please enter only b/w 1-100' : ''}
             id="standard-basic"
             label="Formula"
             className="full-width"
             onChange={handelFormula}
             variant="outlined"
-            type={"number"}
+            type="number"
             max={2}
+            onKeyDown={(evt) => symbolsArr.includes(evt.key) && evt.preventDefault()}
+            pattern="^[1-9][0-9]?$|^100$"
           />
         </Grid>
       </Grid>

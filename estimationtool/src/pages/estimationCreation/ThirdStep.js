@@ -69,7 +69,7 @@ const ThirdStep = (props) => {
       localStorage.estimationHeaderId
     )
       .then((res) => {
-    setLoader(false)
+        setLoader(false)
 
         let dataResponse = res.data.body;
         console.log(dataResponse);
@@ -92,6 +92,7 @@ const ThirdStep = (props) => {
         console.log("Not getting Attribute", err);
       });
   };
+  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
 
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
 
@@ -122,7 +123,7 @@ const ThirdStep = (props) => {
     newObject.estTypeId = props.estimationTypeId;
     SecondStepServ.createCalAttribute(newObject)
       .then((res) => {
-    setLoader(false)
+        setLoader(false)
 
         // console.log("Calculative Attribute Created", res);
         setOpen({ open: true, severity: "success", message: res.data.message });
@@ -156,30 +157,30 @@ const ThirdStep = (props) => {
 
   const onChangeField =
     ({ data }) =>
-    ({ target }) => {
-      // console.log("data, target", data, target, attributes)
+      ({ target }) => {
+        // console.log("data, target", data, target, attributes)
 
-      setAttributes(
-        attributes.map((obj) => {
+        setAttributes(
+          attributes.map((obj) => {
+            if (obj._id === data._id) {
+              const newobj = { ...obj, [target.name]: target.value };
+              return newobj;
+            } else {
+              return obj;
+            }
+          })
+        );
+        const newData = attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        })
-      );
-      const newData = attributes.map((obj) => {
-        if (obj._id === data._id) {
-          const newobj = { ...obj, [target.name]: target.value };
-          return newobj;
-        } else {
-          return obj;
-        }
-      });
-      setAttributes(newData);
-      updateStore(newData);
-    };
+        });
+        setAttributes(newData);
+        updateStore(newData);
+      };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -231,7 +232,7 @@ const ThirdStep = (props) => {
           isOpen={openAddCalAttributeBox}
           openF={openFun}
           closeF={closeFun}
-          title="Add Cal Attribute"
+          title="Add Calculated Attributes"
           oktitle="Save"
           saveFun={saveAddCalAttributeFun}
           cancelTitle="Cancel"
@@ -256,55 +257,51 @@ const ThirdStep = (props) => {
         </Grid>
       </Grid>
       <BorderedContainer>
-      {loaderComponent ? loaderComponent :      <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
+        {loaderComponent ? loaderComponent : <FormControl sx={{ m: 6 }} component="fieldset" variant="standard">
           <FormLabel component="legend">Calculated Attributes </FormLabel>
 
           <FormGroup>
-            <FormControlLabel
-              className="form"
-              control={
-                <>
-                  {calAttriValues && (
-                    <Checkboxes
-                      defaultValues={calAttriValues}
-                      config={attributes}
-                      onChange={(data) => {
-                        setcalAttriValues(data);
-                      }}
-                      onChangeField={updateCheckboxes}
-                      customComponent={({ data }) => {
-                        return (
-                          <>
-                            <TextField
-                              name="unit"
-                              type={"number"}
-                              min={1}
-                              max={99}
-                              className="text-box"
-                              label="%"
-                              variant="outlined"
-                              value={data.unit}
-                              onChange={onChangeField({ data })}
-                            />
-                            <TextField
-                              name="description"
-                              className="comment-box"
-                              label="Comment"
-                              variant="outlined"
-                              value={data.description}
-                              onChange={onChangeField({ data })}
-                            />
-                          </>
-                        );
-                      }}
-                    />
-                  )}
-                </>
-              }
-            />
+
+            {calAttriValues && (
+              <Checkboxes
+                defaultValues={calAttriValues}
+                config={attributes}
+                onChange={(data) => {
+                  setcalAttriValues(data);
+                }}
+                onChangeField={updateCheckboxes}
+                customComponent={({ data }) => {
+                  return (
+                    <>
+                      <TextField
+                        name="unit"
+                        type={"number"}
+                        min={1}
+                        max={99}
+                        className="text-box"
+                        label="%"
+                        variant="outlined"
+                        value={data.unit}
+                        onChange={onChangeField({ data })}
+                        onKeyDown={(evt) => symbolsArr.includes(evt.key) && evt.preventDefault()}
+                        // pattern="\b([0-9]|[1-9][0-9])\b"
+                      />
+                      <TextField
+                        name="description"
+                        className="comment-box"
+                        label="Comment"
+                        variant="outlined"
+                        value={data.description}
+                        onChange={onChangeField({ data })}
+                      />
+                    </>
+                  );
+                }}
+              />
+            )}
           </FormGroup>
         </FormControl>
-}
+        }
       </BorderedContainer>
       {open && (
         <Snackbar
