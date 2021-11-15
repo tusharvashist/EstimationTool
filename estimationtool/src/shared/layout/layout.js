@@ -49,7 +49,7 @@ export default class Layout extends Component {
               <Grid item className="h-100" xs={10}>
                 <Breadcrum />
                 <Switch>
-                  <Route exact path="/estimation">
+                  <Route exact path="/Recent-Estimations">
                     <Allestimation />
                   </Route>
                   <Route

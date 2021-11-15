@@ -1,6 +1,6 @@
 .breadcrumb-wrp {
   padding: 5px 15px;
-  background: #e8e8e8;
+  background: #ebf1eb;
   margin-top: 55px;
 }
 .item-icon {
@@ -17,4 +17,11 @@
 }
 .MuiBreadcrumbs-li .MuiLink-root svg {
   font-size: 21px;
+}
+a {
+  text-decoration: none;
+}
+a:visited,
+a:hover {
+  text-decoration: none !important;
 }

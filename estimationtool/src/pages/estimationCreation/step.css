@@ -31,3 +31,11 @@
 .MuiFormControlLabel-label {
   flex-grow: 1;
 }
+.MuiFormGroup-root {
+  width: 100%;
+}
+.cal-attribute div {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}

@@ -25,7 +25,7 @@ const Sidebarv2 = (props) => {
         <ListItem
           button
           className="listitem"
-          onClick={() => history.push("/estimation")}
+          onClick={() => history.push("/Recent-Estimations")}
         >
           <ListItemIcon>
             <HomeIcon className="link-icon" />

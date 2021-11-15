@@ -386,7 +386,7 @@ function Projects(props) {
               },
             }}
             data={projectByClient}
-            title={`Project${props.thisClient.length > 1 ? "s" : ""}`}
+            title={`Project${props.clients.length > 1 ? "s" : ""}`}
           />
         )}
       </BorderedContainer>

@@ -26,7 +26,7 @@ const BasicBreadcrumbs = (props) => {
           const isLast = index === pathnames.length - 1;
           //console.log(routeTo, isLast);
           return isLast ? (
-            <Typography>{name}</Typography>
+            <Typography style={{ color: "black" }}>{name}</Typography>
           ) : (
             <Link onClick={() => history.push(routeTo)}>{name}</Link>
           );

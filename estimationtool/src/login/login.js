@@ -54,7 +54,7 @@ export default function Login(props) {
   };
 
   const redirectDashbord = () => {
-    let url = "/estimation";
+    let url = "/Recent-Estimations";
     history.push(url);
   };
 
