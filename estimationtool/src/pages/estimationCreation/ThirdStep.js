@@ -159,30 +159,30 @@ const ThirdStep = (props) => {
 
   const onChangeField =
     ({ data }) =>
-    ({ target }) => {
-      // console.log("data, target", data, target, attributes)
+      ({ target }) => {
+        // console.log("data, target", data, target, attributes)
 
-      setAttributes(
-        attributes.map((obj) => {
+        setAttributes(
+          attributes.map((obj) => {
+            if (obj._id === data._id) {
+              const newobj = { ...obj, [target.name]: target.value };
+              return newobj;
+            } else {
+              return obj;
+            }
+          })
+        );
+        const newData = attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        })
-      );
-      const newData = attributes.map((obj) => {
-        if (obj._id === data._id) {
-          const newobj = { ...obj, [target.name]: target.value };
-          return newobj;
-        } else {
-          return obj;
-        }
-      });
-      setAttributes(newData);
-      updateStore(newData);
-    };
+        });
+        setAttributes(newData);
+        updateStore(newData);
+      };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -252,7 +252,7 @@ const ThirdStep = (props) => {
             {!roleState.isContributor && (
               <Button variant="outlined" onClick={openAddCalAttribute}>
                 {" "}
-                <AddIcon /> Add Cal Attribute
+                <AddIcon /> Add Calculated Attribute
               </Button>
             )}
           </div>
@@ -290,7 +290,7 @@ const ThirdStep = (props) => {
                           onKeyDown={(evt) =>
                             symbolsArr.includes(evt.key) && evt.preventDefault()
                           }
-                          // pattern="\b([0-9]|[1-9][0-9])\b"
+                        // pattern="\b([0-9]|[1-9][0-9])\b"
                         />
                         <TextField
                           name="description"
