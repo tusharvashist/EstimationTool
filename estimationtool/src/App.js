@@ -11,7 +11,6 @@ import {
 } from "react-router-dom";
 
 function App() {
-  console.log("hihihihi");
   return (
     <BrowserRouter>
       <Switch>

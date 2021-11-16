@@ -21,6 +21,7 @@ import "./EstimationCreation.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useHistory } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import { setEstimationHeaderId } from "../../Redux/basicDetailRedux";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
@@ -38,8 +39,16 @@ const EstimationCreation = (props) => {
   const [skipped, setSkipped] = React.useState(new Set());
   const clientInfo = { ...location1.state.clientInfo };
   const projecttInfo = { ...location1.state.projectInfo };
-  const estionHeaderId = location1.state.estimationHeaderId;
-  const [estimationHeaderId, setEstimationHeaderId] =
+
+  let estionHeaderId;
+
+  if (location1.state.estimationHeaderId) {
+    estionHeaderId = location1.state.estimationHeaderId;
+  } else {
+    estionHeaderId = basicDetailRedux.estimationHeaderId;
+  }
+
+  const [estimationHeaderId, setNewEstimationHeaderId] =
     React.useState(estionHeaderId);
   const [estimationIdFinish, setEstimationIdFinish] = React.useState();
   const [isOpen, setOpen] = React.useState({});
@@ -84,7 +93,7 @@ const EstimationCreation = (props) => {
 
   useEffect(() => {
     setLocation(location);
-    setEstimationHeaderId(location1.state.estimationHeaderId);
+    setNewEstimationHeaderId(estionHeaderId);
 
     if (location1.state.step !== undefined && location1.state.step === "2") {
       setActiveStep(2);
@@ -111,7 +120,8 @@ const EstimationCreation = (props) => {
         console.log(
           "Save Basic Details APi response:" + JSON.stringify(dataResponce)
         );
-        setEstimationHeaderId(dataResponce._id);
+        setNewEstimationHeaderId(dataResponce._id);
+        dispatch(setEstimationHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -140,7 +150,8 @@ const EstimationCreation = (props) => {
         console.log(
           "Update Basic Details APi response:" + JSON.stringify(dataResponce)
         );
-        setEstimationHeaderId(dataResponce._id);
+        setNewEstimationHeaderId(dataResponce._id);
+        dispatch(setEstimationHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
 
         //TODO:// show response and move next step
@@ -216,7 +227,7 @@ const EstimationCreation = (props) => {
         setLoader(false);
 
         let dataResponce = res.data.body;
-        setEstimationHeaderId(dataResponce._id);
+        setNewEstimationHeaderId(dataResponce._id);
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })

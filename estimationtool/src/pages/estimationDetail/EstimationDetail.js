@@ -130,20 +130,17 @@ const EstimationDetail = () => {
             return dataResponse.estHeaderAttribute.indexOf(item) == pos;
           });
         dataResponse.estHeaderAttribute.forEach((item, i) => {
-
-
           item["validate"] = (rowData) => {
             console.log("---rowData[item.field] ----: ", rowData[item.field]);
             if (rowData[item.field] < 0) {
               rowData[item.field] = 0;
-              return 'Value should be >= 0 ';
+              return "Value should be >= 0 ";
             } else {
               return true;
             }
           };
 
           estHeaderAttribute.push(item);
-
         });
 
         setRequirementHeaderArray(estHeaderAttribute);
@@ -160,15 +157,13 @@ const EstimationDetail = () => {
               requirementId: item.requirement._id,
               _id: item._id,
             };
-          };
+          }
 
           item.estRequirementData.forEach((item, i) => {
-
             requirement[item.ESTAttributeID._id] = item.ESTData;
           });
           arrayRequirement.push(requirement);
-        }
-        );
+        });
 
         setRequirementDataArray(arrayRequirement);
       })
@@ -231,10 +226,6 @@ const EstimationDetail = () => {
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         getById();
       });
   };
@@ -257,8 +248,7 @@ const EstimationDetail = () => {
           cancelTitle="Cancel"
         />
       ) : null} 
-      */
-      }
+      */}
       {openEditConfigurationBox ? (
         <AddRequirements
           isOpen={openEditConfigurationBox}
@@ -369,7 +359,10 @@ const EstimationDetail = () => {
             <p>
               {" "}
               <span className="title-stl"> Client Website :</span>{" "}
-              <a target="blank" href={`//${clientDetails.website}`}> {clientDetails.website}</a>
+              <a target="blank" href={`//${clientDetails.website}`}>
+                {" "}
+                {clientDetails.website}
+              </a>
             </p>
           </Grid>
         </Grid>

@@ -23,7 +23,7 @@ import "./project.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import topNav from "../../shared/layout/topnav/topnav"
+import topNav from "../../shared/layout/topnav/topnav";
 
 function Projects(props) {
   const roleState = useSelector((state) => state.role);
@@ -52,7 +52,7 @@ function Projects(props) {
   const [allProjectByClient, setAllProjectByClient] = useState();
   const [loaderComponent, setLoader] = useLoader();
 
-  const [reload, setReload] = useState("");
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     // getClientById();
@@ -161,25 +161,27 @@ function Projects(props) {
 
   const getAllProjects = (clientid) => {
     setLoader(true);
-    ProjectSer.getAllProject().then((res) => {
-      let dataResponce = res.data.body;
-      setLoader(false);
-      const filteredData = dataResponce.filter((el) => el.client == clientid);
-      const activeEl = filteredData.filter((el) => el.isDeleted == false);
-      setProjectByClient(activeEl);
-      setSecondProjectByClient([...filteredData]);
-      setAllProjectByClient([...filteredData]);
-    }).catch((err) => {
-      // if ((err.response.data = 401) || (err.response.data = 404)) {
-      //   let url = "/login";
-      //   history.push(url);
-      // }
-      setOpen({
-        open: true,
-        severity: "error",
-        message: err.response.data.message,
+    ProjectSer.getAllProject()
+      .then((res) => {
+        let dataResponce = res.data.body;
+        setLoader(false);
+        const filteredData = dataResponce.filter((el) => el.client == clientid);
+        const activeEl = filteredData.filter((el) => el.isDeleted == false);
+        setProjectByClient(activeEl);
+        setSecondProjectByClient([...filteredData]);
+        setAllProjectByClient([...filteredData]);
+      })
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
-    });;
   };
 
   const createProject = (projectData) => {
@@ -372,28 +374,28 @@ function Projects(props) {
             actions={
               !roleState.isContributor
                 ? [
-                  (rowData) => ({
-                    icon: "edit",
-                    tooltip: "Edit project",
-                    onClick: (event, rowData) => {
-                      setEditRow({ ...rowData });
-                      setActionId(rowData.id);
-                      openUpdateDailog();
-                    },
-                    disabled: rowData.isDeleted,
-                  }),
-                  (rowData) => ({
-                    icon: "delete",
-                    tooltip: "Delete project",
-                    onClick: (event, rowData) => {
-                      setEditRow({ ...rowData });
-                      setActionId(rowData.id);
-                      setDeleteRecordName(rowData.projectName);
-                      openDeleteDailog();
-                    },
-                    disabled: rowData.isDeleted,
-                  }),
-                ]
+                    (rowData) => ({
+                      icon: "edit",
+                      tooltip: "Edit project",
+                      onClick: (event, rowData) => {
+                        setEditRow({ ...rowData });
+                        setActionId(rowData.id);
+                        openUpdateDailog();
+                      },
+                      disabled: rowData.isDeleted,
+                    }),
+                    (rowData) => ({
+                      icon: "delete",
+                      tooltip: "Delete project",
+                      onClick: (event, rowData) => {
+                        setEditRow({ ...rowData });
+                        setActionId(rowData.id);
+                        setDeleteRecordName(rowData.projectName);
+                        openDeleteDailog();
+                      },
+                      disabled: rowData.isDeleted,
+                    }),
+                  ]
                 : false
             }
             options={{

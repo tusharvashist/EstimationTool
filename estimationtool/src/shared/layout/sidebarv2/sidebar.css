@@ -53,6 +53,7 @@
 }
 .MuiListItem-button:hover {
   background-color: #1d1660 !important;
+  color: white;
   border-radius: 7px;
   transition: 0.5s all ease;
 }

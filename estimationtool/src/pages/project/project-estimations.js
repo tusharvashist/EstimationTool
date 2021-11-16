@@ -129,9 +129,9 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => { };
+  const openCreateDailog = () => {};
 
-  const openUpdateDailog = () => { };
+  const openUpdateDailog = () => {};
 
   const openDeleteDailog = () => {
     openFun();
@@ -153,7 +153,7 @@ function ProjectEstimations(props) {
 
   let history = useHistory();
 
-  const actionArry = (rowData) => { };
+  const actionArry = (rowData) => {};
   const rowBackgroundColor = {
     true: "#eef5e9",
     false: "#fff",
@@ -170,7 +170,7 @@ function ProjectEstimations(props) {
           closeF={closeFun}
           editRowObj={editRow}
           name={deleteRecordName}
-          title="Delete Project"
+          title="Delete Estimation"
           message="Do you want to delete"
           category="Estimate"
           oktitle="Ok"
@@ -211,7 +211,6 @@ function ProjectEstimations(props) {
                 openDeleteDailog();
               },
               disabled: rowData.isDeleted,
-              disabled: roleState.isContributor,
             }),
           ]}
           options={{

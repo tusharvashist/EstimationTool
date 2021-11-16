@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const basicDetailSlice = createSlice({
+export const roleSlice = createSlice({
   name: "role",
   initialState: {
     isAdmin: false,
@@ -21,7 +21,6 @@ export const basicDetailSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setAdmin, setContributor, setSuperAdmin } =
-  basicDetailSlice.actions;
+export const { setAdmin, setContributor, setSuperAdmin } = roleSlice.actions;
 
-export default basicDetailSlice.reducer;
+export default roleSlice.reducer;
