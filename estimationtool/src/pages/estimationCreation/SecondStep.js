@@ -18,7 +18,7 @@ import AddAttributeEstimation from "../estimationCreation/add-attribute-estimati
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-
+import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstAttributeData } from "../../Redux/effortAttributeSaveRedux";
 import useLoader from "../../shared/layout/hooks/useLoader";
@@ -41,6 +41,7 @@ const SecondStep = (props) => {
   const [finalIds, setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
   const [loaderComponent, setLoader] = useLoader();
+  const history = useHistory();
 
   const getAttribute = () => {
     setLoader(true);

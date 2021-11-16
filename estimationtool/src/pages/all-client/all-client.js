@@ -25,6 +25,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 // import { rolePermission } from "../../shared/commonUtility/rolePermission";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import { useHistory } from "react-router-dom";
 
 function AllClient(props) {
   const { history } = props;
@@ -53,6 +54,7 @@ function AllClient(props) {
   useEffect(() => {
     getAllClient();
   }, []);
+  const history1 = useHistory();
 
   const getAllClient = () => {
     setLoader(true);
@@ -69,7 +71,7 @@ function AllClient(props) {
         console.log("estimation error", err);
         if ((err.response.data = 401) || (err.response.data = 404)) {
           let url = "/login";
-          history.push(url);
+          history1.push(url);
         }
       });
   };
@@ -165,7 +167,7 @@ function AllClient(props) {
       .catch((err) => {
         if ((err.response.data = 401) || (err.response.data = 404)) {
           let url = "/login";
-          history.push(url);
+          history1.push(url);
         }
         setOpen({
           open: true,
@@ -190,7 +192,7 @@ function AllClient(props) {
       .catch((err) => {
         if ((err.response.data = 401) || (err.response.data = 404)) {
           let url = "/login";
-          history.push(url);
+          history1.push(url);
         }
         setOpen({
           open: true,
@@ -215,7 +217,7 @@ function AllClient(props) {
       .catch((err) => {
         if ((err.response.data = 401) || (err.response.data = 404)) {
           let url = "/login";
-          history.push(url);
+          history1.push(url);
         }
         setOpen({
           open: true,
