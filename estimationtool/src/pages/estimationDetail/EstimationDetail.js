@@ -135,8 +135,9 @@ const EstimationDetail = () => {
             if (rowData[item.field] < 0) {
               rowData[item.field] = 0;
               return 'Value should be >= 0 ';
+            } else{
+              return true;
             }
-            
           };
 
           estHeaderAttribute.push(item);
@@ -225,7 +226,8 @@ const EstimationDetail = () => {
   };
   return (
     <React.Fragment>
-      {/* {openEditConfigurationBox ? (
+      {/* 
+      {openEditConfigurationBox ? (
         <AddRequirements
           isOpen={openEditConfigurationBox}
           openF={openAddFun}
@@ -240,7 +242,9 @@ const EstimationDetail = () => {
           editData={editData}
           cancelTitle="Cancel"
         />
-      ) : null} */}
+      ) : null} 
+      */
+      }
       {openEditConfigurationBox ? (
         <AddRequirements
           isOpen={openEditConfigurationBox}

@@ -22,36 +22,30 @@ module.exports.create = async (serviceData) => {
     const findRecord = await ProjectRequirement.find({ title: projectRequirement.title }, { project: projectRequirement.project });
     if(findRecord.length != 0){
       requirementId = findRecord[0]._id;
-         const record = await EstHeaderRequirement.find({estHeader: mongoose.Types.ObjectId(serviceData.estHeader), isDeleted: false}).
-         populate({
-         path: 'requirement',
-         match: { title : projectRequirement.title},
-         options: { limit: 1 }
-                 })
-         record.forEach(element => {
-          if(element.requirement != null && element.requirement.title === projectRequirement.title)
-          {
-          throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
-          }
-      });
-    }
-
-
-    if(findRecord.length === 0){
+        
+              
+      }else {
       let result = await projectRequirement.save();
       requirementId = result._id;
     }
 
-    const savedProjectRequirement = await ProjectRequirement.find({ title: projectRequirement.title }, { project: projectRequirement.project },);
     const estHeaderModel = await EstHeaderModel.findById({ _id: serviceData.estHeader })
     if (estHeaderModel.length == 0) {
-       throw new Error(constant.requirementMessage.INVALID_ID);
+       throw new Error(constant.requirementMessage.INVALID_EST_ID);
     }
+
+    const record = await EstHeaderRequirement.find({requirement: requirementId ,estHeader: mongoose.Types.ObjectId(serviceData.estHeader)})
+    if(record.length != 0){
+        throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+    }
+    
     let estHeaderRequirement = new EstHeaderRequirement({requirement: requirementId ,estHeader: estHeaderModel._id ,isDeleted: false})
     let result_estHeaderRequirement = await estHeaderRequirement.save();
+    
     return formatMongoData(result_estHeaderRequirement)
+
   } catch (err) {
-    console.log("something went wrong: service > ProjectService ", err);
+    //console.log("something went wrong: service > Requirment ", err);
     throw new Error(err)
   }
 }
@@ -81,59 +75,88 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
       }
 
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+    //console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err)
   }
 }
 
 module.exports.updateRequirementData = async (serviceDataArray) => {
   try {
-    var length =0;
+    var length = 0;
+   var bulk =  EstRequirementData.collection.initializeUnorderedBulkOp();
     serviceDataArray.data.forEach(async (serviceData) => {
       let estRequirementData = new EstRequirementData({ ...serviceData })
-
-      let result = await EstRequirementData.findOneAndUpdate({
+      let result =  bulk.find({
         ESTAttributeID: estRequirementData.ESTAttributeID,
         ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID
-        },
-        estRequirementData,
+        }).upsert().updateOne(
+          {
+            $set: {
+              ESTAttributeID: estRequirementData.ESTAttributeID,
+              ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
+              ESTData: estRequirementData.ESTData
+            }
+          },
         { upsert: true , new: true }
         );
+    });
 
-      if (result) {
-        var value = {
-          requirement: estRequirementData.ESTHeaderRequirementID,
-          estHeader: estRequirementData.ESTHeaderID
-        };
-       
-
-        const estHeaderRequirement = await EstHeaderRequirement.findById(result.ESTHeaderRequirementID);
-        estHeaderRequirement.estRequirementData.push(result);
-       await estHeaderRequirement.save();
+    const result = await bulk.execute();
     
-        
-      }
-      if (length === serviceDataArray.data.length-1) {
-        return formatMongoData("done")
-      } else {
-        length = length+1
-      }
-  });
+    serviceDataArray.data.forEach(async (serviceData) => {
+
+
+      let estRequirementData = new EstRequirementData({ ...serviceData })
+      console.log("ESTAttributeID:", estRequirementData.ESTAttributeID,
+        "ESTHeaderRequirementID:", estRequirementData.ESTHeaderRequirementID);
+      
+      let result = EstRequirementData.findOne({
+        ESTAttributeID:estRequirementData.ESTAttributeID
+      ,ESTHeaderRequirementID:estRequirementData.ESTHeaderRequirementID
+      }, function(err, result) {
+        if (err) {
+          throw err;
+        } else {
+          if (result.ESTData != null) {
+            EstHeaderRequirement.findOne({ _id: result.ESTHeaderRequirementID },
+              function (err, result2) {
+                if (err) {
+                  throw err;
+                } else {
+                  var isFind = false;
+                  result2.estRequirementData.forEach((estRequirement) => {
+                    if (String(estRequirement) == String(result._id)) {
+                      isFind = true;
+                    }
+                   });
+                  if (!isFind) {
+                    result2.estRequirementData.push(result);
+                    result2.save();
+                  }
+                }
+              }
+            );
+          }
+          }
+        });
+    });
+  
+    
   } catch (err) {
-    console.log("something went wrong: service > ProjectService ", err);
+   // console.log("something went wrong: service > RequirmentData ", err);
     throw new Error(err)
   }
 }
 
 module.exports.deleteRequirementData = async (id) => {
   try {
-    let estHeaderRequirement = await EstHeaderRequirement.updateOne({_id:id}, { isDeleted: true });
+    let estHeaderRequirement = await EstHeaderRequirement.findByIdAndRemove({_id:id});
     if (!estHeaderRequirement) {
       throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND)
     }
     return formatMongoData(estHeaderRequirement)
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+   // console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err)
   }
 }
@@ -148,7 +171,7 @@ module.exports.getById = async ({ id }) => {
 
     let response = { ...constant.requirementResponse };
   
-
+//****************** */
     let estHeaderRequirement = await EstHeaderRequirement
       .find({ estHeader: id, isDeleted: false }, { estHeader: 0 })
       .populate({
@@ -158,6 +181,9 @@ module.exports.getById = async ({ id }) => {
         path: 'estRequirementData',
          populate: { path: 'ESTAttributeID' }
       })
+    
+//****************** */   
+    
     
     if (estHeaderRequirement.length != 0) {
       response.featureList = estHeaderRequirement
@@ -277,7 +303,10 @@ module.exports.getById = async ({ id }) => {
     response.estHeaderAttribute = [];
     if (estimationHeaderAttributeModel.length != 0) {
       estimationHeaderAttributeModel.forEach(element => {
+
+       
         if (element.estAttributeId) {
+         
           response.estHeaderAttribute.push({
             field: element.estAttributeId._id,
             description: element.estAttributeId.description,
@@ -285,6 +314,7 @@ module.exports.getById = async ({ id }) => {
             id: element.estAttributeId._id,
             code: element.estAttributeId.attributeCode,
             type: "numeric",
+            
           });
         }
       });
@@ -303,7 +333,7 @@ module.exports.getById = async ({ id }) => {
     
     return formatMongoData(response)
   } catch (err) {
-    console.log("something went wrong: service > createEstimation Header", err);
+   // console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err)
   }
 }

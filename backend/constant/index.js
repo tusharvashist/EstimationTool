@@ -44,6 +44,7 @@ module.exports = {
         REQUIREMENT_GET_ERROR: "All requirement featch error",
         REQUIREMENT_NOT_FOUND: "Requirement not found",
         INVALID_ID: "Invalid id",
+        INVALID_EST_ID: "Invalid Estimation id",
         REQUIREMENT_UPDATE: "Requirement update successfully",
         REQUIREMENT_DATA_UPDATE: "Requirement data update successfully",
         REQUIREMENT_DELETE: "Requirement delete successfully",
