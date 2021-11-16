@@ -287,7 +287,7 @@ function AllClient(props) {
             isOpen={isOpenDailog}
             openF={openFun}
             closeF={closeFun}
-            title="Create client"
+            title="Create Client"
             oktitle="Save"
             saveFun={saveCreateClientFun}
             cancelTitle="Cancel"
