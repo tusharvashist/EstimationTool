@@ -169,7 +169,17 @@ function Projects(props) {
       setProjectByClient(activeEl);
       setSecondProjectByClient([...filteredData]);
       setAllProjectByClient([...filteredData]);
-    });
+    }).catch((err) => {
+      if ((err.response.data = 401) || (err.response.data = 404)) {
+        let url = "/login";
+        history.push(url);
+      }
+      setOpen({
+        open: true,
+        severity: "error",
+        message: err.response.data.message,
+      });
+    });;
   };
 
   const createProject = (projectData) => {
@@ -185,9 +195,7 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        if (err.status == 401) {
-
-
+        if ((err.response.data = 401) || (err.response.data = 404)) {
           let url = "/login";
           history.push(url);
         }
@@ -213,6 +221,10 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         setOpen({
           open: true,
           severity: "error",
@@ -235,6 +247,10 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         setOpen({
           open: true,
           severity: "error",

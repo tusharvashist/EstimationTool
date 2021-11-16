@@ -129,9 +129,9 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => {};
+  const openCreateDailog = () => { };
 
-  const openUpdateDailog = () => {};
+  const openUpdateDailog = () => { };
 
   const openDeleteDailog = () => {
     openFun();
@@ -143,12 +143,17 @@ function ProjectEstimations(props) {
         props.refreshData();
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
+      });
   };
 
   let history = useHistory();
 
-  const actionArry = (rowData) => {};
+  const actionArry = (rowData) => { };
   const rowBackgroundColor = {
     true: "#eef5e9",
     false: "#fff",

@@ -118,6 +118,10 @@ const EstimationCreation = (props) => {
       })
       .catch((err) => {
         console.log("save estimation header detail error : ", err);
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         childRef.current.showError(err);
       });
   };
@@ -144,6 +148,10 @@ const EstimationCreation = (props) => {
       })
       .catch((err) => {
         console.log("Update estimation header detail error : ", err);
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         childRef.current.showError(err);
       });
   };
@@ -190,6 +198,10 @@ const EstimationCreation = (props) => {
         history.push(finishLocation);
       })
       .catch((err) => {
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         // console.log("save estimation header detail error : ", err);
         // childRef.current.showError(err);
       });
@@ -209,6 +221,10 @@ const EstimationCreation = (props) => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         // console.log("save estimation header detail error : ", err);
         // childRef.current.showError(err);
       });
@@ -417,7 +433,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
-                  // ref={secondChildRef}
+                // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (

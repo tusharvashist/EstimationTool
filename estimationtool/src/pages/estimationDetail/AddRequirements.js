@@ -69,6 +69,10 @@ const AddRequirements = (props) => {
         })
         .catch((err) => {
           console.log("get updateRequirement by id error", err);
+          if ((err.response.data = 401) || (err.response.data = 404)) {
+            let url = "/login";
+            history.push(url);
+          }
           setOpen({
             open: true,
             severity: "error",
@@ -83,6 +87,10 @@ const AddRequirements = (props) => {
         })
         .catch((err) => {
           console.log("get createRequirement by id error", err);
+          if ((err.response.data = 401) || (err.response.data = 404)) {
+            let url = "/login";
+            history.push(url);
+          }
           setOpen({
             open: true,
             severity: "error",

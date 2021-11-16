@@ -129,26 +129,26 @@ const EstimationDetail = () => {
           });
         dataResponse.estHeaderAttribute.forEach((item, i) => {
 
-     
+
           item["validate"] = (rowData) => {
             console.log("---rowData[item.field] ----: ", rowData[item.field]);
             if (rowData[item.field] < 0) {
               rowData[item.field] = 0;
               return 'Value should be >= 0 ';
-            } else{
+            } else {
               return true;
             }
           };
 
           estHeaderAttribute.push(item);
-          
+
         });
-         
+
         setRequirementHeaderArray(estHeaderAttribute);
         var arrayRequirement = [];
         dataResponse.featureList.forEach((item, i) => {
           if (item.isDeleted === false) {
-           var   field = item.requirement.title;
+            var field = item.requirement.title;
             var requirement = {
               Requirement: item.requirement.title,
               Description: item.requirement.description,
@@ -157,21 +157,25 @@ const EstimationDetail = () => {
               Type: item.requirement.type,
               requirementId: item.requirement._id,
               _id: item._id,
-               };
+            };
           };
-          
+
           item.estRequirementData.forEach((item, i) => {
-           
-              requirement[item.ESTAttributeID._id] = item.ESTData;
-            });
-            arrayRequirement.push(requirement);
-          }
+
+            requirement[item.ESTAttributeID._id] = item.ESTData;
+          });
+          arrayRequirement.push(requirement);
+        }
         );
-        
+
         setRequirementDataArray(arrayRequirement);
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
       });
   };
 
@@ -206,6 +210,10 @@ const EstimationDetail = () => {
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         getById();
       });
   };
@@ -221,6 +229,10 @@ const EstimationDetail = () => {
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
+        if ((err.response.data = 401) || (err.response.data = 404)) {
+          let url = "/login";
+          history.push(url);
+        }
         getById();
       });
   };
