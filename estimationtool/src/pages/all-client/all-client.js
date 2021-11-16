@@ -25,7 +25,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 // import { rolePermission } from "../../shared/commonUtility/rolePermission";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import { useHistory } from "react-router-dom";
+//import { useHistory } from "react-router-dom";
 
 function AllClient(props) {
   const { history } = props;
@@ -54,7 +54,7 @@ function AllClient(props) {
   useEffect(() => {
     getAllClient();
   }, []);
-  const history1 = useHistory();
+  // const history1 = useHistory();
 
   const getAllClient = () => {
     setLoader(true);
@@ -69,10 +69,10 @@ function AllClient(props) {
       })
       .catch((err) => {
         console.log("estimation error", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history1.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        //  }
       });
   };
   const columns = [
@@ -165,10 +165,10 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history1.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",
@@ -190,10 +190,10 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history1.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",
@@ -215,10 +215,10 @@ function AllClient(props) {
         closeFun();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history1.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",

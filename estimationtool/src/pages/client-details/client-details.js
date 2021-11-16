@@ -63,10 +63,10 @@ export default function ClientDetails(props) {
       })
       .catch((err) => {
         console.log("get Client by id error", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 
@@ -83,10 +83,10 @@ export default function ClientDetails(props) {
       })
       .catch((err) => {
         console.log("get Client by id error", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 

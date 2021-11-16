@@ -174,10 +174,10 @@ const EstimationDetail = () => {
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 
@@ -212,10 +212,10 @@ const EstimationDetail = () => {
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         getById();
       });
   };
@@ -231,10 +231,10 @@ const EstimationDetail = () => {
       })
       .catch((err) => {
         console.log("get deleteRequirement by id error", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         getById();
       });
   };

@@ -19,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
 import "./EstimationCreation.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
@@ -118,10 +118,10 @@ const EstimationCreation = (props) => {
       })
       .catch((err) => {
         console.log("save estimation header detail error : ", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         childRef.current.showError(err);
       });
   };
@@ -148,10 +148,10 @@ const EstimationCreation = (props) => {
       })
       .catch((err) => {
         console.log("Update estimation header detail error : ", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         childRef.current.showError(err);
       });
   };
@@ -198,10 +198,10 @@ const EstimationCreation = (props) => {
         history.push(finishLocation);
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        //   if ((err.response.data = 401) || (err.response.data = 404)) {
+        //     let url = "/login";
+        //     history.push(url);
+        //   }
         // console.log("save estimation header detail error : ", err);
         // childRef.current.showError(err);
       });
@@ -221,10 +221,10 @@ const EstimationCreation = (props) => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         // console.log("save estimation header detail error : ", err);
         // childRef.current.showError(err);
       });

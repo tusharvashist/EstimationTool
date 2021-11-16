@@ -75,10 +75,10 @@ const SecondStep = (props) => {
       })
       .catch((err) => {
         console.log("Not getting Attribute", err);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 
@@ -108,10 +108,10 @@ const SecondStep = (props) => {
         closeDialog();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",

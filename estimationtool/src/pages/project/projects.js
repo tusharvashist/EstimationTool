@@ -170,10 +170,10 @@ function Projects(props) {
       setSecondProjectByClient([...filteredData]);
       setAllProjectByClient([...filteredData]);
     }).catch((err) => {
-      if ((err.response.data = 401) || (err.response.data = 404)) {
-        let url = "/login";
-        history.push(url);
-      }
+      // if ((err.response.data = 401) || (err.response.data = 404)) {
+      //   let url = "/login";
+      //   history.push(url);
+      // }
       setOpen({
         open: true,
         severity: "error",
@@ -195,10 +195,10 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",
@@ -221,10 +221,10 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",
@@ -247,10 +247,10 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         setOpen({
           open: true,
           severity: "error",
