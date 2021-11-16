@@ -11,9 +11,11 @@ import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
 import { display } from "@material-ui/system";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import { useHistory } from "react-router-dom";
 
 const EstimationDetail = () => {
   const location = useLocation();
+  const history = useHistory();
   console.log(location);
   const estimationId = location.state.estId;
   // const estimationId = localStorage.estimationHeaderId;

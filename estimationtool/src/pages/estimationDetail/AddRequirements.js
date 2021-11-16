@@ -11,6 +11,7 @@ import {
 import EstimationService from "./estimation.service";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { useHistory } from "react-router";
 
 const AddRequirements = (props) => {
   const [showError, setShowError] = React.useState(false);
@@ -23,6 +24,7 @@ const AddRequirements = (props) => {
   const [requirementDescription, setrequirementDescription] = useState("");
   const [editData, setEditData] = useState([]);
   const [id, setId] = useState("");
+  const history = useHistory();
   const [formData, setFormData] = React.useState({
     title: "",
     description: "",

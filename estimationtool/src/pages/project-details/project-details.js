@@ -13,6 +13,7 @@ import "./project-details.css";
 import { useParams, useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
+import { useHistory } from "react-router-dom";
 
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
@@ -21,6 +22,7 @@ import { useSelector } from "react-redux";
 const pastProjectId = [];
 
 export default function ClientDetails(props) {
+  const history = useHistory();
   const roleState = useSelector((state) => state.role);
 
   const location = useLocation();

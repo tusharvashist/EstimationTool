@@ -25,12 +25,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCalcAttributeData } from "../../Redux/CalcAttributeRedux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import classes from "./thirdStepStyle.module.css";
+import { useHistory } from "react-router-dom";
 
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
   const saveCalcAttribute = useSelector((state) => state.calcAttribute);
   const [loaderComponent, setLoader] = useLoader();
-
+  const history = useHistory();
   const dispatch = useDispatch();
 
   useEffect(() => {
