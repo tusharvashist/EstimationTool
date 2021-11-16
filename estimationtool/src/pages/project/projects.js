@@ -49,10 +49,12 @@ function Projects(props) {
   const [allProjectByClient, setAllProjectByClient] = useState();
   const [loaderComponent, setLoader] = useLoader();
 
+  const [reload, setReload] = useState("");
+
   useEffect(() => {
     // getClientById();
     getAllProjects(clientid);
-  }, [clientid]);
+  }, [clientid, reload]);
 
   const columns = [
     {
@@ -174,6 +176,7 @@ function Projects(props) {
         setLoader(false);
 
         // getClientById();
+        setReload(!reload);
         setOpen({ open: true, severity: "success", message: res.data.message });
         closeFun();
       })
@@ -194,6 +197,7 @@ function Projects(props) {
         setLoader(false);
 
         // getClientById();
+        setReload(!reload);
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
@@ -215,6 +219,7 @@ function Projects(props) {
         setLoader(false);
 
         // getClientById();
+        setReload(!reload);
         setOpen({ open: true, severity: "success", message: res.data.message });
 
         closeFun();
