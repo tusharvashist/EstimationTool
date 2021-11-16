@@ -282,7 +282,7 @@ function AllClient(props) {
             openF={openFun}
             closeF={closeFun}
             editRowObj={editRow}
-            title="Edit Estimation"
+            title="Edit Client"
             oktitle="Save"
             saveFun={saveUpdateClientFun}
             cancelTitle="Cancel"

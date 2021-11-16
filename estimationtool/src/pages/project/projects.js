@@ -15,6 +15,7 @@ import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
 import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from "@material-ui/icons/Add";
+import { useHistory } from "react-router-dom";
 // import Link from "@material-ui/core/Link";
 import { useParams, Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -22,9 +23,11 @@ import "./project.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import topNav from "../../shared/layout/topnav/topnav"
 
 function Projects(props) {
   const roleState = useSelector((state) => state.role);
+  let history = useHistory();
 
   const clientid = props.data;
   const [tableData, setTableData] = useState([]);
@@ -125,6 +128,7 @@ function Projects(props) {
   const handleClose = () => {
     setOpen({});
   };
+
   // const getAllProject = () => {
   //   ProjectSer.getAllProject()
   //     .then((res) => {
@@ -181,6 +185,12 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
+        if (err.status == 401) {
+
+
+          let url = "/login";
+          history.push(url);
+        }
         setOpen({
           open: true,
           severity: "error",
@@ -346,28 +356,28 @@ function Projects(props) {
             actions={
               !roleState.isContributor
                 ? [
-                    (rowData) => ({
-                      icon: "edit",
-                      tooltip: "Edit project",
-                      onClick: (event, rowData) => {
-                        setEditRow({ ...rowData });
-                        setActionId(rowData.id);
-                        openUpdateDailog();
-                      },
-                      disabled: rowData.isDeleted,
-                    }),
-                    (rowData) => ({
-                      icon: "delete",
-                      tooltip: "Delete project",
-                      onClick: (event, rowData) => {
-                        setEditRow({ ...rowData });
-                        setActionId(rowData.id);
-                        setDeleteRecordName(rowData.projectName);
-                        openDeleteDailog();
-                      },
-                      disabled: rowData.isDeleted,
-                    }),
-                  ]
+                  (rowData) => ({
+                    icon: "edit",
+                    tooltip: "Edit project",
+                    onClick: (event, rowData) => {
+                      setEditRow({ ...rowData });
+                      setActionId(rowData.id);
+                      openUpdateDailog();
+                    },
+                    disabled: rowData.isDeleted,
+                  }),
+                  (rowData) => ({
+                    icon: "delete",
+                    tooltip: "Delete project",
+                    onClick: (event, rowData) => {
+                      setEditRow({ ...rowData });
+                      setActionId(rowData.id);
+                      setDeleteRecordName(rowData.projectName);
+                      openDeleteDailog();
+                    },
+                    disabled: rowData.isDeleted,
+                  }),
+                ]
                 : false
             }
             options={{
