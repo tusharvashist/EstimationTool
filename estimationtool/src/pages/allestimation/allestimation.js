@@ -7,10 +7,12 @@ import { fontSize, style } from "@material-ui/system";
 import { createMuiTheme, Paper } from "@material-ui/core";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import { useHistory } from "react-router-dom";
 function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
   const [loaderComponent, setLoader] = useLoader();
+  let history = useHistory();
 
   useEffect(() => {
     setLoader(true);
@@ -24,6 +26,15 @@ function Home() {
       }
       // console.log("dataResponce", res.data.body);
       setTableData([...dataResponce]);
+    }
+
+    ).catch((err) => {
+      if (err.response.data = 401) {
+
+        let url = "/login";
+        history.push(url);
+      }
+
     });
   }, []);
 
