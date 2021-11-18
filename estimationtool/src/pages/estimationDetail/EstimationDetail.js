@@ -131,7 +131,7 @@ const EstimationDetail = () => {
         console.log("Received getRequirementDataById Setting");
         //setLoader(false);
         let dataResponse = res.data.body;
-       // setSummaryDataArray([...dataResponse.summaryTagList]);
+        setSummaryDataArray([...dataResponse.summaryTagList]);
         console.log("dataResponse.summaryTagList");
         var estHeaderAttribute = [
           {
