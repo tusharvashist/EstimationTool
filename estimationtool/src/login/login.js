@@ -94,10 +94,10 @@ export default function Login(props) {
       })
       .catch((err) => {
         setIsShowSpinner(false);
-        if ((err.response.data = 401) || (err.response.data = 404)) {
-          let url = "/login";
-          history.push(url);
-        }
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         autoHideMsZ();
       });
   };

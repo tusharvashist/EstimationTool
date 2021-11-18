@@ -29,11 +29,11 @@ function Home() {
     }
 
     ).catch((err) => {
-      if (err.response.data = 401) {
+      // if (err.response.data = 401) {
 
-        let url = "/login";
-        history.push(url);
-      }
+      //   let url = "/login";
+      //   history.push(url);
+      // }
 
     });
   }, []);
