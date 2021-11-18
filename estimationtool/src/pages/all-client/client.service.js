@@ -5,7 +5,7 @@ const ClientService = {
         let url = Url.allClient;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.get(url+"?skip=0&limit=10",{
+        return axios.get(url+"?skip=0&limit=50",{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }

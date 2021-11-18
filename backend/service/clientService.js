@@ -54,6 +54,9 @@ module.exports.getClientById = async ({ id }) => {
 
 module.exports.clientUpdate = async ({ id, updateInfo }) => {
   try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
     const findRecord = await Client.find({clientName :  updateInfo.clientName });
     if (findRecord.length != 0) {
       if (findRecord.length == 1 && String(findRecord[0]._id) == id) {

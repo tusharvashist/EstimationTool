@@ -16,7 +16,7 @@ const ProjectService = {
         let url = Url.allProject;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
-        return axios.get(url+"?skip=0&limit=20",{
+        return axios.get(url+"?skip=0&limit=100",{
             headers:{
                 'Authorization': `Bearer ${token}` 
             }

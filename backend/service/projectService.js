@@ -62,6 +62,9 @@ module.exports.getProjectById = async ({ id }) => {
 
 module.exports.projectUpdate = async ({ id, updateInfo }) => {
   try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
     const findProject = await Project.find(
       { projectName: updateInfo.projectName },
       { client: updateInfo.client }

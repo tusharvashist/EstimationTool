@@ -1,6 +1,8 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
+import ClientSer from "../client-details/client-details.service";
+
 import {
   Box,
   FormControl,
@@ -47,7 +49,7 @@ function Projects(props) {
   ]);
   const [isOpen, setOpen] = React.useState({});
 
-  const [projectByClient, setProjectByClient] = useState();
+  const [projectByClient, setProjectByClient] = useState(props.listData);
   const [secondProjectByClient, setSecondProjectByClient] = useState();
   const [allProjectByClient, setAllProjectByClient] = useState();
   const [loaderComponent, setLoader] = useLoader();
@@ -71,7 +73,7 @@ function Projects(props) {
             to={{
               pathname:
                 "/All-Clients/" + props.clientName + "/" + rowData.projectName,
-              state: { projectId: rowData.id },
+              state: { projectId: rowData._id },
             }}
           >
             {" "}
@@ -159,30 +161,60 @@ function Projects(props) {
   //     });
   // };
 
-  const getAllProjects = (clientid) => {
+  const getAllProjects = () => {
+    // const clientId = location.pathname.split("/")[2];
     setLoader(true);
-    ProjectSer.getAllProject()
+
+    ClientSer.getClientById(clientid)
       .then((res) => {
-        let dataResponce = res.data.body;
         setLoader(false);
-        const filteredData = dataResponce.filter((el) => el.client == clientid);
-        const activeEl = filteredData.filter((el) => el.isDeleted == false);
+
+        let dataResponce = res.data.body;
+        console.log("%%%%"+ JSON.stringify(dataResponce));
+        setLoader(false);
+        setProjectByClient(dataResponce.projects);
+        //const filteredData = dataResponce.projects.filter((el) => el.client == clientid);
+        const activeEl = dataResponce.projects.filter((el) => el.isDeleted == false);
         setProjectByClient(activeEl);
-        setSecondProjectByClient([...filteredData]);
-        setAllProjectByClient([...filteredData]);
+        setSecondProjectByClient([...dataResponce.projects]);
+        setAllProjectByClient([...dataResponce.projects]);
+       // setClientDetails({ ...dataResponce });
+       // setProjectData(dataResponce.projects);
       })
       .catch((err) => {
+        console.log("get Client by id error", err);
         // if ((err.response.data = 401) || (err.response.data = 404)) {
         //   let url = "/login";
         //   history.push(url);
         // }
-        setOpen({
-          open: true,
-          severity: "error",
-          message: err.response.data.message,
-        });
       });
   };
+
+
+  // const getAllProjects = (clientid) => {
+  //   setLoader(true);
+  //   ProjectSer.getAllProject()
+  //     .then((res) => {
+  //       let dataResponce = res.data.body;
+  //       setLoader(false);
+  //       const filteredData = dataResponce.filter((el) => el.client == clientid);
+  //       const activeEl = filteredData.filter((el) => el.isDeleted == false);
+  //       setProjectByClient(activeEl);
+  //       setSecondProjectByClient([...filteredData]);
+  //       setAllProjectByClient([...filteredData]);
+  //     })
+  //     .catch((err) => {
+  //       // if ((err.response.data = 401) || (err.response.data = 404)) {
+  //       //   let url = "/login";
+  //       //   history.push(url);
+  //       // }
+  //       setOpen({
+  //         open: true,
+  //         severity: "error",
+  //         message: err.response.data.message,
+  //       });
+  //     });
+  // };
 
   const createProject = (projectData) => {
     setLoader(true);
@@ -379,7 +411,7 @@ function Projects(props) {
                       tooltip: "Edit project",
                       onClick: (event, rowData) => {
                         setEditRow({ ...rowData });
-                        setActionId(rowData.id);
+                        setActionId(rowData._id);
                         openUpdateDailog();
                       },
                       disabled: rowData.isDeleted,
@@ -389,7 +421,7 @@ function Projects(props) {
                       tooltip: "Delete project",
                       onClick: (event, rowData) => {
                         setEditRow({ ...rowData });
-                        setActionId(rowData.id);
+                        setActionId(rowData._id);
                         setDeleteRecordName(rowData.projectName);
                         openDeleteDailog();
                       },

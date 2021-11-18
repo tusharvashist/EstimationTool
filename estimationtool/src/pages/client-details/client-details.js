@@ -42,6 +42,8 @@ export default function ClientDetails(props) {
   const [clientUrlName, setClientUrlName] = useState(clientName);
   const [clientId, setClientId] = useState();
 
+  const [projectData, setProjectData] = useState([]);
+
   useEffect(() => {
     getAllClient();
     getClientById();
@@ -79,7 +81,9 @@ export default function ClientDetails(props) {
         setLoader(false);
 
         let dataResponce = res.data.body;
+        //console.log("%%%%"+ JSON.stringify(dataResponce));
         setClientDetails({ ...dataResponce });
+        setProjectData(dataResponce.projects);
       })
       .catch((err) => {
         console.log("get Client by id error", err);
@@ -186,6 +190,7 @@ export default function ClientDetails(props) {
       <Box>
         <ProjectView
           data={clientId}
+          listData={projectData}
           clientName={clientUrlName}
           clients={clients}
           thisClient={clientDetails}
