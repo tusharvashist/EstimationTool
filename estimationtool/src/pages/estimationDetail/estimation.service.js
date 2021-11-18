@@ -15,8 +15,21 @@ const EstimationService = {
             data:{}
         })
     },
-        
-    createRequirement:  function(requirementData){
+
+    getRequirementDataById: function (actionId) {
+        let url = Url.estimationDetail+"/get/data/"+actionId;
+        const getToken = localStorage.getItem("auth")
+        const token = JSON.parse(getToken).token;
+        console.log("URL: ", url);
+        return axios.get(url,{
+            headers:{
+                'Authorization': `Bearer ${token}` 
+            },
+            data:{}
+        })
+    },
+    
+    createRequirement: function (requirementData) {
         let url = Url.estimationDetail+"/";
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
@@ -27,7 +40,7 @@ const EstimationService = {
            })
     },
 
-        updateRequirement:  function(requirementData){
+    updateRequirement:  function(requirementData){
         let url = Url.estimationDetail+"/";
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
@@ -38,7 +51,7 @@ const EstimationService = {
            })
     },
         
-   updateRequirement:  function(actionId,requirementData){
+    updateRequirement:  function(actionId,requirementData){
         let url = Url.estimationDetail+"/"+actionId;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
@@ -48,7 +61,8 @@ const EstimationService = {
             }
         })
     },
-     deleteRequirement:  function(actionId){
+    
+    deleteRequirement: function (actionId) {
         let url = Url.estimationDetail+"/"+actionId;
         const getToken = localStorage.getItem("auth")
         const token = JSON.parse(getToken).token;
@@ -60,7 +74,6 @@ const EstimationService = {
         })
     },
      
-   
     updateEstRequirementData:  function(estrequirementdata){
         let url = Url.estimationDetail+"/data/update";
         const getToken = localStorage.getItem("auth")

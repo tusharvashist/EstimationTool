@@ -16,10 +16,7 @@ import { useHistory } from "react-router-dom";
 const EstimationDetail = () => {
   const location = useLocation();
   const history = useHistory();
-  console.log(location);
   const estimationId = location.state.estId;
-  // const estimationId = localStorage.estimationHeaderId;
-  console.log(estimationId);
   const [clientDetails, setClientDetails] = useState({
     _id: "",
     clientName: "",
@@ -42,17 +39,14 @@ const EstimationDetail = () => {
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
-    useState(false);
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
     { title: "Title", field: "Title", editable: false },
     { title: "Effort", field: "Effort", editable: false },
   ]);
-
   const [summaryDataArray, setSummaryDataArray] = useState([]);
-
   const [requirementHeaderArray, setRequirementHeaderArray] = useState();
   const [loaderComponent, setLoader] = useLoader();
 
@@ -62,7 +56,6 @@ const EstimationDetail = () => {
 
   const openEditRequirement = (event, rowData) => {
     const updatedRows = [requirementDataArray[rowData.tableData.id]];
-    console.log("rowData: ", updatedRows);
     setEditData(updatedRows);
     openFun();
   };
@@ -94,21 +87,52 @@ const EstimationDetail = () => {
 
   const saveAddRequirementsFun = () => {
     closeAddFun();
-    getById();
+    getById()
   };
 
   const getById = () => {
-    setLoader(true);
+    getBasicDetailById(() => {
+      getRequirementDataById();
+    });
+  }
+
+  const getBasicDetailById = (calback) => {
+    //setLoader(true);
+    console.log("Request for getById: ");
     EstimationService.getById(estimationId)
       .then((res) => {
-        setLoader(false);
+        // setLoader(false);
+        console.log("Received data Start Setting");
+       
+        //let dataResponse = res.data.body;
+        console.log("dataResponse = res.data.body");
+        setHeaderData({ ...res.data.body.basicDetails });
+         console.log("dataResponse.basicDetails");
+        setProjectDetails({ ...res.data.body.basicDetails.projectId });
+         console.log("dataResponse.basicDetails.projectId");
+        setClientDetails({ ...res.data.body.basicDetails.projectId.client });
+        console.log("Received data Start End");
+        console.log("dataResponse.basicDetails.projectId.client");
+        setRequirementTagArray([...res.data.body.requirementTag]);
+        console.log("dataResponse.requirementTag");
+        setRequirementTypeArray([...res.data.body.requirementType]);
+        console.log("dataResponse.requirementType");
+        calback();
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
+  };
+
+  const getRequirementDataById = () => {
+    console.log("Request for getRequirementDataById: ");
+    EstimationService.getRequirementDataById(estimationId)
+      .then((res) => {
+        console.log("Received getRequirementDataById Setting");
+        //setLoader(false);
         let dataResponse = res.data.body;
-        setHeaderData({ ...dataResponse.basicDetails });
-        setProjectDetails({ ...dataResponse.basicDetails.projectId });
-        setClientDetails({ ...dataResponse.basicDetails.projectId.client });
-        setRequirementTagArray([...dataResponse.requirementTag]);
-        setRequirementTypeArray([...dataResponse.requirementType]);
-        setSummaryDataArray([...dataResponse.summaryTagList]);
+       // setSummaryDataArray([...dataResponse.summaryTagList]);
+        console.log("dataResponse.summaryTagList");
         var estHeaderAttribute = [
           {
             title: "Requirement",
@@ -116,56 +140,25 @@ const EstimationDetail = () => {
             id: 1,
             editable: false,
           },
-          { title: "Tag", field: "Tag", editable: false, id: 2 },
+          {
+            title: "Tag",
+            field: "Tag",
+            editable: false,
+            id: 2
+          },
           {
             title: "Description",
             field: "Description",
             editable: false,
             id: 3,
-          },
-        ];
-
-        dataResponse.estHeaderAttribute =
-          dataResponse.estHeaderAttribute.filter(function (item, pos) {
-            return dataResponse.estHeaderAttribute.indexOf(item) == pos;
-          });
-        dataResponse.estHeaderAttribute.forEach((item, i) => {
-          item["validate"] = (rowData) => {
-            console.log("---rowData[item.field] ----: ", rowData[item.field]);
-            if (rowData[item.field] < 0) {
-              rowData[item.field] = 0;
-              return "Value should be >= 0 ";
-            } else {
-              return true;
-            }
-          };
-
-          estHeaderAttribute.push(item);
-        });
-
-        setRequirementHeaderArray(estHeaderAttribute);
-        var arrayRequirement = [];
-        dataResponse.featureList.forEach((item, i) => {
-          if (item.isDeleted === false) {
-            var field = item.requirement.title;
-            var requirement = {
-              Requirement: item.requirement.title,
-              Description: item.requirement.description,
-              Tag: item.requirement.tag.name,
-              Tagid: item.requirement.tag._id,
-              Type: item.requirement.type,
-              requirementId: item.requirement._id,
-              _id: item._id,
-            };
           }
-
-          item.estRequirementData.forEach((item, i) => {
-            requirement[item.ESTAttributeID._id] = item.ESTData;
-          });
-          arrayRequirement.push(requirement);
-        });
-
-        setRequirementDataArray(arrayRequirement);
+        ];
+        console.log("dataResponse.title: Description");
+        estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
+        setRequirementHeaderArray(estHeaderAttribute);
+        console.log(" setRequirementHeaderArray(dataResponse.estHeaderAttribute);=");
+        setRequirementDataArray(dataResponse.requirementList);
+        console.log("Received getRequirementDataById End");
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -175,6 +168,11 @@ const EstimationDetail = () => {
         // }
       });
   };
+
+
+
+
+
 
   const updateAttributeValue = async (changes) => {
     var rows = Object.values(changes);
@@ -197,22 +195,27 @@ const EstimationDetail = () => {
     });
 
     setRequirementDataArray(updatedRows);
-    setLoader(true);
+  
+    if (updateEstRequirementData.length !== 0) {
+        setLoader(true);
+      EstimationService.updateEstRequirementData(updateEstRequirementData)
+        .then((res) => {
+          setLoader(false);
 
-    EstimationService.updateEstRequirementData(updateEstRequirementData)
-      .then((res) => {
-        setLoader(false);
-
-        getById();
-      })
-      .catch((err) => {
-        console.log("get deleteRequirement by id error", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
-        getById();
-      });
+          getById();
+        })
+        .catch((err) => {
+           setLoader(false);
+          console.log("get deleteRequirement by id error", err);
+          // if ((err.response.data = 401) || (err.response.data = 404)) {
+          //   let url = "/login";
+          //   history.push(url);
+          // }
+          getById();
+        });
+    } else {
+      setLoader(false);
+    }
   };
 
   const deleteRow = async (changes, resolve) => {

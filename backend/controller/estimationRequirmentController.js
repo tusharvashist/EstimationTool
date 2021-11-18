@@ -44,6 +44,20 @@ module.exports.getById = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
+module.exports.getRequirementData = async (req, res) => {
+    let responce =
+        { ...constant.defaultResponce };
+    try {
+        const responceGetById = await estimationRequirementService.getRequirementData(req.params);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_FETCH;
+        responce.body = responceGetById;
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
 module.exports.updateRequirementData = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {

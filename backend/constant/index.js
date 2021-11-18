@@ -10,6 +10,7 @@ module.exports = {
         featureList: [],
         requirementTag:[],
         requirementType: [],
+        requirementList:[],
         summaryTagList:[],
         estHeaderAttribute: [],
         estHeaderCalculatedAttribute: [],

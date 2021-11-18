@@ -10,10 +10,10 @@ const estHeaderRequirement = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'EstHeader'
     },
-    estRequirementData: [{
-        type: Schema.Types.ObjectId,
-        ref: 'estRequirementData'
-    }],
+    // estRequirementData: [{
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'estRequirementData'
+    // }],
     isDeleted: Boolean,
 }, {
     timestamps: true,

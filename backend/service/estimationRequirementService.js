@@ -11,7 +11,8 @@ const { formatMongoData } = require("../helper/dbhelper")
 const RequirementType = require("../database/models/requirementType")
 const RequirementTag = require("../database/models/requirementTag")
 const EstimationHeaderAttributeModel = require("../database/models/estimationHeaderAtrributeModel")
-const EstimationHeaderAttributeCalc =  require("../database/models/estimationHeaderAtrributeCalcModel")
+const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
+const EstimationAttributes = require("../database/models/estimationAttributesModel")
 const mongoose = require("mongoose")
 
 
@@ -82,6 +83,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
 
 module.exports.updateRequirementData = async (serviceDataArray) => {
   try {
+    console.log("Update Starts");
     var length = 0;
    var bulk =  EstRequirementData.collection.initializeUnorderedBulkOp();
     serviceDataArray.data.forEach(async (serviceData) => {
@@ -102,45 +104,8 @@ module.exports.updateRequirementData = async (serviceDataArray) => {
     });
 
     const result = await bulk.execute();
-    
-    serviceDataArray.data.forEach(async (serviceData) => {
-
-
-      let estRequirementData = new EstRequirementData({ ...serviceData })
-      console.log("ESTAttributeID:", estRequirementData.ESTAttributeID,
-        "ESTHeaderRequirementID:", estRequirementData.ESTHeaderRequirementID);
-      
-      let result = EstRequirementData.findOne({
-        ESTAttributeID:estRequirementData.ESTAttributeID
-      ,ESTHeaderRequirementID:estRequirementData.ESTHeaderRequirementID
-      }, function(err, result) {
-        if (err) {
-          throw err;
-        } else {
-          if (result.ESTData != null) {
-            EstHeaderRequirement.findOne({ _id: result.ESTHeaderRequirementID },
-              function (err, result2) {
-                if (err) {
-                  throw err;
-                } else {
-                  var isFind = false;
-                  result2.estRequirementData.forEach((estRequirement) => {
-                    if (String(estRequirement) == String(result._id)) {
-                      isFind = true;
-                    }
-                   });
-                  if (!isFind) {
-                    result2.estRequirementData.push(result);
-                    result2.save();
-                  }
-                }
-              }
-            );
-          }
-          }
-        });
-    });
-  
+    console.log("Update End");
+   
     
   } catch (err) {
    // console.log("something went wrong: service > RequirmentData ", err);
@@ -161,56 +126,522 @@ module.exports.deleteRequirementData = async (id) => {
   }
 }
 
+class sumOfKey extends Array {
+    sum(key) {
+        return this.reduce((a, b) => a + (b[key] || 0), 0);
+    }
+}
 
+// module.exports.getById = async ({ id }) => {
+//   try {
+//        console.log("GetByID Starts");
+//     if (!mongoose.Types.ObjectId(id)) {
+//       throw new Error(constant.requirementMessage.INVALID_ID)
+//     }
+
+//     let response = { ...constant.requirementResponse };
+  
+// //****************** */
+//     // let estHeaderRequirement2 = await EstHeaderRequirement
+//     //   .find({ estHeader: id, isDeleted: false }, { estHeader: 0 })
+//     //   .populate({
+//     //     path: 'requirement',
+//     //     populate: [{ path: 'tag' }, { path: 'type' }],
+//     //   }).populate({
+//     //     path: 'estRequirementData',
+//     //      populate: { path: 'ESTAttributeID' }
+//     //   })
+    
+// //****************** */   
+    
+    
+//     let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+//       {
+//         $match: {
+//           estHeader: ObjectId(id),
+//           isDeleted: false
+//        }
+//       },
+//       {
+//         $lookup: {
+//           from: 'estrequirementdatas',
+//           localField: '_id',
+//           foreignField: 'ESTHeaderRequirementID',
+//           as: 'attributeData'
+//         }
+//       },
+//       {
+//         $lookup: {
+//           from: 'projectrequirements',
+//           localField: 'requirement',
+//           foreignField: '_id',
+//           as: 'requirementData'
+//         }
+//       },
+//       {
+//         $unwind: {
+//           path: '$requirementData',
+//           preserveNullAndEmptyArrays: true
+//         }
+//       },
+//       {
+//         $lookup: {
+//           from: 'requirementtypes',
+//           localField: 'requirementData.type',
+//           foreignField: '_id',
+//           as: 'requirementData.type'
+//         }
+//       },
+//       {
+//         $unwind: {
+//           path: '$requirementData.type',
+//           preserveNullAndEmptyArrays: true
+//         }
+//       },
+//       {
+//         $lookup: {
+//           from: 'requirementtags',
+//           localField: 'requirementData.tag',
+//           foreignField: '_id',
+//           as: 'requirementData.tag'
+//         }
+//       },
+//       {
+//         $unwind: {
+//           path: '$requirementData.tag',
+//           preserveNullAndEmptyArrays: true
+//         }
+//       },
+//       {
+//         $unwind: {
+//           path: '$attributeData',
+//           preserveNullAndEmptyArrays: true
+//         }
+//       },
+//       {
+//         $lookup: {
+//           from: 'estimationattributes',
+//           localField: 'attributeData.ESTAttributeID',
+//           foreignField: '_id',
+//           as: 'attributeData.ESTAttributeID'
+//         }
+//       },
+//       {
+//         $unwind: {
+//           path: '$attributeData.ESTAttributeID',
+//           preserveNullAndEmptyArrays: true
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: '$_id',
+//           isDeleted: {
+//           $first: '$isDeleted'
+//       },
+//     requirement: {
+//         $first: '$requirementData'
+//       },
+//       estHeader: {
+//          $first: '$estHeader'
+//       },
+//      estRequirementData: {
+//          $push: '$attributeData'
+//         }
+//         }
+//       },
+//       {
+//         $project: {
+//         _id: 1,
+//         isDeleted: 1,
+//         estRequirementData: 1,
+//         requirement: 1
+//         }
+//       }
+//     ]
+//     );
+   
+    
+//     if (estHeaderRequirement.length != 0) {
+//       response.featureList = estHeaderRequirement
+//     }
+
+//     var summaryTagList = [];
+//     var GrandTotal = 0;
+//     var DevTotal = 0;
+
+//     estHeaderRequirement.forEach(element => {
+//       if(element.isDeleted == false){
+     
+        
+//         element.estRequirementData = element.estRequirementData.filter(function (item, pos) {
+//            return element.estRequirementData.indexOf(item) == pos;
+//         })
+//         var totalEffortOfElement = 0;
+        
+//         element.estRequirementData.forEach(effort => {
+//           if (typeof effort.ESTData === 'number') {
+//               totalEffortOfElement = totalEffortOfElement + effort.ESTData;
+//           }
+//         })
+        
+//         // const ESTData = new sumOfKey(element.estRequirementData);
+//         // totalEffortOfElement = totalEffortOfElement + ESTData.sum('ESTData')
+        
+//        DevTotal = DevTotal + totalEffortOfElement;
+        
+//       if (DevTotal) {
+//         if (summaryTagList.length == 0) {
+//           summaryTagList.push({
+//             Title: element.requirement.tag.name,
+//             Effort: totalEffortOfElement,
+//             id: element.requirement.tag._id
+//           });
+
+//         } else {
+//           var tagName = element.requirement.tag.name;
+//           // var index = summaryTagList.findIndex(function (summaryTag, index) {
+//           //   if (summaryTag.id == element.requirement.tag.id)
+//           //     return true;
+//           // });
+
+//           var index = -1;
+//           var currentIndex= 0
+//            summaryTagList.forEach(effort => {
+//           if (effort.Title === tagName) {
+//               index = currentIndex
+//           }
+//              currentIndex = currentIndex + 1;
+//         })
+        
+//           if (index >= 0) {
+//             summaryTagList[index].Effort = summaryTagList[index].Effort + totalEffortOfElement
+//           } else {
+//             summaryTagList.push({
+//               Title: element.requirement.tag.name,
+//               Effort: totalEffortOfElement,
+//               id: element.requirement.tag._id
+//             });
+//           }
+//         }
+//         }
+//       }
+//     });
+
+
+//     var calAttributeTotal = 0;
+//     let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeaderId: id });
+   
+
+
+
+
+//     if (estHeaderAttributeCalc.length != 0) {
+
+//         estHeaderAttributeCalc = estHeaderAttributeCalc.filter(function(item, pos) {
+//     return estHeaderAttributeCalc.indexOf(item) == pos;
+//         })
+      
+//       estHeaderAttributeCalc.forEach(element => {
+//         var effort = DevTotal * (element.unit / 100);
+//          effort = Math.round(effort);
+//         calAttributeTotal = calAttributeTotal + effort;
+       
+//         var formula = element.calcAttributeName + " @" +element.unit +"% All " 
+        
+//          summaryTagList.push({
+//           Title: formula,
+//           Effort: effort,
+//           id: element._id
+//         });
+//       });
+//     }
+
+//     GrandTotal = DevTotal + calAttributeTotal; 
+//     GrandTotal =  Math.round(GrandTotal);
+ 
+//  var arrayRequirement = [];
+//     response.featureList.forEach((item, i) => {
+//       if (item.isDeleted === false) {
+//         var field = item.requirement.title;
+//         var requirement = {
+//           Requirement: item.requirement.title,
+//           Description: item.requirement.description,
+//           Tag: item.requirement.tag.name,
+//           Tagid: item.requirement.tag._id,
+//           Type: item.requirement.type,
+//           requirementId: item.requirement._id,
+//           _id: item._id,
+//         };
+//         item.estRequirementData.forEach((item, i) => {
+
+//             if (item.ESTData !== undefined) {
+//               requirement[item.ESTAttributeID._id] = item.ESTData;
+//             }
+//         });
+//         arrayRequirement.push(requirement);
+//       }
+//     });
+//     response.requirementList = arrayRequirement;
+// //1
+//  let estHeaderModelTotal = await EstHeaderModel.updateOne({_id:id}, { totalCost: GrandTotal });
+//     if (!estHeaderModelTotal) {
+//      // throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND)
+//     }
+//     summaryTagList.push({
+//           Title: "Estimation Total",
+//           Effort: GrandTotal,
+//           id: 0
+//         });
+//    summaryTagList = summaryTagList.filter(function(item, pos) {
+//     return summaryTagList.indexOf(item) == pos;
+//         })
+//     response.summaryTagList = summaryTagList;
+
+//     console.log(response.summaryTagList);
+
+// //4
+//     let estimationHeaderAttributeModel = await EstimationHeaderAttributeModel.find(
+//       {
+//         estHeaderId: id
+//       },{ isDeleted: false }).populate({
+//         path: 'estAttributeId',
+//       })
+    
+//     response.estHeaderAttribute = [];
+//     if (estimationHeaderAttributeModel.length != 0) {
+//       estimationHeaderAttributeModel.forEach(element => {
+//         if (element.estAttributeId) {
+//           response.estHeaderAttribute.push({
+//             field: element.estAttributeId._id,
+//             description: element.estAttributeId.description,
+//             title: element.estAttributeId.attributeName,
+//             id: element.estAttributeId._id,
+//             code: element.estAttributeId.attributeCode,
+//             type: "numeric",
+            
+//           });
+//         }
+//       });
+//     }
+
+    
+    
+//     //2
+//     let requirementType = await RequirementType.find({}).sort({name : 1});
+//     if (requirementType.length != 0) {
+//       response.requirementType = requirementType
+//     }
+// //3
+//      let requirementTag = await RequirementTag.find({}).sort({name : 1});
+//     if (requirementTag.length != 0) {
+//       response.requirementTag = requirementTag
+//     }
+
+//     //5
+//     let estimations = await EstHeaderModel.findById({ _id: id }).
+//       populate({
+//         path: 'projectId',
+//         populate: { path: 'client' }
+//       }).populate({
+//         path: 'estTypeId'
+//       });
+    
+//     response.basicDetails = estimations;
+//  console.log("GetByID Ends");
+//     return formatMongoData(response)
+//   } catch (err) {
+//     console.log("something went wrong: service > GetEstimation data", err);
+//     throw new Error(err)
+//   }
+// }
 
 module.exports.getById = async ({ id }) => {
   try {
+    console.log("GetByID Starts");
+    
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.requirementMessage.INVALID_ID)
+    }
+
+    let response = { ...constant.requirementResponse };    
+    //2
+    let requirementType = await RequirementType.find({}).sort({name : 1});
+    if (requirementType.length != 0) {
+      response.requirementType = requirementType
+    }
+//3
+     let requirementTag = await RequirementTag.find({}).sort({name : 1});
+    if (requirementTag.length != 0) {
+      response.requirementTag = requirementTag
+    }
+
+    //5
+    let estimations = await EstHeaderModel.findById({ _id: id }).
+      populate({
+        path: 'projectId',
+        populate: { path: 'client' }
+      }).populate({
+        path: 'estTypeId'
+      });
+    
+    response.basicDetails = estimations;
+ console.log("GetByID Ends");
+    return formatMongoData(response)
+  } catch (err) {
+    console.log("something went wrong: service > GetEstimation data", err);
+    throw new Error(err)
+  }
+}
+
+
+
+
+module.exports.getRequirementData = async ({ id }) => {
+  try {
+       console.log("GetByID Starts");
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.requirementMessage.INVALID_ID)
     }
 
     let response = { ...constant.requirementResponse };
-  
-//****************** */
-    let estHeaderRequirement = await EstHeaderRequirement
-      .find({ estHeader: id, isDeleted: false }, { estHeader: 0 })
-      .populate({
-        path: 'requirement',
-        populate: [{ path: 'tag' }, { path: 'type' }],
-      }).populate({
-        path: 'estRequirementData',
-         populate: { path: 'ESTAttributeID' }
-      })
-    
-//****************** */   
-    
+
+    let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+      {
+        $match: {
+          estHeader: ObjectId(id),
+          isDeleted: false
+       }
+      },
+      {
+        $lookup: {
+          from: 'estrequirementdatas',
+          localField: '_id',
+          foreignField: 'ESTHeaderRequirementID',
+          as: 'attributeData'
+        }
+      },
+      {
+        $lookup: {
+          from: 'projectrequirements',
+          localField: 'requirement',
+          foreignField: '_id',
+          as: 'requirementData'
+        }
+      },
+      {
+        $unwind: {
+          path: '$requirementData',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'requirementtypes',
+          localField: 'requirementData.type',
+          foreignField: '_id',
+          as: 'requirementData.type'
+        }
+      },
+      {
+        $unwind: {
+          path: '$requirementData.type',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'requirementtags',
+          localField: 'requirementData.tag',
+          foreignField: '_id',
+          as: 'requirementData.tag'
+        }
+      },
+      {
+        $unwind: {
+          path: '$requirementData.tag',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $unwind: {
+          path: '$attributeData',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'estimationattributes',
+          localField: 'attributeData.ESTAttributeID',
+          foreignField: '_id',
+          as: 'attributeData.ESTAttributeID'
+        }
+      },
+      {
+        $unwind: {
+          path: '$attributeData.ESTAttributeID',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          isDeleted: {
+          $first: '$isDeleted'
+      },
+    requirement: {
+        $first: '$requirementData'
+      },
+      estHeader: {
+         $first: '$estHeader'
+      },
+     estRequirementData: {
+         $push: '$attributeData'
+        }
+        }
+      },
+      {
+        $project: {
+        _id: 1,
+        isDeleted: 1,
+        estRequirementData: 1,
+        requirement: 1
+        }
+      },
+      {
+        $sort: {
+          'requirement.title': 1
+        }
+    }
+    ]
+    );
+   
     
     if (estHeaderRequirement.length != 0) {
       response.featureList = estHeaderRequirement
     }
 
-   // var featureList = groupBy(estHeaderRequirement,estHeaderRequirement => estHeaderRequirement.requirement.tag.name);
     var summaryTagList = [];
     var GrandTotal = 0;
     var DevTotal = 0;
+
     estHeaderRequirement.forEach(element => {
       if(element.isDeleted == false){
+     
+        
+        element.estRequirementData = element.estRequirementData.filter(function (item, pos) {
+           return element.estRequirementData.indexOf(item) == pos;
+        })
         var totalEffortOfElement = 0;
         
-        element.estRequirementData = element.estRequirementData.filter(function(item, pos) {
-    return element.estRequirementData.indexOf(item) == pos;
-        })
-        
         element.estRequirementData.forEach(effort => {
-       
-        if (typeof effort.ESTData === 'number') {
+          if (typeof effort.ESTData === 'number') {
               totalEffortOfElement = totalEffortOfElement + effort.ESTData;
           }
-        
-      })
-        DevTotal = DevTotal + totalEffortOfElement;
+        })
         
 
+       DevTotal = DevTotal + totalEffortOfElement;
+        
       if (DevTotal) {
         if (summaryTagList.length == 0) {
           summaryTagList.push({
@@ -221,10 +652,14 @@ module.exports.getById = async ({ id }) => {
 
         } else {
           var tagName = element.requirement.tag.name;
-          var index = summaryTagList.findIndex(function (summaryTag, index) {
-            if (summaryTag.id == element.requirement.tag.id)
-              return true;
-          });
+          var index = -1;
+          var currentIndex= 0
+           summaryTagList.forEach(effort => {
+          if (effort.Title === tagName) {
+              index = currentIndex
+          }
+             currentIndex = currentIndex + 1;
+        })
         
           if (index >= 0) {
             summaryTagList[index].Effort = summaryTagList[index].Effort + totalEffortOfElement
@@ -239,13 +674,15 @@ module.exports.getById = async ({ id }) => {
         }
       }
     });
+
     var calAttributeTotal = 0;
     let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({ estHeaderId: id });
+   
     if (estHeaderAttributeCalc.length != 0) {
 
-    //     estHeaderAttributeCalc = estHeaderAttributeCalc.filter(function(item, pos) {
-    // return estHeaderAttributeCalc.indexOf(item) == pos;
-    //     })
+        estHeaderAttributeCalc = estHeaderAttributeCalc.filter(function(item, pos) {
+    return estHeaderAttributeCalc.indexOf(item) == pos;
+        })
       
       estHeaderAttributeCalc.forEach(element => {
         var effort = DevTotal * (element.unit / 100);
@@ -262,18 +699,37 @@ module.exports.getById = async ({ id }) => {
       });
     }
 
-
-
     GrandTotal = DevTotal + calAttributeTotal; 
     GrandTotal =  Math.round(GrandTotal);
-   
+ 
+ var arrayRequirement = [];
+    response.featureList.forEach((item, i) => {
+      if (item.isDeleted === false) {
+        var field = item.requirement.title;
+        var requirement = {
+          Requirement: item.requirement.title,
+          Description: item.requirement.description,
+          Tag: item.requirement.tag.name,
+          Tagid: item.requirement.tag._id,
+          Type: item.requirement.type,
+          requirementId: item.requirement._id,
+          _id: item._id,
+        };
+        item.estRequirementData.forEach((item, i) => {
 
-
+            if (item.ESTData !== undefined) {
+              requirement[item.ESTAttributeID._id] = item.ESTData;
+            }
+        });
+        arrayRequirement.push(requirement);
+      }
+    });
+    response.requirementList = arrayRequirement;
+//1
  let estHeaderModelTotal = await EstHeaderModel.updateOne({_id:id}, { totalCost: GrandTotal });
     if (!estHeaderModelTotal) {
      // throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND)
     }
-
     summaryTagList.push({
           Title: "Estimation Total",
           Effort: GrandTotal,
@@ -284,15 +740,9 @@ module.exports.getById = async ({ id }) => {
         })
     response.summaryTagList = summaryTagList;
 
-    let requirementType = await RequirementType.find({}).sort({name : 1});
-    if (requirementType.length != 0) {
-      response.requirementType = requirementType
-    }
+    console.log(response.summaryTagList);
 
-     let requirementTag = await RequirementTag.find({}).sort({name : 1});
-    if (requirementTag.length != 0) {
-      response.requirementTag = requirementTag
-    }
+//4
     let estimationHeaderAttributeModel = await EstimationHeaderAttributeModel.find(
       {
         estHeaderId: id
@@ -303,10 +753,7 @@ module.exports.getById = async ({ id }) => {
     response.estHeaderAttribute = [];
     if (estimationHeaderAttributeModel.length != 0) {
       estimationHeaderAttributeModel.forEach(element => {
-
-       
         if (element.estAttributeId) {
-         
           response.estHeaderAttribute.push({
             field: element.estAttributeId._id,
             description: element.estAttributeId.description,
@@ -320,20 +767,33 @@ module.exports.getById = async ({ id }) => {
       });
     }
 
-      let estimations = await EstHeaderModel.findById({ _id: id }).
-      populate({
-        path: 'projectId',
-        populate: { path: 'client' }
-      }).populate({
-        path: 'estTypeId'
-      });
-
-    response.basicDetails = estimations;
-
     
+    
+//     //2
+//     let requirementType = await RequirementType.find({}).sort({name : 1});
+//     if (requirementType.length != 0) {
+//       response.requirementType = requirementType
+//     }
+// //3
+//      let requirementTag = await RequirementTag.find({}).sort({name : 1});
+//     if (requirementTag.length != 0) {
+//       response.requirementTag = requirementTag
+//     }
+
+//     //5
+//     let estimations = await EstHeaderModel.findById({ _id: id }).
+//       populate({
+//         path: 'projectId',
+//         populate: { path: 'client' }
+//       }).populate({
+//         path: 'estTypeId'
+//       });
+    
+//     response.basicDetails = estimations;
+ console.log("GetByID Ends");
     return formatMongoData(response)
   } catch (err) {
-   // console.log("something went wrong: service > GetEstimation data", err);
+    console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err)
   }
 }
