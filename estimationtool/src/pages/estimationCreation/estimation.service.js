@@ -58,15 +58,8 @@ const EstimationService = {
     // },
 
     delete:  function(actionId){
-        let url = Url.allestimation+"/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.delete(url,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            },
-            data:{}
-        })
+        let url = Url.allestimation+"/"+actionId;        
+        return axios.delete(url);
     }
 }
 export default EstimationService;

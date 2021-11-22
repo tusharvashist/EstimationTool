@@ -8,7 +8,7 @@ import Footer from "./footer/footer";
 import SideBarv2 from "./sidebarv2/sidebar";
 import ClientDetails from "../../pages/client-details/client-details";
 import ProjectDetails from "../../pages/project-details/project-details";
-import { Redirect } from "react-router-dom";
+
 import { Container } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import { Switch, Route } from "react-router-dom";
@@ -16,7 +16,6 @@ import { withStyles } from "@material-ui/core/styles";
 import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 import EstimationDetail from "../../pages/estimationDetail/EstimationDetail";
-
 
 const EsContainer = withStyles((props) => {
   return {
@@ -26,10 +25,6 @@ const EsContainer = withStyles((props) => {
     },
   };
 })(Container);
-const authGuard = (Component) => {
-  return (localStorage.getItem("auth") ? (<Component />) : <Redirect to="/login" />);
-
-}
 
 export default class Layout extends Component {
   constructor(props) {
@@ -54,50 +49,50 @@ export default class Layout extends Component {
               <Grid item className="h-100" xs={10}>
                 <Breadcrum />
                 <Switch>
-                  <Route exact path="/Recent-Estimations" render={(props) => authGuard(Allestimation)}>
-                    {/* <Allestimation /> */}
+                  <Route exact path="/Recent-Estimations">
+                    <Allestimation />
                   </Route>
                   <Route
                     exact
                     path="/All-Clients"
-                    render={(props) => authGuard(AllClient)}
+                    render={(props) => <AllClient {...props} />}
                   >
                     {/* <AllClient /> */}
                   </Route>
-                  <Route path="/project" render={(props) => authGuard(Projects)}>
-                    {/* <Projects /> */}
+                  <Route path="/project">
+                    <Projects />
                   </Route>
                   <Route
                     exact
                     path="/All-Clients/:clientName/:projectid/createEstimate"
-                    render={(props) => authGuard(EstimationCreation)}
+                    render={(props) => <EstimationCreation {...props} />}
                   >
                     {/* <EstimationCreation /> */}
                   </Route>
                   <Route
                     exact
                     path="/All-Clients/:clientName"
-                    render={(props) => authGuard(ClientDetails)}
+                    render={(props) => <ClientDetails {...props} />}
                   >
                     {/* <ClientDetails /> */}
                   </Route>
-                  <Route exact path="/All-Clients/:clientName/:projectid" render={(props) => authGuard(ProjectDetails)}>
-                    {/* <ProjectDetails /> */}
+                  <Route exact path="/All-Clients/:clientName/:projectid">
+                    <ProjectDetails />
                   </Route>
                   <Route
                     path="/create-estimation"
                     render={(props) => (
-                      authGuard(EstimationCreation)
-
+                      <EstimationCreation
+                        clientInfo={props.state.clientInfo}
+                        projectInfo={props.state.projectInfo}
+                      />
                     )}
                   />
                   <Route
                     exact
                     path="/All-Clients/:clientName/:projectid/Estimation-Detail"
-
-                    render={(props) => authGuard(EstimationDetail)}
                   >
-                    {/* <EstimationDetail /> */}
+                    <EstimationDetail />
                   </Route>
                 </Switch>
               </Grid>

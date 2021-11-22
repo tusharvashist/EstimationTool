@@ -5,85 +5,37 @@ const EstimationService = {
     getById: function (actionId) {
 
         let url = Url.allestimation+"/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        console.log("URL: ", url);
-        return axios.get(url,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            },
-            data:{}
-        })
+        return axios.get(url);
     },
 
     getRequirementDataById: function (actionId) {
-        let url = Url.estimationDetail+"/get/data/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        console.log("URL: ", url);
-        return axios.get(url,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            },
-            data:{}
-        })
+        let url = Url.estimationDetail+"/get/data/"+actionId;        
+        return axios.get(url);
     },
     
     createRequirement: function (requirementData) {
-        let url = Url.estimationDetail+"/";
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.post(url,requirementData,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-           })
+        let url = Url.estimationDetail+"/";        
+        return axios.post(url,requirementData);
     },
 
     updateRequirement:  function(requirementData){
-        let url = Url.estimationDetail+"/";
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.put(url,requirementData,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-           })
+        let url = Url.estimationDetail+"/";        
+        return axios.put(url,requirementData);
     },
         
     updateRequirement:  function(actionId,requirementData){
-        let url = Url.estimationDetail+"/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.put(url,requirementData,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-        })
+        let url = Url.estimationDetail+"/"+actionId;        
+        return axios.put(url,requirementData);
     },
     
     deleteRequirement: function (actionId) {
-        let url = Url.estimationDetail+"/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.delete(url,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            },
-            data:{}
-        })
+        let url = Url.estimationDetail+"/"+actionId;        
+        return axios.delete(url);
     },
      
     updateEstRequirementData:  function(estrequirementdata){
-        let url = Url.estimationDetail+"/data/update";
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.put(url,{ "data": estrequirementdata }, {
-            headers:{
-                'Authorization': `Bearer ${token}`,
-                "content-type": "application/json",
-            },
-        })
+        let url = Url.estimationDetail+"/data/update";        
+        return axios.put(url,{ "data": estrequirementdata })
     },
 }
 export default EstimationService;
