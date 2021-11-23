@@ -8,6 +8,8 @@ module.exports.createEstimationCalcAttrSchema = Joi.object({
     operator: Joi.string().required(),
     unit: Joi.number().required(),
     description: Joi.string().required(),
+    calcType: Joi.string().required(),
+    tag: Joi.array(),
     value: Joi.string()
 
 
@@ -24,5 +26,7 @@ module.exports.estimationCalcAttrUpdateSchema = Joi.object({
     formula: Joi.string().required(),
     operator: Joi.string().required(),
     unit: Joi.number().required(),
+    calcType: Joi.string().required(),
+    tag: Joi.array(),
     value: Joi.string()
 })
