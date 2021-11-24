@@ -3,3 +3,27 @@
   justify-content: center;
   margin: 5px 0;
 }
+
+.fields {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  margin: 0 10px !important;
+}
+.attributeTag {
+  order: 1;
+  max-width: 140px;
+}
+.percent {
+  order: 2;
+}
+.pof {
+  order: 3;
+  min-width: 60px;
+  text-align: center;
+}
+.chips {
+  order: 4;
+  flex-basis: 100%;
+}

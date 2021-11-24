@@ -16,6 +16,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
 import AddCalAttributeDialog from "./AddCalAttributeDialog";
+import EditCalAttributeDialog from "./EditCalAttributeDialog";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import { setEstimationTypeId } from "../../Redux/basicDetailRedux";
@@ -26,6 +27,7 @@ import { setCalcAttributeData } from "../../Redux/CalcAttributeRedux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import classes from "./thirdStepStyle.module.css";
 import { useHistory } from "react-router-dom";
+import Autocomplete from "@mui/material/Autocomplete";
 
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
@@ -75,7 +77,6 @@ const ThirdStep = (props) => {
         setLoader(false);
 
         let dataResponse = res.data.body;
-        console.log(dataResponse);
         setAllCalcValues(dataResponse);
         let calAttriValues = {};
         setAttributes(
@@ -93,15 +94,12 @@ const ThirdStep = (props) => {
       })
       .catch((err) => {
         console.log("Not getting Attribute", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
 
   const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
+  const [openEditCalAttributeBox, setOpenEditCalAttributeBox] = useState(false);
 
   const [attributes, setAttributes] = useState([]);
 
@@ -131,17 +129,11 @@ const ThirdStep = (props) => {
     SecondStepServ.createCalAttribute(newObject)
       .then((res) => {
         setLoader(false);
-
-        // console.log("Calculative Attribute Created", res);
         setOpen({ open: true, severity: "success", message: res.data.message });
         getCalcAttribute();
         closeFun();
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         setOpen({
           open: true,
           severity: "error",
@@ -168,30 +160,28 @@ const ThirdStep = (props) => {
 
   const onChangeField =
     ({ data }) =>
-      ({ target }) => {
-        // console.log("data, target", data, target, attributes)
-
-        setAttributes(
-          attributes.map((obj) => {
-            if (obj._id === data._id) {
-              const newobj = { ...obj, [target.name]: target.value };
-              return newobj;
-            } else {
-              return obj;
-            }
-          })
-        );
-        const newData = attributes.map((obj) => {
+    ({ target }) => {
+      setAttributes(
+        attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        });
-        setAttributes(newData);
-        updateStore(newData);
-      };
+        })
+      );
+      const newData = attributes.map((obj) => {
+        if (obj._id === data._id) {
+          const newobj = { ...obj, [target.name]: target.value };
+          return newobj;
+        } else {
+          return obj;
+        }
+      });
+      setAttributes(newData);
+      updateStore(newData);
+    };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -206,34 +196,29 @@ const ThirdStep = (props) => {
   };
 
   const { message, severity, open } = isOpen || {};
-  // console.log("props", props);
-  // console.log(
-  //   "saveCalcAttribute",
-  //   attributes.map(
-  //     ({
-  //       calcAttribute,
-  //       calcAttributeName,
-  //       isFormula,
-  //       formula,
-  //       operator,
-  //       unit,
-  //       description,
-  //     }) => ({
-  //       estHeaderId: localStorage.estimationHeaderId,
-  //       calcAttribute,
-  //       calcAttributeName,
-  //       isFormula,
-  //       formula,
-  //       operator,
-  //       unit,
-  //       description,
-  //     })
-  //   )
-  // );
 
-  console.log("saveCalcAttribute", saveCalcAttribute);
   const passHeaderId = () => {
     props.getHeaderId(localStorage.estimationHeaderId);
+  };
+
+  const options = [
+    { key: "Option 1", title: "Group 1" },
+    { key: "Option 2", title: "Group 2" },
+    { key: "Option 3", title: "Group 3" },
+    { key: "Option 4", title: "Group 4" },
+    { key: "Option 5", title: "Group 5" },
+    { key: "Option 6", title: "Group 6" },
+    { key: "Option 7", title: "Group 7" },
+  ];
+
+  const openEditCalBox = () => {
+    openEditFun();
+  };
+  const openEditFun = () => {
+    setOpenEditCalAttributeBox(true);
+  };
+  const closeEditFun = () => {
+    setOpenEditCalAttributeBox(false);
   };
 
   return (
@@ -246,6 +231,17 @@ const ThirdStep = (props) => {
           title="Add Calculated Attributes"
           oktitle="Save"
           saveFun={saveAddCalAttributeFun}
+          cancelTitle="Cancel"
+        />
+      ) : null}
+      {openEditCalAttributeBox ? (
+        <EditCalAttributeDialog
+          isOpen={openEditCalAttributeBox}
+          openF={openEditFun}
+          closeF={closeEditFun}
+          title="Edit Calculated Attributes"
+          oktitle="Update"
+          saveFun={saveAddCalAttributeFun} //Update
           cancelTitle="Cancel"
         />
       ) : null}
@@ -286,22 +282,58 @@ const ThirdStep = (props) => {
                   customComponent={({ data }) => {
                     return (
                       <>
+                        <div
+                          className={classes.fields}
+                          onClick={openEditCalBox}
+                        >
+                          <TextField
+                            className={classes.attributeTag}
+                            disabled
+                            variant="outlined"
+                            name="attribute"
+                            value="Architect"
+                          />
+                          <TextField
+                            className={classes.percent}
+                            style={{ minWidth: "80px" }}
+                            disabled
+                            name="unit"
+                            type={"number"}
+                            min={1}
+                            max={99}
+                            className="text-box"
+                            label="%"
+                            variant="outlined"
+                            value={data.unit}
+                            onChange={onChangeField({ data })}
+                            onKeyDown={(evt) =>
+                              symbolsArr.includes(evt.key) &&
+                              evt.preventDefault()
+                            }
+                            // pattern="\b([0-9]|[1-9][0-9])\b"
+                          />
+                          <p className={classes.pof}>% of</p>
+                          <Autocomplete
+                            className={classes.chips}
+                            disabled
+                            multiple
+                            id="tags-standard"
+                            options={options}
+                            getOptionLabel={(option) => option.title}
+                            defaultValue={[options[1]]}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                variant="standard"
+                                label="Tags"
+                                placeholder="Tags..."
+                              />
+                            )}
+                          />
+                        </div>
                         <TextField
-                          name="unit"
-                          type={"number"}
-                          min={1}
-                          max={99}
-                          className="text-box"
-                          label="%"
-                          variant="outlined"
-                          value={data.unit}
-                          onChange={onChangeField({ data })}
-                          onKeyDown={(evt) =>
-                            symbolsArr.includes(evt.key) && evt.preventDefault()
-                          }
-                        // pattern="\b([0-9]|[1-9][0-9])\b"
-                        />
-                        <TextField
+                          style={{ maxWidth: "450px" }}
+                          focused
                           name="description"
                           className="comment-box"
                           label="Comment"

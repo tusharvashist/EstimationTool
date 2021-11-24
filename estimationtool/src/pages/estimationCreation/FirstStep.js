@@ -112,10 +112,6 @@ const FirstStep = forwardRef((props, ref) => {
         dispatch(setEstimationName(dataResponce.basicDetails.estName));
         dispatch(setEfforUnit(dataResponce.basicDetails.effortUnit));
         dispatch(setEstimationHeaderId(dataResponce.basicDetails._id));
-
-        console.log(
-          "get Basic Details APi response:" + JSON.stringify(dataResponce)
-        );
       })
       .catch((err) => {
         console.log("get estimation header detail error : ", err);
