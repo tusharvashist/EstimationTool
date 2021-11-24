@@ -41,10 +41,14 @@ module.exports.getClientById = async ({ id }) => {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.clientMessage.INVALID_ID);
     }
-    let clients = await Client.findById(id).populate({
-      path: "projects",
-      options: { sort: { updatedAt: -1 } },
-    });
+    let clients = await Client.findById(id)
+      .populate({
+        path: "projects",
+        options: { sort: { updatedAt: -1 } },
+      })
+      .populate({ path: "createdBy" })
+      .populate({ path: "updatedBy" });
+
     if (!clients) {
       throw new Error(constant.clientMessage.CLIENT_NOT_FOUND);
     }
