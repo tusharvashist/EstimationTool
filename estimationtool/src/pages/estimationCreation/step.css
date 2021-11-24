@@ -20,7 +20,7 @@
 .text-box {
   order: 3;
   width: 100px !important;
-  margin: 0 30px !important;
+  margin: 0 20px !important;
 }
 .comment-box {
   order: 4;
@@ -37,5 +37,4 @@ label.MuiFormControlLabel-root {
   display: flex;
   justify-content: center;
   margin: 5px 0;
-  width: 100% !important;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -10,28 +10,13 @@ import {
 } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import EstimationService from "../estimationDetail/estimation.service";
-import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Autocomplete from "@mui/material/Autocomplete";
 
 const useStyles = makeStyles((theme) => ({
   formControl: { maxWidth: 400 },
 }));
 
-const AddCalAttributeDialog = (props) => {
-  useEffect(() => {
-    getAllRequirementTags();
-  }, []);
-
-  const [multiselectOptions, setmultiselectOptions] = useState([]);
-
-  const getAllRequirementTags = () => {
-    SecondStepServ.getAllRequirementTag()
-      .then((res) => {
-        setRequirementTagArray(res.data.body);
-        setmultiselectOptions(res.data.body);
-      })
-      .catch((err) => {});
-  };
+const EditCalAttributeDialog = (props) => {
   const classes = useStyles();
   const [calcType, setCalcType] = useState("per");
 
@@ -44,9 +29,8 @@ const AddCalAttributeDialog = (props) => {
     operator: "abcd",
     unit: null,
     description: " ",
-    formulaTags: [""],
+    tags: [""],
     calcType: "",
-    tag: "",
   });
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
   const [showError, setShowError] = useState(false);
@@ -58,13 +42,12 @@ const AddCalAttributeDialog = (props) => {
     setFormData({ ...newObject });
   };
   const handleCalcType = (e) => {
-    let newObject = { ...formData };
-    newObject.calcType = e.target.value;
-    setFormData({ ...newObject });
+    setCalcType(e.target.value);
+    console.log(calcType);
   };
   const handleTag = (e) => {
     let newObject = { ...formData };
-    newObject.tag = e.target.value;
+    newObject.calcType = e.target.value;
     setFormData({ ...newObject });
   };
   //===============================
@@ -103,18 +86,29 @@ const AddCalAttributeDialog = (props) => {
 
   const handleMultiSelect = (e) => {
     let newObject = { ...formData };
-    // newObject.formulaTags = e.map((data) => {
-    //   const arr = data.id;
-    //   return arr;
-    // });
+    newObject.tags = e.map((data) => {
+      const arr = data.key;
+      return arr;
+    });
     setFormData({ ...newObject });
   };
   const removeDataMultiSelect = (e) => {
-    formData.formulaTags.pop(e.key);
+    formData.tags.pop(e.key);
   };
 
-  const { calcAttributeName, unit } = formData;
+  const options = [
+    { key: "Option 1", title: "Group 1" },
+    { key: "Option 2", title: "Group 2" },
+    { key: "Option 3", title: "Group 3" },
+    { key: "Option 4", title: "Group 4" },
+    { key: "Option 5", title: "Group 5" },
+    { key: "Option 6", title: "Group 6" },
+    { key: "Option 7", title: "Group 7" },
+  ];
 
+  const { calcAttributeName, unit } = formData;
+  console.log("calctype", calcType);
+  console.log("showError", showError);
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}
@@ -142,17 +136,9 @@ const AddCalAttributeDialog = (props) => {
           {/* <InputLabel htmlFor="Calculation Type">Calculation Type</InputLabel> */}
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
-            <Select
-              onChange={handleTag}
-              value={requirementTagArray.id}
-              label={requirementTagArray.name}
-              defaultValue={requirementTagArray[0]}
-            >
-              {requirementTagArray.map((item) => (
-                <MenuItem key={item.name} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
+            <Select onChange={handleTag}>
+              {/* <MenuItem value="man">Manual</MenuItem>
+              <MenuItem value="per">Percentage</MenuItem> */}
             </Select>
           </FormControl>
         </Grid>
@@ -194,10 +180,9 @@ const AddCalAttributeDialog = (props) => {
               <Autocomplete
                 multiple
                 id="tags-standard"
-                options={multiselectOptions}
-                getOptionLabel={(option) => option.name}
-                onSelect={handleMultiSelect}
-                onRemove={removeDataMultiSelect}
+                options={options}
+                getOptionLabel={(option) => option.title}
+                defaultValue={[options[1]]}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -222,4 +207,4 @@ const AddCalAttributeDialog = (props) => {
   );
 };
 
-export default AddCalAttributeDialog;
+export default EditCalAttributeDialog;
