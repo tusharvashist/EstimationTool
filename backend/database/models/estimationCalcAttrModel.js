@@ -15,7 +15,11 @@ const estimationCalcAttrSchema = new mongoose.Schema({
     unit: Number,
     description: String,
     calcType: String,
-    tags: [{
+    tag: {
+        type: Schema.Types.ObjectId,
+        ref: 'requirementTag'
+    },
+    formulaTags: [{
         type: Schema.Types.Array,
         ref: 'requirementTag'
     }]

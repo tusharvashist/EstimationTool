@@ -32,6 +32,8 @@ app.use("/api/v1/estimation", require("./routes/estimation.route"));
 app.use("/api/v1/estimationDetail", require("./routes/estimationDetail.route"));
 //----------- Client Route
 app.use("/api/v1/client", require("./routes/client.route"));
+//-------------RequirementTag
+app.use("/api/v1/requirementTag", require("./routes/requirementTag.route"));
 
 //----------- Project Route
 app.use("/api/v1/project", require("./routes/project.route"));

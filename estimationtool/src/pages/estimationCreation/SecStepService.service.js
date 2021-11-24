@@ -15,10 +15,15 @@ const ClientService = {
     let url = Url.getCalculativeAttribute;
     return axios.get(url + `?esttype=` + typeId + `&estheaderid=` + headerId);
   },
-
+  getAllRequirementTag: function () {
+    let url = Url.getRequirementTag;
+    return axios.get(url);
+  },
   createCalAttribute: function (attributeData) {
     let url = Url.saveCalcAttribute;
     return axios.post(url, attributeData);
   },
+
+
 };
 export default ClientService;

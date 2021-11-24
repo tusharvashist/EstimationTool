@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import { Select, MenuItem, FormControl, InputLabel, makeStyles } from "@material-ui/core";
@@ -6,11 +6,29 @@ import { Grid } from "@material-ui/core";
 import EstimationService from "../estimationDetail/estimation.service";
 import { Multiselect } from "multiselect-react-dropdown";
 import { fontSize } from "@material-ui/system";
+// import { getAllRequirementTag } from "../../../../backend/service/requirementTagService";
+import SecondStepServ from "../estimationCreation/SecStepService.service";
 const useStyles = makeStyles(theme => ({
   formControl: { maxWidth: 400 }
 
 }));
+
+
+
+
 const AddCalAttributeDialog = (props) => {
+  useEffect(() => {
+    getAllRequirementTags()
+  }, []);
+  const getAllRequirementTags = () => {
+    SecondStepServ.getAllRequirementTag().then((res) => {
+      console.log(res.data)
+      setRequirementTagArray(res.data.body);
+      setmultiselectOptions(res.data.body)
+    }).catch((err) => {
+
+    })
+  }
   const classes = useStyles()
   const [calcType, setCalcType] = useState("per");
 
@@ -30,8 +48,9 @@ const AddCalAttributeDialog = (props) => {
     unit: null,
 
     description: " ",
-    tags: [""],
-    calcType: ""
+    formulaTags: [""],
+    calcType: "",
+    tag: ""
   });
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
   const [showError, setShowError] = useState(false);
@@ -44,13 +63,13 @@ const AddCalAttributeDialog = (props) => {
     setFormData({ ...newObject });
   };
   const handleCalcType = e => {
-    setCalcType(e.target.value)
-    console.log(calcType)
-
+    let newObject = { ...formData };
+    newObject.calcType = e.target.value;
+    setFormData({ ...newObject });
   }
   const handleTag = e => {
     let newObject = { ...formData };
-    newObject.calcType = e.target.value;
+    newObject.tag = e.target.value;
     setFormData({ ...newObject });
 
   }
@@ -95,12 +114,12 @@ const AddCalAttributeDialog = (props) => {
 
   const handleMultiSelect = (e) => {
     let newObject = { ...formData };
-    newObject.tags = e.map((data) => { const arr = data.key; return arr });
+    newObject.formulaTags = e.map((data) => { const arr = data.id; return arr });
     setFormData({ ...newObject });
   }
   const removeDataMultiSelect = (e) => {
 
-    formData.tags.pop(e.key)
+    formData.formulaTags.pop(e.key)
 
   }
   const options = [
@@ -143,9 +162,14 @@ const AddCalAttributeDialog = (props) => {
           {/* <InputLabel htmlFor="Calculation Type">Calculation Type</InputLabel> */}
           <FormControl className={classes.formControl}>
             <InputLabel > Tag</InputLabel>
-            <Select onChange={handleTag} >
-              {/* <MenuItem value="man">Manual</MenuItem>
-              <MenuItem value="per">Percentage</MenuItem> */}
+            <Select onChange={handleTag} value={requirementTagArray.id}
+              label={requirementTagArray.name}
+              defaultValue={requirementTagArray[0]} >
+              {requirementTagArray.map((item) => (
+                <MenuItem key={item.name} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
 
             </Select>
           </FormControl>
@@ -186,12 +210,13 @@ const AddCalAttributeDialog = (props) => {
             <Grid item xs={2} > <label style={{ marginLeft: "30px" }}>% of</label></Grid>
             <Grid item xs={7}>
               <Multiselect
-                options={options}
+                options={multiselectOptions}
                 closeIcon="close"
-                displayValue="key"
+                displayValue="name"
                 label="Tags"
                 onSelect={handleMultiSelect}
                 onRemove={removeDataMultiSelect}
+
               />
             </Grid>
             <p style={{ color: "green", fontSize: "12px" }}>Percentage will be applied on the sum of selected tag efforts </p>

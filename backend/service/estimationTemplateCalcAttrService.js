@@ -79,7 +79,9 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
 module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid }) => {
     try {
         if (estheaderid) {
-            let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
+            // //TODO formulaTags and tag is to be populated in estAttCalc in find
+            let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" })
+                ;
             let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: ObjectId(estheaderid) });
             var index = 0;
             estAttCalc.forEach(element => {
@@ -88,6 +90,8 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
                         element.selected = true;
                         element.isFormula = estSelAttElement.isFormula;
                         element.formula = estSelAttElement.formula;
+                        element.tag = estSelAttElement.tag;
+                        element.formulaTags = estSelAttElement.formulaTags;
                         element.operator = estSelAttElement.operator;
                         element.unit = estSelAttElement.unit;
                         element.description = estSelAttElement.description;
@@ -97,8 +101,9 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
             });
             return (estAttCalc)
         }
-        
+
         if (esttype) {
+            //TODO formulaTags and tag is to be populated in estAttCalc in find
             let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
             let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
 
