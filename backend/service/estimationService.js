@@ -1,20 +1,18 @@
-
-const constant = require("../constant")
+const constant = require("../constant");
 //const Estimation = require("../database/models/estimationModel")
-const EstimationHeader = require("../database/models/estHeaderModel")
-const EstimationTemplateModel = require("../database/models/estimationTemplateModel")
-const ProjectModel = require("../database/models/projectModel")
-const { formatMongoData } = require("../helper/dbhelper")
-const mongoose = require("mongoose")
-const EstimationHeaderAtrribute = require("../database/models/estimationHeaderAtrributeModel")
-const EstimationHeaderAtrributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
-const EstimationHeaderAtrributeSchema = require("../database/models/estimationHeaderAtrributeModel")
-const EstHeaderRequirement = require("../database/models/estHeaderRequirement")
-const { estimationHeaderAtrributeMessage } = require("../constant")
-const RequirementType = require("../database/models/requirementType")
-const RequirementTag = require("../database/models/requirementTag")
-const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel")
-
+const EstimationHeader = require("../database/models/estHeaderModel");
+const EstimationTemplateModel = require("../database/models/estimationTemplateModel");
+const ProjectModel = require("../database/models/projectModel");
+const { formatMongoData } = require("../helper/dbhelper");
+const mongoose = require("mongoose");
+const EstimationHeaderAtrribute = require("../database/models/estimationHeaderAtrributeModel");
+const EstimationHeaderAtrributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
+const EstimationHeaderAtrributeSchema = require("../database/models/estimationHeaderAtrributeModel");
+const EstHeaderRequirement = require("../database/models/estHeaderRequirement");
+const { estimationHeaderAtrributeMessage } = require("../constant");
+const RequirementType = require("../database/models/requirementType");
+const RequirementTag = require("../database/models/requirementTag");
+const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
 
 // module.exports.createEstimation = async(serviceData)=>{
 //   try{
@@ -26,7 +24,6 @@ const EstimationHeaderAtrributeModel = require("../database/models/estimationHea
 //     throw new Error(err)
 //   }
 // }
-
 
 // module.exports.getAllEstimation = async({skip = 0,limit = 10})=>{
 //     try{
@@ -68,176 +65,219 @@ const EstimationHeaderAtrributeModel = require("../database/models/estimationHea
 //     }
 // }
 
-
 module.exports.estimationDelete = async ({ id }) => {
   try {
-    let estimation = await EstimationHeader.updateOne({ _id: id }, { isDeleted: true });
+    let estimation = await EstimationHeader.updateOne(
+      { _id: id },
+      { isDeleted: true }
+    );
 
     if (!estimation) {
-      throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
+      throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
     }
-    return formatMongoData(estimation)
+    return formatMongoData(estimation);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
-
+};
 
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
-    let estimations = await EstimationHeader.find({ isDeleted: false }).
-      populate({
-        path: 'projectId',
-        match: { isDeleted: false },     
-        populate: { path: 'client',match: { isDeleted: false } }
-      }).populate({
-        path: 'estTypeId'
-      })           
-      .skip(parseInt(skip)).limit(parseInt(limit))
-      .sort({updatedAt : 'desc'});
+    let estimations = await EstimationHeader.find({ isDeleted: false })
+      .populate({
+        path: "projectId",
+        match: { isDeleted: false },
+        populate: { path: "client", match: { isDeleted: false } },
+      })
+      .populate({
+        path: "estTypeId",
+      })
+      .skip(parseInt(skip))
+      .limit(parseInt(limit))
+      .sort({ updatedAt: "desc" });
 
-      let result=[];
-      estimations.forEach(element => {
-        if(element.projectId != null && element.projectId.client != null)
-        {
+    let result = [];
+    estimations.forEach((element) => {
+      if (element.projectId != null && element.projectId.client != null) {
         result.push(element);
         //console.log(element)
-        }
+      }
     });
-      
-    return formatMongoData(result)
+
+    return formatMongoData(result);
   } catch (err) {
     console.log("something went wrong: service > createEstimation Header", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 
 // create new estimation header configration
 module.exports.createEstimationHeader = async (serviceData) => {
   try {
-    let estimation = new EstimationHeader({ ...serviceData })
+    let estimation = new EstimationHeader({ ...serviceData });
     estimation.estStep = "1";
     let result = await estimation.save();
 
-    const projectModel = await ProjectModel.findById({ _id: estimation.projectId })
+    const projectModel = await ProjectModel.findById({
+      _id: estimation.projectId,
+    });
     projectModel.estimates.push(estimation);
     await projectModel.save();
 
-
-    return formatMongoData(result)
+    return formatMongoData(result);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation Header ", err);
-    throw new Error(err)
+    console.log(
+      "something went wrong: service > createEstimation Header ",
+      err
+    );
+    throw new Error(err);
   }
-}
+};
 
-// Update estimation header basic info 
+// Update estimation header basic info
 module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
   try {
-
-    let estimation = await EstimationHeader.findOneAndUpdate({ _id: id }, updatedInfo, { new: true });
+    let estimation = await EstimationHeader.findOneAndUpdate(
+      { _id: id },
+      updatedInfo,
+      { new: true }
+    );
     if (!estimation) {
-      throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
+      throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
     }
 
-    return formatMongoData(estimation)
+    return formatMongoData(estimation);
   } catch (err) {
-    console.log("something went wrong: service > Update Estimation Header ", err);
-    throw new Error(err)
+    console.log(
+      "something went wrong: service > Update Estimation Header ",
+      err
+    );
+    throw new Error(err);
   }
-}
+};
 
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
     //Remove All Attributes from Estimation Header
-    let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({ serviceData })
+    let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
+      serviceData,
+    });
     if (serviceData) {
-      let estimation = await EstimationHeader.findById(serviceData[0].estHeaderId);
+      let estimation = await EstimationHeader.findById(
+        serviceData[0].estHeaderId
+      );
       if (estimation) {
-        estimation.estStep="2";
+        estimation.estStep = "2";
         estimation.save();
       }
-      let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
-      let result = await EstimationHeaderAtrribute.insertMany(serviceData, forceServerObjectId = true);
+      let resultdelete = await EstimationHeaderAtrribute.deleteMany({
+        estHeaderId: serviceData[0].estHeaderId,
+      });
+      let result = await EstimationHeaderAtrribute.insertMany(
+        serviceData,
+        (forceServerObjectId = true)
+      );
 
-      return formatMongoData(result)
-    }
-    else
-      throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR);
+      return formatMongoData(result);
+    } else
+      throw new Error(
+        constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR
+      );
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 
-
-module.exports.getAllEstimationHeaderAtrribute = async ({ skip = 0, limit = 10 }) => {
+module.exports.getAllEstimationHeaderAtrribute = async ({
+  skip = 0,
+  limit = 10,
+}) => {
   try {
-    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.find().sort({ updatedAt: -1 }).skip(parseInt(skip)).limit(parseInt(limit));
+    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.find()
+      .sort({ updatedAt: -1 })
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
 
-    return formatMongoData(estimationHeaderAtrribute)
+    return formatMongoData(estimationHeaderAtrribute);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 
 module.exports.getEstimationHeaderAtrributeById = async ({ id }) => {
   try {
     if (!mongoose.Types.ObjectId(id)) {
-      throw new Error(constant.estimationHeaderAtrributeMessage.INVALID_ID)
+      throw new Error(constant.estimationHeaderAtrributeMessage.INVALID_ID);
     }
-    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.findById(id)
-      .populate(
-        {
-          path: 'projects',
-          options: { sort: { updatedAt: -1 } }
-        });
+    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.findById(
+      id
+    ).populate({
+      path: "projects",
+      options: { sort: { updatedAt: -1 } },
+    });
     if (!estimationHeaderAtrribute) {
-      throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_NOT_FOUND)
+      throw new Error(
+        constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_NOT_FOUND
+      );
     }
-    return formatMongoData(estimationHeaderAtrribute)
+    return formatMongoData(estimationHeaderAtrribute);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 
 module.exports.estimationHeaderAtrributeUpdate = async ({ id, updateInfo }) => {
   try {
-    const findRecord = await EstimationHeaderAtrribute.find({ estHeaderId: updateInfo.estHeaderId });
+    const findRecord = await EstimationHeaderAtrribute.find({
+      estHeaderId: updateInfo.estHeaderId,
+    });
     if (findRecord.length != 0) {
-      throw new Error(constant.estimationHeaderAtrributeMessage.DUPLICATE_estimationHeaderAtrribute);
+      throw new Error(
+        constant.estimationHeaderAtrributeMessage.DUPLICATE_estimationHeaderAtrribute
+      );
     }
 
-    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
+    let estimationHeaderAtrribute =
+      await EstimationHeaderAtrribute.findOneAndUpdate(
+        { _id: id },
+        updateInfo,
+        { new: true }
+      );
     if (!estimationHeaderAtrribute) {
-      throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_NOT_FOUND)
+      throw new Error(
+        constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_NOT_FOUND
+      );
     }
-    return formatMongoData(estimationHeaderAtrribute)
+    return formatMongoData(estimationHeaderAtrribute);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
-
+};
 
 module.exports.estimationHeaderAtrributeDelete = async ({ id }) => {
   try {
-
-    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.updateOne({ _id: id }, { isDeleted: true });
+    let estimationHeaderAtrribute = await EstimationHeaderAtrribute.updateOne(
+      { _id: id },
+      { isDeleted: true }
+    );
 
     if (!estimationHeaderAtrribute) {
-      throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_NOT_FOUND)
+      throw new Error(
+        constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_NOT_FOUND
+      );
     }
-    return formatMongoData(estimationHeaderAtrribute)
+    return formatMongoData(estimationHeaderAtrribute);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 //============================EstimationHeaderAtrributeCalc=======================================================================
 module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
   try {
@@ -250,99 +290,132 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     // }
     // let result = await estimationHeaderAtrributeCalc.save();
     // return formatMongoData(result)
-    console.log(serviceData)
+    console.log(serviceData);
     if (serviceData) {
-      let estimation = await EstimationHeader.findById(serviceData[0].estHeaderId);
+      let estimation = await EstimationHeader.findById(
+        serviceData[0].estHeaderId
+      );
       if (estimation) {
-        estimation.estStep="3";
+        estimation.estStep = "3";
         estimation.save();
       }
-      let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
+      let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({
+        estHeaderId: serviceData[0].estHeaderId,
+      });
       let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
-      return formatMongoData(result)
-    }
-    else
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_ERROR);
+      return formatMongoData(result);
+    } else
+      throw new Error(
+        constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_ERROR
+      );
+  } catch (err) {
+    // if (serviceData) {
+    //   let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
+    //   let result = await EstimationHeaderAtrribute.insertMany(serviceData);
 
+    //   return formatMongoData(result)
+    // }
+    // else
+    // throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR);
+    //}
+    //------
+    console.log(
+      "something went wrong: service 12121`22> createEstimation ",
+      err
+    );
+    throw new Error(err);
   }
+};
 
-  // if (serviceData) {
-  //   let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
-  //   let result = await EstimationHeaderAtrribute.insertMany(serviceData);
-
-  //   return formatMongoData(result)
-  // }
-  // else
-  // throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR);
-  //}
-  //------
-  catch (err) {
-    console.log("something went wrong: service 12121`22> createEstimation ", err);
-    throw new Error(err)
-  }
-}
-
-
-module.exports.getAllEstimationHeaderAtrributeCalc = async ({ skip = 0, limit = 10 }) => {
+module.exports.getAllEstimationHeaderAtrributeCalc = async ({
+  skip = 0,
+  limit = 10,
+}) => {
   try {
-    let estimationHeaderAtrributeCalc = await EstimationHeaderAtrributeCalc.find().sort({ updatedAt: -1 }).skip(parseInt(skip)).limit(parseInt(limit));
+    let estimationHeaderAtrributeCalc =
+      await EstimationHeaderAtrributeCalc.find()
+        .sort({ updatedAt: -1 })
+        .skip(parseInt(skip))
+        .limit(parseInt(limit));
 
-    return formatMongoData(estimationHeaderAtrributeCalc)
+    return formatMongoData(estimationHeaderAtrributeCalc);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 
 module.exports.getEstimationHeaderAtrributeCalcById = async ({ id }) => {
   try {
     if (!mongoose.Types.ObjectId(id)) {
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.INVALID_ID)
+      throw new Error(constant.estimationHeaderAtrributeCalcMessage.INVALID_ID);
     }
-    let estimationHeaderAtrributeCalc = await findById(id).populate('estHeaderId').populate({
-      path: 'estimates',
-      populate: { path: 'estHeaderId' }
-    });
+    let estimationHeaderAtrributeCalc = await findById(id)
+      .populate("estHeaderId")
+      .populate({
+        path: "estimates",
+        populate: { path: "estHeaderId" },
+      });
     if (!estimationHeaderAtrributeCalc) {
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND)
+      throw new Error(
+        constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND
+      );
     }
-    return formatMongoData(estimationHeaderAtrributeCalc)
+    return formatMongoData(estimationHeaderAtrributeCalc);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};
 
-module.exports.estimationHeaderAtrributeCalcUpdate = async ({ id, updateInfo }) => {
+module.exports.estimationHeaderAtrributeCalcUpdate = async ({
+  id,
+  updateInfo,
+}) => {
   try {
-    const findRecord = await EstimationHeaderAtrributeCalc.find({ estHeaderId: updateInfo.estHeaderId });
+    const findRecord = await EstimationHeaderAtrributeCalc.find({
+      estHeaderId: updateInfo.estHeaderId,
+    });
     if (findRecord.length != 0) {
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc);
+      throw new Error(
+        constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc
+      );
     }
 
-    let estimationHeaderAtrributeCalc = await EstimationHeaderAtrributeCalc.findOneAndUpdate({ _id: id }, updateInfo, { new: true });
+    let estimationHeaderAtrributeCalc =
+      await EstimationHeaderAtrributeCalc.findOneAndUpdate(
+        { _id: id },
+        updateInfo,
+        { new: true }
+      );
     if (!estimationHeaderAtrributeCalc) {
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND)
+      throw new Error(
+        constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND
+      );
     }
-    return formatMongoData(estimationHeaderAtrributeCalc)
+    return formatMongoData(estimationHeaderAtrributeCalc);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
-
+};
 
 module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
   try {
-
-    let estimationHeaderAtrributeCalc = await EstimationHeaderAtrributeCalc.updateOne({ _id: id }, { isDeleted: true });
+    let estimationHeaderAtrributeCalc =
+      await EstimationHeaderAtrributeCalc.updateOne(
+        { _id: id },
+        { isDeleted: true }
+      );
 
     if (!estimationHeaderAtrributeCalc) {
-      throw new Error(constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND)
+      throw new Error(
+        constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_NOT_FOUND
+      );
     }
-    return formatMongoData(estimationHeaderAtrributeCalc)
+    return formatMongoData(estimationHeaderAtrributeCalc);
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
-    throw new Error(err)
+    throw new Error(err);
   }
-}
+};

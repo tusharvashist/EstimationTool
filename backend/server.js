@@ -4,9 +4,9 @@ const cors = require("cors");
 const dbconnection = require("./database/connection");
 const swaggerUi = require("swagger-ui-express");
 const yaml = require("yamljs");
-const swaggerDocument = yaml.load('./swagger.yaml');
+const swaggerDocument = yaml.load("./swagger.yaml");
 //const productionURL = "https://estimationtoolapi.azurewebsites.net/";
-const productionURL = "https://pyramidestimationtool.azurewebsites.net"
+const productionURL = "https://pyramidestimationtool.azurewebsites.net";
 const app = express();
 const PORT = process.env.PORT || 5252;
 let envName = "";
@@ -39,24 +39,32 @@ app.use("/api/v1/project", require("./routes/project.route"));
 //----------- Role Route
 app.use("/api/v1/role", require("./routes/roleMaster.route"));
 
-
 //-----------  Estimation Type Template ie: ROM/SWAG/FIXBID
-app.use("/api/v1/estimationTemplate", require("./routes/estimationTemplateRoute"));
+app.use(
+  "/api/v1/estimationTemplate",
+  require("./routes/estimationTemplateRoute")
+);
 
 //----------- Module Master Route
 app.use("/api/v1/modulemaster", require("./routes/moduleMaster.route"));
 
 //----------- Estimation Attribute Route
-app.use("/api/v1/estimationattribute", require("./routes/estimationattribute.route"));
-
+app.use(
+  "/api/v1/estimationattribute",
+  require("./routes/estimationattribute.route")
+);
 
 //----------- Estimation calculate attribute
-app.use("/api/v1/estimationCalcAttr", require("./routes/estimationCalcAttr.route"));
+app.use(
+  "/api/v1/estimationCalcAttr",
+  require("./routes/estimationCalcAttr.route")
+);
 
 //----------- Estimation template calculate attribute
-app.use("/api/v1/estimationTemplateCalcAttr", require("./routes/estimationTemplateCalcAttr.route"));
-
-
+app.use(
+  "/api/v1/estimationTemplateCalcAttr",
+  require("./routes/estimationTemplateCalcAttr.route")
+);
 
 //----------- Module Token Route
 app.use("/api/v1/moduletoken", require("./routes/moduleToken.route"));
@@ -66,11 +74,11 @@ app.use("/api/v1/permission", require("./routes/permission.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
-  envName = "Locally"
+  envName = "Locally";
   app.get("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
 if (process.env.NODE_ENV === "production") {
-  envName = "Production"
+  envName = "Production";
 }
 
 app.get("/", (req, res) => {
@@ -79,19 +87,23 @@ app.get("/", (req, res) => {
   );
 });
 
-
-
 app.listen(PORT, () => {
   let prodctionMsz = () => {
-    console.log("Node API Application Your Running On Production env...!", `${productionURL}`)
-  }
+    console.log(
+      "Node API Application Your Running On Production env...!",
+      `${productionURL}`
+    );
+  };
   let localMsz = () => {
-    console.log("Node API Application Running locally", `http://localhost:${PORT}`)
-  }
+    console.log(
+      "Node API Application Running locally",
+      `http://localhost:${PORT}`
+    );
+  };
   if (process.env.NODE_ENV === "production") {
-    return prodctionMsz()
+    return prodctionMsz();
   }
-  return localMsz()
+  return localMsz();
 });
 
 //--------- Error handel  middleware
