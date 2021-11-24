@@ -16,6 +16,7 @@ import { withStyles } from "@material-ui/core/styles";
 import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 import EstimationDetail from "../../pages/estimationDetail/EstimationDetail";
+import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -66,6 +67,13 @@ export default class Layout extends Component {
                     exact
                     path="/All-Clients/:clientName/:projectid/createEstimate"
                     render={(props) => <EstimationCreation {...props} />}
+                  >
+                    {/* <EstimationCreation /> */}
+                  </Route>
+                  <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/createRequirements"
+                    render={(props) => <CreateRequirements {...props} />}
                   >
                     {/* <EstimationCreation /> */}
                   </Route>

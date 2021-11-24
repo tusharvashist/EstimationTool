@@ -203,8 +203,8 @@ export default function ClientDetails(props) {
               <span className="section-title"></span>
             </p>
           </Grid>
-          <Grid container justify="space-between" alignItems="center">
-            <Grid item xs={5} sm={5}>
+          <Grid container alignItems="center">
+            <Grid item xs={7}>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
                   <InputLabel id="client-simple-select">
@@ -234,27 +234,56 @@ export default function ClientDetails(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
-            <Link
-              to={{
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/createEstimate",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: "",
-                },
-              }}
+            <Grid
+              item
+              style={{ textAlign: "right", paddingRight: "10px" }}
+              xs={3}
             >
-              <Button onClick={createEstimationHandle} variant="outlined">
-                {" "}
-                <AddIcon />
-                Create Estimation
-              </Button>
-            </Link>
+              <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/createRequirements",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: "",
+                  },
+                }}
+              >
+                <Button onClick={createEstimationHandle} variant="outlined">
+                  {" "}
+                  <AddIcon />
+                  Create Requirements
+                </Button>
+              </Link>
+            </Grid>
+            <Grid item xs={2}>
+              <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/createEstimate",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: "",
+                  },
+                }}
+              >
+                <Button onClick={createEstimationHandle} variant="outlined">
+                  {" "}
+                  <AddIcon />
+                  Create Estimation
+                </Button>
+              </Link>
+            </Grid>
           </Grid>
         </Grid>
       </Box>

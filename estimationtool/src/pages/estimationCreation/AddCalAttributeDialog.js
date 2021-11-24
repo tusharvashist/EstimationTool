@@ -101,9 +101,8 @@ const AddCalAttributeDialog = (props) => {
     }
   };
 
-  const handleMultiSelect = (e, value) => {
+  const handleMultiSelect = (e) => {
     let newObject = { ...formData };
-    console.log(value);
     // newObject.formulaTags = e.map((data) => {
     //   const arr = data.id;
     //   return arr;
