@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
+import { Select, MenuItem, FormControl, InputLabel, makeStyles } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
+import EstimationService from "../estimationDetail/estimation.service";
+import { Multiselect } from "multiselect-react-dropdown";
+import { fontSize } from "@material-ui/system";
+const useStyles = makeStyles(theme => ({
+  formControl: { maxWidth: 400 }
 
+}));
 const AddCalAttributeDialog = (props) => {
+  const classes = useStyles()
+  const [calcType, setCalcType] = useState("per");
+
   const [formData, setFormData] = React.useState({
     estTypeId: null,
 
@@ -20,25 +30,56 @@ const AddCalAttributeDialog = (props) => {
     unit: null,
 
     description: " ",
+    tags: [""],
+    calcType: ""
   });
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
   const [showError, setShowError] = useState(false);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [multiselectOptions, setmultiselectOptions] = useState([]);
 
   const handelCalAttributeName = (e) => {
     let newObject = { ...formData };
     newObject.calcAttributeName = e.target.value;
     setFormData({ ...newObject });
   };
+  const handleCalcType = e => {
+    setCalcType(e.target.value)
+    console.log(calcType)
+
+  }
+  const handleTag = e => {
+    let newObject = { ...formData };
+    newObject.calcType = e.target.value;
+    setFormData({ ...newObject });
+
+  }
+  //===============================
+  const getBasicDetailById = (calback) => {
+
+    EstimationService.getById()
+      .then((res) => {
+
+        setRequirementTagArray([...res.data.body.requirementTag]);
+        console.log("dataResponse.requirementTag");
+
+        calback();
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
+  };
+  //=======
 
   const onSubmitForm = (e) => {
-   
-      if (formData.calcAttributeName && formData.formula) {
-     
-        props.saveFun({ ...formData });
-      } else {
-        setShowError(true);
-      }
-    
+
+    if (formData.calcAttributeName && formData.formula) {
+
+      props.saveFun({ ...formData });
+    } else {
+      setShowError(true);
+    }
+
   };
 
   const handelFormula = (e) => {
@@ -46,14 +87,34 @@ const AddCalAttributeDialog = (props) => {
       setShowError(true);
     } else {
       setShowError(false);
-    let newObject = { ...formData };
-    newObject.unit = e.target.value;
-    setFormData({ ...newObject });
+      let newObject = { ...formData };
+      newObject.unit = e.target.value;
+      setFormData({ ...newObject });
     }
   };
 
-  const { calcAttributeName, unit } = formData;
+  const handleMultiSelect = (e) => {
+    let newObject = { ...formData };
+    newObject.tags = e.map((data) => { const arr = data.key; return arr });
+    setFormData({ ...newObject });
+  }
+  const removeDataMultiSelect = (e) => {
 
+    formData.tags.pop(e.key)
+
+  }
+  const options = [
+    { key: "Option 1", cat: "Group 1" },
+    { key: "Option 2", cat: "Group 1" },
+    { key: "Option 3", cat: "Group 1" },
+    { key: "Option 4", cat: "Group 2" },
+    { key: "Option 5", cat: "Group 2" },
+    { key: "Option 6", cat: "Group 2" },
+    { key: "Option 7", cat: "Group 2" }
+  ]
+
+  const { calcAttributeName, unit } = formData;
+  console.log("calctype", calcType)
   console.log("showError", showError)
   return (
     <CustomizedDialogs
@@ -79,35 +140,63 @@ const AddCalAttributeDialog = (props) => {
           />
         </Grid>
         <Grid item xs={12}>
-          {/* <Dropdown
-            title="Calculation Unit"
-            value="percentage"
-          /> */}
-          <TextField
-            id="standard-basic"
-            label="Calculation Unit"
-            className="full-width"
-            variant="outlined"
-            value="percentage"
-            disabled
-          />
+          {/* <InputLabel htmlFor="Calculation Type">Calculation Type</InputLabel> */}
+          <FormControl className={classes.formControl}>
+            <InputLabel > Tag</InputLabel>
+            <Select onChange={handleTag} >
+              {/* <MenuItem value="man">Manual</MenuItem>
+              <MenuItem value="per">Percentage</MenuItem> */}
+
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <TextField
-            required
-            error={showError && !unit}
-            helperText={showError ? 'Please enter only b/w 1-100' : ''}
-            id="standard-basic"
-            label="Formula"
-            className="full-width"
-            onChange={handelFormula}
-            variant="outlined"
-            type="number"
-            max={2}
-            onKeyDown={(evt) => symbolsArr.includes(evt.key) && evt.preventDefault()}
-            pattern="^[1-9][0-9]?$|^100$"
-          />
+          <FormControl className={classes.formControl}>
+            <InputLabel > Calculation Type</InputLabel>
+            <Select onChange={handleCalcType} >
+              <MenuItem value="man">Manual</MenuItem>
+              <MenuItem value="per">Percentage</MenuItem>
+
+            </Select>
+          </FormControl>
+
+
         </Grid>
+
+        {calcType == "per" ?
+          <>
+            <Grid item xs={3}>
+              <TextField
+                required
+                error={showError && !unit}
+                helperText={showError ? 'Please enter only b/w 1-100' : ''}
+                id="standard-basic"
+                label="Formula"
+                className="full-width"
+                onChange={handelFormula}
+                variant="outlined"
+                type="number"
+                max={2}
+                onKeyDown={(evt) => symbolsArr.includes(evt.key) && evt.preventDefault()}
+                pattern="^[1-9][0-9]?$|^100$"
+              />
+
+
+            </Grid>
+            <Grid item xs={2} > <label style={{ marginLeft: "30px" }}>% of</label></Grid>
+            <Grid item xs={7}>
+              <Multiselect
+                options={options}
+                closeIcon="close"
+                displayValue="key"
+                label="Tags"
+                onSelect={handleMultiSelect}
+                onRemove={removeDataMultiSelect}
+              />
+            </Grid>
+            <p style={{ color: "green", fontSize: "12px" }}>Percentage will be applied on the sum of selected tag efforts </p>
+          </>
+          : <p style={{ color: "green", fontSize: "12px" }}>Please use Estimation Detail page to enter value manually </p>}
       </Grid>
     </CustomizedDialogs>
   );
