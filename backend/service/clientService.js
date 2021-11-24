@@ -2,6 +2,7 @@ const constant = require("../constant");
 const Client = require("../database/models/clientModel");
 const { formatMongoData } = require("../helper/dbhelper");
 const mongoose = require("mongoose");
+const { populate } = require("../database/models/clientModel");
 
 module.exports.createClient = async (serviceData) => {
   try {
@@ -15,7 +16,10 @@ module.exports.createClient = async (serviceData) => {
     let result = await client.save();
     return formatMongoData(result);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+    console.log(
+      "something went wrong: service > clientService > createClient ",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -23,15 +27,17 @@ module.exports.createClient = async (serviceData) => {
 module.exports.getAllClient = async ({ skip = 0, limit = 10 }) => {
   try {
     let clients = await Client.find()
-      .populate({ path: "createdBy" })
-      .populate({ path: "updatedBy" })
+      .populate({ path: "createdBy updatedBy" })
       .sort({ updatedAt: -1 })
       .skip(parseInt(skip))
       .limit(parseInt(limit));
 
     return formatMongoData(clients);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+    console.log(
+      "something went wrong: service > clientService > getAllClient ",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -44,6 +50,7 @@ module.exports.getClientById = async ({ id }) => {
     let clients = await Client.findById(id)
       .populate({
         path: "projects",
+        populate: { path: "createdBy updatedBy" },
         options: { sort: { updatedAt: -1 } },
       })
       .populate({ path: "createdBy" })
@@ -54,7 +61,10 @@ module.exports.getClientById = async ({ id }) => {
     }
     return formatMongoData(clients);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+    console.log(
+      "something went wrong: service > clientService > getClientById ",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -88,7 +98,10 @@ module.exports.clientUpdate = async ({ id, updateInfo }) => {
     }
     return formatMongoData(clients);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+    console.log(
+      "something went wrong: service > clientService > clientUpdate ",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -105,7 +118,10 @@ module.exports.clientDelete = async ({ id }) => {
     }
     return formatMongoData(clients);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation ", err);
+    console.log(
+      "something went wrong: service > clientService > clientDelete ",
+      err
+    );
     throw new Error(err);
   }
 };
