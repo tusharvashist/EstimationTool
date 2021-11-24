@@ -30,10 +30,10 @@ const AddCalAttributeDialog = (props) => {
         setRequirementTagArray(res.data.body);
         setmultiselectOptions(res.data.body);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const classes = useStyles();
-  const [calcType, setCalcType] = useState("per");
+
 
   const [formData, setFormData] = React.useState({
     estTypeId: null,
@@ -42,7 +42,7 @@ const AddCalAttributeDialog = (props) => {
     isFormula: true,
     formula: "%",
     operator: "abcd",
-    unit: null,
+    unit: 0,
     description: " ",
     formulaTags: [""],
     calcType: "",
@@ -67,26 +67,21 @@ const AddCalAttributeDialog = (props) => {
     newObject.tag = e.target.value;
     setFormData({ ...newObject });
   };
-  //===============================
-  const getBasicDetailById = (calback) => {
-    EstimationService.getById()
-      .then((res) => {
-        setRequirementTagArray([...res.data.body.requirementTag]);
-        console.log("dataResponse.requirementTag");
 
-        calback();
-      })
-      .catch((err) => {
-        console.log("get EstimationService by id error", err);
-      });
-  };
-  //=======
 
   const onSubmitForm = (e) => {
-    if (formData.calcAttributeName && formData.formula) {
-      props.saveFun({ ...formData });
+    if (calcType == "per") {
+      if (formData.calcAttributeName && formData.formula) {
+        props.saveFun({ ...formData });
+      } else {
+        setShowError(true);
+      }
     } else {
-      setShowError(true);
+      let newObject = { ...formData };
+      newObject.unit = 0;
+      newObject.formulaTags = [""];
+      setFormData({ ...newObject });
+      props.saveFun({ ...formData });
     }
   };
 
@@ -101,20 +96,17 @@ const AddCalAttributeDialog = (props) => {
     }
   };
 
-  const handleMultiSelect = (e, value) => {
+  const handleMultiSelect = (value) => {
     let newObject = { ...formData };
-    console.log(value);
-    // newObject.formulaTags = e.map((data) => {
-    //   const arr = data.id;
-    //   return arr;
-    // });
+
+    newObject.formulaTags = value.map((data) => {
+      const arr = data.id;
+      return arr;
+    });
     setFormData({ ...newObject });
   };
-  const removeDataMultiSelect = (e) => {
-    formData.formulaTags.pop(e.key);
-  };
 
-  const { calcAttributeName, unit } = formData;
+  const { calcAttributeName, unit, calcType, formulaTags, tag } = formData;
 
   return (
     <CustomizedDialogs
@@ -148,6 +140,7 @@ const AddCalAttributeDialog = (props) => {
               value={requirementTagArray.id}
               label={requirementTagArray.name}
               defaultValue={requirementTagArray[0]}
+              required
             >
               {requirementTagArray.map((item) => (
                 <MenuItem key={item.name} value={item.id}>
@@ -160,14 +153,15 @@ const AddCalAttributeDialog = (props) => {
         <Grid item xs={12}>
           <FormControl className={classes.formControl}>
             <InputLabel> Calculation Type</InputLabel>
-            <Select onChange={handleCalcType} defaultValue="per">
+            <Select onChange={handleCalcType} >
               <MenuItem value="man">Manual</MenuItem>
-              <MenuItem value="per">Formula</MenuItem>
+              <MenuItem value="per">Percentage</MenuItem>
             </Select>
           </FormControl>
+
         </Grid>
 
-        {calcType == "per" ? (
+        {calcType == "per" ? (<>
           <Grid container direction="row" alignItems="center">
             <Grid item xs={3}>
               <TextField
@@ -197,12 +191,13 @@ const AddCalAttributeDialog = (props) => {
                 id="tags-standard"
                 options={multiselectOptions}
                 getOptionLabel={(option) => option.name}
-                onSelect={handleMultiSelect}
-                onRemove={removeDataMultiSelect}
+
+                onChange={(e, value) => handleMultiSelect(value)}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     variant="standard"
+                    value={params.id}
                     label="Tags"
                     placeholder="Tags..."
                   />
@@ -212,7 +207,7 @@ const AddCalAttributeDialog = (props) => {
             <p style={{ color: "green", fontSize: "12px" }}>
               Percentage will be applied on the sum of selected tag efforts{" "}
             </p>
-          </Grid>
+          </Grid></>
         ) : (
           <p style={{ color: "green", fontSize: "12px" }}>
             Please use Estimation Detail page to enter value manually{" "}
