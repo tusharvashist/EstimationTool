@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 module.exports.createProject = async (serviceData) => {
   try {
     let project = new Project({ ...serviceData });
+    project.createdBy = global.loginId;
     const findProject = await Project.find(
       { projectName: project.projectName },
       { client: project.client }
@@ -22,7 +23,10 @@ module.exports.createProject = async (serviceData) => {
 
     return formatMongoData(result);
   } catch (err) {
-    console.log("something went wrong: service > ProjectService ", err);
+    console.log(
+      "something went wrong: service > ProjectService >  createProject ",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -30,11 +34,15 @@ module.exports.createProject = async (serviceData) => {
 module.exports.getAllProject = async ({ skip = 0, limit = 10 }) => {
   try {
     let project = await Project.find()
+      .populate({ path: "createdBy updatedBy" })
       .skip(parseInt(skip))
       .limit(parseInt(limit));
     return formatMongoData(project);
   } catch (err) {
-    console.log("something went wrong: service > ProjectService ", err);
+    console.log(
+      "something went wrong: service > ProjectService > getAllProject",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -45,6 +53,7 @@ module.exports.getProjectById = async ({ id }) => {
       throw new Error(constant.projectMessage.INVALID_ID);
     }
     let project = await Project.findById(id)
+      .populate({ path: "createdBy updatedBy" })
       .populate("client")
       .populate({
         path: "estimates",
@@ -55,7 +64,10 @@ module.exports.getProjectById = async ({ id }) => {
     }
     return formatMongoData(project);
   } catch (err) {
-    console.log("something went wrong: service > projectservice ", err);
+    console.log(
+      "something went wrong: service > projectservice > getProjectById",
+      err
+    );
     throw new Error(err);
   }
 };
@@ -69,18 +81,17 @@ module.exports.projectUpdate = async ({ id, updateInfo }) => {
       { projectName: updateInfo.projectName },
       { client: updateInfo.client }
     );
+    updateInfo.updatedBy = global.loginId;
     if (findProject.length != 0) {
       if (findProject.length == 1 && String(findProject[0]._id) == id) {
-         let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
-      new: true,
-    });
-    if (!project) {
-      throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
-    }
+        let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
+          new: true,
+        });
+        if (!project) {
+          throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
+        }
         return formatMongoData(project);
-        
       } else {
-      
         throw new Error(constant.projectMessage.DUPLICATE_PROJECT);
       }
     }
@@ -93,20 +104,29 @@ module.exports.projectUpdate = async ({ id, updateInfo }) => {
     }
     return formatMongoData(project);
   } catch (err) {
-    console.log("something went wrong: service > projectservice ", err);
+    console.log(
+      "something went wrong: service > projectservice > projectUpdate",
+      err
+    );
     throw new Error(err);
   }
 };
 
 module.exports.projectDelete = async ({ id }) => {
   try {
-    let project = await Project.updateOne({ _id: id }, { isDeleted: true });
+    let project = await Project.updateOne(
+      { _id: id },
+      { isDeleted: true, updatedBy: global.loginId }
+    );
     if (!project) {
       throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
     }
     return formatMongoData(project);
   } catch (err) {
-    console.log("something went wrong: service > projectservice ", err);
+    console.log(
+      "something went wrong: service > projectservice > projectDelete",
+      err
+    );
     throw new Error(err);
   }
 };
