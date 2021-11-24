@@ -1,29 +1,38 @@
 const mongoose = require("mongoose");
 const { Schema } = require('mongoose');
 
-const clientSchema = new mongoose.Schema({
+const clientSchema = new mongoose.Schema(
+  {
     clientName: String,
     website: String,
     description: String,
     isDeleted: Boolean,
     createdBy: {
-        type: Schema.Types.ObjectId,
-        ref: 'user'
+      type: Schema.Types.ObjectId,
+      ref: "user",
     },
-    projects: [{
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+    projects: [
+      {
         type: Schema.Types.ObjectId,
-        ref: 'ProjectMaster'
-    }]
-}, {
+        ref: "ProjectMaster",
+      },
+    ],
+  },
+  {
     timestamps: true,
     toObject: {
-        transform: function (doc, ret, option) {
-            ret.id = ret._id;
-            delete ret._id;
-            delete ret.__v;
-            return ret;
-        }
-    }
-})
+      transform: function (doc, ret, option) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
 clientSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ClientMaster", clientSchema)

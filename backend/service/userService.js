@@ -91,7 +91,8 @@ module.exports.login = async (req) => {
       .split(":");
     const email = emailNpass[0].trim();
     const pass = emailNpass[1].trim();
-    const users = await userModel.aggregate()
+    const users = await userModel
+      .aggregate()
       .match({ email: email })
       .lookup({
         from: "rolemasters",
@@ -111,10 +112,9 @@ module.exports.login = async (req) => {
         from: "moduletokens",
         localField: "moduletokens._id",
         foreignField: "tokenPermission.tokenID",
-        as: "RolePermission"
+        as: "RolePermission",
       })
       .addFields({ token: "" });
-
 
     // const users = await userModel
     //   .aggregate([
