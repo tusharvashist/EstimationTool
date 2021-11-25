@@ -8,10 +8,6 @@ const projectSchema = new mongoose.Schema(
     projectDescription: String,
     domain: String,
     isDeleted: Boolean,
-    createdBy: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
-    },
     client: {
       type: Schema.Types.ObjectId,
       ref: "ClientMaster",

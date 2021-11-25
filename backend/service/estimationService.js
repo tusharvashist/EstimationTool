@@ -84,7 +84,8 @@ module.exports.estimationDelete = async ({ id }) => {
 
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
-    let estimations = await EstimationHeader.find({ isDeleted: false })
+    let estimations = await EstimationHeader.find( {isDeleted: false})
+      .or([{createdBy: global.loginId}, {updatedBy: global.loginId }])
       .populate({
         path: "projectId",
         match: { isDeleted: false },
