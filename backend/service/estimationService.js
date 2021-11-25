@@ -69,7 +69,7 @@ module.exports.estimationDelete = async ({ id }) => {
   try {
     let estimation = await EstimationHeader.updateOne(
       { _id: id },
-      { isDeleted: true }
+      { isDeleted: true, updatedBy: global.loginId }
     );
 
     if (!estimation) {
@@ -88,7 +88,10 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
       .populate({
         path: "projectId",
         match: { isDeleted: false },
-        populate: { path: "client", match: { isDeleted: false } },
+        populate: {
+          path: "client createdBy updatedBy",
+          match: { isDeleted: false },
+        },
       })
       .populate({
         path: "estTypeId",
@@ -117,6 +120,7 @@ module.exports.createEstimationHeader = async (serviceData) => {
   try {
     let estimation = new EstimationHeader({ ...serviceData });
     estimation.estStep = "1";
+    estimation.createdBy = global.loginId;
     let result = await estimation.save();
 
     const projectModel = await ProjectModel.findById({
@@ -138,6 +142,7 @@ module.exports.createEstimationHeader = async (serviceData) => {
 // Update estimation header basic info
 module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
   try {
+    updatedInfo.updatedBy = global.loginId;
     let estimation = await EstimationHeader.findOneAndUpdate(
       { _id: id },
       updatedInfo,
@@ -217,6 +222,7 @@ module.exports.getEstimationHeaderAtrributeById = async ({ id }) => {
       id
     ).populate({
       path: "projects",
+      populate: { path: "createdBy updatedBy" },
       options: { sort: { updatedAt: -1 } },
     });
     if (!estimationHeaderAtrribute) {
@@ -290,7 +296,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     // }
     // let result = await estimationHeaderAtrributeCalc.save();
     // return formatMongoData(result)
-    console.log(serviceData);
+    //console.log(serviceData);
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
