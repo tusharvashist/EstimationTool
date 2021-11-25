@@ -9,9 +9,10 @@ import { useParams, useLocation, Link } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
-import { display } from "@material-ui/system";
+import { display, height } from "@material-ui/system";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
+import countimg from "../../assests/team.png";
 
 const EstimationDetail = () => {
   const location = useLocation();
@@ -39,7 +40,8 @@ const EstimationDetail = () => {
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
+    useState(false);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
@@ -87,14 +89,14 @@ const EstimationDetail = () => {
 
   const saveAddRequirementsFun = () => {
     closeAddFun();
-    getById()
+    getById();
   };
 
   const getById = () => {
     getBasicDetailById(() => {
       getRequirementDataById();
     });
-  }
+  };
 
   const getBasicDetailById = (calback) => {
     //setLoader(true);
@@ -103,13 +105,13 @@ const EstimationDetail = () => {
       .then((res) => {
         // setLoader(false);
         console.log("Received data Start Setting");
-       
+
         //let dataResponse = res.data.body;
         console.log("dataResponse = res.data.body");
         setHeaderData({ ...res.data.body.basicDetails });
-         console.log("dataResponse.basicDetails");
+        console.log("dataResponse.basicDetails");
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
-         console.log("dataResponse.basicDetails.projectId");
+        console.log("dataResponse.basicDetails.projectId");
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
         console.log("Received data Start End");
         console.log("dataResponse.basicDetails.projectId.client");
@@ -144,19 +146,21 @@ const EstimationDetail = () => {
             title: "Tag",
             field: "Tag",
             editable: false,
-            id: 2
+            id: 2,
           },
           {
             title: "Description",
             field: "Description",
             editable: false,
             id: 3,
-          }
+          },
         ];
         console.log("dataResponse.title: Description");
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
         setRequirementHeaderArray(estHeaderAttribute);
-        console.log(" setRequirementHeaderArray(dataResponse.estHeaderAttribute);=");
+        console.log(
+          " setRequirementHeaderArray(dataResponse.estHeaderAttribute);="
+        );
         setRequirementDataArray(dataResponse.requirementList);
         console.log("Received getRequirementDataById End");
       })
@@ -168,11 +172,6 @@ const EstimationDetail = () => {
         // }
       });
   };
-
-
-
-
-
 
   const updateAttributeValue = async (changes) => {
     var rows = Object.values(changes);
@@ -195,9 +194,9 @@ const EstimationDetail = () => {
     });
 
     setRequirementDataArray(updatedRows);
-  
+
     if (updateEstRequirementData.length !== 0) {
-        setLoader(true);
+      setLoader(true);
       EstimationService.updateEstRequirementData(updateEstRequirementData)
         .then((res) => {
           setLoader(false);
@@ -205,7 +204,7 @@ const EstimationDetail = () => {
           getById();
         })
         .catch((err) => {
-           setLoader(false);
+          setLoader(false);
           console.log("get deleteRequirement by id error", err);
           // if ((err.response.data = 401) || (err.response.data = 404)) {
           //   let url = "/login";
@@ -232,26 +231,31 @@ const EstimationDetail = () => {
         getById();
       });
   };
+
+  const handleCountTable = () => {
+    const tableDiv = document.querySelector(".estimation-detail-count-table");
+    if (tableDiv.classList.contains("close")) {
+      tableDiv.classList.remove("close");
+      tableDiv.classList.add("open");
+    } else {
+      tableDiv.classList.add("close");
+      tableDiv.classList.remove("open");
+    }
+  };
+
   return (
-    <React.Fragment>
-      {/* 
-      {openEditConfigurationBox ? (
-        <AddRequirements
-          isOpen={openEditConfigurationBox}
-          openF={openAddFun}
-          closeF={closeFun}
-          title="Edit Requirement"
-          oktitle="Update"
-          saveFun={saveEditConfigFun}
-          requirementTagArray={requirementTagArray}
-          requirementTypeArray={requirementTypeArray}
-          project={projectDetails._id}
-          estHeader={headerData._id}
-          editData={editData}
-          cancelTitle="Cancel"
-        />
-      ) : null} 
-      */}
+    <div className="estimation-detail-cover">
+      <div className="estimation-detail-count-table">
+        <MaterialTable />
+      </div>
+      <div className="estimation-detail-button-container">
+        <button
+          onClick={handleCountTable}
+          className="estimation-detail-count-button"
+        >
+          <img src={countimg} />
+        </button>
+      </div>
       {openEditConfigurationBox ? (
         <AddRequirements
           isOpen={openEditConfigurationBox}
@@ -472,7 +476,53 @@ const EstimationDetail = () => {
           />
         )}
       </BorderedContainer>
-    </React.Fragment>
+      <Grid container justifyContent="flex-end" alignItems="center">
+        <Grid item style={{ marginRight: "10px" }}>
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                clientDetails.clientName +
+                "/" +
+                projectDetails.projectName +
+                "/createEstimate",
+              state: {
+                clientInfo: clientDetails,
+                projectInfo: projectDetails,
+                estimationHeaderId: estimationId,
+              },
+            }}
+          >
+            <Button variant="outlined" className="estimation-detail-button">
+              {" "}
+              <EditOutlined /> Edit Configuration
+            </Button>
+          </Link>
+        </Grid>
+        <Grid item>
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                clientDetails.clientName +
+                "/" +
+                projectDetails.projectName +
+                "/createEstimate",
+              state: {
+                clientInfo: clientDetails,
+                projectInfo: projectDetails,
+                estimationHeaderId: estimationId,
+              },
+            }}
+          >
+            <Button variant="outlined" className="estimation-detail-button">
+              {" "}
+              <EditOutlined /> Edit Configuration
+            </Button>
+          </Link>
+        </Grid>
+      </Grid>
+    </div>
   );
 };
 
