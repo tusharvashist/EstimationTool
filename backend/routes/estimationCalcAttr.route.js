@@ -20,7 +20,7 @@ router.get("/:id",
 //----- Update Project -----------
 router.put("/:id",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateBody(joiEstimationCalcAttrSchema.createEstimationCalcAttrSchema),
+    joiSchemaValidation.validateBody(joiEstimationCalcAttrSchema.estimationCalcAttrUpdateSchema),
     estimationCalcAttrController.estimationCalcAttrUpdate);
 
 

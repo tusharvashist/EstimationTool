@@ -97,9 +97,9 @@ module.exports = {
         estimationHeaderAtrributeCalc_ERROR: "estimationHeaderAtrributeCalc create fail",
         estimationHeaderAtrributeCalc_FETCH: "All estimationHeaderAtrributeCalc fetch successfully",
         estimationHeaderAtrributeCalc_GET_ERROR: "All estimationHeaderAtrributeCalc featch error",
-        estimationHeaderAtrributeCalc_NOT_FOUND: "estimationHeaderAtrributeCalc not found",
+        estimationHeaderAtrributeCalc_NOT_FOUND: "Record not found",
         INVALID_ID: "Invalid id",
-        estimationHeaderAtrributeCalc_UPDATE: "estimationHeaderAtrributeCalc update successfully",
+        estimationHeaderAtrributeCalc_UPDATE: "estimationHeaderAtrribute Calc record updated successfully",
         estimationHeaderAtrributeCalc_DELETE: "estimationHeaderAtrributeCalc delete successfully",
         DUPLICATE_estimationHeaderAtrributeCalc: "estimationHeaderAtrributeCalc already exist with given name.",
 

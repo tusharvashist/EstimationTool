@@ -55,8 +55,10 @@ const EstimationDetail = () => {
   }, [estimationId]);
 
   const openEditRequirement = (event, rowData) => {
+    console.log(rowData)
     const updatedRows = [requirementDataArray[rowData.tableData.id]];
     setEditData(updatedRows);
+    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>")
     openFun();
   };
 
@@ -103,13 +105,13 @@ const EstimationDetail = () => {
       .then((res) => {
         // setLoader(false);
         console.log("Received data Start Setting");
-       
+
         //let dataResponse = res.data.body;
         console.log("dataResponse = res.data.body");
         setHeaderData({ ...res.data.body.basicDetails });
-         console.log("dataResponse.basicDetails");
+        console.log("dataResponse.basicDetails");
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
-         console.log("dataResponse.basicDetails.projectId");
+        console.log("dataResponse.basicDetails.projectId");
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
         console.log("Received data Start End");
         console.log("dataResponse.basicDetails.projectId.client");
@@ -195,9 +197,9 @@ const EstimationDetail = () => {
     });
 
     setRequirementDataArray(updatedRows);
-  
+
     if (updateEstRequirementData.length !== 0) {
-        setLoader(true);
+      setLoader(true);
       EstimationService.updateEstRequirementData(updateEstRequirementData)
         .then((res) => {
           setLoader(false);
@@ -205,7 +207,7 @@ const EstimationDetail = () => {
           getById();
         })
         .catch((err) => {
-           setLoader(false);
+          setLoader(false);
           console.log("get deleteRequirement by id error", err);
           // if ((err.response.data = 401) || (err.response.data = 404)) {
           //   let url = "/login";

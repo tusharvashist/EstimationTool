@@ -27,8 +27,8 @@ module.exports.estimationCalcAttrUpdateSchema = Joi.object({
     formula: Joi.string().required(),
     operator: Joi.string().required(),
     unit: Joi.number().required(),
-    calcType: Joi.string(),
-    tag: Joi.string(),
-    formulaTags: Joi.array(),
-    value: Joi.string()
+    calcType: Joi.string().required(),
+    tag: Joi.string().required(),
+    formulaTags: Joi.array().required(),
+    value: Joi.string().required()
 })

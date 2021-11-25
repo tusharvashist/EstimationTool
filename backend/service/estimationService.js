@@ -160,6 +160,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
+    console.log(".>>>>>>....>>>>>>>." + serviceData)
     //Remove All Attributes from Estimation Header
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
       serviceData,
@@ -290,7 +291,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     // }
     // let result = await estimationHeaderAtrributeCalc.save();
     // return formatMongoData(result)
-    console.log(serviceData);
+    console.log("hi this is service data of final step " + serviceData);
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId

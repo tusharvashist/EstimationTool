@@ -10,11 +10,20 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
     calcAttribute: String,
     calcAttributeName: String,
     isFormula: Boolean,
-    formula: String,
-    operator: String,
-    unit: Number,
-    description: String,
-    value: String
+    formula: String, // percentage/ manual
+    operator: String, // %
+    unit: Number,// value e.g:20%
+    description: String, // comment
+    value: String,
+
+    tag: {
+        type: Schema.Types.ObjectId,
+        ref: 'requirementTag'
+    }, // architechture, Unit testing..are the examples
+    formulaTags: [{
+        type: Schema.Types.ObjectId,
+        ref: 'requirementTag'
+    }] // DEV+ARch+Manual+Unit testing+.....
 
 }, {
     timestamps: true,
@@ -27,5 +36,5 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
         }
     }
 })
-estimationHeaderAtrributeCalcSchema.index({ updatedAt: '-1'});
+estimationHeaderAtrributeCalcSchema.index({ updatedAt: '-1' });
 module.exports = mongoose.model("estimationHeaderAtrributeCalc", estimationHeaderAtrributeCalcSchema)
