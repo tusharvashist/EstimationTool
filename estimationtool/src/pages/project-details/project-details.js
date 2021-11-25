@@ -12,7 +12,6 @@ import ProjectEstimationsGridView from "../project/project-estimations";
 import "./project-details.css";
 import { useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useHistory } from "react-router-dom";
 
 import { Link } from "react-router-dom";
@@ -27,6 +26,7 @@ import {
   setEstimationHeaderId,
 } from "../../Redux/basicDetailRedux";
 import { setProjectId } from "../../Redux/projectRedux";
+import AddRequirements from "../estimationDetail/AddRequirements";
 
 export default function ClientDetails(props) {
   const history = useHistory();
@@ -81,6 +81,7 @@ export default function ClientDetails(props) {
   });
   const [tableDataWithoutFilter, setTableDataWithoutFilter] = useState([]);
   const [tableData, setTableData] = useState([]);
+
   useEffect(() => {
     getProjectById();
   }, []);

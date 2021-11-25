@@ -1,19 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Grid, ListItem } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
 import MaterialTable from "material-table";
+import AddRequirements from "../estimationDetail/AddRequirements";
 
 const CreateRequirements = () => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
   const projecttInfo = { ...location.state.projectInfo };
 
-  const addRequirementHandle = () => {};
+  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+
+  const openAddRequirement = () => {
+    openAddFun();
+  };
+
+  const openAddFun = () => {
+    setOpenAddRequirementsBox(true);
+  };
+
+  const closeAddFun = () => {
+    setOpenAddRequirementsBox(false);
+  };
+
+  const saveAddRequirementsFun = () => {
+    closeAddFun();
+    //getById(); // copied from estimation detail page
+  };
 
   return (
     <>
+      {openAddRequirementsBox ? (
+        <AddRequirements
+          isOpen={openAddRequirementsBox}
+          openF={openAddFun}
+          closeF={closeAddFun}
+          title="Add Requirement"
+          oktitle="Save"
+          saveFun={saveAddRequirementsFun}
+          // requirementTagArray={requirementTagArray}
+          // requirementTypeArray={requirementTypeArray}
+          // project={projectDetails._id}
+          // estHeader={headerData._id}
+          cancelTitle="Cancel"
+        />
+      ) : null}
       <BorderedContainer>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={6}>
@@ -37,7 +70,7 @@ const CreateRequirements = () => {
       </BorderedContainer>
       <Grid container justifyContent="flex-end">
         <Grid item style={{ margin: "10px" }}>
-          <Button onClick={addRequirementHandle} variant="outlined">
+          <Button onClick={openAddRequirement} variant="outlined">
             {" "}
             <AddIcon />
             Add Requirements

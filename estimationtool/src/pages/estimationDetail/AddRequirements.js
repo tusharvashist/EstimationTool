@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useImperativeHandle } from "react";
+import React, { useState, useEffect } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
 import {
@@ -11,7 +11,6 @@ import {
 import EstimationService from "./estimation.service";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-import { useHistory } from "react-router";
 
 const AddRequirements = (props) => {
   const [showError, setShowError] = React.useState(false);
@@ -19,12 +18,10 @@ const AddRequirements = (props) => {
   const [selectedRequirementTag, setSelectedRequirementTag] = useState({});
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
   const [selectedRequirementType, setSelectedRequirementType] = useState({});
-  const [isRequirementTag, setIsRequirementTag] = useState(false);
   const [requirementTitle, setrequirementTitle] = useState("");
   const [requirementDescription, setrequirementDescription] = useState("");
   const [editData, setEditData] = useState([]);
   const [id, setId] = useState("");
-  const history = useHistory();
   const [formData, setFormData] = React.useState({
     title: "",
     description: "",
@@ -114,6 +111,7 @@ const AddRequirements = (props) => {
       isDeleted: false,
     });
   };
+
   const handelRequirement = (event) => {
     setrequirementTitle(event.target.value);
   };
@@ -121,12 +119,14 @@ const AddRequirements = (props) => {
   const handelDescription = (event) => {
     setrequirementDescription(event.target.value);
   };
+
   const handleRequirementTagChange = (event) => {
     const selectedValueObj = requirementTagArray.find(
       (el) => el._id === event.target.value
     );
     setSelectedRequirementTag(selectedValueObj);
   };
+
   const handleRequirementTypeChange = (event) => {
     const selectedValueObj = requirementTypeArray.find(
       (el) => el._id === event.target.value
@@ -139,7 +139,7 @@ const AddRequirements = (props) => {
   useEffect(() => {
     setRequirementTagArray([...props.requirementTagArray]);
     setRequirementTypeArray([...props.requirementTypeArray]);
-    console.log("props.editData0", props.editData);
+
     if (props.editData) {
       setEditData(props.editData);
       setrequirementTitle(props.editData[0].Requirement);
@@ -159,21 +159,11 @@ const AddRequirements = (props) => {
     editData,
   ]);
 
-  console.log(
-    "Edit data ----- :",
-    editData,
-    "selectedRequirementTag: ",
-    selectedRequirementTag,
-    "selectedRequirementType : ",
-    selectedRequirementType
-  );
-
   const { message, severity, open } = isOpen || {};
   const handleClose = () => {
     setOpen({});
   };
-  console.log(requirementTypeArray);
-  console.log(requirementTagArray);
+
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}
@@ -252,6 +242,45 @@ const AddRequirements = (props) => {
             value={requirementDescription}
             onChange={(e) => {
               handelDescription(e);
+            }}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={showError && !requirementDescription} //To be chnaged for Query
+            id="standard-basic"
+            label="Query"
+            className="full-width"
+            value={requirementDescription} //To be chnaged for Query
+            onChange={(e) => {
+              handelDescription(e); //To be chnaged for Query
+            }}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={showError && !requirementDescription} //To be chnaged for Assumption
+            id="standard-basic"
+            label="Assumption"
+            className="full-width"
+            value={requirementDescription} //To be chnaged for Assumption
+            onChange={(e) => {
+              handelDescription(e); //To be chnaged for Assumption
+            }}
+            variant="outlined"
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            error={showError && !requirementDescription} //To be chnaged for Reply
+            id="standard-basic"
+            label="Reply"
+            className="full-width"
+            value={requirementDescription} //To be chnaged for Reply
+            onChange={(e) => {
+              handelDescription(e); //To be chnaged for Reply
             }}
             variant="outlined"
           />
