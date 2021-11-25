@@ -58,30 +58,42 @@ const AddCalAttributeDialog = (props) => {
     setFormData({ ...newObject });
   };
   const handleCalcType = (e) => {
+    if (e.target.value !== '') {
     let newObject = { ...formData };
     newObject.calcType = e.target.value;
     setFormData({ ...newObject });
+    } else {
+      setShowError(true)
+    }
   };
   const handleTag = (e) => {
+    if (e.target.value !== '') {
     let newObject = { ...formData };
     newObject.tag = e.target.value;
     setFormData({ ...newObject });
+    } else {
+      setShowError(true)
+    }
   };
 
 
   const onSubmitForm = (e) => {
     if (calcType == "per") {
-      if (formData.calcAttributeName && formData.formula) {
+      if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags[0] !== '') {
         props.saveFun({ ...formData });
       } else {
         setShowError(true);
       }
     } else {
+      if (formData.calcAttributeName  && formData.tag && formData.calcType) {
       let newObject = { ...formData };
       newObject.unit = 0;
       newObject.formulaTags = [""];
       setFormData({ ...newObject });
       props.saveFun({ ...formData });
+      } else {
+        setShowError(true)
+      }
     }
   };
 
@@ -97,6 +109,7 @@ const AddCalAttributeDialog = (props) => {
   };
 
   const handleMultiSelect = (value) => {
+
     let newObject = { ...formData };
 
     newObject.formulaTags = value.map((data) => {
@@ -136,6 +149,7 @@ const AddCalAttributeDialog = (props) => {
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
             <Select
+            error={showError && !tag}
               onChange={handleTag}
               value={requirementTagArray.id}
               label={requirementTagArray.name}
@@ -153,7 +167,7 @@ const AddCalAttributeDialog = (props) => {
         <Grid item xs={12}>
           <FormControl className={classes.formControl}>
             <InputLabel> Calculation Type</InputLabel>
-            <Select onChange={handleCalcType} >
+            <Select onChange={handleCalcType} error={showError && !calcType}>
               <MenuItem value="man">Manual</MenuItem>
               <MenuItem value="per">Percentage</MenuItem>
             </Select>
@@ -167,7 +181,7 @@ const AddCalAttributeDialog = (props) => {
               <TextField
                 required
                 error={showError && !unit}
-                helperText={showError ? "Please enter only b/w 1-100" : ""}
+                helperText={showError ? "Enter b/w 1-100" : ""}
                 id="standard-basic"
                 label="Value"
                 className="full-width"
@@ -191,7 +205,6 @@ const AddCalAttributeDialog = (props) => {
                 id="tags-standard"
                 options={multiselectOptions}
                 getOptionLabel={(option) => option.name}
-
                 onChange={(e, value) => handleMultiSelect(value)}
                 renderInput={(params) => (
                   <TextField
@@ -200,6 +213,10 @@ const AddCalAttributeDialog = (props) => {
                     value={params.id}
                     label="Tags"
                     placeholder="Tags..."
+                    required
+                    error={showError && !formulaTags}
+                    helperText={showError ? "Select one tag atleast" : ""}
+    
                   />
                 )}
               />
