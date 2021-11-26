@@ -85,7 +85,8 @@ module.exports.estimationDelete = async ({ id }) => {
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
     let estimations = await EstimationHeader.find( {isDeleted: false})
-      .or([{createdBy: global.loginId}, {updatedBy: global.loginId }])
+      //TODO: Please do not remove below liine , will implement this when implement permission based things
+      //.or([{createdBy: global.loginId}, {updatedBy: global.loginId }])
       .populate({
         path: "projectId",
         match: { isDeleted: false },
@@ -166,6 +167,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
+    console.log(".>>>>>>....>>>>>>>." + serviceData)
     //Remove All Attributes from Estimation Header
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
       serviceData,
@@ -176,6 +178,7 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
       );
       if (estimation) {
         estimation.estStep = "2";
+        estimation.updatedBy = global.loginId;
         estimation.save();
       }
       let resultdelete = await EstimationHeaderAtrribute.deleteMany({
@@ -185,6 +188,8 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
         serviceData,
         (forceServerObjectId = true)
       );
+
+
 
       return formatMongoData(result);
     } else
@@ -297,13 +302,14 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     // }
     // let result = await estimationHeaderAtrributeCalc.save();
     // return formatMongoData(result)
-    //console.log(serviceData);
+    console.log("hi this is service data of final step " + serviceData);
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
       );
       if (estimation) {
         estimation.estStep = "3";
+        estimation.updatedBy = global.loginId;
         estimation.save();
       }
       let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({

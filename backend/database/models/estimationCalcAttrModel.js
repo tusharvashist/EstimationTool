@@ -20,7 +20,7 @@ const estimationCalcAttrSchema = new mongoose.Schema({
         ref: 'requirementTag'
     },
     formulaTags: [{
-        type: Schema.Types.Array,
+        type: Schema.Types.ObjectId,
         ref: 'requirementTag'
     }]
 
