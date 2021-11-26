@@ -13,7 +13,7 @@ import { display, height } from "@material-ui/system";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
 import countimg from "../../assests/team.png";
-
+import {EstimationHeader,ClientProjectHeader} from "./HeaderElement";
 const EstimationDetail = () => {
   const location = useLocation();
   const history = useHistory();
@@ -313,93 +313,8 @@ const EstimationDetail = () => {
           </Link>
         </Box>
       </Container>
-      <BorderedContainer>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              {" "}
-              <span className="title-stl"> Estimation Name : </span>{" "}
-              {headerData.estName}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              {" "}
-              <span className="title-stl"> Estimation Type :</span>{" "}
-              {headerData.estTypeId.estType}
-            </p>
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          justify="space-between"
-          alignItems="center"
-          className="block-section"
-        >
-          <p>
-            <span className="section-title"></span>
-          </p>
-        </Grid>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              <span className="title-stl"> Effort Unit : </span>
-              {headerData.effortUnit}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              <span className="title-stl"> Total Cost :</span> ${" "}
-              {headerData.totalCost}{" "}
-            </p>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
-      <BorderedContainer>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              {" "}
-              <span className="title-stl"> Client Name :</span>{" "}
-              {clientDetails.clientName}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              {" "}
-              <span className="title-stl"> Client Website :</span>{" "}
-              <a target="blank" href={`//${clientDetails.website}`}>
-                {" "}
-                {clientDetails.website}
-              </a>
-            </p>
-          </Grid>
-        </Grid>
-        <Grid
-          container
-          justify="space-between"
-          alignItems="center"
-          className="block-section"
-        >
-          <p>
-            <span className="section-title"></span>
-          </p>
-        </Grid>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              <span className="title-stl"> Project Name : </span>
-              {projectDetails.projectName}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              <span className="title-stl"> Business Domain :</span>{" "}
-              {projectDetails.domain}{" "}
-            </p>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
+      <EstimationHeader data={headerData} />
+      <ClientProjectHeader client={clientDetails} project={ projectDetails} />
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
           <Button

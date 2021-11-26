@@ -22,9 +22,7 @@ module.exports.create = async (serviceData) => {
     let requirementId = '';
     const findRecord = await ProjectRequirement.find({ title: projectRequirement.title }, { project: projectRequirement.project });
     if(findRecord.length != 0){
-      requirementId = findRecord[0]._id;
-        
-              
+      requirementId = findRecord[0]._id;    
       }else {
       let result = await projectRequirement.save();
       requirementId = result._id;

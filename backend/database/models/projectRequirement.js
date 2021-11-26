@@ -21,7 +21,13 @@ const projectRequirementSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'ProjectMaster',
         required: true
-    }
+    },
+    queryAssumption:[ {
+        type: Schema.Types.ObjectId,
+        ref: 'QueryAssumption',
+        required: true
+    }]
+    
 }, {
     timestamps: true,
     toObject: {
