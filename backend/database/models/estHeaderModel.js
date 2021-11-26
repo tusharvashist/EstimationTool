@@ -47,6 +47,7 @@ const estimationHeaderSchema = new mongoose.Schema({
         ref: 'user'
     },
     estStep: String,
+    estTentativeTimeline: Number,
 }, {
     timestamps: true,
     toObject: {
