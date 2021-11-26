@@ -5,7 +5,8 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import AddIcon from "@material-ui/icons/Add";
 import MaterialTable from "material-table";
 import AddRequirements from "../estimationDetail/AddRequirements";
-
+import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
+import { RequirementTableWithFilter} from "./RequirementTable"
 const CreateRequirements = () => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
@@ -47,27 +48,9 @@ const CreateRequirements = () => {
           cancelTitle="Cancel"
         />
       ) : null}
-      <BorderedContainer>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
-            <ListItem>Client Name: {clientInfo.clientName}</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>
-              Client Website:&nbsp;
-              <a target="_blank" href={`//${clientInfo.website}`}>
-                {clientInfo.website}
-              </a>
-            </ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Project Name: {projecttInfo.projectName}</ListItem>
-          </Grid>
-          <Grid item xs={6}>
-            <ListItem>Business Domain: {projecttInfo.domain}</ListItem>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
+
+       <ClientProjectHeader client={clientInfo} project={ projecttInfo} />
+    
       <Grid container justifyContent="flex-end">
         <Grid item style={{ margin: "10px" }}>
           <Button onClick={openAddRequirement} variant="outlined">
@@ -78,7 +61,7 @@ const CreateRequirements = () => {
         </Grid>
       </Grid>
       <BorderedContainer>
-        <MaterialTable />
+        <RequirementTableWithFilter />
       </BorderedContainer>
     </>
   );

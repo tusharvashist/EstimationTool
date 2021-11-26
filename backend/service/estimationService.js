@@ -84,8 +84,9 @@ module.exports.estimationDelete = async ({ id }) => {
 
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
-    let estimations = await EstimationHeader.find({ isDeleted: false })
-      .or([{ createdBy: global.loginId }, { updatedBy: global.loginId }])
+    let estimations = await EstimationHeader.find( {isDeleted: false})
+      //TODO: Please do not remove below liine , will implement this when implement permission based things
+      //.or([{createdBy: global.loginId}, {updatedBy: global.loginId }])
       .populate({
         path: "projectId",
         match: { isDeleted: false },
@@ -177,6 +178,7 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
       );
       if (estimation) {
         estimation.estStep = "2";
+        estimation.updatedBy = global.loginId;
         estimation.save();
       }
       let resultdelete = await EstimationHeaderAtrribute.deleteMany({
@@ -186,6 +188,8 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
         serviceData,
         (forceServerObjectId = true)
       );
+
+
 
       return formatMongoData(result);
     } else
@@ -307,6 +311,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
       console.log("hi this is service data of final step " + estimation)
       if (estimation) {
         estimation.estStep = "3";
+        estimation.updatedBy = global.loginId;
         estimation.save();
       }
       let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({
