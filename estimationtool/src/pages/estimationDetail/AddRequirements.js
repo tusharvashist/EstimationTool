@@ -20,6 +20,12 @@ const AddRequirements = (props) => {
   const [selectedRequirementType, setSelectedRequirementType] = useState({});
   const [requirementTitle, setrequirementTitle] = useState("");
   const [requirementDescription, setrequirementDescription] = useState("");
+
+  const [query, setQuery] = useState("");
+  const [assumption, setAssumption] = useState("");
+  const [reply, setReply] = useState("");
+  
+
   const [editData, setEditData] = useState([]);
   const [id, setId] = useState("");
   const [formData, setFormData] = React.useState({
@@ -42,6 +48,9 @@ const AddRequirements = (props) => {
     requirementDescription,
     selectedRequirementTag,
     selectedRequirementType,
+    reply,
+    query,
+    assumption
   ]);
 
   const onSubmitForm = (e) => {
@@ -109,6 +118,9 @@ const AddRequirements = (props) => {
       project: props.project,
       estHeader: props.estHeader,
       isDeleted: false,
+      query: query,
+      assumption: assumption,
+      reply: reply,
     });
   };
 
@@ -118,6 +130,15 @@ const AddRequirements = (props) => {
 
   const handelDescription = (event) => {
     setrequirementDescription(event.target.value);
+  };
+  const handelAssumption= (event) => {
+    setAssumption(event.target.value);
+  };
+    const handelReply= (event) => {
+    setReply(event.target.value);
+  };
+    const handelQuery = (event) => {
+    setQuery(event.target.value);
   };
 
   const handleRequirementTagChange = (event) => {
@@ -248,39 +269,39 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !requirementDescription} //To be chnaged for Query
+            error={showError && !query} //To be chnaged for Query
             id="standard-basic"
             label="Query"
             className="full-width"
-            value={requirementDescription} //To be chnaged for Query
+            value={query} //To be chnaged for Query
             onChange={(e) => {
-              handelDescription(e); //To be chnaged for Query
+              handelQuery(e); //To be chnaged for Query
             }}
             variant="outlined"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !requirementDescription} //To be chnaged for Assumption
+            error={showError && !assumption} //To be chnaged for Assumption
             id="standard-basic"
             label="Assumption"
             className="full-width"
-            value={requirementDescription} //To be chnaged for Assumption
+            value={assumption} //To be chnaged for Assumption
             onChange={(e) => {
-              handelDescription(e); //To be chnaged for Assumption
+              handelAssumption(e); //To be chnaged for Assumption
             }}
             variant="outlined"
           />
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !requirementDescription} //To be chnaged for Reply
+            error={showError && !reply} //To be chnaged for Reply
             id="standard-basic"
             label="Reply"
             className="full-width"
-            value={requirementDescription} //To be chnaged for Reply
+            value={reply} //To be chnaged for Reply
             onChange={(e) => {
-              handelDescription(e); //To be chnaged for Reply
+              handelReply(e); //To be chnaged for Reply
             }}
             variant="outlined"
           />

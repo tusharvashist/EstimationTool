@@ -13,7 +13,9 @@ import { display, height } from "@material-ui/system";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
 import countimg from "../../assests/team.png";
-import {EstimationHeader,ClientProjectHeader} from "./HeaderElement";
+import { EstimationHeader, ClientProjectHeader } from "./HeaderElement";
+
+
 const EstimationDetail = () => {
   const location = useLocation();
   const history = useHistory();

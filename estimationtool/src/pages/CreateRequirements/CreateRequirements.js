@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { Button, Grid, ListItem } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -7,12 +7,38 @@ import MaterialTable from "material-table";
 import AddRequirements from "../estimationDetail/AddRequirements";
 import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
 import { RequirementTableWithFilter} from "./RequirementTable"
+import  RequirementService from "./requirement.service"
+
 const CreateRequirements = () => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
-  const projecttInfo = { ...location.state.projectInfo };
+  const projectsInfo = { ...location.state.projectInfo };
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
 
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+
+  useEffect(() => {
+    getBasicDetailById();
+  },[]);
+
+
+  
+
+  const getBasicDetailById = () => {
+    RequirementService.getTagsType()
+      .then((res) => {
+      //  setHeaderData({ ...res.data.body.basicDetails           });
+        setRequirementTagArray([...res.data.body.requirementTag]);
+        setRequirementTypeArray([...res.data.body.requirementType]);
+
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
+  };
+
+
 
   const openAddRequirement = () => {
     openAddFun();
@@ -28,7 +54,6 @@ const CreateRequirements = () => {
 
   const saveAddRequirementsFun = () => {
     closeAddFun();
-    //getById(); // copied from estimation detail page
   };
 
   return (
@@ -41,15 +66,15 @@ const CreateRequirements = () => {
           title="Add Requirement"
           oktitle="Save"
           saveFun={saveAddRequirementsFun}
-          // requirementTagArray={requirementTagArray}
-          // requirementTypeArray={requirementTypeArray}
-          // project={projectDetails._id}
-          // estHeader={headerData._id}
+          requirementTagArray={requirementTagArray}
+          requirementTypeArray={requirementTypeArray}
+          project={projectsInfo._id}
+          estHeader={""}
           cancelTitle="Cancel"
         />
       ) : null}
 
-       <ClientProjectHeader client={clientInfo} project={ projecttInfo} />
+       <ClientProjectHeader client={clientInfo} project={ projectsInfo} />
     
       <Grid container justifyContent="flex-end">
         <Grid item style={{ margin: "10px" }}>
