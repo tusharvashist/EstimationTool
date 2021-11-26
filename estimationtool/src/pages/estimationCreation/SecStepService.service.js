@@ -23,7 +23,7 @@ const ClientService = {
     let url = Url.saveCalcAttribute;
     return axios.post(url, attributeData);
   },
-
+  updateCalculativeAttribute: function () {}
 
 };
 export default ClientService;

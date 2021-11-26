@@ -1,14 +1,12 @@
 import {
+  Select,
+  MenuItem,
   Button,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   FormGroup,
   FormLabel,
   Grid,
   InputLabel,
-  ListItem,
-  NativeSelect,
   TextField,
 } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
@@ -29,16 +27,31 @@ import classes from "./thirdStepStyle.module.css";
 import { useHistory } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 
+
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
   const saveCalcAttribute = useSelector((state) => state.calcAttribute);
   const [loaderComponent, setLoader] = useLoader();
   const history = useHistory();
   const dispatch = useDispatch();
+  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
 
+  const [openModal, setOpenModal] = useState(null);
+  const [details, setDetails] = useState({})
+
+  const [attributes, setAttributes] = useState([]);
+
+  const [isOpen, setOpen] = React.useState({});
+  const [calAttriValues, setcalAttriValues] = useState(null);
+  const [allCalcValues, setAllCalcValues] = useState([]);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [multiselectOptions, setmultiselectOptions] = useState([]);
+  const [tagData, setTagData] = useState([]);
+  const [multiSelectData, setmultiSelectData] = useState([]);
   useEffect(() => {
     getCalcAttribute();
     passHeaderId();
+    getAllRequirementTags();
   }, []);
 
   const updateStore = (list) => {
@@ -53,6 +66,9 @@ const ThirdStep = (props) => {
           operator,
           unit,
           description,
+          formulaTags,
+          tag,
+          calcType
         }) => ({
           estHeaderId: localStorage.estimationHeaderId,
           calcAttribute,
@@ -62,6 +78,9 @@ const ThirdStep = (props) => {
           operator,
           unit,
           description,
+          formulaTags,
+          tag,
+          calcType
         })
       );
     dispatch(setCalcAttributeData(newList));
@@ -78,6 +97,7 @@ const ThirdStep = (props) => {
 
         let dataResponse = res.data.body;
         setAllCalcValues(dataResponse);
+     
         let calAttriValues = {};
         setAttributes(
           dataResponse.map((ob) => {
@@ -89,6 +109,11 @@ const ThirdStep = (props) => {
             };
           })
         );
+        // let tagObj = {
+        //   id: dataResponse.tag._id,
+        //   name: dataResponse.tag.name
+        // }
+        // setTagData(tagObj)
         setcalAttriValues(calAttriValues);
         updateStore(dataResponse);
       })
@@ -96,37 +121,48 @@ const ThirdStep = (props) => {
         console.log("Not getting Attribute", err);
       });
   };
-  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
 
-  const [openAddCalAttributeBox, setOpenAddCalAttributeBox] = useState(false);
-  const [openEditCalAttributeBox, setOpenEditCalAttributeBox] = useState(false);
 
-  const [attributes, setAttributes] = useState([]);
-
-  const [isOpen, setOpen] = React.useState({});
-  const [calAttriValues, setcalAttriValues] = useState(null);
-  const [allCalcValues, setAllCalcValues] = useState([]);
-  const openAddCalAttribute = () => {
-    openFun();
+  console.log("attributes", attributes)
+  const getAllRequirementTags = () => {
+    SecondStepServ.getAllRequirementTag()
+      .then((res) => {
+        setRequirementTagArray(res.data.body);
+        setmultiselectOptions(res.data.body);
+      })
+      .catch((err) => { });
   };
 
-  const openFun = () => {
-    setOpenAddCalAttributeBox(true);
+  const openAddCalAttribute = () => {
+    openFun("Add");
+  };
+
+  const openFun = (type) => {
+    if (type)
+      setOpenModal({ open: true, type })
   };
   const closeFun = () => {
-    setOpenAddCalAttributeBox(false);
+    setDetails({});
+    setOpenModal(null);
   };
   const saveAddCalAttributeFun = (data) => {
-    createCalAttribute(data);
+    saveCalAttribute(data);
   };
 
-  const createCalAttribute = (data) => {
+  const saveCalAttribute = (data) => {
+
+    if (data._id === undefined) {
+      let newObject = { ...data };
+      newObject.estTypeId = props.estimationTypeId;
+      createCalcAttribute(newObject)
+    } else {
+      updateCalcAttribute(data)
+    }
+  };
+
+  const createCalcAttribute = (data) => {
     setLoader(true);
-
-    let newObject = { ...data };
-
-    newObject.estTypeId = props.estimationTypeId;
-    SecondStepServ.createCalAttribute(newObject)
+    SecondStepServ.createCalAttribute(data)
       .then((res) => {
         setLoader(false);
         setOpen({ open: true, severity: "success", message: res.data.message });
@@ -140,48 +176,74 @@ const ThirdStep = (props) => {
           message: err.response.data.message,
         });
       });
-  };
+  }
 
-  // const createProject = (projectData) => {
-  //   ProjectSer.createProject(projectData)
-  //     .then((res) => {
-  //       getClientById();
-  //       setOpen({ open: true, severity: "success", message: res.data.message });
-  //       closeFun();
-  //     })
-  //     .catch((err) => {
-  //       setOpen({ open: true, severity: "error", message: err.message });
-  //     });
-  // };
+  const updateCalcAttribute = (data) => {
 
+    console.log("updateddata", data)
+    let tagObj = {
+      id: data.tag._id,
+      name: data.tag.name
+    }
+    setTagData(tagObj);
+    let multiArray = [];
+    if (data.formulaTags.length > 1) {
+    let multiDataObj = data.formulaTags.map(item =>
+      {
+        let filter = {
+          id:item
+        }
+        multiArray.push(filter)
+      }
+      )
+      console.log("multiarray",multiArray)
+      let setSelectedData = multiselectOptions.find(x => multiArray.map(req => req.id === x.id))
+    setmultiSelectData(setSelectedData)
+  } else {
+    let obj = {
+      id: data.formulaTags._id,
+      name: data.formulaTags.name
+    }
+    setmultiSelectData(obj)
+  }
+
+    setAttributes(attributes.map((att) => {
+      if (att._id === data._id) {
+        return { ...data, name: data.calcAttributeName, label: data.calcAttributeName };
+      } else {
+        return { ...att }
+      }
+    }));
+    closeFun();
+  }
   const handleClose = () => {
     setOpen({});
   };
 
   const onChangeField =
     ({ data }) =>
-    ({ target }) => {
-      setAttributes(
-        attributes.map((obj) => {
+      ({ target }) => {
+        setAttributes(
+          attributes.map((obj) => {
+            if (obj._id === data._id) {
+              const newobj = { ...obj, [target.name]: target.value };
+              return newobj;
+            } else {
+              return obj;
+            }
+          })
+        );
+        const newData = attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        })
-      );
-      const newData = attributes.map((obj) => {
-        if (obj._id === data._id) {
-          const newobj = { ...obj, [target.name]: target.value };
-          return newobj;
-        } else {
-          return obj;
-        }
-      });
-      setAttributes(newData);
-      updateStore(newData);
-    };
+        });
+        setAttributes(newData);
+        updateStore(newData);
+      };
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -201,51 +263,27 @@ const ThirdStep = (props) => {
     props.getHeaderId(localStorage.estimationHeaderId);
   };
 
-  const options = [
-    { key: "Option 1", title: "Group 1" },
-    { key: "Option 2", title: "Group 2" },
-    { key: "Option 3", title: "Group 3" },
-    { key: "Option 4", title: "Group 4" },
-    { key: "Option 5", title: "Group 5" },
-    { key: "Option 6", title: "Group 6" },
-    { key: "Option 7", title: "Group 7" },
-  ];
 
-  const openEditCalBox = () => {
-    openEditFun();
-  };
-  const openEditFun = () => {
-    setOpenEditCalAttributeBox(true);
-  };
-  const closeEditFun = () => {
-    setOpenEditCalAttributeBox(false);
+  const openEditCalBox = (data) => {
+    setDetails(data)
+    openFun('Edit');
   };
 
   return (
     <React.Fragment>
-      {openAddCalAttributeBox ? (
+      {openModal && openModal.open ? (
         <AddCalAttributeDialog
-          isOpen={openAddCalAttributeBox}
+          isOpen={openModal.open}
+          id={details._id}
+          details={details}
           openF={openFun}
           closeF={closeFun}
-          title="Add Calculated Attributes"
+          title={`${openModal.type} Calculated Attributes`}
           oktitle="Save"
           saveFun={saveAddCalAttributeFun}
           cancelTitle="Cancel"
         />
       ) : null}
-      {openEditCalAttributeBox ? (
-        <EditCalAttributeDialog
-          isOpen={openEditCalAttributeBox}
-          openF={openEditFun}
-          closeF={closeEditFun}
-          title="Edit Calculated Attributes"
-          oktitle="Update"
-          saveFun={saveAddCalAttributeFun} //Update
-          cancelTitle="Cancel"
-        />
-      ) : null}
-
       <Grid
         container
         rowSpacing={1}
@@ -284,15 +322,25 @@ const ThirdStep = (props) => {
                       <>
                         <div
                           className={classes.fields}
-                          onClick={openEditCalBox}
+                          onClick={() => { openEditCalBox(data) }}
                         >
-                          <TextField
-                            className={classes.attributeTag}
+
+                          
+                          <Select
+                          placeholder="Tag"
                             disabled
-                            variant="outlined"
-                            name="attribute"
-                            value="Architect"
-                          />
+                            defaultValue={tagData}
+                            value={requirementTagArray.id}
+                            label={requirementTagArray.name}
+                            required
+                          >
+                            {requirementTagArray.map((item) => (
+                              <MenuItem key={item.name} value={item.id}>
+                                {item.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+
                           <TextField
                             className={classes.percent}
                             style={{ minWidth: "80px" }}
@@ -310,7 +358,7 @@ const ThirdStep = (props) => {
                               symbolsArr.includes(evt.key) &&
                               evt.preventDefault()
                             }
-                            // pattern="\b([0-9]|[1-9][0-9])\b"
+                          // pattern="\b([0-9]|[1-9][0-9])\b"
                           />
                           <p className={classes.pof}>% of</p>
                           <Autocomplete
@@ -318,15 +366,16 @@ const ThirdStep = (props) => {
                             disabled
                             multiple
                             id="tags-standard"
-                            options={options}
-                            getOptionLabel={(option) => option.title}
-                            defaultValue={[options[1]]}
+                            options={multiselectOptions}
+                            getOptionLabel={(option) => option.name}
+                            defaultValue={multiSelectData}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
+                                value={params.id}
                                 variant="standard"
-                                label="Tags"
-                                placeholder="Tags..."
+                                label="Formula Tags"
+                                placeholder="Formula Tags..."
                               />
                             )}
                           />
