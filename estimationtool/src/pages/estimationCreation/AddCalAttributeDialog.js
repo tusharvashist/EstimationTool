@@ -59,18 +59,18 @@ const AddCalAttributeDialog = (props) => {
   };
   const handleCalcType = (e) => {
     if (e.target.value !== '') {
-    let newObject = { ...formData };
-    newObject.calcType = e.target.value;
-    setFormData({ ...newObject });
+      let newObject = { ...formData };
+      newObject.calcType = e.target.value;
+      setFormData({ ...newObject });
     } else {
       setShowError(true)
     }
   };
   const handleTag = (e) => {
     if (e.target.value !== '') {
-    let newObject = { ...formData };
-    newObject.tag = e.target.value;
-    setFormData({ ...newObject });
+      let newObject = { ...formData };
+      newObject.tag = e.target.value;
+      setFormData({ ...newObject });
     } else {
       setShowError(true)
     }
@@ -85,12 +85,13 @@ const AddCalAttributeDialog = (props) => {
         setShowError(true);
       }
     } else {
-      if (formData.calcAttributeName  && formData.tag && formData.calcType) {
-      let newObject = { ...formData };
-      newObject.unit = 0;
-      newObject.formulaTags = [""];
-      setFormData({ ...newObject });
-      props.saveFun({ ...formData });
+      if (formData.calcAttributeName && formData.tag && formData.calcType) {
+        let newObject = { ...formData };
+        console.log(".....hi......." + newObject)
+        newObject.unit = 0;
+        newObject.formulaTags = [];
+        setFormData({ ...newObject });
+        props.saveFun({ ...formData });
       } else {
         setShowError(true)
       }
@@ -149,7 +150,7 @@ const AddCalAttributeDialog = (props) => {
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
             <Select
-            error={showError && !tag}
+              error={showError && !tag}
               onChange={handleTag}
               value={requirementTagArray.id}
               label={requirementTagArray.name}
@@ -216,7 +217,7 @@ const AddCalAttributeDialog = (props) => {
                     required
                     error={showError && !formulaTags}
                     helperText={showError ? "Select one tag atleast" : ""}
-    
+
                   />
                 )}
               />
