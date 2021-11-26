@@ -7,7 +7,7 @@ module.exports.getallEstimationTemplateCalcAttr = Joi.object({
     esttype: Joi.string(),
     estheaderid: Joi.string()
 })
-module.exports.sstimationTemplateCalcAttrUpdateSchema = Joi.object({
+module.exports.estimationTemplateCalcAttrUpdateSchema = Joi.object({
     estCalcId: Joi.string().required(),
     estTypeId: Joi.string().required()
 })
