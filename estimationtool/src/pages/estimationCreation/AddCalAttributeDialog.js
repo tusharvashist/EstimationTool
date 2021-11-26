@@ -13,27 +13,20 @@ import EstimationService from "../estimationDetail/estimation.service";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Autocomplete from "@mui/material/Autocomplete";
 
-const useStyles = makeStyles((theme) => ({
-  formControl: { maxWidth: 400 },
-}));
+
+
 
 const AddCalAttributeDialog = (props) => {
-  useEffect(() => {
-    getAllRequirementTags();
-  }, []);
-
-  const [multiselectOptions, setmultiselectOptions] = useState([]);
-
-  const getAllRequirementTags = () => {
-    SecondStepServ.getAllRequirementTag()
-      .then((res) => {
-        setRequirementTagArray(res.data.body);
-        setmultiselectOptions(res.data.body);
-      })
-      .catch((err) => { });
-  };
+  const useStyles = makeStyles((theme) => ({
+    formControl: { maxWidth: 400 },
+  }));
   const classes = useStyles();
-
+  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
+  const [showError, setShowError] = useState(false);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [multiselectOptions, setmultiselectOptions] = useState([]);
+  const [selectTagValue, setSelectTagValue] = useState();
+  const [multiTagValue, setMultiSelectTag] = useState();
 
   const [formData, setFormData] = React.useState({
     estTypeId: null,
@@ -48,55 +41,92 @@ const AddCalAttributeDialog = (props) => {
     calcType: "",
     tag: "",
   });
-  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
-  const [showError, setShowError] = useState(false);
-  const [requirementTagArray, setRequirementTagArray] = useState([]);
 
-  const handelCalAttributeName = (e) => {
-    let newObject = { ...formData };
-    newObject.calcAttributeName = e.target.value;
-    setFormData({ ...newObject });
-  };
-  const handleCalcType = (e) => {
-    if (e.target.value !== '') {
-    let newObject = { ...formData };
-    newObject.calcType = e.target.value;
-    setFormData({ ...newObject });
-    } else {
-      setShowError(true)
-    }
-  };
-  const handleTag = (e) => {
-    if (e.target.value !== '') {
-    let newObject = { ...formData };
-    newObject.tag = e.target.value;
-    setFormData({ ...newObject });
-    } else {
-      setShowError(true)
-    }
+  useEffect(() => {
+    getAllRequirementTags();
+    setEditData()
+  }, []);
+
+  // API Calling
+  const getAllRequirementTags = () => {
+    SecondStepServ.getAllRequirementTag()
+      .then((res) => {
+        setRequirementTagArray(res.data.body);
+        setmultiselectOptions(res.data.body);
+      })
+      .catch((err) => { });
   };
 
 
-  const onSubmitForm = (e) => {
-    if (calcType == "per") {
-      if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags[0] !== '') {
-        props.saveFun({ ...formData });
-      } else {
-        setShowError(true);
+  // Set Edit Data
+
+  const setEditData = () => {
+    if (props.id) {
+      console.log("props",props)
+
+      setFormData({ ...formData, ...props.details })
+         let obj = { ...props.details };
+     obj.tag= {id:props.details.tag._id, name:props.details.tag.name}
+     
+      setSelectTagValue(obj.tag.id)
+    let  objNew = { ...props.details };
+    let arry = [];
+    
+    if (objNew.formulaTags.length === 1) {
+      let obj = {
+        id: objNew.formulaTags[0]._id,
+        name: objNew.formulaTags[0].name
       }
+      arry.push(obj)
+      setMultiSelectTag(arry)
     } else {
-      if (formData.calcAttributeName  && formData.tag && formData.calcType) {
+      let newFilteredArray = []
+      multiselectOptions.forEach((ele) => {
+        if(ele.includes(objNew.formulaTags)) {
+          newFilteredArray.push(ele)
+        }
+      })
+ console.log("filteredarray",newFilteredArray)
+    }
+    }
+  }
+  
+
+  // Submit form
+  const onSubmitForm = (e) => {
+    if (calcType == "percentage") {
+      getValuePercentage()
+    } else {
+      getValueManual()
+    }
+  };
+
+  // selecting value percentage
+
+  const getValuePercentage = () => {
+    if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length !== 0) {
+      props.saveFun({ ...formData });
+    } else {
+      setShowError(true);
+    }
+  }
+
+  //  selecting value manual
+
+  const getValueManual = () => {
+    if (formData.calcAttributeName && formData.tag && formData.calcType) {
       let newObject = { ...formData };
       newObject.unit = 0;
       newObject.formulaTags = [""];
       setFormData({ ...newObject });
-      props.saveFun({ ...formData });
-      } else {
-        setShowError(true)
-      }
+      props.saveFun({ ...newObject });
+    } else {
+      setShowError(true)
     }
-  };
+  }
 
+
+  //  Handle Validation
   const handelFormula = (e) => {
     if (e.target.value > 99) {
       setShowError(true);
@@ -119,6 +149,32 @@ const AddCalAttributeDialog = (props) => {
     setFormData({ ...newObject });
   };
 
+
+  const handelCalAttributeName = (e) => {
+    let newObject = { ...formData };
+    newObject.calcAttributeName = e.target.value;
+    setFormData({ ...newObject });
+  };
+
+  const handleCalcType = (e) => {
+    if (e.target.value !== '') {
+      let newObject = { ...formData };
+      newObject.calcType = e.target.value;
+      setFormData({ ...newObject, unit: 0 });
+    } else {
+      setShowError(true)
+    }
+  };
+
+  const handleTag = (e) => {
+    if (e.target.value !== '') {
+      let newObject = { ...formData };
+      newObject.tag = e.target.value;
+      setFormData({ ...newObject });
+    } else {
+      setShowError(true)
+    }
+  };
   const { calcAttributeName, unit, calcType, formulaTags, tag } = formData;
 
   return (
@@ -142,6 +198,7 @@ const AddCalAttributeDialog = (props) => {
             className="full-width"
             onChange={handelCalAttributeName}
             variant="outlined"
+            value={calcAttributeName}
           />
         </Grid>
         <Grid item xs={12}>
@@ -149,11 +206,11 @@ const AddCalAttributeDialog = (props) => {
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
             <Select
-            error={showError && !tag}
+              error={showError && !tag}
               onChange={handleTag}
               value={requirementTagArray.id}
               label={requirementTagArray.name}
-              defaultValue={requirementTagArray[0]}
+              defaultValue={selectTagValue}
               required
             >
               {requirementTagArray.map((item) => (
@@ -167,15 +224,15 @@ const AddCalAttributeDialog = (props) => {
         <Grid item xs={12}>
           <FormControl className={classes.formControl}>
             <InputLabel> Calculation Type</InputLabel>
-            <Select onChange={handleCalcType} error={showError && !calcType}>
-              <MenuItem value="man">Manual</MenuItem>
-              <MenuItem value="per">Percentage</MenuItem>
+            <Select onChange={handleCalcType} error={showError && !calcType} value={calcType}>
+              <MenuItem value="manual">Manual</MenuItem>
+              <MenuItem value="percentage">Percentage</MenuItem>
             </Select>
           </FormControl>
 
         </Grid>
 
-        {calcType == "per" ? (<>
+        {calcType == "percentage" ? (<>
           <Grid container direction="row" alignItems="center">
             <Grid item xs={3}>
               <TextField
@@ -183,6 +240,7 @@ const AddCalAttributeDialog = (props) => {
                 error={showError && !unit}
                 helperText={showError ? "Enter b/w 1-100" : ""}
                 id="standard-basic"
+                value={unit}
                 label="Value"
                 className="full-width"
                 onChange={handelFormula}
@@ -206,6 +264,7 @@ const AddCalAttributeDialog = (props) => {
                 options={multiselectOptions}
                 getOptionLabel={(option) => option.name}
                 onChange={(e, value) => handleMultiSelect(value)}
+                defaultValue={multiTagValue}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -216,7 +275,7 @@ const AddCalAttributeDialog = (props) => {
                     required
                     error={showError && !formulaTags}
                     helperText={showError ? "Select one tag atleast" : ""}
-    
+
                   />
                 )}
               />
