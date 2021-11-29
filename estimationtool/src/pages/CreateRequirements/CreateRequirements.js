@@ -26,7 +26,8 @@ const CreateRequirements = () => {
    const getRequirementWithQuery = (callBack) => {
     RequirementService.getRequirementWithQuery(projectsInfo._id)
       .then((res) => {
-        setRequirementHeaderData({ ...res.data.body.featureList});
+        setRequirementHeaderData([ ...res.data.body.featureList ]);
+        
         callBack();
       })
       .catch((err) => {
@@ -34,12 +35,11 @@ const CreateRequirements = () => {
         callBack();
       });
   };
-
+  console.log("requirementHeaderData: ",requirementHeaderData);
 
   const getBasicDetailById = () => {
     RequirementService.getTagsType()
       .then((res) => {
-      //  setHeaderData({ ...res.data.body.basicDetails           });
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
 
@@ -65,6 +65,7 @@ const CreateRequirements = () => {
 
   const saveAddRequirementsFun = () => {
     closeAddFun();
+     getRequirementWithQuery(() => { });
   };
 
   return (
