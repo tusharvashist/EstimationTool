@@ -27,6 +27,13 @@ import classes from "./thirdStepStyle.module.css";
 import { useHistory } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 
+const multiSelectFormatter = (list) => {
+  const newArr = list.flat();
+  if (!newArr.length) {
+    return [];
+  }
+  return newArr
+}
 
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
@@ -51,7 +58,6 @@ const ThirdStep = (props) => {
   useEffect(() => {
     getCalcAttribute();
     passHeaderId();
-    getAllRequirementTags();
   }, []);
 
   const updateStore = (list) => {
@@ -88,6 +94,8 @@ const ThirdStep = (props) => {
 
   const getCalcAttribute = () => {
     setLoader(true);
+    getAllRequirementTags();
+
     SecondStepServ.getAllCalculativeAttribute(
       props.estimationTypeId,
       localStorage.estimationHeaderId
@@ -96,24 +104,20 @@ const ThirdStep = (props) => {
         setLoader(false);
 
         let dataResponse = res.data.body;
-        setAllCalcValues(dataResponse);
-     
+
         let calAttriValues = {};
         setAttributes(
           dataResponse.map((ob) => {
             calAttriValues[ob.calcAttributeName] = ob.selected;
             return {
               ...ob,
+              formulaTags: multiSelectFormatter(ob.formulaTags),
               name: ob.calcAttributeName,
               label: ob.calcAttributeName,
             };
           })
         );
-        // let tagObj = {
-        //   id: dataResponse.tag._id,
-        //   name: dataResponse.tag.name
-        // }
-        // setTagData(tagObj)
+
         setcalAttriValues(calAttriValues);
         updateStore(dataResponse);
       })
@@ -123,14 +127,19 @@ const ThirdStep = (props) => {
   };
 
 
-  console.log("attributes", attributes)
   const getAllRequirementTags = () => {
     SecondStepServ.getAllRequirementTag()
       .then((res) => {
         setRequirementTagArray(res.data.body);
         setmultiselectOptions(res.data.body);
       })
-      .catch((err) => { });
+      .catch((err) => {
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const openAddCalAttribute = () => {
@@ -181,35 +190,53 @@ const ThirdStep = (props) => {
   const updateCalcAttribute = (data) => {
 
     console.log("updateddata", data)
-    let tagObj = {
-      id: data.tag._id,
-      name: data.tag.name
-    }
-    setTagData(tagObj);
-    let multiArray = [];
-    if (data.formulaTags.length > 1) {
-    let multiDataObj = data.formulaTags.map(item =>
-      {
-        let filter = {
-          id:item
-        }
-        multiArray.push(filter)
-      }
-      )
-      console.log("multiarray",multiArray)
-      let setSelectedData = multiselectOptions.find(x => multiArray.map(req => req.id === x.id))
-    setmultiSelectData(setSelectedData)
-  } else {
-    let obj = {
-      id: data.formulaTags._id,
-      name: data.formulaTags.name
-    }
-    setmultiSelectData(obj)
-  }
+    let obj = data.tag;
+    if (data.tag._id === undefined) {
 
+      obj = multiselectOptions.find(x => {
+        if (x.id === data.tag) {
+          return { ...x, _id: x.id };
+        }
+      })
+    }
+
+
+    let filterArray = [...data.formulaTags];
+    let finalArr = [];
+
+    if (filterArray.length) {
+      const [firstEle] = filterArray;
+      if (typeof firstEle === 'string') {
+        let arry = multiselectOptions.forEach((ele) => {
+          if (data.formulaTags.includes(ele.id)) {
+            finalArr.push(ele)
+          }
+        })
+      } else {
+        finalArr = [...filterArray];
+      }
+
+    } else {
+      finalArr = [...filterArray];
+    }
+
+
+
+    // setmultiSelectData(filterArray)
+    console.log("filter Formula tags", filterArray)
+
+    // let filteredObj = {...data}
+    // filteredObj.tag = filterTagData;
+    // filteredObj.formulaTags = filterArray
     setAttributes(attributes.map((att) => {
       if (att._id === data._id) {
-        return { ...data, name: data.calcAttributeName, label: data.calcAttributeName };
+        return {
+          ...data,
+          tag: obj,
+          formulaTags: finalArr,
+          name: data.calcAttributeName,
+          label: data.calcAttributeName
+        };
       } else {
         return { ...att }
       }
@@ -269,6 +296,7 @@ const ThirdStep = (props) => {
     openFun('Edit');
   };
 
+  console.log("multi", multiselectOptions)
   return (
     <React.Fragment>
       {openModal && openModal.open ? (
@@ -318,20 +346,28 @@ const ThirdStep = (props) => {
                   }}
                   onChangeField={updateCheckboxes}
                   customComponent={({ data }) => {
+                    console.log("checkbox data", data)
                     return (
                       <>
                         <div
+                        title={!data.selected ? 'Please mark it checked to edit the row' : ''}
                           className={classes.fields}
-                          onClick={() => { openEditCalBox(data) }}
+                          onClick={() => {
+                            if (data.selected) {
+                              openEditCalBox(data)
+                            }
+                          }}
                         >
 
-                          
+
                           <Select
-                          placeholder="Tag"
+                            style={{ minWidth: "180px" }}
+                            placeholder="Tag"
                             disabled
-                            defaultValue={tagData}
-                            value={requirementTagArray.id}
-                            label={requirementTagArray.name}
+                            //defaultValue={data.tag}
+                            //value={data.tag}
+                            //label={requirementTagArray.name}
+                            value={data.tag ? data.tag._id : ''}
                             required
                           >
                             {requirementTagArray.map((item) => (
@@ -343,7 +379,7 @@ const ThirdStep = (props) => {
 
                           <TextField
                             className={classes.percent}
-                            style={{ minWidth: "80px" }}
+                            style={{ minWidth: "60px" }}
                             disabled
                             name="unit"
                             type={"number"}
@@ -368,20 +404,19 @@ const ThirdStep = (props) => {
                             id="tags-standard"
                             options={multiselectOptions}
                             getOptionLabel={(option) => option.name}
-                            defaultValue={multiSelectData}
+                            value={data.formulaTags}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
                                 value={params.id}
                                 variant="standard"
                                 label="Formula Tags"
-                                placeholder="Formula Tags..."
                               />
                             )}
                           />
                         </div>
                         <TextField
-                          style={{ maxWidth: "450px" }}
+                          style={{ maxWidth: "200px" }}
                           focused
                           name="description"
                           className="comment-box"

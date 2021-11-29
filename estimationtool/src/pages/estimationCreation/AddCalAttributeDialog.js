@@ -35,11 +35,11 @@ const AddCalAttributeDialog = (props) => {
     isFormula: true,
     formula: "%",
     operator: "abcd",
-    unit: 0,
+    unit: 1,
     description: " ",
     formulaTags: [""],
     calcType: "",
-    tag: "",
+    tag: {},
   });
 
   useEffect(() => {
@@ -66,28 +66,21 @@ const AddCalAttributeDialog = (props) => {
 
       setFormData({ ...formData, ...props.details })
          let obj = { ...props.details };
-     obj.tag= {id:props.details.tag._id, name:props.details.tag.name}
+         const tagInfo = props.details.tag || {};
+     obj.tag= {id:tagInfo._id, name:tagInfo.name}
      
       setSelectTagValue(obj.tag.id)
     let  objNew = { ...props.details };
-    let arry = [];
-    
-    if (objNew.formulaTags.length === 1) {
-      let obj = {
-        id: objNew.formulaTags[0]._id,
-        name: objNew.formulaTags[0].name
+    let filterArray = [];
+    let arry = objNew.formulaTags.flat().map(item => {
+      let ob = {
+        id: item._id,
+        name: item.name
       }
-      arry.push(obj)
-      setMultiSelectTag(arry)
-    } else {
-      let newFilteredArray = []
-      multiselectOptions.forEach((ele) => {
-        if(ele.includes(objNew.formulaTags)) {
-          newFilteredArray.push(ele)
-        }
-      })
- console.log("filteredarray",newFilteredArray)
-    }
+      filterArray.push(ob)
+    });
+    
+  setMultiSelectTag(filterArray)
     }
   }
   
@@ -105,6 +98,7 @@ const AddCalAttributeDialog = (props) => {
 
   const getValuePercentage = () => {
     if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length !== 0) {
+     console.log("formData in save func", formData)
       props.saveFun({ ...formData });
     } else {
       setShowError(true);
@@ -116,7 +110,7 @@ const AddCalAttributeDialog = (props) => {
   const getValueManual = () => {
     if (formData.calcAttributeName && formData.tag && formData.calcType) {
       let newObject = { ...formData };
-      newObject.unit = 0;
+      newObject.unit = 1;
       newObject.formulaTags = [""];
       setFormData({ ...newObject });
       props.saveFun({ ...newObject });
@@ -128,7 +122,7 @@ const AddCalAttributeDialog = (props) => {
 
   //  Handle Validation
   const handelFormula = (e) => {
-    if (e.target.value > 99) {
+    if (e.target.value > 99 || e.target.value < 0) {
       setShowError(true);
     } else {
       setShowError(false);
@@ -140,13 +134,15 @@ const AddCalAttributeDialog = (props) => {
 
   const handleMultiSelect = (value) => {
 
-    let newObject = { ...formData };
+    // let newObject = { ...formData };
 
-    newObject.formulaTags = value.map((data) => {
-      const arr = data.id;
-      return arr;
-    });
-    setFormData({ ...newObject });
+    // newObject.formulaTags = value.map((data) => {
+    //   const arr = data.id;
+    //   return arr;
+    // });
+    console.log("value in mult", value)
+    setMultiSelectTag(value)
+    setFormData({ ...formData, formulaTags: [...value] });
   };
 
 
@@ -168,9 +164,12 @@ const AddCalAttributeDialog = (props) => {
 
   const handleTag = (e) => {
     if (e.target.value !== '') {
-      let newObject = { ...formData };
-      newObject.tag = e.target.value;
-      setFormData({ ...newObject });
+      const _id = e.target.value;
+      const name= e.target.label;
+
+      // let newObject = { ...formData };
+      // newObject.tag = e.target.value;
+      setFormData({ ...formData,tag: {_id, name} });
     } else {
       setShowError(true)
     }
@@ -208,8 +207,8 @@ const AddCalAttributeDialog = (props) => {
             <Select
               error={showError && !tag}
               onChange={handleTag}
-              value={requirementTagArray.id}
-              label={requirementTagArray.name}
+              value={formData.tag.id}
+              label={formData.tag.name}
               defaultValue={selectTagValue}
               required
             >
