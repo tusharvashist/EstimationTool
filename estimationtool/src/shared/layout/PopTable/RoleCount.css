@@ -1,0 +1,29 @@
+.close-role {
+  display: none !important;
+}
+.parentrole {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 1px;
+  width: 243px;
+  right: 190px;
+  z-index: 4510;
+  overflow: scroll;
+}
+.option {
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+.optionbtn {
+  display: flex;
+}
+.optionbtn > p {
+  margin: 0 20px;
+}
