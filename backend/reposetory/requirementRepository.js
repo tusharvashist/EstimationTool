@@ -15,7 +15,6 @@ const EstimationHeaderAttributeCalc = require("../database/models/estimationHead
 const EstimationAttributes = require("../database/models/estimationAttributesModel")
 const mongoose = require("mongoose")
 
-
 module.exports.createRequirement = async (serviceData) => {
     let projectRequirement = new ProjectRequirement({ ...serviceData })
     let requirementId = '';
@@ -32,7 +31,6 @@ module.exports.createRequirement = async (serviceData) => {
     }
     
 }
-
 
 module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
 
@@ -68,7 +66,6 @@ module.exports.createQueryAssumption = async (projectRequirementId, serviceData)
     }
 }
 
-
 module.exports.getTags = async () => {
      let requirementTag = await RequirementTag.find({}).sort({ name: 1 });
     if (requirementTag.length != 0) {
@@ -87,7 +84,6 @@ module.exports.getTypes = async () => {
         return [];
     }
 }
-
 
 module.exports.getRequirementWithQuery = async (projectId) => {
    
@@ -141,18 +137,44 @@ module.exports.getRequirementWithQuery = async (projectId) => {
                 }
             },
             {
-                $project: {
-                _id: 1,
-                title: 1,
-                description: 1,
-                type: 1,
-                tag: 1,
-                mitigation: 1,
-                isDeleted: 1,
-                project: 1,
-                queryassumptions: 1,
-                createdAt: 1,
-                updatedAt: 1,
+                $group: {
+                    _id: '$_id',
+                    isDeleted: {
+                        $first: '$isDeleted'
+                    },
+                    Requirement: {
+                        $first: '$title'
+                    },
+                    Description: {
+                        $first: '$description'
+                    },
+                    Tagid: {
+                        $first: '$tag._id'
+                    },
+                    Tag: {
+                        $first: '$tag.name'
+                    },
+                    Type: {
+                        $first: '$type.name'
+                    },
+                    Typeid: {
+                        $first: '$type._id'
+                    },
+                    requirementId: {
+                        $first: '$_id'
+                    },
+Query:{
+   $first: "$queryassumptions.query",
+},
+Assumption:{
+   $first: "$queryassumptions.assumption",
+},
+Reply:{
+   $first: "$queryassumptions.reply",
+},
+queryassumptionsId:{
+   $first: "$queryassumptions._id",
+}
                 }
             }
         ]
