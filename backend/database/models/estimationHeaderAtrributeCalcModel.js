@@ -15,6 +15,8 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
     unit: Number,// value e.g:20%
     description: String, // comment
     value: String,
+    calcType: String,
+
 
     tag: {
         type: Schema.Types.ObjectId,

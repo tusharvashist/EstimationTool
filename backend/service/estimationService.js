@@ -302,11 +302,13 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     // }
     // let result = await estimationHeaderAtrributeCalc.save();
     // return formatMongoData(result)
-    console.log("hi this is service data of final step " + serviceData);
+
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
+
       );
+      console.log("hi this is service data of final step " + estimation)
       if (estimation) {
         estimation.estStep = "3";
         estimation.updatedBy = global.loginId;

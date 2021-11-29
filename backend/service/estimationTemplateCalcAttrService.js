@@ -78,38 +78,118 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
 
 module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid }) => {
     try {
+        let estAttCalc = await EstimationCalcAttr.aggregate([{
+            $match: {
+                estTypeId: ObjectId(esttype)
+            }
+        }, {
+            $lookup: {
+                from: 'requirementtags',
+                localField: 'tag',
+                foreignField: '_id',
+                as: 'tag'
+            }
+        }, {
+            $unwind: {
+                path: '$tag',
+                preserveNullAndEmptyArrays: true
+            }
+        }, {
+            $unwind: {
+                path: '$formulaTags'
+            }
+        }, {
+            $lookup: {
+                from: 'requirementtags',
+                localField: 'formulaTags',
+                foreignField: '_id',
+                as: 'formulaTags'
+            }
+        }, {
+            $group: {
+
+                _id: "$_id",
+
+                calcAttribute: {
+
+                    $first: "$calcAttribute",
+
+                },
+
+                estTypeId: {
+
+                    $first: "$estTypeId",
+
+                },
+
+                calcAttributeName: {
+
+                    $first: "$calcAttributeName",
+
+                },
+                isFormula: {
+
+                    $first: "$isFormula",
+
+                },
+                formula: {
+
+                    $first: "$formula",
+
+                },
+                operator: {
+
+                    $first: "$operator",
+
+                },
+                unit: {
+
+                    $first: "$unit",
+
+                },
+                description: {
+
+                    $first: "$description",
+
+                },
+                calcType: {
+
+                    $first: "$calcType",
+
+                },
+                tag: {
+
+                    $first: "$tag",
+
+                },
+                createdAt: {
+
+                    $first: "$createdAt",
+
+                },
+                updatedAt: {
+
+                    $first: "$updatedAt",
+
+                },
+                formulaTags: {
+
+                    $push: "$formulaTags",
+
+                },
+
+
+
+            }
+        }
+        ]).addFields({ selected: false, value: "" });
         if (estheaderid) {
             // //TODO formulaTags and tag is to be populated in estAttCalc in find
-            let estAttCalc = await EstimationCalcAttr.aggregate([{
-                $match: {
-                    estTypeId: ObjectId(esttype)
-                }
-            }, {
-                $lookup: {
-                    from: 'requirementtags',
-                    localField: 'tag',
-                    foreignField: '_id',
-                    as: 'tag'
-                }
-            }, {
-                $unwind: {
-                    path: '$tag',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $unwind: {
-                    path: '$formulaTags'
-                }
-            }, {
-                $lookup: {
-                    from: 'requirementtags',
-                    localField: 'formulaTags',
-                    foreignField: '_id',
-                    as: 'formulaTags'
-                }
-            }]).addFields({ selected: false, value: "" });
-            let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: ObjectId(estheaderid) }).populate("tag");
-            console.log(estSelAtt);
+
+            let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({ estHeaderId: ObjectId(estheaderid) }).populate("tag").populate({
+                path: 'formulaTags'
+            });
+
             var index = 0;
             estAttCalc.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
@@ -125,15 +205,18 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
                         element.description = estSelAttElement.description;
                         element.value == estSelAttElement.value;
                     }
+
                 });
             });
-            return (estAttCalc)
+
         }
 
         if (esttype) {
             //TODO formulaTags and tag is to be populated in estAttCalc in find
-            let estAttCalc = await EstimationCalcAttr.aggregate().match({ estTypeId: ObjectId(esttype) }).addFields({ selected: false, value: "" });
-            let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype });
+
+            let estSelAtt = await EstimationTemplateCalcAttr.find({ estTypeId: esttype }).populate("tag").populate({
+                path: "formulaTags"
+            });
 
             var index = 0;
             estAttCalc.forEach(element => {
@@ -143,6 +226,7 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
                     }
                 });
             });
+
             return (estAttCalc)
         }
     } catch (err) {

@@ -22,5 +22,5 @@ const queryAssumptionSchema = new mongoose.Schema({
         }
     }
 })
-projectRequirementSchema.index({ updatedAt: '-1'});
-module.exports = mongoose.model("QueryAssumption", projectRequirementSchema)
+
+module.exports = mongoose.model("QueryAssumption", queryAssumptionSchema)
