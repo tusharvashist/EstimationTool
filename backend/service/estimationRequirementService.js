@@ -29,6 +29,26 @@ module.exports.create = async (serviceData) => {
   }
 };
 
+
+module.exports.getRequirementWithQuery = async ({ id }) => {
+  try {
+
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.requirementMessage.INVALID_ID);
+    }
+
+    var requirementList = await RequirementRepository.getRequirementWithQuery(id);
+    let response = { ...constant.requirementResponse };
+    response.featureList = requirementList;
+
+    return formatMongoData(response);
+  } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    throw new Error(err);
+  }
+};
+
+
 module.exports.updateRequirement = async ({ id, updateInfo }) => {
   try {
     const findRecord = await ProjectRequirement.find(
@@ -139,6 +159,7 @@ class sumOfKey extends Array {
 
 
 
+
 module.exports.getById = async ({ id }) => {
   try {
 
@@ -150,7 +171,7 @@ module.exports.getById = async ({ id }) => {
     //2
       response.requirementType = await RequirementRepository.getTypes();
     //3
-      response.requirementTag = requirementTag.getTypes();
+    response.requirementTag = await RequirementRepository.getTags();
     //5
     let estimations = await EstHeaderModel.findById({ _id: id })
       .populate({

@@ -6,6 +6,12 @@ const RequirementService = {
 
         let url = Url.getRequirementTag + "/get/TagsType" ;
         return axios.get(url);
+    },
+        
+    getRequirementWithQuery: function (projectId) {
+
+        let url = Url.estimationDetail + "/get/Requirement/With/Query/"+ projectId ;
+        return axios.get(url);
     }
 }
 

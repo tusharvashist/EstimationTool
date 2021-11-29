@@ -26,6 +26,13 @@ router.get("/get/data/:id",
     //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationDetail.getRequirementData
 );
+router.get("/get/Requirement/With/Query/:id",
+    tokenValidation.validateToken,
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    estimationDetail.getRequirementWithQuery
+);
+
+
 //----- Delete est header attr-----------
 router.delete("/:id",
     tokenValidation.validateToken,
