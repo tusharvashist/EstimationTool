@@ -11,4 +11,9 @@ router.get("/",
     joiSchemaValidation.validateQueryParams(joiRequirementTagSchema.getallRequirementTag),
     requirementTagController.getAllRequirementTag
 );
+router.get("/get/TagsType",
+    tokenValidation.validateToken,
+    requirementTagController.getAllTagType
+);
+
 module.exports = router;

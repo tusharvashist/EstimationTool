@@ -28,6 +28,7 @@ import {
   setEfforUnit,
   setEsttimationDesc,
   setEstimationHeaderId,
+  setEstimationTentativeTimeline,
 } from "../../Redux/basicDetailRedux";
 import estimationServices from "../allestimation/allestimation.service";
 import useLoader from "../../shared/layout/hooks/useLoader";
@@ -58,6 +59,8 @@ const FirstStep = forwardRef((props, ref) => {
   const [isEffortUnitInvalid, setIsEffortUnitInvalid] = useState(false);
   const [isEstimationNameInvalid, setEstimationNameInvalid] = useState(false);
   const [isDescriptionInvalid, setDescriptionInvalid] = useState(false);
+  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] = useState(false);
+
   const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
@@ -81,6 +84,8 @@ const FirstStep = forwardRef((props, ref) => {
     setIsEffortUnitInvalid(basicDetailRedux.efforUnit === "");
     setEstimationNameInvalid(basicDetailRedux.estimationName == "");
     setDescriptionInvalid(basicDetailRedux.esttimationDesc === "");
+    setTentativeTimelineInvalid(validateTimeline(basicDetailRedux.estimationTentativeTimeline));
+
   };
 
   // get estimation basic info
@@ -112,6 +117,8 @@ const FirstStep = forwardRef((props, ref) => {
         dispatch(setEstimationName(dataResponce.basicDetails.estName));
         dispatch(setEfforUnit(dataResponce.basicDetails.effortUnit));
         dispatch(setEstimationHeaderId(dataResponce.basicDetails._id));
+        dispatch(setEstimationTentativeTimeline(dataResponce.basicDetails.estTentativeTimeline));
+
       })
       .catch((err) => {
         console.log("get estimation header detail error : ", err);
@@ -162,6 +169,16 @@ const FirstStep = forwardRef((props, ref) => {
     //handleFieldsError();
     setDescriptionInvalid(charString.length > 0 && remainingCharLimit == 250);
   };
+
+  //tentative timeline value 
+  const tentaiveTimelineInputValue = (timelineInput) => {
+    dispatch(setEstimationTentativeTimeline(timelineInput));
+    setTentativeTimelineInvalid(validateTimeline(timelineInput));
+  };
+
+  function validateTimeline(timelineValue){
+    return (Number(timelineValue) <= 0);
+  }
 
   //generate estimation Name
   const generateEstimationName = (etId) => {
@@ -250,13 +267,26 @@ const FirstStep = forwardRef((props, ref) => {
             <Grid item xs={5}>
               <TextField
                 id="standard-basic"
-                label=""
+                label="Estimation Name*"
                 variant="outlined"
                 value={basicDetailRedux.estimationName}
                 error={isEstimationNameInvalid}
               />
             </Grid>
+            
           </Grid>
+          <Grid item xs={3}>
+            <TextField
+                id="standard-basic"
+                label="Tentative Timeline (Weeks)*"
+                variant="outlined"
+                type={'number'}
+                InputProps={{ inputProps: { min: 1, max: 3, maxLength:3 } }}
+                error={isTentativeTimelineInvalid}
+                value={basicDetailRedux.estimationTentativeTimeline}
+                onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
+              />
+            </Grid>
           <Grid item xs={8} spacing={1}>
             <TextField
               id="standard-basic"

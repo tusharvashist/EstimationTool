@@ -24,6 +24,7 @@ import {
   setEfforUnit,
   setEsttimationDesc,
   setEstimationHeaderId,
+  setEstimationTentativeTimeline,
 } from "../../Redux/basicDetailRedux";
 import { setProjectId } from "../../Redux/projectRedux";
 import AddRequirements from "../estimationDetail/AddRequirements";
@@ -146,6 +147,7 @@ export default function ClientDetails(props) {
     dispatch(setEfforUnit(""));
     dispatch(setEstimationHeaderId(""));
     localStorage.setItem("estimationHeaderId", "");
+    dispatch(setEstimationTentativeTimeline(""));
   };
 
   return (
