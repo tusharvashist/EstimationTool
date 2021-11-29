@@ -161,7 +161,7 @@ const ThirdStep = (props) => {
   const saveCalAttribute = (data) => {
 
     if (data._id === undefined) {
-      let newObject = { ...data };
+      let newObject = { ...data, formulaTags: data.formulaTags.map(el => el.id), tag: data.tag ? data.tag._id : '' };
       newObject.estTypeId = props.estimationTypeId;
       createCalcAttribute(newObject)
     } else {
@@ -170,6 +170,7 @@ const ThirdStep = (props) => {
   };
 
   const createCalcAttribute = (data) => {
+
     setLoader(true);
     SecondStepServ.createCalAttribute(data)
       .then((res) => {
@@ -350,7 +351,7 @@ const ThirdStep = (props) => {
                     return (
                       <>
                         <div
-                        title={!data.selected ? 'Please mark it checked to edit the row' : ''}
+                          title={!data.selected ? 'Please mark it checked to edit the row' : ''}
                           className={classes.fields}
                           onClick={() => {
                             if (data.selected) {
