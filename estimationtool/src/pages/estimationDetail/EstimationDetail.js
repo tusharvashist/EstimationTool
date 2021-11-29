@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import counting from "../../assests/team.png";
 import { EstimationHeader, ClientProjectHeader } from "./HeaderElement";
 import RoleCount from "../../shared/layout/PopTable/RoleCount";
+import ResourceCountMatrix from "../resourcemix/ResourceCount"
 
 const EstimationDetail = () => {
   const location = useLocation();
@@ -297,34 +298,7 @@ const EstimationDetail = () => {
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
-      <div className="estimation-detail-count-table close-resourceCountTable">
-        <BorderedContainer className="count-box-shadow roleCountInputParent">
-          <MaterialTable
-            style={{ boxShadow: "none" }}
-            title="Resource Count"
-            columns={columns}
-            options={{
-              search: false,
-              tableLayout: "auto",
-              paging: false,
-            }}
-            data={rowData}
-          />
-          <div className="resource-cont-costing">
-            <h4>Costing: $1000</h4>
-            <h4 className="inline-cost">Expected Timeline: $1000</h4>
-            <h4 className="inline-cost">Actual Timeline: $1000</h4>
-          </div>
-        </BorderedContainer>
-      </div>
-      <div className="estimation-detail-button-container">
-        <button
-          onClick={handleCountTable}
-          className="estimation-detail-count-button"
-        >
-          <img src={counting} />
-        </button>
-      </div>
+      <ResourceCountMatrix data={estimationId}/>
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
