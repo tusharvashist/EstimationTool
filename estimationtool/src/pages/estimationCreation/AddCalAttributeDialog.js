@@ -97,7 +97,7 @@ const AddCalAttributeDialog = (props) => {
   // selecting value percentage
 
   const getValuePercentage = () => {
-    if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length !== 0) {
+    if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length > 0) {
       console.log("formData in save func", formData)
       props.saveFun({ ...formData });
     } else {
@@ -134,17 +134,13 @@ const AddCalAttributeDialog = (props) => {
 
   const handleMultiSelect = (value) => {
 
-    // let newObject = { ...formData };
-
-    // newObject.formulaTags = value.map((data) => {
-    //   const arr = data.id;
-    //   return arr;
-    // });
     if (value.length > 0) {
       console.log("value in mult", value)
       setMultiSelectTag(value)
       setFormData({ ...formData, formulaTags: [...value] });
     } else {
+      setFormData({ ...formData, formulaTags: [] });
+
       setShowError(true)
     }
   };
@@ -269,6 +265,7 @@ const AddCalAttributeDialog = (props) => {
                 getOptionLabel={(option) => option.name}
                 onChange={(e, value) => handleMultiSelect(value)}
                 defaultValue={multiTagValue}
+                error={showError && !formulaTags}
                 renderInput={(params) => (
                   <TextField
                     {...params}
