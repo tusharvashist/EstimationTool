@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Grid, ListItem } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -7,23 +7,32 @@ import MaterialTable from "material-table";
 import AddRequirements from "../estimationDetail/AddRequirements";
 import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 export const RequirementTable = (props) => {
-    const location = useLocation();
-    const clientInfo = { ...location.state.clientInfo };
-    const projecttInfo = { ...location.state.projectInfo };
-    const [loaderComponent, setLoader] = useLoader(false);
-    const [requirementHeader, setSummaryHeaderArray] = useState([
-      { title: "Requirement", field: "Requirement", editable: false },
-      { title: "Description", field: "Description", editable: false },
-      { title: "Tag", field: "Tag", editable: false },
-      { title: "Type", field: "Type", editable: false },
-      { title: "Query", field: "Query", editable: false },
-      { title: "Assumption", field: "Assumption", editable: false },
-      { title: "Reply", field: "Reply", editable: false },      
-    ]);
-    const [requirementHeaderData, setRequirementHeaderData] = useState([]);
-    const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+  const location = useLocation();
+  const clientInfo = { ...location.state.clientInfo };
+  const projecttInfo = { ...location.state.projectInfo };
+  const [loaderComponent, setLoader] = useLoader(false);
+  const [requirementHeader, setSummaryHeaderArray] = useState([
+    { title: "Requirement", field: "Requirement", editable: false },
+    { title: "Description", field: "Description", editable: false },
+    { title: "Tag", field: "Tag", editable: false },
+    { title: "Type", field: "Type", editable: false },
+    { title: "Query", field: "Query", editable: false },
+    { title: "Assumption", field: "Assumption", editable: false },
+    { title: "Reply", field: "Reply", editable: false },
+  ]);
+  const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+  const [available, setAvailable] = useState(10);
+
+  useEffect(() => {
+    setAvailable(10);
+  }, []);
 
   const openAddRequirement = () => {
     openAddFun();
@@ -41,14 +50,13 @@ export const RequirementTable = (props) => {
     closeAddFun();
   };
 
-  const openEditRequirement = (event, rowData) => {
- 
-  };
+  const openEditRequirement = (event, rowData) => {};
   return (
     <>
-        {loaderComponent ? (
-          loaderComponent
-        ) : (
+      {loaderComponent ? (
+        loaderComponent
+      ) : (
+        <>
           <MaterialTable
             style={{ boxShadow: "none" }}
             title={`Requirements`}
@@ -57,9 +65,10 @@ export const RequirementTable = (props) => {
             onRowClick={(event, rowData, togglePanel) =>
               openEditRequirement(event, rowData)
             }
-            editable={'never'}
+            editable={"never"}
             options={{
               search: false,
+              selection: true,
               headerStyle: {
                 backgroundColor: "#e5ebf7",
                 fontWeight: "bold",
@@ -67,28 +76,43 @@ export const RequirementTable = (props) => {
                 color: "#113c91",
               },
             }}
+            actions={[
+              {
+                icon: () => (
+                  <Select
+                    labelId="demo-simple-select-standard-label"
+                    id="demo-simple-select-standard"
+                    value={available}
+                    onChange={(e) => setAvailable(e.target.value)}
+                    label="Requirements"
+                  >
+                    <MenuItem value={10}>Available</MenuItem>
+                    <MenuItem value={20}>Used Requirements</MenuItem>
+                  </Select>
+                ),
+                isFreeAction: true,
+              },
+            ]}
           />
-        )}
+        </>
+      )}
     </>
   );
 };
 
-
-
 export const RequirementTableWithFilter = () => {
-
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const openAddRequirement = () => {
     openAddFun();
   };
-    
-     const openAddFun = () => {
+
+  const openAddFun = () => {
     setOpenAddRequirementsBox(true);
   };
 
   return (
-      <>
-          <Grid container justifyContent="flex-end">
+    <>
+      <Grid container justifyContent="flex-end">
         <Grid item style={{ margin: "10px" }}>
           <Button onClick={openAddRequirement} variant="outlined">
             {" "}
@@ -97,7 +121,7 @@ export const RequirementTableWithFilter = () => {
           </Button>
         </Grid>
       </Grid>
-        <RequirementTable />
+      <RequirementTable />
     </>
   );
 };
