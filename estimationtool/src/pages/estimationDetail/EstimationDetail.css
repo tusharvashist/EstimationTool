@@ -35,8 +35,8 @@
   right: 50px;
   width: 60%;
 }
-.close {
-  animation: boxClose 0.5s linear forwards;
+.close-resourceCountTable {
+  animation: boxClose 0.2s linear forwards;
 }
 
 @keyframes boxClose {
@@ -50,7 +50,7 @@
   }
 }
 .open {
-  animation: boxOpen 0.5s linear forwards;
+  animation: boxOpen 0.2s linear forwards;
 }
 
 @keyframes boxOpen {
@@ -62,4 +62,26 @@
   100% {
     transform: scale(1);
   }
+}
+
+.resource-cont-costing {
+  margin: 20px;
+}
+.inline-cost {
+  display: inline;
+  margin-right: 40px;
+}
+.count-box-shadow {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+}
+
+.roleCountInputParent {
+  position: relative;
+}
+
+.roleCountInput {
+  position: relative;
+  width: 300px;
+  display: flex;
 }

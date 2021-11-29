@@ -5,16 +5,14 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { EditOutlined, Add, SaveOutlined, Edit } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./EstimationDetail.css";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 import EstimationService from "./estimation.service";
-import EditConfiguration from "./EditConfigurationDialog";
 import AddRequirements from "./AddRequirements";
-import { display, height } from "@material-ui/system";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
-import countimg from "../../assests/team.png";
+import counting from "../../assests/team.png";
 import { EstimationHeader, ClientProjectHeader } from "./HeaderElement";
-
+import RoleCount from "../../shared/layout/PopTable/RoleCount";
 
 const EstimationDetail = () => {
   const location = useLocation();
@@ -59,10 +57,10 @@ const EstimationDetail = () => {
   }, [estimationId]);
 
   const openEditRequirement = (event, rowData) => {
-    console.log(rowData)
+    console.log(rowData);
     const updatedRows = [requirementDataArray[rowData.tableData.id]];
     setEditData(updatedRows);
-    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>")
+    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
     openFun();
   };
 
@@ -236,30 +234,98 @@ const EstimationDetail = () => {
       });
   };
 
+  ///============== JS- Resource Count Pop up and table - START ==============///
+
+  const popupCount = () => {};
+
+  const columns = [
+    { title: "Count", field: "count", width: "1%" },
+    {
+      title: "Skills(Effort & summary Attribute)",
+      field: "skill",
+      width: "40%",
+    },
+    { title: "Technologies", field: "technology", width: "20%" },
+    {
+      title: "Role",
+      field: "role",
+      width: "50%",
+      render: (rowData) => <RoleCount className="roleCountInput" />,
+    },
+  ];
+
+  const rowData = [
+    {
+      count: 2,
+      skill: "Frontend",
+      technology: "React/Angular",
+      // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
+    },
+    {
+      count: 2,
+      skill: "Frontend",
+      technology: "React/Angular",
+      // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
+    },
+    {
+      count: 2,
+      skill: "Frontend",
+      technology: "React/Angular",
+      // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
+    },
+  ];
+
   const handleCountTable = () => {
     const tableDiv = document.querySelector(".estimation-detail-count-table");
-    if (tableDiv.classList.contains("close")) {
-      tableDiv.classList.remove("close");
+    if (tableDiv.classList.contains("close-resourceCountTable")) {
+      tableDiv.classList.remove("close-resourceCountTable");
       tableDiv.classList.add("open");
     } else {
-      tableDiv.classList.add("close");
+      tableDiv.classList.add("close-resourceCountTable");
       tableDiv.classList.remove("open");
     }
   };
 
+  const handleRowClick = (rowData) => {
+    console.log(rowData);
+    const roleDiv = document.querySelector(".rolelist");
+    roleDiv.classList.toggle("close-role");
+  };
+
+  ///============== JS- Resource Count Pop up and table - END ==============///
+
   return (
     <div className="estimation-detail-cover">
-      <div className="estimation-detail-count-table">
-        <MaterialTable />
+      {/*========= JSX- Resource Count Pop up and table - START ========= */}
+      <div className="estimation-detail-count-table close-resourceCountTable">
+        <BorderedContainer className="count-box-shadow roleCountInputParent">
+          <MaterialTable
+            style={{ boxShadow: "none" }}
+            title="Resource Count"
+            columns={columns}
+            options={{
+              search: false,
+              tableLayout: "auto",
+              paging: false,
+            }}
+            data={rowData}
+          />
+          <div className="resource-cont-costing">
+            <h4>Costing: $1000</h4>
+            <h4 className="inline-cost">Expected Timeline: $1000</h4>
+            <h4 className="inline-cost">Actual Timeline: $1000</h4>
+          </div>
+        </BorderedContainer>
       </div>
       <div className="estimation-detail-button-container">
         <button
           onClick={handleCountTable}
           className="estimation-detail-count-button"
         >
-          <img src={countimg} />
+          <img src={counting} />
         </button>
       </div>
+      {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
           isOpen={openEditConfigurationBox}
@@ -316,7 +382,7 @@ const EstimationDetail = () => {
         </Box>
       </Container>
       <EstimationHeader data={headerData} />
-      <ClientProjectHeader client={clientDetails} project={ projectDetails} />
+      <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
           <Button
