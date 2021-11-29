@@ -62,28 +62,28 @@ const AddCalAttributeDialog = (props) => {
 
   const setEditData = () => {
     if (props.id) {
-      console.log("props",props)
+      console.log("props", props)
 
       setFormData({ ...formData, ...props.details })
-         let obj = { ...props.details };
-         const tagInfo = props.details.tag || {};
-     obj.tag= {id:tagInfo._id, name:tagInfo.name}
-     
+      let obj = { ...props.details };
+      const tagInfo = props.details.tag || {};
+      obj.tag = { id: tagInfo._id, name: tagInfo.name }
+
       setSelectTagValue(obj.tag.id)
-    let  objNew = { ...props.details };
-    let filterArray = [];
-    let arry = objNew.formulaTags.flat().map(item => {
-      let ob = {
-        id: item._id,
-        name: item.name
-      }
-      filterArray.push(ob)
-    });
-    
-  setMultiSelectTag(filterArray)
+      let objNew = { ...props.details };
+      let filterArray = [];
+      let arry = objNew.formulaTags.flat().map(item => {
+        let ob = {
+          id: item._id,
+          name: item.name
+        }
+        filterArray.push(ob)
+      });
+
+      setMultiSelectTag(filterArray)
     }
   }
-  
+
 
   // Submit form
   const onSubmitForm = (e) => {
@@ -98,7 +98,7 @@ const AddCalAttributeDialog = (props) => {
 
   const getValuePercentage = () => {
     if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length !== 0) {
-     console.log("formData in save func", formData)
+      console.log("formData in save func", formData)
       props.saveFun({ ...formData });
     } else {
       setShowError(true);
@@ -140,16 +140,24 @@ const AddCalAttributeDialog = (props) => {
     //   const arr = data.id;
     //   return arr;
     // });
-    console.log("value in mult", value)
-    setMultiSelectTag(value)
-    setFormData({ ...formData, formulaTags: [...value] });
+    if (value.length > 0) {
+      console.log("value in mult", value)
+      setMultiSelectTag(value)
+      setFormData({ ...formData, formulaTags: [...value] });
+    } else {
+      setShowError(true)
+    }
   };
 
 
   const handelCalAttributeName = (e) => {
-    let newObject = { ...formData };
-    newObject.calcAttributeName = e.target.value;
-    setFormData({ ...newObject });
+    if (e.target.value !== '') {
+      let newObject = { ...formData };
+      newObject.calcAttributeName = e.target.value;
+      setFormData({ ...newObject });
+    } else {
+      setShowError(true)
+    }
   };
 
   const handleCalcType = (e) => {
@@ -165,11 +173,8 @@ const AddCalAttributeDialog = (props) => {
   const handleTag = (e) => {
     if (e.target.value !== '') {
       const _id = e.target.value;
-      const name= e.target.label;
-
-      // let newObject = { ...formData };
-      // newObject.tag = e.target.value;
-      setFormData({ ...formData,tag: {_id, name} });
+      const name = e.target.label;
+      setFormData({ ...formData, tag: { _id, name } });
     } else {
       setShowError(true)
     }

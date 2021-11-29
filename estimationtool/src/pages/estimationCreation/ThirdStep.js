@@ -60,6 +60,7 @@ const ThirdStep = (props) => {
     passHeaderId();
   }, []);
 
+  // Common Request to Save calculate attribute and update data on change
   const updateStore = (list) => {
     const newList = list
       .filter((ob) => ob.selected)
@@ -92,6 +93,8 @@ const ThirdStep = (props) => {
     dispatch(setCalcAttributeData(newList));
   };
 
+
+  // On page load Get all estimation template calculate attribue
   const getCalcAttribute = () => {
     setLoader(true);
     getAllRequirementTags();
@@ -126,7 +129,7 @@ const ThirdStep = (props) => {
       });
   };
 
-
+  // Get all tag data on page load
   const getAllRequirementTags = () => {
     SecondStepServ.getAllRequirementTag()
       .then((res) => {
@@ -142,6 +145,7 @@ const ThirdStep = (props) => {
       });
   };
 
+  // For open and edit dialog box of Calculative Attribute
   const openAddCalAttribute = () => {
     openFun("Add");
   };
@@ -158,6 +162,7 @@ const ThirdStep = (props) => {
     saveCalAttribute(data);
   };
 
+  // Method to create and update calculative attribute
   const saveCalAttribute = (data) => {
 
     if (data._id === undefined) {
@@ -169,6 +174,7 @@ const ThirdStep = (props) => {
     }
   };
 
+  //  For creating of calculative attribute
   const createCalcAttribute = (data) => {
 
     setLoader(true);
@@ -187,6 +193,8 @@ const ThirdStep = (props) => {
         });
       });
   }
+
+  //  For updating of calculative attribute
 
   const updateCalcAttribute = (data) => {
 
@@ -220,15 +228,8 @@ const ThirdStep = (props) => {
     } else {
       finalArr = [...filterArray];
     }
+    // settting data on the same state where we store all data
 
-
-
-    // setmultiSelectData(filterArray)
-    console.log("filter Formula tags", filterArray)
-
-    // let filteredObj = {...data}
-    // filteredObj.tag = filterTagData;
-    // filteredObj.formulaTags = filterArray
     setAttributes(attributes.map((att) => {
       if (att._id === data._id) {
         return {
@@ -248,6 +249,7 @@ const ThirdStep = (props) => {
     setOpen({});
   };
 
+  // while editing the comment box and unit box
   const onChangeField =
     ({ data }) =>
       ({ target }) => {
@@ -272,6 +274,8 @@ const ThirdStep = (props) => {
         setAttributes(newData);
         updateStore(newData);
       };
+
+  // while check or uncheck checkbox
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
@@ -285,6 +289,7 @@ const ThirdStep = (props) => {
     updateStore(newData);
   };
 
+  // Destructing of snackbar 
   const { message, severity, open } = isOpen || {};
 
   const passHeaderId = () => {
@@ -297,7 +302,6 @@ const ThirdStep = (props) => {
     openFun('Edit');
   };
 
-  console.log("multi", multiselectOptions)
   return (
     <React.Fragment>
       {openModal && openModal.open ? (
@@ -347,7 +351,7 @@ const ThirdStep = (props) => {
                   }}
                   onChangeField={updateCheckboxes}
                   customComponent={({ data }) => {
-                    console.log("checkbox data", data)
+
                     return (
                       <>
                         <div
