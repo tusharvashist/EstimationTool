@@ -8,7 +8,7 @@ import AddRequirements from "../estimationDetail/AddRequirements";
 import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
 import useLoader from "../../shared/layout/hooks/useLoader";
 
-export const RequirementTable = () => {
+export const RequirementTable = (props) => {
     const location = useLocation();
     const clientInfo = { ...location.state.clientInfo };
     const projecttInfo = { ...location.state.projectInfo };
@@ -53,7 +53,7 @@ export const RequirementTable = () => {
             style={{ boxShadow: "none" }}
             title={`Requirements`}
             columns={requirementHeader}
-            data={requirementHeaderData}
+            data={props.requirementHeaderData}
             onRowClick={(event, rowData, togglePanel) =>
               openEditRequirement(event, rowData)
             }

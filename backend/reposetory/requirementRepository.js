@@ -86,6 +86,81 @@ module.exports.getTypes = async () => {
     } else {
         return [];
     }
+}
 
 
+module.exports.getRequirementWithQuery = async (projectId) => {
+   
+    let projectRequirement = await ProjectRequirement.aggregate(
+        [
+            {
+                $match: {
+                project: ObjectId(projectId)
+                }
+            },
+            {
+                $lookup: {
+                from: 'queryassumptions',
+                localField: '_id',
+                foreignField: 'projectRequirement',
+                as: 'queryassumptions'
+                }
+            },
+            {
+                $unwind: {
+                path: '$queryassumptions',
+                preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                from: 'requirementtypes',
+                localField: 'type',
+                foreignField: '_id',
+                as: 'type'
+                }
+            },
+            {
+                $unwind: {
+                path: '$type',
+                preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $lookup: {
+                    from: 'requirementtags',
+                    localField: 'tag',
+                    foreignField: '_id',
+                    as: 'tag'
+                }
+            },
+                {
+                    $unwind: {
+                    path: '$tag',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                _id: 1,
+                title: 1,
+                description: 1,
+                type: 1,
+                tag: 1,
+                mitigation: 1,
+                isDeleted: 1,
+                project: 1,
+                queryassumptions: 1,
+                createdAt: 1,
+                updatedAt: 1,
+                }
+            }
+        ]
+    );
+    
+    if (projectRequirement.length != 0) {
+        return projectRequirement;
+    } else {
+        return [];
+    }
 }

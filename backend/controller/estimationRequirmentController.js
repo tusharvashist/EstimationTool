@@ -30,6 +30,23 @@ module.exports.update = async (req,res)=>{
     return res.status(responce.status).send(responce);
 }
 
+
+
+module.exports.getRequirementWithQuery = async (req, res) => {
+    let responce =
+        { ...constant.defaultResponce };
+    try {
+        const responceGetById = await estimationRequirementService.getRequirementWithQuery(req.params);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_FETCH;
+        responce.body = responceGetById;
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
+
 module.exports.getById = async (req, res) => {
     let responce =
         { ...constant.defaultResponce };

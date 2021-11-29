@@ -6,7 +6,7 @@ import AddIcon from "@material-ui/icons/Add";
 import MaterialTable from "material-table";
 import AddRequirements from "../estimationDetail/AddRequirements";
 import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
-import { RequirementTableWithFilter} from "./RequirementTable"
+import { RequirementTable, RequirementTableWithFilter} from "./RequirementTable"
 import  RequirementService from "./requirement.service"
 
 const CreateRequirements = () => {
@@ -15,15 +15,26 @@ const CreateRequirements = () => {
   const projectsInfo = { ...location.state.projectInfo };
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
 
+    const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   useEffect(() => {
-    getBasicDetailById();
+    getRequirementWithQuery(() => {getBasicDetailById() });
   },[]);
 
 
-  
+   const getRequirementWithQuery = (callBack) => {
+    RequirementService.getRequirementWithQuery(projectsInfo._id)
+      .then((res) => {
+        setRequirementHeaderData({ ...res.data.body.featureList});
+        callBack();
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+        callBack();
+      });
+  };
+
 
   const getBasicDetailById = () => {
     RequirementService.getTagsType()
@@ -86,7 +97,7 @@ const CreateRequirements = () => {
         </Grid>
       </Grid>
       <BorderedContainer>
-        <RequirementTableWithFilter />
+        <RequirementTable requirementHeaderData={ requirementHeaderData} />
       </BorderedContainer>
     </>
   );
