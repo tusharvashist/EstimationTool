@@ -14,6 +14,7 @@ import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
+import "./Requirements.css";
 
 export const RequirementTable = (props) => {
   const location = useLocation();
@@ -31,7 +32,7 @@ export const RequirementTable = (props) => {
   ]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
-  const [available, setAvailable] = useState(["EPIC"]);
+  const [available, setAvailable] = useState(["FEATURE"]);
 
   const openAddRequirement = () => {
     openAddFun();
@@ -78,15 +79,38 @@ export const RequirementTable = (props) => {
         loaderComponent
       ) : (
         <>
+          <div className="addReqTableHeader">
+            <h3>Requirements</h3>
+            <Select
+              labelId="demo-multiple-checkbox-label"
+              id="demo-multiple-checkbox"
+              multiple
+              value={available}
+              onChange={handleChange}
+              input={<OutlinedInput label="Tag" />}
+              renderValue={(selected) => selected.join(", ")}
+              MenuProps={MenuProps}
+              style={{ width: "250px" }}
+            >
+              {types.map((name) => (
+                <MenuItem key={name} value={name}>
+                  <Checkbox checked={available.indexOf(name) > -1} />
+                  <ListItemText primary={name} />
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
           <MaterialTable
             style={{ boxShadow: "none" }}
-            title={`Requirements`}
+            // title={`Requirements`}
             columns={requirementHeader}
             data={props.requirementHeaderData}
             editable={"never"}
             options={{
               search: false,
               selection: true,
+              showTitle: false,
+              showTextRowsSelected: true,
               headerStyle: {
                 backgroundColor: "#e5ebf7",
                 fontWeight: "bold",
@@ -94,31 +118,6 @@ export const RequirementTable = (props) => {
                 color: "#113c91",
               },
             }}
-            actions={[
-              {
-                icon: () => (
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={available}
-                    onChange={handleChange}
-                    input={<OutlinedInput label="Tag" />}
-                    renderValue={(selected) => selected.join(", ")}
-                    MenuProps={MenuProps}
-                    style={{ width: "250px" }}
-                  >
-                    {types.map((name) => (
-                      <MenuItem key={name} value={name}>
-                        <Checkbox checked={available.indexOf(name) > -1} />
-                        <ListItemText primary={name} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                ),
-                isFreeAction: true,
-              },
-            ]}
           />
         </>
       )}
