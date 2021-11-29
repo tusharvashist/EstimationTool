@@ -165,6 +165,9 @@ const AddRequirements = (props) => {
       setEditData(props.editData);
       setrequirementTitle(props.editData[0].Requirement);
       setrequirementDescription(props.editData[0].Description);
+      setQuery(props.editData[0].Query);
+      setAssumption(props.editData[0].Assumption);
+      setReply(props.editData[0].Reply);
       setSelectedRequirementTag({
         _id: props.editData[0].Tagid,
         name: props.editData[0].Tag,

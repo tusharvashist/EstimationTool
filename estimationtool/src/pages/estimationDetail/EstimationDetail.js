@@ -14,6 +14,8 @@ import counting from "../../assests/team.png";
 import { EstimationHeader, ClientProjectHeader } from "./HeaderElement";
 import RoleCount from "../../shared/layout/PopTable/RoleCount";
 import ResourceCountMatrix from "../resourcemix/ResourceCount"
+import RequirementService from "../CreateRequirements/requirement.service";
+import { RequirementTable, RequirementTablePopup} from "../CreateRequirements/RequirementTable"
 
 const EstimationDetail = () => {
   const location = useLocation();
@@ -41,9 +43,9 @@ const EstimationDetail = () => {
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
-    useState(false);
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
+  const [openRequirementTable, setOpenRequirementTable] = useState(false);
   const [editData, setEditData] = useState([]);
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([
     { title: "Title", field: "Title", editable: false },
@@ -53,6 +55,8 @@ const EstimationDetail = () => {
   const [requirementHeaderArray, setRequirementHeaderArray] = useState();
   const [loaderComponent, setLoader] = useLoader();
 
+  const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+  
   useEffect(() => {
     getById();
   }, [estimationId]);
@@ -60,6 +64,8 @@ const EstimationDetail = () => {
   const openEditRequirement = (event, rowData) => {
     console.log(rowData);
     const updatedRows = [requirementDataArray[rowData.tableData.id]];
+
+    
     setEditData(updatedRows);
     console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
     openFun();
@@ -81,7 +87,23 @@ const EstimationDetail = () => {
   const openAddRequirement = () => {
     openAddFun();
   };
+  
+  const openAddAvailableRequirement = () => {
+    openAddAvailableRequirementFun();
+  };
 
+  const closeAddAvailableRequirement = () => {
+    closeAddAvailableRequirementFun();
+  };
+ 
+  const openAddAvailableRequirementFun = () => {
+    setOpenRequirementTable(true);
+  };
+   
+  const closeAddAvailableRequirementFun = () => {
+    setOpenRequirementTable(false);
+  };
+  
   const openAddFun = () => {
     setOpenAddRequirementsBox(true);
   };
@@ -97,10 +119,28 @@ const EstimationDetail = () => {
 
   const getById = () => {
     getBasicDetailById(() => {
-      getRequirementDataById();
+      getRequirementDataById(() => { getRequirementWithQuery()});
     });
   };
 
+  console.log("projectDetails._id", projectDetails._id);
+
+   const getRequirementWithQuery = (callBack) => {
+    RequirementService.getRequirementWithQuery(projectDetails._id)
+      .then((res) => {
+        setRequirementHeaderData([ ...res.data.body.featureList ]);
+        
+        callBack();
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+        //callBack();
+      });
+   };
+  
+  
+  
+  
   const getBasicDetailById = (calback) => {
     //setLoader(true);
     console.log("Request for getById: ");
@@ -129,7 +169,7 @@ const EstimationDetail = () => {
       });
   };
 
-  const getRequirementDataById = () => {
+  const getRequirementDataById = (callback) => {
     console.log("Request for getRequirementDataById: ");
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
@@ -166,6 +206,7 @@ const EstimationDetail = () => {
         );
         setRequirementDataArray(dataResponse.requirementList);
         console.log("Received getRequirementDataById End");
+        callback();
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -173,6 +214,7 @@ const EstimationDetail = () => {
         //   let url = "/login";
         //   history.push(url);
         // }
+         callback();
       });
   };
 
@@ -204,7 +246,7 @@ const EstimationDetail = () => {
         .then((res) => {
           setLoader(false);
 
-          getById();
+          getRequirementDataById(() => { });
         })
         .catch((err) => {
           setLoader(false);
@@ -213,7 +255,7 @@ const EstimationDetail = () => {
           //   let url = "/login";
           //   history.push(url);
           // }
-          getById();
+           getRequirementDataById(() => { });
         });
     } else {
       setLoader(false);
@@ -331,6 +373,25 @@ const EstimationDetail = () => {
           cancelTitle="Cancel"
         />
       ) : null}
+ 
+ 
+ {openRequirementTable ? (
+        <RequirementTablePopup
+          isOpen={openRequirementTable}
+          openF={openAddAvailableRequirement}
+          closeF={closeAddAvailableRequirementFun}
+          title="Add Available Requirement"
+          oktitle="Add"
+          saveFun={closeAddAvailableRequirementFun}
+          cancelTitle="Cancel"
+          requirementHeaderData={requirementHeaderData}
+          selection={false}
+          requirementTypeArray={requirementTypeArray} />
+  
+      ) : null}
+ 
+ 
+ 
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
           <Link
@@ -359,6 +420,16 @@ const EstimationDetail = () => {
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
+                
+          <Button
+            variant="outlined"
+            className="estimation-detail-button"
+            onClick={openAddAvailableRequirement}
+          >
+            {" "}
+            <Add /> Add Available Requirements
+          </Button>
+          <Box sx={{ width: "20px" }} className="estimation-detail-box" />
           <Button
             variant="outlined"
             className="estimation-detail-button"

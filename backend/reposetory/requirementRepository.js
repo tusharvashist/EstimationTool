@@ -51,6 +51,43 @@ module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
 
 }
 
+
+module.exports.updateQuery = async (projectRequirementId, serviceData) => {
+    const findRecord = await QueryAssumptionModel.find(
+        { projectRequirement: projectRequirementId },
+        { query: serviceData.query }
+    );
+    if (findRecord.length !== 0) {
+
+        var newQuery = {
+            query: serviceData.query,
+            assumption: serviceData.assumption,
+            reply: serviceData.reply
+        };
+
+        let queryAssumptionModel = await QueryAssumptionModel.findOneAndUpdate(
+          { _id: findRecord[0]._id },
+          newQuery,
+          { new: true }
+        );
+        
+       // if (!queryAssumptionModel) {
+        //  throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+       // }
+
+        
+        return queryAssumptionModel;
+
+
+
+    } else {
+        return  "OK";
+    }
+}
+
+
+
+
 module.exports.createQueryAssumption = async (projectRequirementId, serviceData) => {
     const findRecord = await QueryAssumptionModel.find(
         { projectRequirement: projectRequirementId },
