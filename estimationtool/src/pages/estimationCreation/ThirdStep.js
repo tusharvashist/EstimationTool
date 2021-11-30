@@ -32,8 +32,8 @@ const multiSelectFormatter = (list) => {
   if (!newArr.length) {
     return [];
   }
-  return newArr
-}
+  return newArr;
+};
 
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
@@ -44,7 +44,7 @@ const ThirdStep = (props) => {
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
 
   const [openModal, setOpenModal] = useState(null);
-  const [details, setDetails] = useState({})
+  const [details, setDetails] = useState({});
 
   const [attributes, setAttributes] = useState([]);
 
@@ -75,7 +75,7 @@ const ThirdStep = (props) => {
           description,
           formulaTags,
           tag,
-          calcType
+          calcType,
         }) => ({
           estHeaderId: localStorage.estimationHeaderId,
           calcAttribute,
@@ -87,12 +87,11 @@ const ThirdStep = (props) => {
           description,
           formulaTags,
           tag,
-          calcType
+          calcType,
         })
       );
     dispatch(setCalcAttributeData(newList));
   };
-
 
   // On page load Get all estimation template calculate attribue
   const getCalcAttribute = () => {
@@ -151,8 +150,7 @@ const ThirdStep = (props) => {
   };
 
   const openFun = (type) => {
-    if (type)
-      setOpenModal({ open: true, type })
+    if (type) setOpenModal({ open: true, type });
   };
   const closeFun = () => {
     setDetails({});
@@ -164,19 +162,21 @@ const ThirdStep = (props) => {
 
   // Method to create and update calculative attribute
   const saveCalAttribute = (data) => {
-
     if (data._id === undefined) {
-      let newObject = { ...data, formulaTags: data.formulaTags.map(el => el.id), tag: data.tag ? data.tag._id : '' };
+      let newObject = {
+        ...data,
+        formulaTags: data.formulaTags.map((el) => el.id),
+        tag: data.tag ? data.tag._id : "",
+      };
       newObject.estTypeId = props.estimationTypeId;
-      createCalcAttribute(newObject)
+      createCalcAttribute(newObject);
     } else {
-      updateCalcAttribute(data)
+      updateCalcAttribute(data);
     }
   };
 
   //  For creating of calculative attribute
   const createCalcAttribute = (data) => {
-
     setLoader(true);
     SecondStepServ.createCalAttribute(data)
       .then((res) => {
@@ -192,31 +192,27 @@ const ThirdStep = (props) => {
           message: err.response.data.message,
         });
       });
-  }
+  };
 
   //  For updating of calculative attribute
 
   const updateCalcAttribute = (data) => {
-
-    console.log("updateddata", data)
     let obj = data.tag;
     if (data.tag._id === undefined) {
-
-      obj = multiselectOptions.find(x => {
+      obj = multiselectOptions.find((x) => {
         if (x.id === data.tag) {
           return { ...x, _id: x.id };
         }
-      })
+      });
     }
 
-
     let filterArray = [];
-    let arry = data.formulaTags.map(item => {
+    let arry = data.formulaTags.map((item) => {
       let ob = {
         _id: item.id,
-        name: item.name
-      }
-      filterArray.push(ob)
+        name: item.name,
+      };
+      filterArray.push(ob);
     });
     // let finalArr = [];
 
@@ -236,23 +232,23 @@ const ThirdStep = (props) => {
     // }
 
     // settting data on the same state where we store all data
-const newData = attributes.map((att) => {
-  if (att._id === data._id) {
-    return {
-      ...data,
-      tag: obj,
-      formulaTags: filterArray,
-      name: data.calcAttributeName,
-      label: data.calcAttributeName
-    };
-  } else {
-    return { ...att }
-  }
-})
+    const newData = attributes.map((att) => {
+      if (att._id === data._id) {
+        return {
+          ...data,
+          tag: obj,
+          formulaTags: filterArray,
+          name: data.calcAttributeName,
+          label: data.calcAttributeName,
+        };
+      } else {
+        return { ...att };
+      }
+    });
     setAttributes(newData);
     updateStore(newData);
     closeFun();
-  }
+  };
   const handleClose = () => {
     setOpen({});
   };
@@ -260,28 +256,28 @@ const newData = attributes.map((att) => {
   // while editing the comment box and unit box
   const onChangeField =
     ({ data }) =>
-      ({ target }) => {
-        setAttributes(
-          attributes.map((obj) => {
-            if (obj._id === data._id) {
-              const newobj = { ...obj, [target.name]: target.value };
-              return newobj;
-            } else {
-              return obj;
-            }
-          })
-        );
-        const newData = attributes.map((obj) => {
+    ({ target }) => {
+      setAttributes(
+        attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        });
-        setAttributes(newData);
-        updateStore(newData);
-      };
+        })
+      );
+      const newData = attributes.map((obj) => {
+        if (obj._id === data._id) {
+          const newobj = { ...obj, [target.name]: target.value };
+          return newobj;
+        } else {
+          return obj;
+        }
+      });
+      setAttributes(newData);
+      updateStore(newData);
+    };
 
   // while check or uncheck checkbox
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
@@ -297,18 +293,19 @@ const newData = attributes.map((att) => {
     updateStore(newData);
   };
 
-  // Destructing of snackbar 
+  // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
 
   const passHeaderId = () => {
     props.getHeaderId(localStorage.estimationHeaderId);
   };
 
-
   const openEditCalBox = (data) => {
-    setDetails(data)
-    openFun('Edit');
+    setDetails(data);
+    openFun("Edit");
   };
+
+  console.log(attributes);
 
   return (
     <React.Fragment>
@@ -359,20 +356,21 @@ const newData = attributes.map((att) => {
                   }}
                   onChangeField={updateCheckboxes}
                   customComponent={({ data }) => {
-
                     return (
                       <>
                         <div
-                          title={!data.selected ? 'Please mark it checked to edit the row' : ''}
+                          title={
+                            !data.selected
+                              ? "Please mark it checked to edit the row"
+                              : ""
+                          }
                           className={classes.fields}
                           onClick={() => {
                             if (data.selected) {
-                              openEditCalBox(data)
+                              openEditCalBox(data);
                             }
                           }}
                         >
-
-
                           <Select
                             style={{ minWidth: "180px" }}
                             placeholder="Tag"
@@ -380,7 +378,7 @@ const newData = attributes.map((att) => {
                             //defaultValue={data.tag}
                             //value={data.tag}
                             //label={requirementTagArray.name}
-                            value={data.tag ? data.tag._id : ''}
+                            value={data.tag ? data.tag._id : ""}
                             required
                           >
                             {requirementTagArray.map((item) => (
@@ -389,44 +387,55 @@ const newData = attributes.map((att) => {
                               </MenuItem>
                             ))}
                           </Select>
-
-                          <TextField
-                            className={classes.percent}
-                            style={{ minWidth: "60px" }}
-                            disabled
-                            name="unit"
-                            type={"number"}
-                            min={1}
-                            max={99}
-                            className="text-box"
-                            label="%"
-                            variant="outlined"
-                            value={data.unit}
-                            onChange={onChangeField({ data })}
-                            onKeyDown={(evt) =>
-                              symbolsArr.includes(evt.key) &&
-                              evt.preventDefault()
-                            }
-                          // pattern="\b([0-9]|[1-9][0-9])\b"
-                          />
-                          <p className={classes.pof}>% of</p>
-                          <Autocomplete
-                            className={classes.chips}
-                            disabled
-                            multiple
-                            id="tags-standard"
-                            options={multiselectOptions}
-                            getOptionLabel={(option) => option.name}
-                            value={data.formulaTags}
-                            renderInput={(params) => (
+                          {data.calcType !== "manual" ? (
+                            <>
                               <TextField
-                                {...params}
-                                value={params.id}
-                                variant="standard"
-                                label="Formula Tags"
+                                className={classes.percent}
+                                style={{ minWidth: "60px" }}
+                                disabled
+                                name="unit"
+                                type={"number"}
+                                min={1}
+                                max={99}
+                                label="%"
+                                variant="outlined"
+                                value={data.unit}
+                                onChange={onChangeField({ data })}
+                                onKeyDown={(evt) =>
+                                  symbolsArr.includes(evt.key) &&
+                                  evt.preventDefault()
+                                }
+                                // pattern="\b([0-9]|[1-9][0-9])\b"
                               />
-                            )}
-                          />
+
+                              <p className={classes.pof}>% of</p>
+                              <Autocomplete
+                                className={classes.chips}
+                                disabled
+                                limitTags={3}
+                                multiple
+                                id="tags-standard"
+                                options={multiselectOptions}
+                                getOptionLabel={(option) => option.name}
+                                value={data.formulaTags}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    value={params.id}
+                                    variant="standard"
+                                    label="Formula Tags"
+                                  />
+                                )}
+                              />
+                            </>
+                          ) : (
+                            <TextField
+                              disabled
+                              className="text-box"
+                              label="Manual"
+                              variant="outlined"
+                            />
+                          )}
                         </div>
                         <TextField
                           style={{ maxWidth: "200px" }}

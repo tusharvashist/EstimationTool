@@ -19,7 +19,6 @@
 }
 .text-box {
   order: 3;
-  width: 100px !important;
   margin: 0 20px !important;
 }
 .comment-box {
@@ -37,4 +36,7 @@ label.MuiFormControlLabel-root {
   display: flex;
   justify-content: center;
   margin: 5px 0;
+}
+.css-1kpdewa-MuiAutocomplete-root .MuiAutocomplete-inputRoot {
+  justify-content: flex-start;
 }
