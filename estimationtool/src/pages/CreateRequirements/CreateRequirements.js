@@ -17,6 +17,8 @@ const CreateRequirements = () => {
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
 
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
+  const [editData, setEditData] = useState([]);
     const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   useEffect(() => {
     getRequirementWithQuery(() => {getBasicDetailById() });
@@ -35,7 +37,27 @@ const CreateRequirements = () => {
         callBack();
       });
   };
-  console.log("requirementHeaderData: ",requirementHeaderData);
+  console.log("requirementHeaderData: ", requirementHeaderData);
+  
+
+ const openEditRequirement = (event, rowData) => {
+    console.log(rowData);
+    const updatedRows = [requirementHeaderData[rowData.tableData.id]];
+    setEditData(updatedRows);
+    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
+    openFun();
+  };
+
+
+  const openFun = () => {
+    setOpenEditConfigurationBox(true);
+  };
+
+  const closeFun = () => {
+    setOpenEditConfigurationBox(false);
+
+  };
+
 
   const getBasicDetailById = () => {
     RequirementService.getTagsType()
@@ -68,6 +90,11 @@ const CreateRequirements = () => {
      getRequirementWithQuery(() => { });
   };
 
+    const updateAddRequirementsFun = () => {
+    closeFun();
+     getRequirementWithQuery(() => { });
+  };
+
   return (
     <>
       {openAddRequirementsBox ? (
@@ -85,7 +112,22 @@ const CreateRequirements = () => {
           cancelTitle="Cancel"
         />
       ) : null}
-
+{openEditConfigurationBox ? (
+        <AddRequirements
+          isOpen={openEditConfigurationBox}
+          openF={openAddFun}
+          closeF={closeFun}
+          title="Edit Requirement"
+          oktitle="Update"
+          saveFun={updateAddRequirementsFun}
+          requirementTagArray={requirementTagArray}
+          requirementTypeArray={requirementTypeArray}
+          project={projectsInfo._id}
+          estHeader={""}
+          editData={editData}
+          cancelTitle="Cancel"
+        />
+      ) : null}
        <ClientProjectHeader client={clientInfo} project={ projectsInfo} />
     
       <Grid container justifyContent="flex-end">
@@ -98,7 +140,15 @@ const CreateRequirements = () => {
         </Grid>
       </Grid>
       <BorderedContainer>
-        <RequirementTable requirementHeaderData={ requirementHeaderData} />
+        <RequirementTable
+          requirementHeaderData={requirementHeaderData}
+          selection={false}
+          requirementTypeArray={requirementTypeArray}
+          openEditRequirement={(event, rowData, togglePanel) =>
+              openEditRequirement(event, rowData)
+            }
+          isEditable={true}
+          />
       </BorderedContainer>
     </>
   );

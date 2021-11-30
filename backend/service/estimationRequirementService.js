@@ -66,6 +66,10 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
         if (!requirement) {
           throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
         }
+
+      let queryAssumption = await RequirementRepository.updateQuery(requirement._id,updateInfo);
+  
+        
         return formatMongoData(requirement);
       } else {
         throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
@@ -302,6 +306,13 @@ module.exports.getRequirementData = async ({ id }) => {
           estRequirementData: 1,
           requirement: 1,
         },
+      },{
+       $lookup: {
+        from: 'queryassumptions',
+        localField: 'requirement._id',
+        foreignField: 'projectRequirement',
+        as: 'requirement.queryassumptions'
+        }
       },
       {
         $sort: {
@@ -412,7 +423,15 @@ module.exports.getRequirementData = async ({ id }) => {
           Type: item.requirement.type,
           requirementId: item.requirement._id,
           _id: item._id,
+          
         };
+
+        if (item.requirement.queryassumptions.length !== 0) {
+          requirement["queryassumptionsId"] = item.requirement.queryassumptions[0]._id;
+          requirement["Query"] = item.requirement.queryassumptions[0].query;
+          requirement["Assumption"] = item.requirement.queryassumptions[0].assumption;
+          requirement["Reply"] = item.requirement.queryassumptions[0].reply;
+        }
         item.estRequirementData.forEach((item, i) => {
           if (item.ESTData !== undefined) {
             requirement[item.ESTAttributeID._id] = item.ESTData;

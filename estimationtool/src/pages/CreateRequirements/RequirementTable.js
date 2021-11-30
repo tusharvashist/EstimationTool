@@ -16,6 +16,8 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
 
+import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
+
 export const RequirementTable = (props) => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
@@ -30,10 +32,20 @@ export const RequirementTable = (props) => {
     { title: "Assumption", field: "Assumption", editable: false },
     { title: "Reply", field: "Reply", editable: false },
   ]);
-  const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+  //const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+
+  const [requirementHeaderDataFilter, setFilterRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["FEATURE"]);
+  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
+  var requirementHeaderData = [];
 
+  useEffect(() => {
+    requirementHeaderData = props.requirementHeaderData;
+    setFilterRequirementHeaderData(props.requirementHeaderData);
+    setRequirementTypeArray(props.requirementTypeArray);
+
+  },[props.requirementHeaderData, props.requirementTypeArray, requirementHeaderData, requirementTypeArray]);
   const openAddRequirement = () => {
     openAddFun();
   };
@@ -62,6 +74,11 @@ export const RequirementTable = (props) => {
   };
 
   const types = ["EPIC", "FEATURE", "STORY"];
+  
+  
+  const handleCheckBoxClicked = (row) => {
+    console.log(row);
+  };
 
   const handleChange = (event) => {
     const {
@@ -71,8 +88,40 @@ export const RequirementTable = (props) => {
       // On autofill we get a the stringified value.
       typeof value === "string" ? value.split(",") : value
     );
+    console.log(value);
+    // setLoader(true);
+    // filter(value, () => {
+    //     setLoader(false);
+    // })
+  
   };
 
+
+  const filter = async (value, callBack) => {
+    if (value.length !== 0) {
+      var list = await requirementHeaderData.filter((mainElement) => {
+        return value.some((filterElement) => {
+          console.log(filterElement, mainElement.Type);
+          if (mainElement.Type === filterElement) {
+            return mainElement;
+          }
+        });
+      });
+          var val = await setFilterRequirementHeaderData(list);
+      callBack();
+    } else {
+          var val = await setFilterRequirementHeaderData(requirementHeaderData);
+      callBack();
+    }
+
+  };
+
+
+
+
+  //console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
+
+  //console.log("available: ", available);
   return (
     <>
       {loaderComponent ? (
@@ -104,11 +153,18 @@ export const RequirementTable = (props) => {
             style={{ boxShadow: "none" }}
             // title={`Requirements`}
             columns={requirementHeader}
-            data={props.requirementHeaderData}
-            editable={"never"}
+            data={requirementHeaderDataFilter}
+              editable={"never"}
+              onRowClick={(event, rowData, togglePanel) =>{
+                if (props.isEditable) {
+                  props.openEditRequirement(event, rowData)
+                }
+              }
+            }
+            onSelectionChange={(rows) => handleCheckBoxClicked(rows)}
             options={{
               search: false,
-              selection: true,
+              selection: props.selection,
               showTitle: false,
               showTextRowsSelected: true,
               headerStyle: {
@@ -125,7 +181,7 @@ export const RequirementTable = (props) => {
   );
 };
 
-export const RequirementTableWithFilter = () => {
+export const RequirementTablePopup = (props) => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const openAddRequirement = () => {
     openAddFun();
@@ -135,18 +191,23 @@ export const RequirementTableWithFilter = () => {
     setOpenAddRequirementsBox(true);
   };
 
+  const onSubmitForm = () => {
+  };
+  
+
   return (
     <>
-      <Grid container justifyContent="flex-end">
-        <Grid item style={{ margin: "10px" }}>
-          <Button onClick={openAddRequirement} variant="outlined">
-            {" "}
-            <AddIcon />
-            Filter
-          </Button>
-        </Grid>
-      </Grid>
-      <RequirementTable />
+     <CustomizedDialogs
+      isOpen={props.isOpen}
+      openFun={props.openF}
+      closeFun={props.closeF}
+      title={props.title}
+      oktitle={props.oktitle}
+      cancelTitle={props.cancelTitle}
+      saveFun={onSubmitForm}
+    >
+        <RequirementTable requirementHeaderData={props.requirementHeaderData} openEditRequirement={() => { }} isEditable={ false} selection={ true}  requirementTypeArray={props.requirementTypeArray}/>
+        </CustomizedDialogs>
     </>
   );
 };
