@@ -17,6 +17,8 @@
 }
 .percent {
   order: 2;
+  width: 50px !important;
+  margin: 0 0 0 20px !important;
 }
 .pof {
   order: 3;
