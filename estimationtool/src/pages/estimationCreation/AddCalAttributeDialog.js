@@ -132,7 +132,7 @@ const AddCalAttributeDialog = (props) => {
     }
   };
 
-  const handleMultiSelect = (value) => {
+  const handleMultiSelect = (e, value) => {
 
     if (value.length > 0) {
       console.log("value in mult", value)
@@ -263,7 +263,7 @@ const AddCalAttributeDialog = (props) => {
                 id="tags-standard"
                 options={multiselectOptions}
                 getOptionLabel={(option) => option.name}
-                onChange={(e, value) => handleMultiSelect(value)}
+                onChange={(e, value) => handleMultiSelect(e, value)}
                 defaultValue={multiTagValue}
                 error={showError && !formulaTags}
                 renderInput={(params) => (
