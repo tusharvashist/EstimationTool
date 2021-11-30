@@ -34,7 +34,8 @@ export const RequirementTable = (props) => {
   ]);
   //const [requirementHeaderData, setRequirementHeaderData] = useState([]);
 
-  const [requirementHeaderDataFilter, setFilterRequirementHeaderData] = useState([]);
+  const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
+    useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["FEATURE"]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
@@ -44,8 +45,12 @@ export const RequirementTable = (props) => {
     requirementHeaderData = props.requirementHeaderData;
     setFilterRequirementHeaderData(props.requirementHeaderData);
     setRequirementTypeArray(props.requirementTypeArray);
-
-  },[props.requirementHeaderData, props.requirementTypeArray, requirementHeaderData, requirementTypeArray]);
+  }, [
+    props.requirementHeaderData,
+    props.requirementTypeArray,
+    requirementHeaderData,
+    requirementTypeArray,
+  ]);
   const openAddRequirement = () => {
     openAddFun();
   };
@@ -74,8 +79,7 @@ export const RequirementTable = (props) => {
   };
 
   const types = ["EPIC", "FEATURE", "STORY"];
-  
-  
+
   const handleCheckBoxClicked = (row) => {
     console.log(row);
   };
@@ -93,9 +97,7 @@ export const RequirementTable = (props) => {
     // filter(value, () => {
     //     setLoader(false);
     // })
-  
   };
-
 
   const filter = async (value, callBack) => {
     if (value.length !== 0) {
@@ -107,17 +109,13 @@ export const RequirementTable = (props) => {
           }
         });
       });
-          var val = await setFilterRequirementHeaderData(list);
+      var val = await setFilterRequirementHeaderData(list);
       callBack();
     } else {
-          var val = await setFilterRequirementHeaderData(requirementHeaderData);
+      var val = await setFilterRequirementHeaderData(requirementHeaderData);
       callBack();
     }
-
   };
-
-
-
 
   //console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
 
@@ -154,13 +152,12 @@ export const RequirementTable = (props) => {
             // title={`Requirements`}
             columns={requirementHeader}
             data={requirementHeaderDataFilter}
-              editable={"never"}
-              onRowClick={(event, rowData, togglePanel) =>{
-                if (props.isEditable) {
-                  props.openEditRequirement(event, rowData)
-                }
+            editable={"never"}
+            onRowClick={(event, rowData, togglePanel) => {
+              if (props.isEditable) {
+                props.openEditRequirement(event, rowData);
               }
-            }
+            }}
             onSelectionChange={(rows) => handleCheckBoxClicked(rows)}
             options={{
               search: false,
@@ -191,23 +188,28 @@ export const RequirementTablePopup = (props) => {
     setOpenAddRequirementsBox(true);
   };
 
-  const onSubmitForm = () => {
-  };
-  
+  const onSubmitForm = () => {};
 
   return (
     <>
-     <CustomizedDialogs
-      isOpen={props.isOpen}
-      openFun={props.openF}
-      closeFun={props.closeF}
-      title={props.title}
-      oktitle={props.oktitle}
-      cancelTitle={props.cancelTitle}
-      saveFun={onSubmitForm}
-    >
-        <RequirementTable requirementHeaderData={props.requirementHeaderData} openEditRequirement={() => { }} isEditable={ false} selection={ true}  requirementTypeArray={props.requirementTypeArray}/>
-        </CustomizedDialogs>
+      <CustomizedDialogs
+        isOpen={props.isOpen}
+        openFun={props.openF}
+        closeFun={props.closeF}
+        title={props.title}
+        oktitle={props.oktitle}
+        cancelTitle={props.cancelTitle}
+        saveFun={onSubmitForm}
+        width={"lg"}
+      >
+        <RequirementTable
+          requirementHeaderData={props.requirementHeaderData}
+          openEditRequirement={() => {}}
+          isEditable={false}
+          selection={true}
+          requirementTypeArray={props.requirementTypeArray}
+        />
+      </CustomizedDialogs>
     </>
   );
 };

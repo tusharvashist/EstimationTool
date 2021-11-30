@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
-import MuiDialogContent from '@material-ui/core/DialogContent';
-import MuiDialogActions from '@material-ui/core/DialogActions';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import Typography from '@material-ui/core/Typography';
-import './dailog.css';
+import React, { useEffect } from "react";
+import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import MuiDialogActions from "@material-ui/core/DialogActions";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import Typography from "@material-ui/core/Typography";
+import "./dailog.css";
 
 const styles = (theme) => ({
   root: {
@@ -16,16 +16,16 @@ const styles = (theme) => ({
     padding: theme.spacing(2),
   },
   closeButton: {
-    position: 'absolute',
+    position: "absolute",
     right: theme.spacing(1),
     top: theme.spacing(1),
     color: theme.palette.grey[500],
   },
   MuiDialogTitle: {
     root: {
-      backgroundColor: "#000"
-    }
-  }
+      backgroundColor: "#000",
+    },
+  },
 });
 
 const DialogTitle = withStyles(styles)((props) => {
@@ -34,7 +34,11 @@ const DialogTitle = withStyles(styles)((props) => {
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h6">{children}</Typography>
       {onClose ? (
-        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+        <IconButton
+          aria-label="close"
+          className={classes.closeButton}
+          onClick={onClose}
+        >
           <CloseIcon />
         </IconButton>
       ) : null}
@@ -65,25 +69,26 @@ export default function CustomizedDialogs(props) {
   };
 
   const okFun = () => {
-    props.saveFun(props.saveFun)
-  }
+    props.saveFun(props.saveFun);
+  };
 
-  useEffect(() => {
-  }, [props.isOpen])
-
-
+  useEffect(() => {}, [props.isOpen]);
 
   return (
-    <Dialog fullWidth maxWidth="sm" onClose={handleClose} aria-labelledby="customized-dialog-title" open={props.isOpen} disableBackdropClick>
-      <DialogTitle className="modal-header" id="customized-dialog-title" >
+    <Dialog
+      fullWidth
+      maxWidth={props.width ? props.width : "sm"}
+      onClose={handleClose}
+      aria-labelledby="customized-dialog-title"
+      open={props.isOpen}
+      disableBackdropClick
+    >
+      <DialogTitle className="modal-header" id="customized-dialog-title">
         <Typography align="center"> {props.title}</Typography>
       </DialogTitle>
-      <DialogContent dividers>
-        {props.children}
-      </DialogContent>
+      <DialogContent dividers>{props.children}</DialogContent>
       <DialogActions>
-
-        <Button size="small" color="primary" onClick={okFun} >
+        <Button size="small" color="primary" onClick={okFun}>
           {props.oktitle}
         </Button>
 
