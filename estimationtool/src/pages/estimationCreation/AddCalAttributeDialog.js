@@ -14,8 +14,6 @@ import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Autocomplete from "@mui/material/Autocomplete";
 
 
-
-
 const AddCalAttributeDialog = (props) => {
   const useStyles = makeStyles((theme) => ({
     formControl: { maxWidth: 400 },
@@ -57,7 +55,6 @@ const AddCalAttributeDialog = (props) => {
       .catch((err) => { });
   };
 
-
   // Set Edit Data
 
   const setEditData = () => {
@@ -83,7 +80,6 @@ const AddCalAttributeDialog = (props) => {
       setMultiSelectTag(filterArray)
     }
   }
-
 
   // Submit form
   const onSubmitForm = (e) => {
@@ -111,14 +107,13 @@ const AddCalAttributeDialog = (props) => {
     if (formData.calcAttributeName && formData.tag && formData.calcType) {
       let newObject = { ...formData };
       newObject.unit = 0;
-      newObject.formulaTags = [""];
+      newObject.formulaTags = [];
       setFormData({ ...newObject });
       props.saveFun({ ...newObject });
     } else {
       setShowError(true)
     }
   }
-
 
   //  Handle Validation
   const handelFormula = (e) => {
@@ -144,7 +139,6 @@ const AddCalAttributeDialog = (props) => {
       setShowError(true)
     }
   };
-
 
   const handelCalAttributeName = (e) => {
     if (e.target.value !== '') {
@@ -296,3 +290,6 @@ const AddCalAttributeDialog = (props) => {
 };
 
 export default AddCalAttributeDialog;
+
+
+
