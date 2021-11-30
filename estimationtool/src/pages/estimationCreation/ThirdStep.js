@@ -210,39 +210,47 @@ const ThirdStep = (props) => {
     }
 
 
-    let filterArray = [...data.formulaTags];
-    let finalArr = [];
-
-    if (filterArray.length) {
-      const [firstEle] = filterArray;
-      if (typeof firstEle === 'string') {
-        let arry = multiselectOptions.forEach((ele) => {
-          if (data.formulaTags.includes(ele.id)) {
-            finalArr.push(ele)
-          }
-        })
-      } else {
-        finalArr = [...filterArray];
+    let filterArray = [];
+    let arry = data.formulaTags.map(item => {
+      let ob = {
+        _id: item.id,
+        name: item.name
       }
+      filterArray.push(ob)
+    });
+    // let finalArr = [];
 
-    } else {
-      finalArr = [...filterArray];
-    }
+    // if (filterArray.length) {
+    //   const [firstEle] = filterArray;
+    //   if (typeof firstEle === 'string') {
+    //     let arry = multiselectOptions.forEach((ele) => {
+    //       if (data.formulaTags.includes(ele.id)) {
+    //         finalArr.push(ele)
+    //       }
+    //     })
+    //   } else {
+    //     finalArr = [...filterArray];
+    //   }
+    // } else {
+    //   finalArr = [...filterArray];
+    // }
+
     // settting data on the same state where we store all data
-
-    setAttributes(attributes.map((att) => {
-      if (att._id === data._id) {
-        return {
-          ...data,
-          tag: obj,
-          formulaTags: finalArr,
-          name: data.calcAttributeName,
-          label: data.calcAttributeName
-        };
-      } else {
-        return { ...att }
-      }
-    }));
+const newData = attributes.map((att) => {
+  if (att._id === data._id) {
+    return {
+      ...data,
+      tag: obj,
+      formulaTags: filterArray,
+      name: data.calcAttributeName,
+      label: data.calcAttributeName
+    };
+  } else {
+    return { ...att }
+  }
+})
+    setAttributes(newData);
+    updateStore(newData);
     closeFun();
   }
   const handleClose = () => {
