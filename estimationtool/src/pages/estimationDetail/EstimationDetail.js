@@ -65,7 +65,7 @@ const EstimationDetail = () => {
     console.log(rowData);
     const updatedRows = [requirementDataArray[rowData.tableData.id]];
 
-    
+
     setEditData(updatedRows);
     console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
     openFun();
@@ -89,7 +89,16 @@ const EstimationDetail = () => {
   };
   
   const openAddAvailableRequirement = () => {
+
+    if (requirementHeaderData.length !== 0) {
+      
     openAddAvailableRequirementFun();
+    } else {
+      getRequirementWithQuery(() => {
+        
+          openAddAvailableRequirementFun();
+      })
+    }
   };
 
   const closeAddAvailableRequirement = () => {
@@ -119,23 +128,27 @@ const EstimationDetail = () => {
 
   const getById = () => {
     getBasicDetailById(() => {
-      getRequirementDataById(() => { getRequirementWithQuery()});
+      getRequirementDataById(() => { getRequirementWithQuery(() => { })});
     });
   };
 
   console.log("projectDetails._id", projectDetails._id);
 
-   const getRequirementWithQuery = (callBack) => {
-    RequirementService.getRequirementWithQuery(projectDetails._id)
-      .then((res) => {
-        setRequirementHeaderData([ ...res.data.body.featureList ]);
+  const getRequirementWithQuery = (callBack) => {
+    if (projectDetails._id.length !== 0) {
+      RequirementService.getRequirementWithQuery(projectDetails._id)
+        .then((res) => {
+          setRequirementHeaderData([...res.data.body.featureList]);
         
-        callBack();
-      })
-      .catch((err) => {
-        console.log("get EstimationService by id error", err);
-        //callBack();
-      });
+          callBack();
+        })
+        .catch((err) => {
+          console.log("get EstimationService by id error", err);
+          //callBack();
+        });
+    } else {
+       callBack();
+    }
    };
   
   
