@@ -110,7 +110,7 @@ const AddCalAttributeDialog = (props) => {
   const getValueManual = () => {
     if (formData.calcAttributeName && formData.tag && formData.calcType) {
       let newObject = { ...formData };
-      newObject.unit = 1;
+      newObject.unit = 0;
       newObject.formulaTags = [""];
       setFormData({ ...newObject });
       props.saveFun({ ...newObject });
