@@ -305,8 +305,6 @@ const ThirdStep = (props) => {
     openFun("Edit");
   };
 
-  console.log(attributes);
-
   return (
     <React.Fragment>
       {openModal && openModal.open ? (

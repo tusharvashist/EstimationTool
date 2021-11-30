@@ -31,7 +31,6 @@ const SecondStep = (props) => {
 
   const saveAttribute = useSelector((state) => state.effortAttribute);
   const basicDetail = useSelector((state) => state.basicDetail);
-  console.log("basicDetail", basicDetail);
 
   const dispatch = useDispatch();
 
@@ -54,11 +53,9 @@ const SecondStep = (props) => {
 
         let dataResponse = res.data.body;
         let checkboxValues = {};
-        console.log("dataResponse", dataResponse);
         setAttributes(
           dataResponse.map((ob) => {
             checkboxValues[ob.attributeName] = ob.selected;
-            console.log("");
             return { ...ob, name: ob.attributeName, label: ob.attributeName };
           })
         );
@@ -85,8 +82,8 @@ const SecondStep = (props) => {
   const [dialog, setDialog] = useState(false);
 
   const openDailog = () => {
-    setDialog(true);
-  },
+      setDialog(true);
+    },
     closeDialog = () => {
       setDialog(false);
     };
@@ -129,7 +126,6 @@ const SecondStep = (props) => {
         return obj;
       }
     });
-    console.log("updatedValues", updatedValues);
     setAttributes(updatedValues);
     const newData = updatedValues
       .filter((ob) => ob.selected)
@@ -140,14 +136,12 @@ const SecondStep = (props) => {
     setFinalIds(newData);
 
     dispatch(setEstAttributeData(newData));
-
-    console.log("attributeid", saveAttribute.estAttributeId);
   };
 
   const handleClose = () => {
     setOpen({});
   };
-  console.log("finalIds", finalIds);
+
   const { message, severity, open } = isOpen || {};
   return (
     <React.Fragment>

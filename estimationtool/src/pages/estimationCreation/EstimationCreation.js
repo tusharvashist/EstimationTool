@@ -26,7 +26,6 @@ import { setEstimationHeaderId } from "../../Redux/basicDetailRedux";
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = (props) => {
-  console.log(props);
   const basicDetailRedux = useSelector((state) => state.basicDetail);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -56,6 +55,7 @@ const EstimationCreation = (props) => {
 
   const getHeaderIdChild = (p) => {
     setEstimationIdFinish(p);
+    setNewEstimationHeaderId(p);
   };
 
   const finishLocation = {
@@ -116,10 +116,6 @@ const EstimationCreation = (props) => {
         setLoader(false);
 
         let dataResponce = res.data.body;
-        console.log(dataResponce);
-        console.log(
-          "Save Basic Details APi response:" + JSON.stringify(dataResponce)
-        );
         setNewEstimationHeaderId(dataResponce._id);
         dispatch(setEstimationHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
@@ -138,6 +134,7 @@ const EstimationCreation = (props) => {
 
   // update estimation basic detals Api call
   const updateEstimationBasicDetail = (reqData) => {
+    console.log("this is running");
     setLoader(true);
 
     estimationServices
@@ -147,9 +144,6 @@ const EstimationCreation = (props) => {
 
         let dataResponce = res.data.body;
 
-        console.log(
-          "Update Basic Details APi response:" + JSON.stringify(dataResponce)
-        );
         setNewEstimationHeaderId(dataResponce._id);
         dispatch(setEstimationHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
@@ -170,7 +164,6 @@ const EstimationCreation = (props) => {
   const handleSaveCalcAttribute = () => {
     if (calcAttributeSave.data.length !== 0) {
       createSaveCalctAttribute(getCalcAttributeRequestPayload());
-      // console.log("thirdstep validation", calcAttributeSave.data);
     } else {
       setOpen({
         open: true,
@@ -259,7 +252,7 @@ const EstimationCreation = (props) => {
       basicDetailRedux.estimationName &&
       basicDetailRedux.estimationTypeId &&
       basicDetailRedux.esttimationDesc &&
-      basicDetailRedux.efforUnit && 
+      basicDetailRedux.efforUnit &&
       Number(basicDetailRedux.estimationTentativeTimeline) > 0
     ) {
       estimationHeaderId
@@ -446,7 +439,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
-                // ref={secondChildRef}
+                  // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (

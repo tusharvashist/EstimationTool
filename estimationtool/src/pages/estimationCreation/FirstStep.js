@@ -59,7 +59,8 @@ const FirstStep = forwardRef((props, ref) => {
   const [isEffortUnitInvalid, setIsEffortUnitInvalid] = useState(false);
   const [isEstimationNameInvalid, setEstimationNameInvalid] = useState(false);
   const [isDescriptionInvalid, setDescriptionInvalid] = useState(false);
-  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] = useState(false);
+  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] =
+    useState(false);
 
   const [loaderComponent, setLoader] = useLoader();
 
@@ -84,8 +85,9 @@ const FirstStep = forwardRef((props, ref) => {
     setIsEffortUnitInvalid(basicDetailRedux.efforUnit === "");
     setEstimationNameInvalid(basicDetailRedux.estimationName == "");
     setDescriptionInvalid(basicDetailRedux.esttimationDesc === "");
-    setTentativeTimelineInvalid(validateTimeline(basicDetailRedux.estimationTentativeTimeline));
-
+    setTentativeTimelineInvalid(
+      validateTimeline(basicDetailRedux.estimationTentativeTimeline)
+    );
   };
 
   // get estimation basic info
@@ -117,8 +119,11 @@ const FirstStep = forwardRef((props, ref) => {
         dispatch(setEstimationName(dataResponce.basicDetails.estName));
         dispatch(setEfforUnit(dataResponce.basicDetails.effortUnit));
         dispatch(setEstimationHeaderId(dataResponce.basicDetails._id));
-        dispatch(setEstimationTentativeTimeline(dataResponce.basicDetails.estTentativeTimeline));
-
+        dispatch(
+          setEstimationTentativeTimeline(
+            dataResponce.basicDetails.estTentativeTimeline
+          )
+        );
       })
       .catch((err) => {
         console.log("get estimation header detail error : ", err);
@@ -154,7 +159,6 @@ const FirstStep = forwardRef((props, ref) => {
     //console.log("this is an selected value", event);
     let etId = event.target.value; //estimation type object
     //setSelectedEstimationType(etId);
-    console.log("Selected ESTIMATION TYPE+" + etId);
 
     dispatch(setEstimationTypeId(etId));
     //handleFieldsError();
@@ -170,14 +174,14 @@ const FirstStep = forwardRef((props, ref) => {
     setDescriptionInvalid(charString.length > 0 && remainingCharLimit == 250);
   };
 
-  //tentative timeline value 
+  //tentative timeline value
   const tentaiveTimelineInputValue = (timelineInput) => {
     dispatch(setEstimationTentativeTimeline(timelineInput));
     setTentativeTimelineInvalid(validateTimeline(timelineInput));
   };
 
-  function validateTimeline(timelineValue){
-    return (Number(timelineValue) <= 0);
+  function validateTimeline(timelineValue) {
+    return Number(timelineValue) <= 0;
   }
 
   //generate estimation Name
@@ -198,7 +202,6 @@ const FirstStep = forwardRef((props, ref) => {
     //console.log("this is an selected value", event);
     let effortUnit = event.target.value; //effort unit type object
     //setSelectedEffortUnit(effortUnit);
-    console.log("Selected EffortUnit+" + effortUnit);
     dispatch(setEfforUnit(effortUnit));
     //handleFieldsError();
     setIsEffortUnitInvalid(effortUnit === "");
@@ -226,9 +229,6 @@ const FirstStep = forwardRef((props, ref) => {
                     labelId="estimation-type-label"
                     id="estimation-type-select"
                     onChange={(e) => {
-                      console.log(
-                        e.target.value + "Instade est select onchange"
-                      );
                       getEstimationDropDownValue(e);
                     }}
                     value={basicDetailRedux.estimationTypeId}
@@ -273,20 +273,19 @@ const FirstStep = forwardRef((props, ref) => {
                 error={isEstimationNameInvalid}
               />
             </Grid>
-            
           </Grid>
           <Grid item xs={3}>
             <TextField
-                id="standard-basic"
-                label="Tentative Timeline (Weeks)*"
-                variant="outlined"
-                type={'number'}
-                InputProps={{ inputProps: { min: 1, max: 3, maxLength:3 } }}
-                error={isTentativeTimelineInvalid}
-                value={basicDetailRedux.estimationTentativeTimeline}
-                onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
-              />
-            </Grid>
+              id="standard-basic"
+              label="Tentative Timeline (Weeks)*"
+              variant="outlined"
+              type={"number"}
+              InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
+              error={isTentativeTimelineInvalid}
+              value={basicDetailRedux.estimationTentativeTimeline}
+              onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
+            />
+          </Grid>
           <Grid item xs={8} spacing={1}>
             <TextField
               id="standard-basic"
