@@ -27,7 +27,6 @@ import {
   setEstimationTentativeTimeline,
 } from "../../Redux/basicDetailRedux";
 import { setProjectId } from "../../Redux/projectRedux";
-import AddRequirements from "../estimationDetail/AddRequirements";
 
 export default function ClientDetails(props) {
   const history = useHistory();

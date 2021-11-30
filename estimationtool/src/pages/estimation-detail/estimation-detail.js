@@ -4,42 +4,25 @@ import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { EditOutlined, Add, SaveOutlined, Edit } from "@material-ui/icons";
 import MaterialTable from "material-table";
-import "./EstimationDetail.css";
+import "./estimation-detail.css";
 import { useLocation, Link } from "react-router-dom";
 import EstimationService from "./estimation.service";
-import AddRequirements from "./AddRequirements";
+import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
 import counting from "../../assests/team.png";
-import { EstimationHeader, ClientProjectHeader } from "./HeaderElement";
+import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import RoleCount from "../../shared/layout/PopTable/RoleCount";
 import ResourceCountMatrix from "../resourcemix/ResourceCount"
 import RequirementService from "../CreateRequirements/requirement.service";
-import { RequirementTable, RequirementTablePopup} from "../CreateRequirements/RequirementTable"
+import {RequirementTablePopup} from "../CreateRequirements/RequirementTable"
 
 const EstimationDetail = () => {
   const location = useLocation();
-  const history = useHistory();
   const estimationId = location.state.estId;
-  const [clientDetails, setClientDetails] = useState({
-    _id: "",
-    clientName: "",
-    description: "",
-    website: "",
-  });
-  const [projectDetails, setProjectDetails] = useState({
-    _id: "",
-    projectName: "",
-    projectDescription: "",
-    businessDomain: "",
-  });
-  const [headerData, setHeaderData] = useState({
-    estName: "",
-    estDescription: "",
-    effortUnit: "",
-    totalCost: 0,
-    estTypeId: {},
-  });
+  const [clientDetails, setClientDetails] = useState({ _id: "",clientName: "",description: "",website: ""});
+  const [projectDetails, setProjectDetails] = useState({ _id: "",projectName: "", projectDescription: "", businessDomain: ""});
+  const [headerData, setHeaderData] = useState({ estName: "", estDescription: "",effortUnit: "",totalCost: 0,estTypeId: {}});
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
@@ -54,7 +37,6 @@ const EstimationDetail = () => {
   const [summaryDataArray, setSummaryDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState();
   const [loaderComponent, setLoader] = useLoader();
-
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   
   useEffect(() => {
@@ -64,10 +46,7 @@ const EstimationDetail = () => {
   const openEditRequirement = (event, rowData) => {
     console.log(rowData);
     const updatedRows = [requirementDataArray[rowData.tableData.id]];
-
-
     setEditData(updatedRows);
-    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
     openFun();
   };
 
@@ -90,15 +69,15 @@ const EstimationDetail = () => {
   
   const openAddAvailableRequirement = () => {
 
-    if (requirementHeaderData.length !== 0) {
+    // if (requirementHeaderData.length !== 0) {
       
-    openAddAvailableRequirementFun();
-    } else {
+    // openAddAvailableRequirementFun();
+    // } else {
       getRequirementWithQuery(() => {
         
           openAddAvailableRequirementFun();
       })
-    }
+    // }
   };
 
   const closeAddAvailableRequirement = () => {
@@ -136,7 +115,7 @@ const EstimationDetail = () => {
 
   const getRequirementWithQuery = (callBack) => {
     if (projectDetails._id.length !== 0) {
-      RequirementService.getRequirementWithQuery(projectDetails._id)
+      RequirementService.getUnpairedRequirementEstimation(projectDetails._id,headerData._id)
         .then((res) => {
           setRequirementHeaderData([...res.data.body.featureList]);
         
@@ -155,27 +134,18 @@ const EstimationDetail = () => {
   
   
   const getBasicDetailById = (calback) => {
-    //setLoader(true);
+    setLoader(true);
     console.log("Request for getById: ");
     EstimationService.getById(estimationId)
       .then((res) => {
-        // setLoader(false);
-        console.log("Received data Start Setting");
-
-        //let dataResponse = res.data.body;
-        console.log("dataResponse = res.data.body");
         setHeaderData({ ...res.data.body.basicDetails });
-        console.log("dataResponse.basicDetails");
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
-        console.log("dataResponse.basicDetails.projectId");
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
-        console.log("Received data Start End");
-        console.log("dataResponse.basicDetails.projectId.client");
         setRequirementTagArray([...res.data.body.requirementTag]);
-        console.log("dataResponse.requirementTag");
         setRequirementTypeArray([...res.data.body.requirementType]);
-        console.log("dataResponse.requirementType");
+         setLoader(false);
         calback();
+        
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -183,14 +153,10 @@ const EstimationDetail = () => {
   };
 
   const getRequirementDataById = (callback) => {
-    console.log("Request for getRequirementDataById: ");
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
-        console.log("Received getRequirementDataById Setting");
-        //setLoader(false);
         let dataResponse = res.data.body;
         setSummaryDataArray([...dataResponse.summaryTagList]);
-        console.log("dataResponse.summaryTagList");
         var estHeaderAttribute = [
           {
             title: "Requirement",
@@ -211,22 +177,15 @@ const EstimationDetail = () => {
             id: 3,
           },
         ];
-        console.log("dataResponse.title: Description");
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
         setRequirementHeaderArray(estHeaderAttribute);
-        console.log(
-          " setRequirementHeaderArray(dataResponse.estHeaderAttribute);="
-        );
         setRequirementDataArray(dataResponse.requirementList);
-        console.log("Received getRequirementDataById End");
+        setLoader(false);
         callback();
+
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
          callback();
       });
   };
@@ -264,10 +223,6 @@ const EstimationDetail = () => {
         .catch((err) => {
           setLoader(false);
           console.log("get deleteRequirement by id error", err);
-          // if ((err.response.data = 401) || (err.response.data = 404)) {
-          //   let url = "/login";
-          //   history.push(url);
-          // }
            getRequirementDataById(() => { });
         });
     } else {
@@ -281,7 +236,6 @@ const EstimationDetail = () => {
     EstimationService.deleteRequirement(changes._id)
       .then((res) => {
         setLoader(false);
-
         getById();
       })
       .catch((err) => {
@@ -289,6 +243,9 @@ const EstimationDetail = () => {
         getById();
       });
   };
+
+
+
 
   ///============== JS- Resource Count Pop up and table - START ==============///
 
@@ -347,13 +304,41 @@ const EstimationDetail = () => {
     const roleDiv = document.querySelector(".rolelist");
     roleDiv.classList.toggle("close-role");
   };
+  
+  var selectedRequirementsRows = [];
+  const handleCheckBoxClicked = (rows) => {
+    console.log("rows:-- ", rows);
+    selectedRequirementsRows = rows;
+  };
+
+  const saveAddAvailableRequirementFun = () => {
+    setOpenRequirementTable(false);
+    if (selectedRequirementsRows.length !== 0) {
+      setLoader(true);
+      EstimationService.mapHeaderToMultipleRequirement(estimationId, selectedRequirementsRows)
+        .then((res) => {
+          setLoader(false);
+          getRequirementDataById(() => { });
+        })
+        .catch((err) => {
+          setLoader(false);
+          console.log("get deleteRequirement by id error", err);
+          getRequirementDataById(() => { });
+        });
+    } else {
+      setLoader(false);
+    }
+  };
+
 
   ///============== JS- Resource Count Pop up and table - END ==============///
 
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
-      <ResourceCountMatrix data={estimationId}/>
+      <ResourceCountMatrix
+        data={estimationId}
+        />
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
@@ -395,11 +380,14 @@ const EstimationDetail = () => {
           closeF={closeAddAvailableRequirementFun}
           title="Add Available Requirement"
           oktitle="Add"
-          saveFun={closeAddAvailableRequirementFun}
+          saveFun={saveAddAvailableRequirementFun}
           cancelTitle="Cancel"
           requirementHeaderData={requirementHeaderData}
           selection={false}
-          requirementTypeArray={requirementTypeArray} />
+          requirementTypeArray={requirementTypeArray}
+          handleCheckBoxClicked={handleCheckBoxClicked}
+          
+         />
   
       ) : null}
  

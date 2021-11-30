@@ -4,8 +4,8 @@ import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
 import MaterialTable from "material-table";
-import AddRequirements from "../estimationDetail/AddRequirements";
-import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
+import AddRequirements from "../estimation-detail/add-requirements-popup";
+import { ClientProjectHeader } from "../estimation-detail/header-element";
 import { RequirementTable, RequirementTableWithFilter} from "./RequirementTable"
 import  RequirementService from "./requirement.service"
 

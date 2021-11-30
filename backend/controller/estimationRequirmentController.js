@@ -14,6 +14,28 @@ module.exports.create = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
+
+module.exports.mapHeaderToMultipleRequirement = async (req,res)=>{
+    let responce = {...constant.defaultResponce};
+    try{
+        const responceFromClientSer = await estimationRequirementService.mapHeaderToMultipleRequirement({
+            id:req.params.id,
+            updateInfo:req.body,
+        });
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_UPDATE;
+        responce.body = responceFromClientSer;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
+
+
+
+
+
 module.exports.update = async (req,res)=>{
     let responce = {...constant.defaultResponce};
     try{
@@ -30,6 +52,22 @@ module.exports.update = async (req,res)=>{
     return res.status(responce.status).send(responce);
 }
 
+
+
+
+module.exports.getUnpairedRequirementEstimation = async (req, res) => {
+    let responce =
+        { ...constant.defaultResponce };
+    try {
+        const responceGetById = await estimationRequirementService.getUnpairedRequirementEstimation(req.query);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_FETCH;
+        responce.body = responceGetById;
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
 
 
 module.exports.getRequirementWithQuery = async (req, res) => {

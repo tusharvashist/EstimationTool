@@ -30,6 +30,22 @@ module.exports.create = async (serviceData) => {
 };
 
 
+module.exports.mapHeaderToMultipleRequirement = async ( serviceData) => {
+  try {
+
+    var result = await RequirementRepository.mapHeaderToMultipleRequirement(
+        serviceData.id,
+        serviceData.updateInfo.data)
+    return formatMongoData(result );
+ 
+  } catch (err) {
+    // //console.log("something went wrong: service > RequirmentData ", err);
+    throw new Error(err);
+  }
+};
+
+
+
 module.exports.getRequirementWithQuery = async ({ id }) => {
   try {
 
@@ -47,6 +63,30 @@ module.exports.getRequirementWithQuery = async ({ id }) => {
     throw new Error(err);
   }
 };
+
+
+
+module.exports.getUnpairedRequirementEstimation = async ( query) => {
+  try {
+
+    // if (!mongoose.Types.ObjectId(id)) {
+    //   throw new Error(constant.requirementMessage.INVALID_ID);
+    // }
+  var requirementList = await RequirementRepository.getRequirementWithQuery(query.projectId);
+    var unpairedRequirementEstimation = await RequirementRepository.getUnpairedRequirementEstimation(requirementList,
+      query.estHeader);
+   let response = { ...constant.requirementResponse };
+    response.featureList = unpairedRequirementEstimation;
+
+    return formatMongoData(response);
+  } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    throw new Error(err);
+  }
+};
+
+
+
 
 
 module.exports.updateRequirement = async ({ id, updateInfo }) => {
@@ -90,6 +130,13 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
     throw new Error(err);
   }
 };
+
+
+
+
+
+
+
 
 module.exports.updateRequirementData = async (serviceDataArray) => {
   try {

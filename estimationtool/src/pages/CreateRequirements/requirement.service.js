@@ -12,6 +12,14 @@ const RequirementService = {
 
         let url = Url.estimationDetail + "/get/Requirement/With/Query/"+ projectId ;
         return axios.get(url);
+    },
+
+    
+
+      getUnpairedRequirementEstimation: function (projectId,estHeader) {
+
+        let url = Url.estimationDetail + "/getUnpairedRequirementEstimation?projectId="+ projectId+"&estHeader="+estHeader;
+        return axios.get(url);
     }
 }
 

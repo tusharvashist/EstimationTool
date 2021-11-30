@@ -4,8 +4,8 @@ import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
 import MaterialTable from "material-table";
-import AddRequirements from "../estimationDetail/AddRequirements";
-import { ClientProjectHeader } from "../estimationDetail/HeaderElement";
+import AddRequirements from "../estimation-detail/add-requirements-popup";
+import { ClientProjectHeader } from "../estimation-detail/header-element";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -24,15 +24,14 @@ export const RequirementTable = (props) => {
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
-    { title: "Requirement", field: "Requirement", editable: false },
-    { title: "Description", field: "Description", editable: false },
-    { title: "Tag", field: "Tag", editable: false },
-    { title: "Type", field: "Type", editable: false },
-    { title: "Query", field: "Query", editable: false },
-    { title: "Assumption", field: "Assumption", editable: false },
-    { title: "Reply", field: "Reply", editable: false },
+    { title: "Requirement", field: "Requirement" },
+    { title: "Description", field: "Description" },
+    { title: "Tag", field: "Tag" },
+    { title: "Type", field: "Type" },
+    { title: "Query", field: "Query" },
+    { title: "Assumption", field: "Assumption" },
+    { title: "Reply", field: "Reply" },
   ]);
-  //const [requirementHeaderData, setRequirementHeaderData] = useState([]);
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
@@ -79,10 +78,6 @@ export const RequirementTable = (props) => {
   };
 
   const types = ["EPIC", "FEATURE", "STORY"];
-
-  const handleCheckBoxClicked = (row) => {
-    console.log(row);
-  };
 
   const handleChange = (event) => {
     const {
@@ -158,7 +153,12 @@ export const RequirementTable = (props) => {
                 props.openEditRequirement(event, rowData);
               }
             }}
-            onSelectionChange={(rows) => handleCheckBoxClicked(rows)}
+              onSelectionChange={(rows) => {
+                if (props.selection === true) {
+                  props.handleCheckBoxClicked(rows);
+                }
+                
+              }}
             options={{
               search: false,
               selection: props.selection,
@@ -179,17 +179,6 @@ export const RequirementTable = (props) => {
 };
 
 export const RequirementTablePopup = (props) => {
-  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
-  const openAddRequirement = () => {
-    openAddFun();
-  };
-
-  const openAddFun = () => {
-    setOpenAddRequirementsBox(true);
-  };
-
-  const onSubmitForm = () => {};
-
   return (
     <>
       <CustomizedDialogs
@@ -199,7 +188,7 @@ export const RequirementTablePopup = (props) => {
         title={props.title}
         oktitle={props.oktitle}
         cancelTitle={props.cancelTitle}
-        saveFun={onSubmitForm}
+        saveFun={props.saveFun}
         width={"lg"}
       >
         <RequirementTable
@@ -208,6 +197,7 @@ export const RequirementTablePopup = (props) => {
           isEditable={false}
           selection={true}
           requirementTypeArray={props.requirementTypeArray}
+            handleCheckBoxClicked={props.handleCheckBoxClicked}
         />
       </CustomizedDialogs>
     </>

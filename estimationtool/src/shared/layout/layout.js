@@ -15,7 +15,7 @@ import { Switch, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
-import EstimationDetail from "../../pages/estimationDetail/EstimationDetail";
+import EstimationDetail from "../../pages/estimation-detail/estimation-detail";
 import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
 
 const EsContainer = withStyles((props) => {
