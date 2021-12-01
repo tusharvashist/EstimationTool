@@ -36,16 +36,16 @@ export const RequirementTable = (props) => {
   const [loaderComponent, setLoader] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
     { headerName: "Requirement", field: "Requirement", width: 170 },
-    { headerName: "Description", field: "Description", width: 130 },
-    { headerName: "Tag", field: "Tag", width: 100 },
+    { headerName: "Description", field: "Description", width: 200 },
+    { headerName: "Tag", field: "Tag", width: 150 },
     {
       headerName: "Type",
       field: "Type",
-      width: 100,
+      width: 130,
     },
-    { headerName: "Query", field: "Query", width: 130 },
-    { headerName: "Assumption", field: "Assumption", width: 130 },
-    { headerName: "Reply", field: "Reply", width: 130 },
+    { headerName: "Query", field: "Query", width: 200 },
+    { headerName: "Assumption", field: "Assumption", width: 200 },
+    { headerName: "Reply", field: "Reply", width: 200 },
   ]);
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
@@ -170,28 +170,30 @@ export const RequirementTable = (props) => {
                 </MenuItem>
               ))}
             </Select>
-          </div>
-          <div style={{ height: 400, width: "100%" }}>
-            <DataGrid
+            </div>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid
               className={classes.root}
-              rows={requirementHeaderDataFilter}
-              columns={requirementHeader}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              checkboxSelection={props.selection}
-              selected={(event, rowData, togglePanel) => {
-                if (props.isEditable) {
-                  props.openEditRequirement(event, rowData);
-                }
-              }}
-              onSelectionModelChange={(rows) => {
-                console.log("onSelectionModelChange: ", rows);
-                if (props.selection === true) {
-                  props.handleCheckBoxClicked(rows);
-                }
-              }}
-            />
-          </div>
+                rows={requirementHeaderDataFilter}
+                columns={requirementHeader}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                checkboxSelection={props.selection}
+                onRowClick={(params, event) => {
+                //selected={(event, rowData, togglePanel) => {
+                    if (props.isEditable) {
+                      props.openEditRequirement(event, params.row);
+                     }
+                }}
+                onSelectionModelChange={(rows) => {
+                  console.log("onSelectionModelChange: ",rows);
+                   if (props.selection === true) {
+                      props.handleCheckBoxClicked(rows);
+                 }
+                
+                }}
+              />
+              </div>
           {/* <MaterialTable
             style={{ boxShadow: "none" }}
             columns={requirementHeader}

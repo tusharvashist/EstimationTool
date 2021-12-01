@@ -46,9 +46,7 @@ const CreateRequirements = () => {
 
  const openEditRequirement = (event, rowData) => {
     console.log(rowData);
-    const updatedRows = [requirementHeaderData[rowData.tableData.id]];
-    setEditData(updatedRows);
-    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
+    setEditData([rowData]);
     openFun();
   };
 
