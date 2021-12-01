@@ -91,7 +91,6 @@ export const RequirementTable = (props) => {
 
   const filter =  (value) => {
     if (value.length !== 0) {
-      
       var filterData = [];
       value.map((element) => {
         filterData.push(requirementHeaderData.filter((requirementData) => requirementData.Type === element))
