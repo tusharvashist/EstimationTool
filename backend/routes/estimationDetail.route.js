@@ -21,15 +21,30 @@ router.put("/data/update",
     //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationDetail.updateRequirementData
 );
+router.put("/map/Header/ToMultipleRequirement/:id",
+    tokenValidation.validateToken,
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    estimationDetail.mapHeaderToMultipleRequirement
+);
+
 router.get("/get/data/:id",
     tokenValidation.validateToken,
     //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationDetail.getRequirementData
 );
+
+
 router.get("/get/Requirement/With/Query/:id",
     tokenValidation.validateToken,
     //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationDetail.getRequirementWithQuery
+);
+
+
+router.get("/getUnpairedRequirementEstimation",
+    tokenValidation.validateToken,
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    estimationDetail.getUnpairedRequirementEstimation
 );
 
 

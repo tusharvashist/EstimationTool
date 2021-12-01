@@ -37,5 +37,10 @@ const EstimationService = {
         let url = Url.estimationDetail+"/data/update";        
         return axios.put(url,{ "data": estrequirementdata })
     },
+
+    mapHeaderToMultipleRequirement:  function(estHeaderId, multipleRequirement){
+        let url = Url.estimationDetail+"/map/Header/ToMultipleRequirement/"+estHeaderId ;        
+        return axios.put(url,{ "data": multipleRequirement })
+    },
 }
 export default EstimationService;

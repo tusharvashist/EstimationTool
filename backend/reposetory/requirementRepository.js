@@ -29,7 +29,6 @@ module.exports.createRequirement = async (serviceData) => {
       let result = await projectRequirement.save();
         return result;
     }
-    
 }
 
 module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
@@ -51,6 +50,36 @@ module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
 
 }
 
+module.exports.mapHeaderToMultipleRequirement = async (estHeaderId,  serviceDataArray) => {
+   
+    const estHeaderModel = await EstHeaderModel.findById({ _id: estHeaderId })
+
+    if (estHeaderModel.length == 0) {
+       throw new Error(constant.requirementMessage.INVALID_EST_ID);
+    }
+
+    var index = 0;
+    var resultArray = []
+    var result =  await serviceDataArray.forEach(async (serviceData) => {
+        const record = await EstHeaderRequirement.find({
+            requirement: serviceData.requirementId,
+            estHeader: mongoose.Types.ObjectId(estHeaderId)
+        })
+        
+        if (record.length === 0) {
+            let estHeaderRequirement = new EstHeaderRequirement({
+                requirement: serviceData.requirementId,
+                estHeader: estHeaderModel._id, isDeleted: false
+            })
+            let result_estHeaderRequirement = await estHeaderRequirement.save();
+            resultArray.push(result_estHeaderRequirement);
+            if (index == (serviceDataArray.length - 1)) {
+                 return resultArray;
+            }
+            index = index + 1;
+        }    
+    });
+}
 
 module.exports.updateQuery = async (projectRequirementId, serviceData) => {
     const findRecord = await QueryAssumptionModel.find(
@@ -71,14 +100,7 @@ module.exports.updateQuery = async (projectRequirementId, serviceData) => {
           { new: true }
         );
         
-       // if (!queryAssumptionModel) {
-        //  throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
-       // }
-
-        
         return queryAssumptionModel;
-
-
 
     } else {
         return  "OK";
@@ -120,6 +142,30 @@ module.exports.getTypes = async () => {
     } else {
         return [];
     }
+}
+
+
+
+module.exports.getUnpairedRequirementEstimation = async (requirementList,estHeader ) => {
+  //  var requirementList = await getRequirementWithQuery(projectId);
+    var unpairedRequirement = [];
+    var index = 0;
+    
+    var result = await EstHeaderRequirement.find({ estHeader: estHeader });
+      
+    var temp = requirementList.forEach( (element) => {
+        
+        const found = result.find(({ requirement })=> String(requirement) === String(element._id));
+      if (!found) {
+            unpairedRequirement.push(element);
+        }
+       // if (index == (requirementList.length - 1)) {
+           
+            //callback(unpairedRequirement);
+        //}
+          index = index + 1;
+    });
+    return unpairedRequirement;
 }
 
 module.exports.getRequirementWithQuery = async (projectId) => {

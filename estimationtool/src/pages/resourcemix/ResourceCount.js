@@ -1,6 +1,6 @@
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import MaterialTable from "material-table";
-import "../estimationDetail/EstimationDetail.css";
+import "../estimation-detail/estimation-detail.css";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import counting from "../../assests/team.png";
 import RoleCount from "../../shared/layout/PopTable/RoleCount";
