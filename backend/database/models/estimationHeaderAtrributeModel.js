@@ -10,7 +10,7 @@ const estimationHeaderAtrributeSchema = new mongoose.Schema({
         type: String,
         ref: 'EstimationAttributes'
     },
-    totalValue: String,//sum of all requirement attribute values
+  //  totalValue: String,//sum of all requirement attribute values
 }, {
     timestamps: true,
     toObject: {

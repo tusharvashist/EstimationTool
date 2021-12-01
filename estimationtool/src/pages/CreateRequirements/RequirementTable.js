@@ -33,7 +33,6 @@ export const RequirementTable = (props) => {
     { headerName: "Reply", field: "Reply" ,width: 130 },
   ]);
 
-
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
@@ -136,11 +135,23 @@ export const RequirementTable = (props) => {
             </div>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
-                 rows={requirementHeaderDataFilter}
-                 columns={requirementHeader}
-                 pageSize={5}
+                rows={requirementHeaderDataFilter}
+                columns={requirementHeader}
+                pageSize={5}
                 rowsPerPageOptions={[5]}
-                checkboxSelection
+                checkboxSelection={props.selection}
+                selected={(event, rowData, togglePanel) => {
+                    if (props.isEditable) {
+                      props.openEditRequirement(event, rowData);
+                     }
+                }}
+                onSelectionModelChange={(rows) => {
+                  console.log("onSelectionModelChange: ",rows);
+                   if (props.selection === true) {
+                      props.handleCheckBoxClicked(rows);
+                 }
+                
+                }}
               />
               </div>
           {/* <MaterialTable

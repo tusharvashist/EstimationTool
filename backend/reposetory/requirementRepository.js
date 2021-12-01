@@ -62,13 +62,13 @@ module.exports.mapHeaderToMultipleRequirement = async (estHeaderId,  serviceData
     var resultArray = []
     var result =  await serviceDataArray.forEach(async (serviceData) => {
         const record = await EstHeaderRequirement.find({
-            requirement: serviceData.requirementId,
+            requirement:mongoose.Types.ObjectId(serviceData) ,
             estHeader: mongoose.Types.ObjectId(estHeaderId)
         })
         
         if (record.length === 0) {
             let estHeaderRequirement = new EstHeaderRequirement({
-                requirement: serviceData.requirementId,
+                requirement: serviceData,
                 estHeader: estHeaderModel._id, isDeleted: false
             })
             let result_estHeaderRequirement = await estHeaderRequirement.save();
