@@ -222,6 +222,9 @@ module.exports.getRequirementWithQuery = async (projectId) => {
             {
                 $group: {
                     _id: '$_id',
+                    id: {
+                        $first: '$_id'
+                    },
                     isDeleted: {
                         $first: '$isDeleted'
                     },

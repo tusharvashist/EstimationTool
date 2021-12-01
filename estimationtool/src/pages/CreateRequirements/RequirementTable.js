@@ -15,23 +15,24 @@ import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
-
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
+import { DataGrid } from '@mui/x-data-grid';
 
 export const RequirementTable = (props) => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
-  const [requirementHeader, setSummaryHeaderArray] = useState([
-    { title: "Requirement", field: "Requirement" },
-    { title: "Description", field: "Description" },
-    { title: "Tag", field: "Tag" },
-    { title: "Type", field: "Type" },
-    { title: "Query", field: "Query" },
-    { title: "Assumption", field: "Assumption" },
-    { title: "Reply", field: "Reply" },
+   const [requirementHeader, setSummaryHeaderArray] = useState([
+    { headerName: "Requirement", field: "Requirement" ,width: 170 },
+    { headerName: "Description", field: "Description" ,width: 130 },
+    { headerName: "Tag", field: "Tag",width: 70  },
+    { headerName: "Type", field: "Type",width: 70  },
+    { headerName: "Query", field: "Query" ,width: 130 },
+    { headerName: "Assumption", field: "Assumption" ,width: 130 },
+    { headerName: "Reply", field: "Reply" ,width: 130 },
   ]);
+
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
@@ -132,8 +133,17 @@ export const RequirementTable = (props) => {
                 </MenuItem>
               ))}
             </Select>
-          </div>
-          <MaterialTable
+            </div>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid
+                 rows={requirementHeaderDataFilter}
+                 columns={requirementHeader}
+                 pageSize={5}
+                rowsPerPageOptions={[5]}
+                checkboxSelection
+              />
+              </div>
+          {/* <MaterialTable
             style={{ boxShadow: "none" }}
             columns={requirementHeader}
             data={requirementHeaderDataFilter}
@@ -161,7 +171,7 @@ export const RequirementTable = (props) => {
                 color: "#113c91",
               },
             }}
-          />
+          /> */}
         </>
       )}
     </>
