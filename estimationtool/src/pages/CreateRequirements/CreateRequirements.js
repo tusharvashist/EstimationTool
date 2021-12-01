@@ -19,7 +19,8 @@ const CreateRequirements = () => {
 
   const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
   const [editData, setEditData] = useState([]);
-    const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+  const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+  
   useEffect(() => {
     getRequirementWithQuery(() => {getBasicDetailById() });
   },[]);

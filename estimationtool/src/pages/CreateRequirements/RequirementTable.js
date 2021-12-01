@@ -35,21 +35,19 @@ export const RequirementTable = (props) => {
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
+  const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
-  const [available, setAvailable] = useState(["FEATURE"]);
-  const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  var requirementHeaderData = [];
+  const [available, setAvailable] = useState([]);
+  //const [requirementTypeArray, setRequirementTypeArray] = useState([]);
+
 
   useEffect(() => {
-    requirementHeaderData = props.requirementHeaderData;
-    setFilterRequirementHeaderData(props.requirementHeaderData);
-    setRequirementTypeArray(props.requirementTypeArray);
-  }, [
-    props.requirementHeaderData,
-    props.requirementTypeArray,
-    requirementHeaderData,
-    requirementTypeArray,
-  ]);
+    setRequirementHeaderData( [...props.requirementHeaderData]);
+    setFilterRequirementHeaderData([...props.requirementHeaderData]);
+   // setRequirementTypeArray([...props.requirementTypeArray]);
+    console.log("useEffect");
+  }, [props.requirementHeaderData, props.requirementTypeArray]);
+
   const openAddRequirement = () => {
     openAddFun();
   };
@@ -88,27 +86,21 @@ export const RequirementTable = (props) => {
       typeof value === "string" ? value.split(",") : value
     );
     console.log(value);
-    // setLoader(true);
-    // filter(value, () => {
-    //     setLoader(false);
-    // })
+    filter(value);
   };
 
-  const filter = async (value, callBack) => {
+  const filter =  (value) => {
     if (value.length !== 0) {
-      var list = await requirementHeaderData.filter((mainElement) => {
-        return value.some((filterElement) => {
-          console.log(filterElement, mainElement.Type);
-          if (mainElement.Type === filterElement) {
-            return mainElement;
-          }
-        });
-      });
-      var val = await setFilterRequirementHeaderData(list);
-      callBack();
+      
+      var filterData = [];
+      value.map((element) => {
+        filterData.push(requirementHeaderData.filter((requirementData) => requirementData.Type === element))
+      })
+      
+      setFilterRequirementHeaderData(filterData.flat());
+      
     } else {
-      var val = await setFilterRequirementHeaderData(requirementHeaderData);
-      callBack();
+       setFilterRequirementHeaderData(requirementHeaderData);
     }
   };
 
@@ -144,7 +136,6 @@ export const RequirementTable = (props) => {
           </div>
           <MaterialTable
             style={{ boxShadow: "none" }}
-            // title={`Requirements`}
             columns={requirementHeader}
             data={requirementHeaderDataFilter}
             editable={"never"}
