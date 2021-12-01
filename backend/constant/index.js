@@ -105,6 +105,15 @@ module.exports = {
 
     },
 
+    techSkillMasterMessage: {
+        TECHSKILL_CREATED: "Tech Skill created successfully",
+        TECHSKILL_ERROR: "Tech Skill create fail",
+        TECHSKILL_FETCH: "All Tech Skill fetch successfully",
+        TECHSKILL_GET_ERROR: "All Tech Skill fetch error",
+        TECHSKILL_NOT_FOUND: "Tech Skill not found",
+        INVALID_ID: "Invalid id",
+    },
+
     projectMessage: {
         PROJECT_CREATED: "Project created successfully",
         PROJECT_ERROR: "Project create fail",
