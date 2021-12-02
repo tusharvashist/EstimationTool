@@ -25,6 +25,7 @@ import {
   setEsttimationDesc,
   setEstimationHeaderId,
   setEstimationTentativeTimeline,
+  setEstimationContingency,
 } from "../../Redux/basicDetailRedux";
 import { setProjectId } from "../../Redux/projectRedux";
 
@@ -147,6 +148,7 @@ export default function ClientDetails(props) {
     dispatch(setEstimationHeaderId(""));
     localStorage.setItem("estimationHeaderId", "");
     dispatch(setEstimationTentativeTimeline(""));
+    dispatch(setEstimationContingency(""));
   };
 
   return (

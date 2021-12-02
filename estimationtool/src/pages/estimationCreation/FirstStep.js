@@ -29,10 +29,12 @@ import {
   setEsttimationDesc,
   setEstimationHeaderId,
   setEstimationTentativeTimeline,
+  setEstimationContingency,
 } from "../../Redux/basicDetailRedux";
 import estimationServices from "../allestimation/allestimation.service";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
+import { width } from "@material-ui/system";
 
 const FirstStep = forwardRef((props, ref) => {
   const history = useHistory();
@@ -45,32 +47,24 @@ const FirstStep = forwardRef((props, ref) => {
     { key: 2, value: "Day" },
     { key: 3, value: "Hour" },
   ]);
-  //const [selectedEstType, setSelectedEstimationType] = useState();
-  //const [selectedEffortUnit, setSelectedEffortUnit] = useState();
-  //const [estimationNameAutoGen, setEstimationNameAutoGen] = useState();
+  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
+
   const [clientName, setClientName] = useState();
   const [projectName, setProjectName] = useState();
-  //const estHeaderID = {...props.estimationHeaderId};
-
-  //const [estimationHeaderId, setEstimationHeaderId] = useState({estHeaderID});
-  //const [estimationDescription, setEstimationDescription] = useState();
-  //const { forwardRef, useRef, useImperativeHandle } = React;
   const [isEstimationTypeInvalid, setIsEstimationTypeInvalid] = useState(false);
   const [isEffortUnitInvalid, setIsEffortUnitInvalid] = useState(false);
   const [isEstimationNameInvalid, setEstimationNameInvalid] = useState(false);
   const [isDescriptionInvalid, setDescriptionInvalid] = useState(false);
-  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] =
-    useState(false);
+  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] = useState(false);
+  const [isContingencyInvalid, setContingencyInvalid] = useState(false);
 
   const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
     setClientName(props.clientName);
     setProjectName(props.projectName);
-    //setEstimationHeaderId(estHeaderId);
     getAllMasterEstimationTypes();
     getEstimationBasicInfo();
-    //remainingCharCount(basicDetailRedux.esttimationDesc);
   }, []);
 
   useImperativeHandle(ref, () => ({
@@ -88,11 +82,13 @@ const FirstStep = forwardRef((props, ref) => {
     setTentativeTimelineInvalid(
       validateTimeline(basicDetailRedux.estimationTentativeTimeline)
     );
+    setContingencyInvalid(
+      !validateContingency(basicDetailRedux.estimationContingency)
+    );
   };
 
   // get estimation basic info
   const getEstimationBasicInfo = () => {
-    //let estHeaderId = '6189e7ca1bdec59514481b47'
     let estHeaderId = props.estimationHeaderId;
     // console.log("props Estimation Header Id: " + "::" + estHeaderId);
     if (estHeaderId) {
@@ -124,13 +120,10 @@ const FirstStep = forwardRef((props, ref) => {
             dataResponce.basicDetails.estTentativeTimeline
           )
         );
+        dispatch(setEstimationContingency(dataResponce.basicDetails.contingency))
       })
       .catch((err) => {
         console.log("get estimation header detail error : ", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
 
@@ -147,10 +140,6 @@ const FirstStep = forwardRef((props, ref) => {
       })
       .catch((err) => {
         console.log("get master estimation types", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
 
@@ -158,10 +147,7 @@ const FirstStep = forwardRef((props, ref) => {
   const getEstimationDropDownValue = (event) => {
     //console.log("this is an selected value", event);
     let etId = event.target.value; //estimation type object
-    //setSelectedEstimationType(etId);
-
     dispatch(setEstimationTypeId(etId));
-    //handleFieldsError();
     setIsEstimationTypeInvalid(false);
     generateEstimationName(etId);
   };
@@ -170,7 +156,6 @@ const FirstStep = forwardRef((props, ref) => {
     var remainingCharLimit = 250 - charString.length;
     setCharacterCount(remainingCharLimit);
     dispatch(setEsttimationDesc(charString));
-    //handleFieldsError();
     setDescriptionInvalid(charString.length > 0 && remainingCharLimit == 250);
   };
 
@@ -180,8 +165,18 @@ const FirstStep = forwardRef((props, ref) => {
     setTentativeTimelineInvalid(validateTimeline(timelineInput));
   };
 
+  //Contingency value input handling
+  const handleContingencyInputValueChange = (contingencyVal) => {
+    dispatch(setEstimationContingency(contingencyVal));
+    setContingencyInvalid(!validateContingency(contingencyVal));
+  };
+
   function validateTimeline(timelineValue) {
     return Number(timelineValue) <= 0;
+  }
+
+  function validateContingency(value){
+    return Number(value) > 0 && Number(value) <=100;
   }
 
   //generate estimation Name
@@ -189,11 +184,8 @@ const FirstStep = forwardRef((props, ref) => {
     const selectedEstimationObj = estTypes.find((esType) => esType.id === etId);
     var estName =
       selectedEstimationObj.estType + "-" + clientName + "-" + projectName;
-    //return estName.replace(/ /g,"_");
-    //setEstimationNameAutoGen(estName.replace(/ /g,"_"));
     dispatch(setEstimationType(selectedEstimationObj.estType));
     dispatch(setEstimationName(estName.replace(/ /g, "_")));
-    //handleFieldsError();
     setEstimationNameInvalid(estName == "");
   };
 
@@ -201,9 +193,7 @@ const FirstStep = forwardRef((props, ref) => {
   const getEffortUnitDropDownValue = (event) => {
     //console.log("this is an selected value", event);
     let effortUnit = event.target.value; //effort unit type object
-    //setSelectedEffortUnit(effortUnit);
     dispatch(setEfforUnit(effortUnit));
-    //handleFieldsError();
     setIsEffortUnitInvalid(effortUnit === "");
   };
 
@@ -276,8 +266,9 @@ const FirstStep = forwardRef((props, ref) => {
           </Grid>
           <Grid
             container
-            columnSpacing={7}
-            style={{ gap: 200 }}
+            style={{gap: 200}}
+            className="gridgap"
+
           >
           <Grid item xs={4}>
             <TextField
@@ -291,16 +282,20 @@ const FirstStep = forwardRef((props, ref) => {
               onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
             />
           </Grid>
-          <Grid item xs={4} spacing={11}>
+          <Grid item xs={4} >
             <TextField
               id="standard-basic"
               label="Contengency(%)*"
               variant="outlined"
-              type={"number"}
-              InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
-              error={isTentativeTimelineInvalid}
-              value={basicDetailRedux.estimationTentativeTimeline}
-              onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
+              type="number"
+              max={2}
+                onKeyDown={(evt) =>
+                  symbolsArr.includes(evt.key) && evt.preventDefault()
+                }
+                pattern="^[1-9][0-9]?$|^100$"
+              error={isContingencyInvalid}
+              value={basicDetailRedux.estimationContingency}
+              onChange={(e) => handleContingencyInputValueChange(e.target.value)}
             />
           </Grid>
           </Grid>

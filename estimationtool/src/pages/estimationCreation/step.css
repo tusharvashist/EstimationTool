@@ -40,3 +40,9 @@ label.MuiFormControlLabel-root {
 .css-1kpdewa-MuiAutocomplete-root .MuiAutocomplete-inputRoot {
   justify-content: flex-start;
 }
+@media (max-width:864px) {
+  .gridgap {
+    gap: 0 !important;
+  }
+}
+
