@@ -186,7 +186,9 @@ const FirstStep = forwardRef((props, ref) => {
       selectedEstimationObj.estType + "-" + clientName + "-" + projectName;
     dispatch(setEstimationType(selectedEstimationObj.estType));
     dispatch(setEstimationName(estName.replace(/ /g, "_")));
+    dispatch(setEstimationContingency(selectedEstimationObj.contingency));
     setEstimationNameInvalid(estName == "");
+    setContingencyInvalid(!validateContingency(selectedEstimationObj.contingency));
   };
 
   // get the Effort Unit value from selected dropdown
