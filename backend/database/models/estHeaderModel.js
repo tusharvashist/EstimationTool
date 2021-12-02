@@ -30,7 +30,7 @@ const estimationHeaderSchema = new mongoose.Schema({
         required: 'Effort Unit is required!'
     },
     manCount: Number,
-    contigency: String,
+    contingency: Number,
     totalCost: Number,
     estCalcColumns: String,
     estColumns: String,
