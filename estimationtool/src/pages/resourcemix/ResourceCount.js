@@ -69,21 +69,17 @@ const rowData = [
   {
     count: 2,
     skill: "Frontend",
-    technology: "React/Angular"
+    // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
+  },
+  {
+    count: 2,
+    skill: "Frontend",
 
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
   {
     count: 2,
     skill: "Frontend",
-    technology: "React/Angular"
-
-    // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
-  },
-  {
-    count: 2,
-    skill: "Frontend",
-    technology: "React/Angular"
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
 ];
@@ -128,7 +124,7 @@ const handleRowClick = (rowData) => {
                   tableLayout: "auto",
                   paging: false,
                 }}
-                data={rowData}
+                data={technologySkills}
               />
               <div className="resource-cont-costing">
                 <h4>Costing: $1000</h4>
