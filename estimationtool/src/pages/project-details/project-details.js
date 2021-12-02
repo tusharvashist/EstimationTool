@@ -28,6 +28,7 @@ import {
   setEstimationContingency,
 } from "../../Redux/basicDetailRedux";
 import { setProjectId } from "../../Redux/projectRedux";
+import Header from "../../shared/layout/Header/Header";
 
 export default function ClientDetails(props) {
   const history = useHistory();
@@ -156,56 +157,37 @@ export default function ClientDetails(props) {
       <Box>
         <Grid container alignItems="center">
           <Grid container justify="space-between" alignItems="center">
-            <Grid item xs={10} sm={4}>
-              <p>
-                {" "}
-                <span className="title-stl"> Project Name :</span>{" "}
-                {projectDetails.projectName}
-              </p>
+            <Grid item xs={12} sm={6}>
+              <Header
+                iconname="client"
+                title="Client Name"
+                name={clientDetails.clientName}
+              />
             </Grid>
-            <Grid item xs={10} sm={6}>
-              <p>
-                {" "}
-                <span className="title-stl"> Business Domain :</span>{" "}
-                {projectDetails.domain}
-              </p>
+            <Grid item xs={12} sm={6}>
+              <Header
+                iconname="link"
+                title="Client Website"
+                website={clientDetails.website}
+              />
             </Grid>
           </Grid>
-          <Grid
-            container
-            justify="space-between"
-            alignItems="center"
-            className="block-section"
-          >
-            <p>
-              <span className="section-title"></span>
-            </p>
-          </Grid>
+
           <Grid container justify="space-between" alignItems="center">
-            <Grid item xs={10} sm={4}>
-              <p>
-                <span className="title-stl"> Client Name : </span>
-                {clientDetails.clientName}
-              </p>
+            <Grid item xs={12} sm={6}>
+              <Header
+                iconname="project"
+                title="Project Name"
+                name={projectDetails.projectName}
+              />
             </Grid>
             <Grid item xs={10} sm={6}>
-              <p>
-                <span className="title-stl"> Client Website :</span>{" "}
-                <a target="_blank" href={`//${clientDetails.website}`}>
-                  {clientDetails.website}
-                </a>{" "}
-              </p>
+              <Header
+                iconname="business"
+                title="Business Domain"
+                name={projectDetails.domain}
+              />
             </Grid>
-          </Grid>
-          <Grid
-            container
-            justify="space-between"
-            alignItems="center"
-            className="block-section"
-          >
-            <p>
-              <span className="section-title"></span>
-            </p>
           </Grid>
           <Grid container alignItems="center">
             <Grid item xs={7}>
