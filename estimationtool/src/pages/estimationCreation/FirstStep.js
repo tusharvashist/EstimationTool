@@ -264,7 +264,7 @@ const FirstStep = forwardRef((props, ref) => {
                 </FormControl>
               </div>
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={4}>
               <TextField
                 id="standard-basic"
                 label="Estimation Name*"
@@ -274,7 +274,12 @@ const FirstStep = forwardRef((props, ref) => {
               />
             </Grid>
           </Grid>
-          <Grid item xs={3}>
+          <Grid
+            container
+            columnSpacing={7}
+            style={{ gap: 200 }}
+          >
+          <Grid item xs={4}>
             <TextField
               id="standard-basic"
               label="Tentative Timeline (Weeks)*"
@@ -285,6 +290,19 @@ const FirstStep = forwardRef((props, ref) => {
               value={basicDetailRedux.estimationTentativeTimeline}
               onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
             />
+          </Grid>
+          <Grid item xs={4} spacing={11}>
+            <TextField
+              id="standard-basic"
+              label="Contengency(%)*"
+              variant="outlined"
+              type={"number"}
+              InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
+              error={isTentativeTimelineInvalid}
+              value={basicDetailRedux.estimationTentativeTimeline}
+              onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
+            />
+          </Grid>
           </Grid>
           <Grid item xs={8} spacing={1}>
             <TextField
