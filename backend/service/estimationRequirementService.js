@@ -349,7 +349,7 @@ module.exports.getRequirementData = async ({ id }) => {
           Type: item.requirement.type,
           requirementId: item.requirement._id,
           _id: item._id,
-          
+          id:item._id,
         };
 
         if (item.requirement.queryassumptions.length !== 0) {
@@ -412,21 +412,24 @@ module.exports.getRequirementData = async ({ id }) => {
           response.estHeaderAttribute.push({
             field: element.estAttributeId._id,
             description: element.estAttributeId.description,
-            title: element.estAttributeId.attributeName,
+            headerName: element.estAttributeId.attributeName,
             id: element.estAttributeId._id,
             code: element.estAttributeId.attributeCode,
-            type: "numeric",
+            type: "number",
+            editable: true,
+            width: 170 ,
           });
 
           if (contingency > 0) {
             response.estHeaderAttribute.push({
               field: element.estAttributeId._id + contingencySuffix,
               description: element.estAttributeId.description,
-              title: element.estAttributeId.attributeName + contingencySuffix,
+              headerName: element.estAttributeId.attributeName + contingencySuffix,
               id: element.estAttributeId._id + contingencySuffix,
               code: element.estAttributeId.attributeCode + contingencySuffix,
-              type: "numeric",
+              type: "number",
               editable: false,
+              width: 170, 
             });
           }
         }

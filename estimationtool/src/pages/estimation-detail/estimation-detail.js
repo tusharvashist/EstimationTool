@@ -2,20 +2,22 @@ import { Button, Container } from "@material-ui/core";
 import { Box, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { EditOutlined, Add, SaveOutlined, Edit } from "@material-ui/icons";
+import { EditOutlined, Add } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./estimation-detail.css";
 import { useLocation, Link } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import { useHistory } from "react-router-dom";
-import counting from "../../assests/team.png";
 import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import RoleCount from "../../shared/layout/PopTable/RoleCount";
 import ResourceCountMatrix from "../resourcemix/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
-import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
+
+import {RequirementTablePopup} from "../CreateRequirements/RequirementTable"
+import { DataGrid } from "@mui/x-data-grid";
+
+import { makeStyles, createStyles } from "@mui/styles";
 
 const EstimationDetail = () => {
   const location = useLocation();
@@ -52,9 +54,34 @@ const EstimationDetail = () => {
     { title: "Effort", field: "Effort", editable: false },
   ]);
   const [summaryDataArray, setSummaryDataArray] = useState([]);
-  const [requirementHeaderArray, setRequirementHeaderArray] = useState();
+  const [requirementHeaderArray, setRequirementHeaderArray] = useState([
+          {
+            headerName: "Requirement",
+            field: "Requirement",
+            editable: false,
+            width: 170 
+          },
+          {
+            headerName: "Tag",
+            field: "Tag",
+            editable: false,
+            width: 170 
+          },
+          {
+            headerName: "Description",
+            field: "Description",
+            editable: false,
+            width: 170,
+            editable: true
+          },
+        ]);
   const [loaderComponent, setLoader] = useLoader();
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
+   const [editRowsModel, setEditRowsModel] = React.useState({});
+
+  const handleEditRowsModelChange = React.useCallback((model) => {
+    setEditRowsModel(model);
+  }, []);
 
   useEffect(() => {
     getById();
@@ -175,22 +202,25 @@ const EstimationDetail = () => {
         setSummaryDataArray([...dataResponse.summaryTagList]);
         var estHeaderAttribute = [
           {
-            title: "Requirement",
+            headerName: "Requirement",
             field: "Requirement",
-            id: 1,
-            editable: false,
+            //id: 1,
+            //editable: false,
+            width: 170 
           },
           {
-            title: "Tag",
+            headerName: "Tag",
             field: "Tag",
-            editable: false,
-            id: 2,
+            //editable: false,
+           // id: 2,
+            width: 170 
           },
           {
-            title: "Description",
+            headerName: "Description",
             field: "Description",
-            editable: false,
-            id: 3,
+            //editable: false,
+            //id: 3,
+            width: 170 
           },
         ];
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
@@ -345,6 +375,56 @@ const EstimationDetail = () => {
     }
   };
 
+  const useStyles = makeStyles((theme) =>
+    createStyles({
+      root: {
+        "& .MuiDataGrid-columnHeaderWrapper": {
+          backgroundColor: "rgb(229, 235, 247)",
+        },
+      },
+    })
+  );
+const classes = useStyles();
+  
+  
+  
+  // var headerS = [
+  //         {
+  //           headerName: "Requirement",
+  //           field: "Requirement",
+  //           //id: 1,
+  //           //editable: false,
+  //           width: 170 
+  //         },
+  //         {
+  //           headerName: "Tag",
+  //           field: "Tag",
+  //           //editable: false,
+  //          // id: 2,
+  //           width: 170 
+  //         },
+  //         {
+  //           headerName: "Description",
+  //           field: "Description",
+  //           //editable: false,
+  //           //id: 3,
+  //           width: 170 
+  //         },
+  //       ];
+  
+  const rows = [
+    {
+      id: 1,
+      Requirement: "Requirement",
+      Tag: "Tag",
+      Description: "Description",
+    },
+   {
+      id: 2,
+      Requirement: "Requirement",
+      Tag: "Tag",
+      Description: "Description",
+    }];
   ///============== JS- Resource Count Pop up and table - END ==============///
 
   return (
@@ -451,42 +531,19 @@ const EstimationDetail = () => {
         {loaderComponent ? (
           loaderComponent
         ) : (
-          <MaterialTable
-            style={{ boxShadow: "none" }}
-            title={`Estimation Efforts (${headerData.effortUnit})`}
-            columns={requirementHeaderArray}
-            data={requirementDataArray}
-            onRowClick={(event, rowData, togglePanel) =>
-              openEditRequirement(event, rowData)
-            }
-            editable={{
-              onBulkUpdate: (changes) =>
-                new Promise((resolve, reject) => {
-                  updateAttributeValue(changes);
-                  setTimeout(() => {
-                    resolve();
-                  }, 1000);
-                }),
-
-              onRowDelete: (oldData) =>
-                new Promise((resolve, reject) => {
-                  deleteRow(oldData, resolve);
-                  // setTimeout(() => {
-                  //   resolve();
-                  // }, 1000);
-                }),
-            }}
-            options={{
-              search: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-            }}
-          />
-        )}
+          <div style={{ height: 400, width: '100%' }}>    
+           <DataGrid
+              className={classes.root}
+                rows={requirementDataArray}
+                columns={requirementHeaderArray}
+                editRowsModel={editRowsModel}
+                 onEditRowsModelChange={handleEditRowsModelChange}
+              />
+              </div>
+          
+        )
+        
+        }
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>

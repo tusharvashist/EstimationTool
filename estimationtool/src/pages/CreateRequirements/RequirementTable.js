@@ -38,10 +38,7 @@ export const RequirementTable = (props) => {
     { headerName: "Requirement", field: "Requirement", width: 170 },
     { headerName: "Description", field: "Description", width: 200 },
     { headerName: "Tag", field: "Tag", width: 150 },
-    {
-      headerName: "Type",
-      field: "Type",
-      width: 130,
+    { headerName: "Type",  field: "Type",   width: 130,
     },
     { headerName: "Query", field: "Query", width: 200 },
     { headerName: "Assumption", field: "Assumption", width: 200 },
