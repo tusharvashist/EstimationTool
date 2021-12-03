@@ -10,6 +10,7 @@ const resourceRoleMaster = new mongoose.Schema(
     techSkill: String,
     location: String,
     isDeleted: Boolean,
+    defaultAdjusted: Boolean
   },
   {
     timestamps: true,

@@ -1,7 +1,7 @@
 const constant = require("../constant")
 const TechSkill = require("../database/models/techSkillMaster")
 const { formatMongoData } = require("../helper/dbhelper")
-const mongoose = require("mongoose")
+//const mongoose = require("mongoose")
 
 //const RequirementRepository = require("../reposetory/requirementRepository")
 

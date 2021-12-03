@@ -16,6 +16,7 @@ const estResourcePlanning = new mongoose.Schema(
     currency: String,
     price: Number,
     allocationPercent: Number,
+    defaultAdjusted: Boolean
   },
   {
     timestamps: true,

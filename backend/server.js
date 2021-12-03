@@ -43,6 +43,10 @@ app.use("/api/v1/project", require("./routes/project.route"));
 //----------- Role Route
 app.use("/api/v1/role", require("./routes/roleMaster.route"));
 
+
+//----------- Role Route
+app.use("/api/v1/resourceRoleMaster", require("./routes/resourceRoleMaster.route"));
+
 //-----------  Estimation Type Template ie: ROM/SWAG/FIXBID
 app.use(
   "/api/v1/estimationTemplate",
