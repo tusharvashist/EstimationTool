@@ -1,16 +1,28 @@
 import React, { useEffect } from "react";
 import classes from "./HeaderTile.module.css";
 import { MdPeopleOutline } from "react-icons/md";
-import { IoPeopleCircleOutline, IoBusinessOutline } from "react-icons/io5";
-import { VscTools } from "react-icons/vsc";
-import { BsMenuAppFill } from "react-icons/bs";
+import {
+  IoPeopleCircleOutline,
+  IoBusinessOutline,
+  IoTodayOutline,
+  IoCalculatorOutline,
+} from "react-icons/io5";
+import { VscNote, VscTypeHierarchy } from "react-icons/vsc";
+import { BsMenuAppFill, BsStopwatch, BsCalendar3 } from "react-icons/bs";
 import TextureOutlinedIcon from "@mui/icons-material/TextureOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 
 const HeaderTiles = (props) => {
-  const icon = (name) => {
-    switch (name) {
+  const icon = (word) => {
+    if (props.name == "Hour") {
+      word = "effortUnitHour";
+    } else if (props.name == "Day") {
+      word = "effortUnitDay";
+    } else if (props.name == "Month") {
+      word = "effortUnitMonth";
+    }
+    switch (word) {
       case "client":
         return <MdPeopleOutline />;
         break;
@@ -22,6 +34,24 @@ const HeaderTiles = (props) => {
         break;
       case "business":
         return <IoBusinessOutline />;
+        break;
+      case "estimation":
+        return <VscNote />;
+        break;
+      case "estimationType":
+        return <VscTypeHierarchy />;
+        break;
+      case "effortUnitHour":
+        return <BsStopwatch />;
+        break;
+      case "effortUnitDay":
+        return <IoTodayOutline />;
+        break;
+      case "effortUnitMonth":
+        return <BsCalendar3 />;
+        break;
+      case "cost":
+        return <IoCalculatorOutline />;
         break;
       default:
         return <TextureOutlinedIcon />;

@@ -1,17 +1,18 @@
 .close-role {
   display: none !important;
 }
+.open-role {
+  display: flex;
+}
 .parentrole {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: absolute;
-  top: 1px;
   width: 243px;
   right: 190px;
   z-index: 4510;
-  overflow: scroll;
 }
 .option {
   margin: 10px 0;

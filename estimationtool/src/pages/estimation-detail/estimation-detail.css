@@ -36,41 +36,22 @@
   width: 60%;
 }
 .close-resourceCountTable {
-  animation: boxClose 0.2s linear forwards;
+  display: none;
 }
 
-@keyframes boxClose {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(0);
-    bottom: -100px;
-    right: -400px;
-  }
-}
-.open {
-  animation: boxOpen 0.2s linear forwards;
-}
-
-@keyframes boxOpen {
-  0% {
-    transform: scale(0);
-    bottom: -100px;
-    right: -400px;
-  }
-  100% {
-    transform: scale(1);
-  }
+.open-resourceCountTable {
+  display: flex;
 }
 
 .resource-cont-costing {
   margin: 20px;
 }
+
 .inline-cost {
   display: inline;
   margin-right: 40px;
 }
+
 .count-box-shadow {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
     rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
