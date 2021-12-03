@@ -66,3 +66,8 @@
   width: 300px;
   display: flex;
 }
+.MuiDataGrid-root .MuiDataGrid-columnHeaderTitle {
+  text-overflow: unset !important;
+  white-space: normal !important;
+  line-height: 16px;
+}

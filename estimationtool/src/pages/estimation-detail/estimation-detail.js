@@ -10,7 +10,7 @@ import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { EstimationHeader, ClientProjectHeader } from "./header-element";
-import RoleCount from "../../shared/layout/PopTable/RoleCount";
+import RoleCount from "../resourcemix/RoleCount";
 import ResourceCountMatrix from "../resourcemix/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
 
@@ -580,8 +580,7 @@ const classes = useStyles();
                 "/" +
                 projectDetails.projectName +
                 "/" +
-                headerData.estName 
-                +
+                headerData.estName +
                 "/requirement-mix",
               state: {
                 clientInfo: clientDetails,

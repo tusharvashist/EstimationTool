@@ -3,7 +3,7 @@ import "../estimation-detail/estimation-detail.css";
 import React, { useState, useEffect } from "react";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import counting from "../../assests/team.png";
-import RoleCount from "../../shared/layout/PopTable/RoleCount";
+import RoleCount from "./RoleCount";
 import ResourceMixService from "../resourcemix/resourcecount.service";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
@@ -109,12 +109,7 @@ const ResourceCountMatrix = (props) => {
     <div className="estimation-detail-cover">
       <div className="estimation-detail-count-table close-resourceCountTable">
         <BorderedContainer className="count-box-shadow roleCountInputParent">
-          {openEditCount && (
-            <RoleEditCount
-              openEditCount={openEditCount}
-              rowEditData={rowEditData}
-            />
-          )}
+          {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
           <div style={{ height: 300, width: "100%" }}>
             <DataGrid
               rows={rowData}
