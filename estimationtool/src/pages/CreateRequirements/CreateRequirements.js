@@ -22,30 +22,31 @@ const CreateRequirements = () => {
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   
   useEffect(() => {
-    getRequirementWithQuery(() => {getBasicDetailById() });
+    console.log("Create  useEffect ");
+    getRequirementWithQuery(() => {
+     
+    });
+    getTagsType();
   },[]);
 
 
-   const getRequirementWithQuery = (callBack) => {
+   function getRequirementWithQuery(callBack) {
     RequirementService.getRequirementWithQuery(projectsInfo._id)
       .then((res) => {
-        setRequirementHeaderData([ ...res.data.body.featureList ]);
-        
+        setRequirementHeaderData([...res.data.body.featureList]);
         callBack();
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
         callBack();
       });
-  };
+  }
   console.log("requirementHeaderData: ", requirementHeaderData);
   
 
  const openEditRequirement = (event, rowData) => {
     console.log(rowData);
-    const updatedRows = [requirementHeaderData[rowData.tableData.id]];
-    setEditData(updatedRows);
-    console.log(updatedRows + ">>>>>>>>>>>>>>>>>>");
+    setEditData([rowData]);
     openFun();
   };
 
@@ -60,7 +61,7 @@ const CreateRequirements = () => {
   };
 
 
-  const getBasicDetailById = () => {
+  const getTagsType = () => {
     RequirementService.getTagsType()
       .then((res) => {
         setRequirementTagArray([...res.data.body.requirementTag]);

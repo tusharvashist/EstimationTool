@@ -10,6 +10,7 @@ export const basicDetailSlice = createSlice({
     esttimationDesc: '',
     estimationHeaderId: '',
     estimationTentativeTimeline: '',
+    estimationContingency: '',
   },
   reducers: {
     setEstimationName: (state, estimationName) => {
@@ -33,12 +34,16 @@ export const basicDetailSlice = createSlice({
     },
     setEstimationTentativeTimeline: (state, estimationTentativeTimeline) => {
       state.estimationTentativeTimeline = estimationTentativeTimeline.payload;
+    },
+
+    setEstimationContingency: (state, estimationContingency) => {
+      state.estimationContingency = estimationContingency.payload;
     }
 
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setEstimationName, setEstimationType, setEstimationTypeId, setEfforUnit, setEsttimationDesc,setEstimationHeaderId,setEstimationTentativeTimeline } = basicDetailSlice.actions
+export const { setEstimationName, setEstimationType, setEstimationTypeId, setEfforUnit, setEsttimationDesc,setEstimationHeaderId,setEstimationTentativeTimeline,setEstimationContingency  } = basicDetailSlice.actions
 
 export default basicDetailSlice.reducer

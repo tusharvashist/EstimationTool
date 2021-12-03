@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 5252;
 let envName = "";
 dotEnv.config();
-
+global.ResourceWeekHours = 40;
 //do connection
 dbconnection();
 
@@ -79,6 +79,9 @@ app.use("/api/v1/moduletoken", require("./routes/moduleToken.route"));
 
 //----------- Permission
 app.use("/api/v1/permission", require("./routes/permission.route"));
+
+//----------- Resource Planning
+app.use("/api/v1/resource", require("./routes/resourcePlanning.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {

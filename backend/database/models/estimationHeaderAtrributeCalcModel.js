@@ -14,7 +14,7 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
     operator: String, // %
     unit: Number,// value e.g:20%
     description: String, // comment
-    value: String,
+    value: String,// It will hold formula calculated  or manual value
     calcType: String,
 
 

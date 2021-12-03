@@ -516,7 +516,10 @@ const EstimationDetail = () => {
                 clientDetails.clientName +
                 "/" +
                 projectDetails.projectName +
-                "/createEstimate",
+                "/" +
+                headerData.estName 
+                +
+                "/requirement-mix",
               state: {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
@@ -526,7 +529,7 @@ const EstimationDetail = () => {
           >
             <Button variant="outlined" className="estimation-detail-button">
               {" "}
-              <EditOutlined /> Edit Configuration
+              <EditOutlined /> Generate Resource Mix
             </Button>
           </Link>
         </Grid>

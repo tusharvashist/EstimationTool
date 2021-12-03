@@ -1,0 +1,26 @@
+.tilecontainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  /* padding: 20px; */
+}
+.icon {
+  padding: 15px;
+  background: #ebf1eb;
+  border-radius: 50%;
+  border: 1px solid #a6c0a6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 20px;
+  color: #1e7e1e;
+  font-size: 25px;
+}
+.information {
+  display: flex;
+  flex-direction: column;
+}
+.name {
+  color: #000;
+  font-weight: 400;
+}

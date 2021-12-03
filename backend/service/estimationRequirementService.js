@@ -13,7 +13,7 @@ const EstimationHeaderAttributeModel = require("../database/models/estimationHea
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
 const EstimationAttributes = require("../database/models/estimationAttributesModel")
 const mongoose = require("mongoose")
-const RequirementRepository = require("../reposetory/requirementRepository")
+const RequirementRepository = require("../repository/requirementRepository")
 
 module.exports.create = async (serviceData) => {
   try {
@@ -29,7 +29,6 @@ module.exports.create = async (serviceData) => {
   }
 };
 
-
 module.exports.mapHeaderToMultipleRequirement = async ( serviceData) => {
   try {
 
@@ -43,8 +42,6 @@ module.exports.mapHeaderToMultipleRequirement = async ( serviceData) => {
     throw new Error(err);
   }
 };
-
-
 
 module.exports.getRequirementWithQuery = async ({ id }) => {
   try {
@@ -64,8 +61,6 @@ module.exports.getRequirementWithQuery = async ({ id }) => {
   }
 };
 
-
-
 module.exports.getUnpairedRequirementEstimation = async ( query) => {
   try {
 
@@ -84,10 +79,6 @@ module.exports.getUnpairedRequirementEstimation = async ( query) => {
     throw new Error(err);
   }
 };
-
-
-
-
 
 module.exports.updateRequirement = async ({ id, updateInfo }) => {
   try {
@@ -130,13 +121,6 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
     throw new Error(err);
   }
 };
-
-
-
-
-
-
-
 
 module.exports.updateRequirementData = async (serviceDataArray) => {
   try {
@@ -208,9 +192,6 @@ class sumOfKey extends Array {
   }
 }
 
-
-
-
 module.exports.getById = async ({ id }) => {
   try {
 
@@ -242,131 +223,19 @@ module.exports.getById = async ({ id }) => {
   }
 };
 
-
 module.exports.getRequirementData = async ({ id }) => {
   try {
-    //console.log("GetByID Starts");
+
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.requirementMessage.INVALID_ID);
     }
 
     let response = { ...constant.requirementResponse };
 
-    let estHeaderRequirement = await EstHeaderRequirement.aggregate([
-      {
-        $match: {
-          estHeader: ObjectId(id),
-          isDeleted: false,
-        },
-      },
-      {
-        $lookup: {
-          from: "estrequirementdatas",
-          localField: "_id",
-          foreignField: "ESTHeaderRequirementID",
-          as: "attributeData",
-        },
-      },
-      {
-        $lookup: {
-          from: "projectrequirements",
-          localField: "requirement",
-          foreignField: "_id",
-          as: "requirementData",
-        },
-      },
-      {
-        $unwind: {
-          path: "$requirementData",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "requirementtypes",
-          localField: "requirementData.type",
-          foreignField: "_id",
-          as: "requirementData.type",
-        },
-      },
-      {
-        $unwind: {
-          path: "$requirementData.type",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "requirementtags",
-          localField: "requirementData.tag",
-          foreignField: "_id",
-          as: "requirementData.tag",
-        },
-      },
-      {
-        $unwind: {
-          path: "$requirementData.tag",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $unwind: {
-          path: "$attributeData",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "estimationattributes",
-          localField: "attributeData.ESTAttributeID",
-          foreignField: "_id",
-          as: "attributeData.ESTAttributeID",
-        },
-      },
-      {
-        $unwind: {
-          path: "$attributeData.ESTAttributeID",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $group: {
-          _id: "$_id",
-          isDeleted: {
-            $first: "$isDeleted",
-          },
-          requirement: {
-            $first: "$requirementData",
-          },
-          estHeader: {
-            $first: "$estHeader",
-          },
-          estRequirementData: {
-            $push: "$attributeData",
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          isDeleted: 1,
-          estRequirementData: 1,
-          requirement: 1,
-        },
-      },{
-       $lookup: {
-        from: 'queryassumptions',
-        localField: 'requirement._id',
-        foreignField: 'projectRequirement',
-        as: 'requirement.queryassumptions'
-        }
-      },
-      {
-        $sort: {
-          "requirement.title": 1,
-        },
-      },
-    ]);
+ 
+    var contingency = await RequirementRepository.getContingency(id);
+    var contingencySuffix = " Contingency";
+    var estHeaderRequirement = await RequirementRepository.getEstHeaderRequirementWithContingency(id);
 
     if (estHeaderRequirement.length != 0) {
       response.featureList = estHeaderRequirement;
@@ -480,9 +349,14 @@ module.exports.getRequirementData = async ({ id }) => {
           requirement["Reply"] = item.requirement.queryassumptions[0].reply;
         }
         item.estRequirementData.forEach((item, i) => {
-          if (item.ESTData !== undefined) {
+          if (item.ESTData !== undefined && item.ESTData !==  null) {
             requirement[item.ESTAttributeID._id] = item.ESTData;
+              if (contingency > 0) {
+             requirement[item.ESTAttributeID._id+contingencySuffix] = item.ESTDataContingency;
           }
+          }
+
+        
         });
         arrayRequirement.push(requirement);
       }
@@ -531,6 +405,18 @@ module.exports.getRequirementData = async ({ id }) => {
             code: element.estAttributeId.attributeCode,
             type: "numeric",
           });
+
+          if (contingency > 0) {
+            response.estHeaderAttribute.push({
+              field: element.estAttributeId._id + contingencySuffix,
+              description: element.estAttributeId.description,
+              title: element.estAttributeId.attributeName + contingencySuffix,
+              id: element.estAttributeId._id + contingencySuffix,
+              code: element.estAttributeId.attributeCode + contingencySuffix,
+              type: "numeric",
+              editable: false,
+            });
+          }
         }
       });
     }

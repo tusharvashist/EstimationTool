@@ -1,6 +1,8 @@
 .addReqTableHeader {
   display: flex;
   align-items: center;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 .addReqTableHeader > h3 {
   margin-right: 40px;

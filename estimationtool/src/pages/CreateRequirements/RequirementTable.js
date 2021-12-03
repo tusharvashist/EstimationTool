@@ -15,8 +15,19 @@ import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
-
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarFilterButton,
+  GridToolbarExport,
+  GridToolbarDensitySelector,
+} from "@mui/x-data-grid";
+import { makeStyles, createStyles } from "@mui/styles";
+import Pagination from "@mui/material/Pagination";
+import { ClassNames } from "@emotion/react";
+import { dark } from "@material-ui/core/styles/createPalette";
 
 export const RequirementTable = (props) => {
   const location = useLocation();
@@ -24,13 +35,17 @@ export const RequirementTable = (props) => {
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
-    { title: "Requirement", field: "Requirement" },
-    { title: "Description", field: "Description" },
-    { title: "Tag", field: "Tag" },
-    { title: "Type", field: "Type" },
-    { title: "Query", field: "Query" },
-    { title: "Assumption", field: "Assumption" },
-    { title: "Reply", field: "Reply" },
+    { headerName: "Requirement", field: "Requirement", width: 170 },
+    { headerName: "Description", field: "Description", width: 200 },
+    { headerName: "Tag", field: "Tag", width: 150 },
+    {
+      headerName: "Type",
+      field: "Type",
+      width: 130,
+    },
+    { headerName: "Query", field: "Query", width: 200 },
+    { headerName: "Assumption", field: "Assumption", width: 200 },
+    { headerName: "Reply", field: "Reply", width: 200 },
   ]);
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
@@ -40,11 +55,10 @@ export const RequirementTable = (props) => {
   const [available, setAvailable] = useState([]);
   //const [requirementTypeArray, setRequirementTypeArray] = useState([]);
 
-
   useEffect(() => {
-    setRequirementHeaderData( [...props.requirementHeaderData]);
+    setRequirementHeaderData([...props.requirementHeaderData]);
     setFilterRequirementHeaderData([...props.requirementHeaderData]);
-   // setRequirementTypeArray([...props.requirementTypeArray]);
+    // setRequirementTypeArray([...props.requirementTypeArray]);
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
 
@@ -89,22 +103,45 @@ export const RequirementTable = (props) => {
     filter(value);
   };
 
-  const filter =  (value) => {
+  const filter = (value) => {
     if (value.length !== 0) {
-      
       var filterData = [];
       value.map((element) => {
-        filterData.push(requirementHeaderData.filter((requirementData) => requirementData.Type === element))
-      })
-      
+        filterData.push(
+          requirementHeaderData.filter(
+            (requirementData) => requirementData.Type === element
+          )
+        );
+      });
+
       setFilterRequirementHeaderData(filterData.flat());
-      
     } else {
-       setFilterRequirementHeaderData(requirementHeaderData);
+      setFilterRequirementHeaderData(requirementHeaderData);
     }
   };
 
-  //console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        {/* <GridToolbarFilterButton /> */}
+        {/* <GridToolbarDensitySelector /> */}
+        {/* <GridToolbarExport /> */}
+      </GridToolbarContainer>
+    );
+  }
+
+  const useStyles = makeStyles((theme) =>
+    createStyles({
+      root: {
+        "& .MuiDataGrid-columnHeaderWrapper": {
+          backgroundColor: "rgb(229, 235, 247)",
+        },
+      },
+    })
+  );
+  const classes = useStyles();
+  console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
 
   //console.log("available: ", available);
   return (
@@ -133,8 +170,31 @@ export const RequirementTable = (props) => {
                 </MenuItem>
               ))}
             </Select>
-          </div>
-          <MaterialTable
+            </div>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid
+              className={classes.root}
+                rows={requirementHeaderDataFilter}
+                columns={requirementHeader}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                checkboxSelection={props.selection}
+                onRowClick={(params, event) => {
+                //selected={(event, rowData, togglePanel) => {
+                    if (props.isEditable) {
+                      props.openEditRequirement(event, params.row);
+                     }
+                }}
+                onSelectionModelChange={(rows) => {
+                  console.log("onSelectionModelChange: ",rows);
+                   if (props.selection === true) {
+                      props.handleCheckBoxClicked(rows);
+                 }
+                
+                }}
+              />
+              </div>
+          {/* <MaterialTable
             style={{ boxShadow: "none" }}
             columns={requirementHeader}
             data={requirementHeaderDataFilter}
@@ -162,7 +222,7 @@ export const RequirementTable = (props) => {
                 color: "#113c91",
               },
             }}
-          />
+          /> */}
         </>
       )}
     </>
@@ -188,7 +248,7 @@ export const RequirementTablePopup = (props) => {
           isEditable={false}
           selection={true}
           requirementTypeArray={props.requirementTypeArray}
-            handleCheckBoxClicked={props.handleCheckBoxClicked}
+          handleCheckBoxClicked={props.handleCheckBoxClicked}
         />
       </CustomizedDialogs>
     </>

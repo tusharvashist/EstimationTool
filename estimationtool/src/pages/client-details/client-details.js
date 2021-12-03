@@ -18,6 +18,7 @@ import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useParams, useHistory } from "react-router-dom";
 import ProjectServ from "../project/project.service";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import Header from "../../shared/layout/Header/Header";
 
 export default function ClientDetails(props) {
   const location = useLocation();
@@ -124,66 +125,52 @@ export default function ClientDetails(props) {
           {loaderComponent ? (
             loaderComponent
           ) : (
-            <Grid container justify="space-between" alignItems="center">
-              {/* <Grid item xs={5} sm={1}>
-              <p>
-                <span className="title-stl"> Client Name : </span>
-              </p>
-            </Grid> */}
-              <Grid item xs={5} sm={5}>
-                {/* <Box mb={3}>
-                <Grid container justify="space-between" alignItems="center">
-                  <Dropdown
-                    defaultValue={{ title: "Active", value: "active" }}
-                    title="client status"
-                    list={clientStatus}
-                    getVal={getDropDownvalue}
-                  />
+            <>
+              <Grid container>
+                <Grid item xs={5} sm={5}>
+                  <Box sx={{ maxWidth: 200 }}>
+                    <FormControl width="300px">
+                      <InputLabel id="client-simple-select">
+                        Client Name{" "}
+                      </InputLabel>
 
+                      <Select
+                        labelId="client-simple-select"
+                        id="client-simple-select"
+                        value={clientUrlName}
+                        label={clientUrlName}
+                        onChange={getDropDownvalue}
+                      >
+                        {clients.map((item) => (
+                          <MenuItem
+                            key={item.clientName}
+                            value={item.clientName}
+                          >
+                            {item.clientName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
                 </Grid>
-              </Box> */}
-
-                <Box sx={{ maxWidth: 200 }}>
-                  <FormControl width="300px">
-                    <InputLabel id="client-simple-select">
-                      Client Name{" "}
-                    </InputLabel>
-
-                    <Select
-                      labelId="client-simple-select"
-                      id="client-simple-select"
-                      value={clientUrlName}
-                      label={clientUrlName}
-                      onChange={getDropDownvalue}
-                    >
-                      {clients.map((item) => (
-                        <MenuItem key={item.clientName} value={item.clientName}>
-                          {item.clientName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
               </Grid>
-              <Grid item xs={10} sm={6}>
-                <p>
-                  <span className="title-stl"> Client Website :</span>{" "}
-                  <a target="_blank" href={`//${clientDetails.website}`}>
-                    {clientDetails.website}
-                  </a>{" "}
-                </p>
+              <Grid container justify="space-between" alignItems="center">
+                <Grid item xs={12} sm={6}>
+                  <Header
+                    iconname="client"
+                    title="Client Name"
+                    name={clientUrlName}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Header
+                    iconname="link"
+                    title="Client Website"
+                    website={clientDetails.website}
+                  />
+                </Grid>
               </Grid>
-              <Grid
-                container
-                justify="space-between"
-                alignItems="center"
-                className="block-section"
-              >
-                <p>
-                  <span className="section-title"></span>
-                </p>
-              </Grid>
-            </Grid>
+            </>
           )}
         </Grid>
       </Box>

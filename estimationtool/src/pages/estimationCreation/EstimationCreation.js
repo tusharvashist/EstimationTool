@@ -253,7 +253,8 @@ const EstimationCreation = (props) => {
       basicDetailRedux.estimationTypeId &&
       basicDetailRedux.esttimationDesc &&
       basicDetailRedux.efforUnit &&
-      Number(basicDetailRedux.estimationTentativeTimeline) > 0
+      Number(basicDetailRedux.estimationTentativeTimeline) > 0 &&
+      Number(basicDetailRedux.estimationContingency) > 0
     ) {
       estimationHeaderId
         ? updateEstimationBasicDetail(getRequestPayload())
@@ -275,7 +276,7 @@ const EstimationCreation = (props) => {
       effortUnit: basicDetailRedux.efforUnit,
       estTentativeTimeline: basicDetailRedux.estimationTentativeTimeline,
       manCount: 0,
-      contigency: "25",
+      contingency: basicDetailRedux.estimationContingency,
       totalCost: 0,
       estCalcColumns: "NA",
       estColumns: "NA",
