@@ -1,16 +1,39 @@
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import MaterialTable from "material-table";
 import "../estimation-detail/estimation-detail.css";
+import React, { useState, useEffect } from "react";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import counting from "../../assests/team.png";
 import RoleCount from "../../shared/layout/PopTable/RoleCount";
-
-
+import ResourceMixService from "../resourcemix/resourcecount.service";
+import {
+  Select,
+  MenuItem,
+  
+} from "@material-ui/core";
 const ResourceCountMatrix = (props) => {
 
-const estimationHeaderId =  props.data;
+  const estimationHeaderId =  props.data;
 
-const popupCount = () => {};
+  const popupCount = () => {};
+  const [technologySkills, setTechnolnogySkills] = useState();
+  const [selectedTechnology, setSelectedTechnology] = useState();
+
+
+  useEffect(() => {
+    if(estimationHeaderId) {
+    getTechnologySkill();
+    }
+  }, []);
+
+  // Get All Technology Skills
+
+  const getTechnologySkill = () => {
+    ResourceMixService.getAllTechnologies().then((res)=> {
+      console.log("technology skills ", res.data.body)
+      setTechnolnogySkills(res.data.body)
+    }).catch((err) => {})
+  }
 
 const columns = [
   { title: "Count", field: "count", width: "1%" },
@@ -19,7 +42,20 @@ const columns = [
     field: "skill",
     width: "40%",
   },
-  { title: "Technologies", field: "technology", width: "20%" },
+  { title: "Technologies", field: "technology", width: "20%", render: (rowData) => <>
+      <Select           
+              onChange={handleTechnology}
+              value={technologySkills.id}
+              label={technologySkills.skill}
+              required
+            >
+              {technologySkills.map((item) => (
+                <MenuItem key={item.skill} value={item.id}>
+                  {item.skill}
+                </MenuItem>
+              ))}
+            </Select>
+   </> },
   {
     title: "Role",
     field: "role",
@@ -33,22 +69,30 @@ const rowData = [
   {
     count: 2,
     skill: "Frontend",
-    technology: "React/Angular",
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
   {
     count: 2,
     skill: "Frontend",
-    technology: "React/Angular",
+
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
   {
     count: 2,
     skill: "Frontend",
-    technology: "React/Angular",
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
 ];
+
+// handle change on technology dropdown
+
+const handleTechnology = (e) => {
+  if (e.target.value !== '') {
+   console.log(e.target.value)
+  } else {
+    // setShowError(true)
+  }
+};
 
 const handleCountTable = () => {
   const tableDiv = document.querySelector(".estimation-detail-count-table");
@@ -80,7 +124,7 @@ const handleRowClick = (rowData) => {
                   tableLayout: "auto",
                   paging: false,
                 }}
-                data={rowData}
+                data={technologySkills}
               />
               <div className="resource-cont-costing">
                 <h4>Costing: $1000</h4>
