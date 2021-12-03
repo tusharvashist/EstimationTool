@@ -69,17 +69,21 @@ const rowData = [
   {
     count: 2,
     skill: "Frontend",
-    // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
-  },
-  {
-    count: 2,
-    skill: "Frontend",
+    technology: "React/Angular"
 
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
   {
     count: 2,
     skill: "Frontend",
+    technology: "React/Angular"
+
+    // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
+  },
+  {
+    count: 2,
+    skill: "Frontend",
+    technology: "React/Angular"
     // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
   },
 ];
