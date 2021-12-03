@@ -2,8 +2,7 @@ const constant = require("../constant")
 const RequirementTag = require("../database/models/requirementTag")
 const { formatMongoData } = require("../helper/dbhelper")
 const mongoose = require("mongoose")
-
-const RequirementRepository = require("../reposetory/requirementRepository")
+const RequirementRepository = require("../repository/requirementRepository")
 
 module.exports.getAllRequirementTag = async ({ skip = 0, limit = 10 }) => {
     try {
@@ -15,8 +14,6 @@ module.exports.getAllRequirementTag = async ({ skip = 0, limit = 10 }) => {
         throw new Error(err)
     }
 }
-
-
 
 module.exports.getTagsType = async () => {
     try {

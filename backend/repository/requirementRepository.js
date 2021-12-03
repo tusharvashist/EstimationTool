@@ -168,6 +168,216 @@ module.exports.getUnpairedRequirementEstimation = async (requirementList,estHead
     return unpairedRequirement;
 }
 
+module.exports.getContingency = async (estHeaderId) => {
+  try {
+    let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
+    return estimations.contingency;
+  } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    throw new Error(err);
+  }
+}
+
+module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
+   try {
+  let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
+   console.log(estimations);
+  //if (estimations.length != 0) {
+      var requirementData = await requirementDataForEstHeader(estHeaderId);
+     //}
+     console.log("requirement: ", requirementData);
+     requirementData.forEach((requirementElement) => {
+       
+       console.log("--------------");
+        // console.log("---",requirementElement);
+       requirementElement.estRequirementData.forEach((estRequirement) => {
+             //   console.log("estRequirementData: ",estRequirement);
+         if (estRequirement.ESTData !== undefined && estRequirement.ESTData !== 0) {
+            estRequirement["ESTDataContingency"] = (estRequirement.ESTData * estimations.contingency)/100
+          } else {
+            estRequirement["ESTDataContingency"] = 0
+         }
+          console.log(estRequirement);
+       })
+     })
+     return requirementData;
+      } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    throw new Error(err);
+  }
+}
+
+
+module.exports.getAttributesCalAttributesTotal= async (estHeaderId) => {
+  var resourceCount = {
+    estHeaderId: estHeaderId,
+    EstimationAttributes: [
+      {
+        _id: new ObjectId("618a4976e2b03fc48cfadc8a"),
+        attributeCode: 'DEV',
+        attributeName: 'Front End',
+        description: 'name',
+        Total: 265,
+      },
+      {
+        _id: new ObjectId("618a4976e2b03fc48cfadc7a"),
+        attributeCode: 'DEV',
+        attributeName: 'Back End',
+        description: 'Back End',
+        Total: 115,
+      }
+    ],
+  EstimationCalcAttributes:  [
+      {
+        _id: "619f91696779944466be276c",
+        calcAttribute: " ",
+        calcAttributeName: "ProjectManager",
+        ESTDataTotal: 45
+      },
+      {
+        _id: "619f91696779944466be275c",
+        calcAttribute: " ",
+        calcAttributeName: "ProjectManager",
+        Total: 45
+      }
+    ]
+  };
+  console.log("ResourceCount :",resourceCount);
+  return resourceCount;
+}
+
+
+
+module.exports.getEstHeaderRequirement = async (estHeaderId) => {
+
+    return requirementDataForEstHeader(estHeaderId);
+}
+
+ async function requirementDataForEstHeader(estHeaderId){
+
+    let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+      {
+        $match: {
+          estHeader: ObjectId(estHeaderId),
+          isDeleted: false,
+        },
+      },
+      {
+        $lookup: {
+          from: "estrequirementdatas",
+          localField: "_id",
+          foreignField: "ESTHeaderRequirementID",
+          as: "attributeData",
+        },
+      },
+      {
+        $lookup: {
+          from: "projectrequirements",
+          localField: "requirement",
+          foreignField: "_id",
+          as: "requirementData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$requirementData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "requirementtypes",
+          localField: "requirementData.type",
+          foreignField: "_id",
+          as: "requirementData.type",
+        },
+      },
+      {
+        $unwind: {
+          path: "$requirementData.type",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "requirementtags",
+          localField: "requirementData.tag",
+          foreignField: "_id",
+          as: "requirementData.tag",
+        },
+      },
+      {
+        $unwind: {
+          path: "$requirementData.tag",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$attributeData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "estimationattributes",
+          localField: "attributeData.ESTAttributeID",
+          foreignField: "_id",
+          as: "attributeData.ESTAttributeID",
+        },
+      },
+      {
+        $unwind: {
+          path: "$attributeData.ESTAttributeID",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          isDeleted: {
+            $first: "$isDeleted",
+          },
+          requirement: {
+            $first: "$requirementData",
+          },
+          estHeader: {
+            $first: "$estHeader",
+          },
+          estRequirementData: {
+            $push: "$attributeData",
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          isDeleted: 1,
+          estRequirementData: 1,
+          requirement: 1,
+        },
+      },{
+       $lookup: {
+        from: 'queryassumptions',
+        localField: 'requirement._id',
+        foreignField: 'projectRequirement',
+        as: 'requirement.queryassumptions'
+        }
+      },
+      {
+        $sort: {
+          "requirement.title": 1,
+        },
+      },
+    ]);
+  return estHeaderRequirement;
+}
+
+
+
+
+
+
 module.exports.getRequirementWithQuery = async (projectId) => {
    
     let projectRequirement = await ProjectRequirement.aggregate(

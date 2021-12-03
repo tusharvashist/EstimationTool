@@ -2,7 +2,7 @@ const estimationRequirementService = require("../service/estimationRequirementSe
 const constant = require("../constant");
 
 module.exports.create = async (req, res) => {
-    let responce = { ...constant.defaultResponce };
+    let responce = { ...constant.defaultResponse };
     try {
         const responceGetByID = await estimationRequirementService.create(req.body);
         responce.status = 200;
@@ -16,7 +16,7 @@ module.exports.create = async (req, res) => {
 
 
 module.exports.mapHeaderToMultipleRequirement = async (req,res)=>{
-    let responce = {...constant.defaultResponce};
+    let responce = {...constant.defaultResponse};
     try{
         const responceFromClientSer = await estimationRequirementService.mapHeaderToMultipleRequirement({
             id:req.params.id,
@@ -37,7 +37,7 @@ module.exports.mapHeaderToMultipleRequirement = async (req,res)=>{
 
 
 module.exports.update = async (req,res)=>{
-    let responce = {...constant.defaultResponce};
+    let responce = {...constant.defaultResponse};
     try{
         const responceFromClientSer = await estimationRequirementService.updateRequirement({
             id:req.params.id,
@@ -57,7 +57,7 @@ module.exports.update = async (req,res)=>{
 
 module.exports.getUnpairedRequirementEstimation = async (req, res) => {
     let responce =
-        { ...constant.defaultResponce };
+        { ...constant.defaultResponse };
     try {
         const responceGetById = await estimationRequirementService.getUnpairedRequirementEstimation(req.query);
         responce.status = 200;
@@ -72,7 +72,7 @@ module.exports.getUnpairedRequirementEstimation = async (req, res) => {
 
 module.exports.getRequirementWithQuery = async (req, res) => {
     let responce =
-        { ...constant.defaultResponce };
+        { ...constant.defaultResponse };
     try {
         const responceGetById = await estimationRequirementService.getRequirementWithQuery(req.params);
         responce.status = 200;
@@ -87,7 +87,7 @@ module.exports.getRequirementWithQuery = async (req, res) => {
 
 module.exports.getById = async (req, res) => {
     let responce =
-        { ...constant.defaultResponce };
+        { ...constant.defaultResponse };
     try {
         const responceGetById = await estimationRequirementService.getById(req.params);
         responce.status = 200;
@@ -101,7 +101,7 @@ module.exports.getById = async (req, res) => {
 
 module.exports.getRequirementData = async (req, res) => {
     let responce =
-        { ...constant.defaultResponce };
+        { ...constant.defaultResponse };
     try {
         const responceGetById = await estimationRequirementService.getRequirementData(req.params);
         responce.status = 200;
@@ -114,7 +114,7 @@ module.exports.getRequirementData = async (req, res) => {
 }
 
 module.exports.updateRequirementData = async (req, res) => {
-    let responce = { ...constant.defaultResponce };
+    let responce = { ...constant.defaultResponse };
     try {
         const responceGetByID = await estimationRequirementService.updateRequirementData(req.body);
         responce.status = 200;
@@ -128,7 +128,7 @@ module.exports.updateRequirementData = async (req, res) => {
 
 //-----------------  Delete
 module.exports.requirementDelete = async (req,res)=>{
-    let responce = {...constant.defaultResponce};
+    let responce = {...constant.defaultResponse};
     try{
        const responce = await estimationRequirementService.deleteRequirementData(req.params.id);
         responce.status = 200;
