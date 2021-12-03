@@ -125,6 +125,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
 module.exports.updateRequirementData = async (serviceDataArray) => {
   try {
     //console.log("Update Starts");
+    var estHeader = "";
     var length = 0;
     var bulk = EstRequirementData.collection.initializeUnorderedBulkOp();
     serviceDataArray.data.forEach(async (serviceData) => {
@@ -144,17 +145,26 @@ module.exports.updateRequirementData = async (serviceDataArray) => {
             },
           },
           { upsert: true, new: true }
-        );
+      );
+      
+
+
+      
+      estHeader = serviceData.ESTHeaderID;
+
+
     });
 
     const result = await bulk.execute();
-    //Update EstHeader for UpdatedBy
-    const estHeaderModel = await EstHeaderModel.findById({
-      _id: serviceData.estHeader,
-    });
-    if (estHeaderModel.length == 0) {
-      estHeaderModel.updatedBy = global.loginId;
-      estHeaderModel.save();
+    if (estHeader.length !== 0) {
+      //Update EstHeader for UpdatedBy
+      const estHeaderModel = await EstHeaderModel.findById({
+        _id: estHeader,
+      });
+      if (estHeaderModel.length == 0) {
+        estHeaderModel.updatedBy = global.loginId;
+        estHeaderModel.save();
+      }
     }
 
     //console.log("Update End");
@@ -350,10 +360,12 @@ module.exports.getRequirementData = async ({ id }) => {
         }
         item.estRequirementData.forEach((item, i) => {
           if (item.ESTData !== undefined && item.ESTData !==  null) {
+             if (item.ESTAttributeID !== undefined && item.ESTAttributeID !==  null) {
             requirement[item.ESTAttributeID._id] = item.ESTData;
-              if (contingency > 0) {
-             requirement[item.ESTAttributeID._id+contingencySuffix] = item.ESTDataContingency;
-          }
+               if (contingency > 0) {
+                 requirement[item.ESTAttributeID._id + contingencySuffix] = item.ESTDataContingency;
+
+               }              }
           }
 
         
