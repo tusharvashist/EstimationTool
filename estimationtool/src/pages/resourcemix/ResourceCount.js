@@ -7,32 +7,38 @@ import RoleCount from "./RoleCount";
 import ResourceMixService from "../resourcemix/resourcecount.service";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
-
+//import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
+import ResourceMix from "../resourcemix/resourcecount.service"
 const ResourceCountMatrix = (props) => {
   const estimationHeaderId = props.data;
 
-  const popupCount = () => {};
+  const popupCount = () => { };
   const [technologySkills, setTechnolnogySkills] = useState();
   const [selectedTechnology, setSelectedTechnology] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
   const [rowEditData, setRowEditData] = useState();
 
-  // useEffect(() => {
-  //   if (estimationHeaderId) {
-  //     getTechnologySkill();
-  //   }
-  // }, []);
+  useEffect(() => {
+    //   if (estimationHeaderId) {
+    //     getTechnologySkill();
+    //   }
+    getResourceCountData();
+  },
+    []);
+
 
   // Get All Technology Skills
 
-  // const getTechnologySkill = () => {
-  //   ResourceMixService.getAllTechnologies()
-  //     .then((res) => {
-  //       console.log("technology skills ", res.data.body);
-  //       setTechnolnogySkills(res.data.body);
-  //     })
-  //     .catch((err) => {});
-  // };
+  const getResourceCountData = () => {
+    ResourceMixService.getAllResourceCount()
+      .then((res) => {
+        console.log("technology skills ", res.data.body);
+        // setTechnolnogySkills(res.data.body);
+      })
+      .catch((err) => { });
+  };
+
+
 
   const columns = [
     { headerName: "Resource Count", field: "count", width: 180 },
