@@ -22,7 +22,8 @@ const Url = {
    allEffortAttribute: `${process.env.REACT_APP_URL}estimation/atrribute`,
    allCalculativeAttribute: `${process.env.REACT_APP_URL}estimation/atrributeCalc`,
    getRequirementTag: `${process.env.REACT_APP_URL}requirementTag`,
-   getAllTechnologiesSkill: `${process.env.REACT_APP_URL}techskill/`
+   getAllTechnologiesSkill: `${process.env.REACT_APP_URL}techskill/`,
+   getResourceCount: `${process.env.REACT_APP_URL}getresourcecount`
 
 
 }
