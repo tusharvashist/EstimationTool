@@ -2,31 +2,50 @@ import { Button, Container } from "@material-ui/core";
 import { Box, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { EditOutlined, Add, SaveOutlined, Edit } from "@material-ui/icons";
+import { EditOutlined, Add } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./estimation-detail.css";
 import { useLocation, Link } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import { useHistory } from "react-router-dom";
-import counting from "../../assests/team.png";
 import { EstimationHeader, ClientProjectHeader } from "./header-element";
-import RoleCount from "../../shared/layout/PopTable/RoleCount";
-import ResourceCountMatrix from "../resourcemix/ResourceCount"
+import RoleCount from "../resourcemix/RoleCount";
+import ResourceCountMatrix from "../resourcemix/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
+
 import {RequirementTablePopup} from "../CreateRequirements/RequirementTable"
+import { DataGrid } from "@mui/x-data-grid";
+
+import { makeStyles, createStyles } from "@mui/styles";
 
 const EstimationDetail = () => {
   const location = useLocation();
   const estimationId = location.state.estId;
-  const [clientDetails, setClientDetails] = useState({ _id: "",clientName: "",description: "",website: ""});
-  const [projectDetails, setProjectDetails] = useState({ _id: "",projectName: "", projectDescription: "", businessDomain: ""});
-  const [headerData, setHeaderData] = useState({ estName: "", estDescription: "",effortUnit: "",totalCost: 0,estTypeId: {}});
+  const [clientDetails, setClientDetails] = useState({
+    _id: "",
+    clientName: "",
+    description: "",
+    website: "",
+  });
+  const [projectDetails, setProjectDetails] = useState({
+    _id: "",
+    projectName: "",
+    projectDescription: "",
+    businessDomain: "",
+  });
+  const [headerData, setHeaderData] = useState({
+    estName: "",
+    estDescription: "",
+    effortUnit: "",
+    totalCost: 0,
+    estTypeId: {},
+  });
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
+    useState(false);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [openRequirementTable, setOpenRequirementTable] = useState(false);
   const [editData, setEditData] = useState([]);
@@ -35,10 +54,35 @@ const EstimationDetail = () => {
     { title: "Effort", field: "Effort", editable: false },
   ]);
   const [summaryDataArray, setSummaryDataArray] = useState([]);
-  const [requirementHeaderArray, setRequirementHeaderArray] = useState();
+  const [requirementHeaderArray, setRequirementHeaderArray] = useState([
+          {
+            headerName: "Requirement",
+            field: "Requirement",
+            editable: false,
+            width: 170 
+          },
+          {
+            headerName: "Tag",
+            field: "Tag",
+            editable: false,
+            width: 170 
+          },
+          {
+            headerName: "Description",
+            field: "Description",
+            editable: false,
+            width: 170,
+            editable: true
+          },
+        ]);
   const [loaderComponent, setLoader] = useLoader();
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
-  
+   const [editRowsModel, setEditRowsModel] = React.useState({});
+
+  const handleEditRowsModelChange = React.useCallback((model) => {
+    setEditRowsModel(model);
+  }, []);
+
   useEffect(() => {
     getById();
   }, [estimationId]);
@@ -66,32 +110,30 @@ const EstimationDetail = () => {
   const openAddRequirement = () => {
     openAddFun();
   };
-  
-  const openAddAvailableRequirement = () => {
 
+  const openAddAvailableRequirement = () => {
     // if (requirementHeaderData.length !== 0) {
-      
+
     // openAddAvailableRequirementFun();
     // } else {
-      getRequirementWithQuery(() => {
-        
-          openAddAvailableRequirementFun();
-      })
+    getRequirementWithQuery(() => {
+      openAddAvailableRequirementFun();
+    });
     // }
   };
 
   const closeAddAvailableRequirement = () => {
     closeAddAvailableRequirementFun();
   };
- 
+
   const openAddAvailableRequirementFun = () => {
     setOpenRequirementTable(true);
   };
-   
+
   const closeAddAvailableRequirementFun = () => {
     setOpenRequirementTable(false);
   };
-  
+
   const openAddFun = () => {
     setOpenAddRequirementsBox(true);
   };
@@ -107,7 +149,9 @@ const EstimationDetail = () => {
 
   const getById = () => {
     getBasicDetailById(() => {
-      getRequirementDataById(() => { getRequirementWithQuery(() => { })});
+      getRequirementDataById(() => {
+        getRequirementWithQuery(() => {});
+      });
     });
   };
 
@@ -115,10 +159,13 @@ const EstimationDetail = () => {
 
   const getRequirementWithQuery = (callBack) => {
     if (projectDetails._id.length !== 0) {
-      RequirementService.getUnpairedRequirementEstimation(projectDetails._id,headerData._id)
+      RequirementService.getUnpairedRequirementEstimation(
+        projectDetails._id,
+        headerData._id
+      )
         .then((res) => {
           setRequirementHeaderData([...res.data.body.featureList]);
-        
+
           callBack();
         })
         .catch((err) => {
@@ -126,13 +173,10 @@ const EstimationDetail = () => {
           //callBack();
         });
     } else {
-       callBack();
+      callBack();
     }
-   };
-  
-  
-  
-  
+  };
+
   const getBasicDetailById = (calback) => {
     setLoader(true);
     console.log("Request for getById: ");
@@ -143,9 +187,8 @@ const EstimationDetail = () => {
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
-         setLoader(false);
+        setLoader(false);
         calback();
-        
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -159,22 +202,25 @@ const EstimationDetail = () => {
         setSummaryDataArray([...dataResponse.summaryTagList]);
         var estHeaderAttribute = [
           {
-            title: "Requirement",
+            headerName: "Requirement",
             field: "Requirement",
-            id: 1,
-            editable: false,
+            //id: 1,
+            //editable: false,
+            width: 170 
           },
           {
-            title: "Tag",
+            headerName: "Tag",
             field: "Tag",
-            editable: false,
-            id: 2,
+            //editable: false,
+           // id: 2,
+            width: 170 
           },
           {
-            title: "Description",
+            headerName: "Description",
             field: "Description",
-            editable: false,
-            id: 3,
+            //editable: false,
+            //id: 3,
+            width: 170 
           },
         ];
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
@@ -182,11 +228,10 @@ const EstimationDetail = () => {
         setRequirementDataArray(dataResponse.requirementList);
         setLoader(false);
         callback();
-
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
-         callback();
+        callback();
       });
   };
 
@@ -218,12 +263,12 @@ const EstimationDetail = () => {
         .then((res) => {
           setLoader(false);
 
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         })
         .catch((err) => {
           setLoader(false);
           console.log("get deleteRequirement by id error", err);
-           getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         });
     } else {
       setLoader(false);
@@ -243,9 +288,6 @@ const EstimationDetail = () => {
         getById();
       });
   };
-
-
-
 
   ///============== JS- Resource Count Pop up and table - START ==============///
 
@@ -304,7 +346,7 @@ const EstimationDetail = () => {
     const roleDiv = document.querySelector(".rolelist");
     roleDiv.classList.toggle("close-role");
   };
-  
+
   var selectedRequirementsRows = [];
   const handleCheckBoxClicked = (rows) => {
     console.log("rows:-- ", rows);
@@ -315,30 +357,80 @@ const EstimationDetail = () => {
     setOpenRequirementTable(false);
     if (selectedRequirementsRows.length !== 0) {
       setLoader(true);
-      EstimationService.mapHeaderToMultipleRequirement(estimationId, selectedRequirementsRows)
+      EstimationService.mapHeaderToMultipleRequirement(
+        estimationId,
+        selectedRequirementsRows
+      )
         .then((res) => {
           setLoader(false);
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         })
         .catch((err) => {
           setLoader(false);
           console.log("get deleteRequirement by id error", err);
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         });
     } else {
       setLoader(false);
     }
   };
 
-
+  const useStyles = makeStyles((theme) =>
+    createStyles({
+      root: {
+        "& .MuiDataGrid-columnHeaderWrapper": {
+          backgroundColor: "rgb(229, 235, 247)",
+        },
+      },
+    })
+  );
+const classes = useStyles();
+  
+  
+  
+  // var headerS = [
+  //         {
+  //           headerName: "Requirement",
+  //           field: "Requirement",
+  //           //id: 1,
+  //           //editable: false,
+  //           width: 170 
+  //         },
+  //         {
+  //           headerName: "Tag",
+  //           field: "Tag",
+  //           //editable: false,
+  //          // id: 2,
+  //           width: 170 
+  //         },
+  //         {
+  //           headerName: "Description",
+  //           field: "Description",
+  //           //editable: false,
+  //           //id: 3,
+  //           width: 170 
+  //         },
+  //       ];
+  
+  const rows = [
+    {
+      id: 1,
+      Requirement: "Requirement",
+      Tag: "Tag",
+      Description: "Description",
+    },
+   {
+      id: 2,
+      Requirement: "Requirement",
+      Tag: "Tag",
+      Description: "Description",
+    }];
   ///============== JS- Resource Count Pop up and table - END ==============///
 
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
-      <ResourceCountMatrix
-        data={estimationId}
-        />
+      <ResourceCountMatrix data={estimationId} />
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
@@ -371,9 +463,8 @@ const EstimationDetail = () => {
           cancelTitle="Cancel"
         />
       ) : null}
- 
- 
- {openRequirementTable ? (
+
+      {openRequirementTable ? (
         <RequirementTablePopup
           isOpen={openRequirementTable}
           openF={openAddAvailableRequirement}
@@ -386,13 +477,9 @@ const EstimationDetail = () => {
           selection={false}
           requirementTypeArray={requirementTypeArray}
           handleCheckBoxClicked={handleCheckBoxClicked}
-          
-         />
-  
+        />
       ) : null}
- 
- 
- 
+
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
           <Link
@@ -417,11 +504,10 @@ const EstimationDetail = () => {
           </Link>
         </Box>
       </Container>
-      <EstimationHeader data={headerData} />
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
+      <EstimationHeader data={headerData} />
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box">
-                
           <Button
             variant="outlined"
             className="estimation-detail-button"
@@ -445,42 +531,19 @@ const EstimationDetail = () => {
         {loaderComponent ? (
           loaderComponent
         ) : (
-          <MaterialTable
-            style={{ boxShadow: "none" }}
-            title={`Estimation Efforts (${headerData.effortUnit})`}
-            columns={requirementHeaderArray}
-            data={requirementDataArray}
-            onRowClick={(event, rowData, togglePanel) =>
-              openEditRequirement(event, rowData)
-            }
-            editable={{
-              onBulkUpdate: (changes) =>
-                new Promise((resolve, reject) => {
-                  updateAttributeValue(changes);
-                  setTimeout(() => {
-                    resolve();
-                  }, 1000);
-                }),
-
-              onRowDelete: (oldData) =>
-                new Promise((resolve, reject) => {
-                  deleteRow(oldData, resolve);
-                  // setTimeout(() => {
-                  //   resolve();
-                  // }, 1000);
-                }),
-            }}
-            options={{
-              search: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-            }}
-          />
-        )}
+          <div style={{ height: 400, width: '100%' }}>    
+           <DataGrid
+              className={classes.root}
+                rows={requirementDataArray}
+                columns={requirementHeaderArray}
+                editRowsModel={editRowsModel}
+                 onEditRowsModelChange={handleEditRowsModelChange}
+              />
+              </div>
+          
+        )
+        
+        }
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>
@@ -517,8 +580,7 @@ const EstimationDetail = () => {
                 "/" +
                 projectDetails.projectName +
                 "/" +
-                headerData.estName 
-                +
+                headerData.estName +
                 "/requirement-mix",
               state: {
                 clientInfo: clientDetails,
