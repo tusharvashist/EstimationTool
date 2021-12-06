@@ -28,3 +28,20 @@ module.exports.getResourceCount = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
+module.exports.updateTechnologyResourceCount = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responceGetByID =
+      await estimationResourceCountService.updateTechnologyResourceCount({
+        id: req.params.id,
+        updatedInfo: req.body,
+      });
+    responce.status = 200;
+    responce.message = constant.ResourceCountMessage.ResourceCountTech_UPDATE;
+    responce.body = responceGetByID;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};

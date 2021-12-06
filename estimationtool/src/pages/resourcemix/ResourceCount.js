@@ -11,10 +11,12 @@ import {
   Select,
   MenuItem,
 } from "@material-ui/core";
+//import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
+import ResourceMix from "../resourcemix/resourcecount.service"
 const ResourceCountMatrix = (props) => {
   const estimationHeaderId = props.data;
 
-  const popupCount = () => {};
+  const popupCount = () => { };
   const [technologySkills, setTechnolnogySkills] = useState();
   const [selectedTechnology, setSelectedTechnology] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
@@ -23,6 +25,8 @@ const ResourceCountMatrix = (props) => {
   useEffect(() => {
     if (estimationHeaderId) {
       getTechnologySkill();
+    getResourceCountData();
+
     }
   }, []);
 
@@ -37,11 +41,21 @@ const ResourceCountMatrix = (props) => {
       .catch((err) => {});
   };
 
-  const handleTechnology = (value) => {
-    if (value !== '') {
-      console.log("technology Id",value)
-    }
-  }
+
+
+
+  // Get All Technology Skills
+
+  const getResourceCountData = () => {
+    ResourceMixService.getAllResourceCount()
+      .then((res) => {
+        console.log("technology skills ", res.data.body);
+        // setTechnolnogySkills(res.data.body);
+      })
+      .catch((err) => { });
+  };
+
+
 
   //console.log("technologySkills",technologySkills)
   const getColumns = ({onChangeSelect,technologySkills}) => ([

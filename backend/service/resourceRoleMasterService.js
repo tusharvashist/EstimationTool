@@ -15,17 +15,17 @@ module.exports.createResourceRoleMaster = async (serviceData) => {
   }
 }
 
-// module.exports.createEstResourcePlanning = async (serviceData) => {
-//   try {
-//     let estimationTemplate = new estResourcePlanningModel({ ...serviceData })
-//     let result = await estimationTemplate.save();
+module.exports.createEstResourcePlanning = async (serviceData) => {
+  try {
+    let estimationTemplate = new estResourcePlanningModel({ ...serviceData })
+    let result = await estimationTemplate.save();
 
-//     return formatMongoData(result)
-//   } catch (err) {
-//     console.log("something went wrong: service est resource planning service ", err);
-//     throw new Error(err)
-//   }
-// }
+    return formatMongoData(result)
+  } catch (err) {
+    console.log("something went wrong: service est resource planning service ", err);
+    throw new Error(err)
+  }
+}
 
 
 

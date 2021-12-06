@@ -27,15 +27,15 @@ module.exports.createResourceRoleMaster = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
-// module.exports.createEstResourcePlanning = async (req, res) => {
-//     let responce = { ...constant.defaultResponce };
-//     try {
-//         const responceFromRoleSer = await resourceRoleMasterSer.createEstResourcePlanning(req.body);
-//         responce.status = 200;
-//         responce.message = constant.resourceRoleMasterMessage.RESOURCEROLEMASTER_CREATED;
-//         responce.body = responceFromRoleSer;
-//     } catch (err) {
-//         responce.message = err.message;
-//     }
-//     return res.status(responce.status).send(responce);
-// }
+module.exports.createEstResourcePlanning = async (req, res) => {
+    let responce = { ...constant.defaultResponce };
+    try {
+        const responceFromRoleSer = await resourceRoleMasterSer.createEstResourcePlanning(req.body);
+        responce.status = 200;
+        responce.message = constant.resourceRoleMasterMessage.RESOURCEROLEMASTER_CREATED;
+        responce.body = responceFromRoleSer;
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
