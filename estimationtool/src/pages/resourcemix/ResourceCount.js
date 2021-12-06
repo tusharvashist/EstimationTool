@@ -15,7 +15,6 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 
 const ResourceCountMatrix = (props) => {
-
   const [tableOpen, setTableOpen] = useState(false);
 
   const popupCount = () => {};
@@ -59,14 +58,13 @@ const ResourceCountMatrix = (props) => {
 
   const getResourceCountAllData = (estimationHeaderId) => {
     ResourceMixService.getResourceCountAll(estimationHeaderId)
-    .then((res) => {
-      console.log("all Data", res.data.body);
-      setResouceCountData(res.data.body);
-      // setTechnolnogySkills(res.data.body);
-    })
-    .catch((err) => {});
-  }
- 
+      .then((res) => {
+        console.log("all Data", res.data.body);
+        setResouceCountData(res.data.body);
+        // setTechnolnogySkills(res.data.body);
+      })
+      .catch((err) => {});
+  };
 
   //console.log("technologySkills",technologySkills)
   const getColumns = ({ onChangeSelect, technologySkills }) => [
@@ -93,7 +91,7 @@ const ResourceCountMatrix = (props) => {
           <Select
             style={{ width: "100%" }}
             onChange={(e) => onChangeSelect(e, rowdata)}
-             value={resouceCountData.techSkill}
+            value={resouceCountData.techSkill}
             //   label={technologySkills.skill}
 
             required
@@ -178,29 +176,31 @@ const ResourceCountMatrix = (props) => {
 
   return (
     <div className="estimation-detail-cover">
-      <div className="estimation-detail-count-table ">
-        <BorderedContainer className="count-box-shadow roleCountInputParent">
-          {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
-          <div style={{ height: 300, width: "100%" }}>
-            {resouceCountData.length && (
-              <DataGrid
-                rows={resouceCountData}
-                columns={getColumns({ onChangeSelect, technologySkills })}
-                pageSize={5}
-                onCellClick={handleCellClick}
-                getRowId={({ _id }) => _id}
-                key="_id"
-              />
-            )}
-          </div>
+      {tableOpen && (
+        <div className="estimation-detail-count-table">
+          <BorderedContainer className="count-box-shadow roleCountInputParent">
+            {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
+            <div style={{ height: 300, width: "100%" }}>
+              {resouceCountData.length && (
+                <DataGrid
+                  rows={resouceCountData}
+                  columns={getColumns({ onChangeSelect, technologySkills })}
+                  pageSize={5}
+                  onCellClick={handleCellClick}
+                  getRowId={({ _id }) => _id}
+                  key="_id"
+                />
+              )}
+            </div>
 
-          <div className="resource-cont-costing">
-            <h4>Costing: $1000</h4>
-            <h4 className="inline-cost">Expected Timeline: $1000</h4>
-            <h4 className="inline-cost">Actual Timeline: $1000</h4>
-          </div>
-        </BorderedContainer>
-      </div>
+            <div className="resource-cont-costing">
+              <h4>Costing: $1000</h4>
+              <h4 className="inline-cost">Expected Timeline: $1000</h4>
+              <h4 className="inline-cost">Actual Timeline: $1000</h4>
+            </div>
+          </BorderedContainer>
+        </div>
+      )}
       <div className="estimation-detail-button-container">
         <button
           onClick={handleCountTable}

@@ -6,7 +6,7 @@ const RoleEditItem = (props) => {
       <p>Lead</p>
       <div className="optionbtn">
         <button>+</button>
-        <p>{props.rowEditData[0]}</p>
+        <p>{props.rowEditData}</p>
         <button>-</button>
       </div>
     </>
