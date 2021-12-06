@@ -2,21 +2,21 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import "../estimation-detail/estimation-detail.css";
 import React, { useState, useEffect } from "react";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import counting from "../../assests/team.png";
 import RoleCount from "./RoleCount";
 import ResourceMixService from "../resourcemix/resourcecount.service";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
-import {
-  Select,
-  MenuItem,
-} from "@material-ui/core";
+import { Select, MenuItem } from "@material-ui/core";
 //import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
-import ResourceMix from "../resourcemix/resourcecount.service"
+import ResourceMix from "../resourcemix/resourcecount.service";
+import { MdOutlineManageAccounts } from "react-icons/md";
+
 const ResourceCountMatrix = (props) => {
   const estimationHeaderId = props.data;
 
-  const popupCount = () => { };
+  const [tableOpen, setTableOpen] = useState(false);
+
+  const popupCount = () => {};
   const [technologySkills, setTechnolnogySkills] = useState();
   const [selectedTechnology, setSelectedTechnology] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
@@ -25,8 +25,7 @@ const ResourceCountMatrix = (props) => {
   useEffect(() => {
     if (estimationHeaderId) {
       getTechnologySkill();
-    getResourceCountData();
-
+      getResourceCountData();
     }
   }, []);
 
@@ -41,9 +40,6 @@ const ResourceCountMatrix = (props) => {
       .catch((err) => {});
   };
 
-
-
-
   // Get All Technology Skills
 
   const getResourceCountData = () => {
@@ -52,13 +48,11 @@ const ResourceCountMatrix = (props) => {
         console.log("technology skills ", res.data.body);
         // setTechnolnogySkills(res.data.body);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
-
-
   //console.log("technologySkills",technologySkills)
-  const getColumns = ({onChangeSelect,technologySkills}) => ([
+  const getColumns = ({ onChangeSelect, technologySkills }) => [
     { headerName: "Resource Count", field: "count", width: 180 },
     {
       headerName: "Skills(Effort & summary Attribute)",
@@ -70,24 +64,23 @@ const ResourceCountMatrix = (props) => {
       field: "technology",
       width: 200,
       renderCell: (rowdata) => {
-        console.log("technologySkills", technologySkills)
+        console.log("technologySkills", technologySkills);
         return (
-        <Select
-        style={{ width: "100%" }}
-              onChange={onChangeSelect}
-             value={technologySkills.id}
-              label={technologySkills.skill}
-              
-              required
-            >
-              {technologySkills.map((item) => (
-                <MenuItem key={item.skill} value={item.id}>
-                  {item.skill}
-                </MenuItem>
-              ))}
-            </Select>
-            )
-      }
+          <Select
+            style={{ width: "100%" }}
+            onChange={onChangeSelect}
+            value={technologySkills.id}
+            label={technologySkills.skill}
+            required
+          >
+            {technologySkills.map((item) => (
+              <MenuItem key={item.skill} value={item.id}>
+                {item.skill}
+              </MenuItem>
+            ))}
+          </Select>
+        );
+      },
     },
     {
       headerName: "Role",
@@ -95,7 +88,7 @@ const ResourceCountMatrix = (props) => {
       width: 300,
       renderCell: renderRole,
     },
-  ]);
+  ];
 
   function renderRole(params) {
     return <RoleCount data={params.value} />;
@@ -138,33 +131,28 @@ const ResourceCountMatrix = (props) => {
   ];
 
   const handleCountTable = () => {
-    const tableDiv = document.querySelector(".estimation-detail-count-table");
-    if (tableDiv.classList.contains("close-resourceCountTable")) {
-      tableDiv.classList.remove("close-resourceCountTable");
-      tableDiv.classList.add("open");
-    } else {
-      tableDiv.classList.add("close-resourceCountTable");
-      tableDiv.classList.remove("open");
-    }
+    if (!tableOpen) setTableOpen(true);
+    if (tableOpen) setTableOpen(false);
   };
 
   const onChangeSelect = (selected) => {
-    console.log("selected", selected.target.value)
-  }
+    console.log("selected", selected.target.value);
+  };
   return (
     <div className="estimation-detail-cover">
-      <div className="estimation-detail-count-table close-resourceCountTable">
-        <BorderedContainer className="count-box-shadow roleCountInputParent">
-          {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
-          <div style={{ height: 300, width: "100%" }}>
-            <DataGrid
-              rows={rowData}
-              columns={getColumns({onChangeSelect, technologySkills})}
-              pageSize={5}
-              onCellClick={handleCellClick}
-            />
-          </div>
-          {/* <MaterialTable
+      {tableOpen && (
+        <div className="estimation-detail-count-table close-resourceCountTable">
+          <BorderedContainer className="count-box-shadow roleCountInputParent">
+            {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
+            <div style={{ height: 300, width: "100%" }}>
+              <DataGrid
+                rows={rowData}
+                columns={getColumns({ onChangeSelect, technologySkills })}
+                pageSize={5}
+                onCellClick={handleCellClick}
+              />
+            </div>
+            {/* <MaterialTable
             style={{ boxShadow: "none" }}
             title="Resource Count"
             columns={columns}
@@ -175,19 +163,22 @@ const ResourceCountMatrix = (props) => {
             }}
             data={technologySkills}
           /> */}
-          <div className="resource-cont-costing">
-            <h4>Costing: $1000</h4>
-            <h4 className="inline-cost">Expected Timeline: $1000</h4>
-            <h4 className="inline-cost">Actual Timeline: $1000</h4>
-          </div>
-        </BorderedContainer>
-      </div>
+            <div className="resource-cont-costing">
+              <h4>Costing: $1000</h4>
+              <h4 className="inline-cost">Expected Timeline: $1000</h4>
+              <h4 className="inline-cost">Actual Timeline: $1000</h4>
+            </div>
+          </BorderedContainer>
+        </div>
+      )}
       <div className="estimation-detail-button-container">
         <button
           onClick={handleCountTable}
           className="estimation-detail-count-button"
         >
-          <img src={counting} />
+          <MdOutlineManageAccounts
+            style={{ fontSize: "32px", color: "#1e7e1e" }}
+          />
         </button>
       </div>
     </div>
