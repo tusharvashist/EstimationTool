@@ -26,13 +26,12 @@ router.get(
   resourceCountController.getResourceCount
 );
 
-//----- Update -----------
-// router.put(
-//   "/:id",
-//   tokenValidation.validateToken,
-//   joiSchemaValidation.validateBody(joiClientSchema.clientUpdateSchema),
-//   clientController.clientUpdate
-// );
+//----- Update Technology-----------
+router.put(
+  "/tech/:id",
+  tokenValidation.validateToken,
+  resourceCountController.updateTechnologyResourceCount
+);
 
 //----- Get all List -----------
 // router.get(

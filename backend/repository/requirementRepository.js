@@ -1,172 +1,181 @@
-const constant = require("../constant")
-const {ObjectId} = require('mongodb');
-const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel")
-const Client = require("../database/models/clientModel")
-const EstHeaderModel = require("../database/models/estHeaderModel")
-const ProjectRequirement = require("../database/models/projectRequirement")
-const QueryAssumptionModel = require("../database/models/queryAssumptionModel")
-const EstHeaderRequirement = require("../database/models/estHeaderRequirement")
-const EstRequirementData =  require("../database/models/estRequirementData")
-const { formatMongoData } = require("../helper/dbhelper")
-const RequirementType = require("../database/models/requirementType")
-const RequirementTag = require("../database/models/requirementTag")
-const EstimationHeaderAttributeModel = require("../database/models/estimationHeaderAtrributeModel")
-const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
-const EstimationAttributes = require("../database/models/estimationAttributesModel")
-const mongoose = require("mongoose")
+const constant = require("../constant");
+const { ObjectId } = require("mongodb");
+const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
+const Client = require("../database/models/clientModel");
+const EstHeaderModel = require("../database/models/estHeaderModel");
+const ProjectRequirement = require("../database/models/projectRequirement");
+const QueryAssumptionModel = require("../database/models/queryAssumptionModel");
+const EstHeaderRequirement = require("../database/models/estHeaderRequirement");
+const EstRequirementData = require("../database/models/estRequirementData");
+const { formatMongoData } = require("../helper/dbhelper");
+const RequirementType = require("../database/models/requirementType");
+const RequirementTag = require("../database/models/requirementTag");
+const EstimationHeaderAttributeModel = require("../database/models/estimationHeaderAtrributeModel");
+const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
+const EstimationAttributes = require("../database/models/estimationAttributesModel");
+const mongoose = require("mongoose");
 
 module.exports.createRequirement = async (serviceData) => {
-    let projectRequirement = new ProjectRequirement({ ...serviceData })
-    let requirementId = '';
-    const findRecord = await ProjectRequirement.find(
-        { title: projectRequirement.title },
-        { project: projectRequirement.project }
-    );
+  let projectRequirement = new ProjectRequirement({ ...serviceData });
+  let requirementId = "";
+  const findRecord = await ProjectRequirement.find(
+    { title: projectRequirement.title },
+    { project: projectRequirement.project }
+  );
 
-    if(findRecord.length != 0){
-        return findRecord[0];
-    } else {
-      let result = await projectRequirement.save();
-        return result;
-    }
-}
+  if (findRecord.length != 0) {
+    return findRecord[0];
+  } else {
+    let result = await projectRequirement.save();
+    return result;
+  }
+};
 
 module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
+  const estHeaderModel = await EstHeaderModel.findById({
+    _id: serviceData.estHeader,
+  });
+  if (estHeaderModel.length == 0) {
+    throw new Error(constant.requirementMessage.INVALID_EST_ID);
+  }
 
-    const estHeaderModel = await EstHeaderModel.findById({ _id: serviceData.estHeader })
-    if (estHeaderModel.length == 0) {
-       throw new Error(constant.requirementMessage.INVALID_EST_ID);
-    }
+  const record = await EstHeaderRequirement.find({
+    requirement: requirementId,
+    estHeader: mongoose.Types.ObjectId(serviceData.estHeader),
+  });
+  if (record.length != 0) {
+    throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+  }
 
-    const record = await EstHeaderRequirement.find({requirement: requirementId ,estHeader: mongoose.Types.ObjectId(serviceData.estHeader)})
-    if(record.length != 0){
-        throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
-    }
-    
-    let estHeaderRequirement = new EstHeaderRequirement({requirement: requirementId ,estHeader: estHeaderModel._id ,isDeleted: false})
-    let result_estHeaderRequirement = await estHeaderRequirement.save();
-    
-    return result_estHeaderRequirement
+  let estHeaderRequirement = new EstHeaderRequirement({
+    requirement: requirementId,
+    estHeader: estHeaderModel._id,
+    isDeleted: false,
+  });
+  let result_estHeaderRequirement = await estHeaderRequirement.save();
 
-}
+  return result_estHeaderRequirement;
+};
 
-module.exports.mapHeaderToMultipleRequirement = async (estHeaderId,  serviceDataArray) => {
-   
-    const estHeaderModel = await EstHeaderModel.findById({ _id: estHeaderId })
+module.exports.mapHeaderToMultipleRequirement = async (
+  estHeaderId,
+  serviceDataArray
+) => {
+  const estHeaderModel = await EstHeaderModel.findById({ _id: estHeaderId });
 
-    if (estHeaderModel.length == 0) {
-       throw new Error(constant.requirementMessage.INVALID_EST_ID);
-    }
+  if (estHeaderModel.length == 0) {
+    throw new Error(constant.requirementMessage.INVALID_EST_ID);
+  }
 
-    var index = 0;
-    var resultArray = []
-    var result =  await serviceDataArray.forEach(async (serviceData) => {
-        const record = await EstHeaderRequirement.find({
-            requirement:mongoose.Types.ObjectId(serviceData) ,
-            estHeader: mongoose.Types.ObjectId(estHeaderId)
-        })
-        
-        if (record.length === 0) {
-            let estHeaderRequirement = new EstHeaderRequirement({
-                requirement: serviceData,
-                estHeader: estHeaderModel._id, isDeleted: false
-            })
-            let result_estHeaderRequirement = await estHeaderRequirement.save();
-            resultArray.push(result_estHeaderRequirement);
-            if (index == (serviceDataArray.length - 1)) {
-                 return resultArray;
-            }
-            index = index + 1;
-        }    
+  var index = 0;
+  var resultArray = [];
+  var result = await serviceDataArray.forEach(async (serviceData) => {
+    const record = await EstHeaderRequirement.find({
+      requirement: mongoose.Types.ObjectId(serviceData),
+      estHeader: mongoose.Types.ObjectId(estHeaderId),
     });
-}
+
+    if (record.length === 0) {
+      let estHeaderRequirement = new EstHeaderRequirement({
+        requirement: serviceData,
+        estHeader: estHeaderModel._id,
+        isDeleted: false,
+      });
+      let result_estHeaderRequirement = await estHeaderRequirement.save();
+      resultArray.push(result_estHeaderRequirement);
+      if (index == serviceDataArray.length - 1) {
+        return resultArray;
+      }
+      index = index + 1;
+    }
+  });
+};
 
 module.exports.updateQuery = async (projectRequirementId, serviceData) => {
-    const findRecord = await QueryAssumptionModel.find(
-        { projectRequirement: projectRequirementId },
-        { query: serviceData.query }
+  const findRecord = await QueryAssumptionModel.find(
+    { projectRequirement: projectRequirementId },
+    { query: serviceData.query }
+  );
+  if (findRecord.length !== 0) {
+    var newQuery = {
+      query: serviceData.query,
+      assumption: serviceData.assumption,
+      reply: serviceData.reply,
+    };
+
+    let queryAssumptionModel = await QueryAssumptionModel.findOneAndUpdate(
+      { _id: findRecord[0]._id },
+      newQuery,
+      { new: true }
     );
-    if (findRecord.length !== 0) {
 
-        var newQuery = {
-            query: serviceData.query,
-            assumption: serviceData.assumption,
-            reply: serviceData.reply
-        };
+    return queryAssumptionModel;
+  } else {
+    return "OK";
+  }
+};
 
-        let queryAssumptionModel = await QueryAssumptionModel.findOneAndUpdate(
-          { _id: findRecord[0]._id },
-          newQuery,
-          { new: true }
-        );
-        
-        return queryAssumptionModel;
-
-    } else {
-        return  "OK";
-    }
-}
-
-
-
-
-module.exports.createQueryAssumption = async (projectRequirementId, serviceData) => {
-    const findRecord = await QueryAssumptionModel.find(
-        { projectRequirement: projectRequirementId },
-        { query: serviceData.query }
-    );
-    if (findRecord.length == 0) {
-        let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
-        queryAssumptionModel.projectRequirement = projectRequirementId;
-        let result = await queryAssumptionModel.save();
-        return result;
-    } else {
-        return findRecord[0];
-    }
-}
+module.exports.createQueryAssumption = async (
+  projectRequirementId,
+  serviceData
+) => {
+  const findRecord = await QueryAssumptionModel.find(
+    { projectRequirement: projectRequirementId },
+    { query: serviceData.query }
+  );
+  if (findRecord.length == 0) {
+    let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
+    queryAssumptionModel.projectRequirement = projectRequirementId;
+    let result = await queryAssumptionModel.save();
+    return result;
+  } else {
+    return findRecord[0];
+  }
+};
 
 module.exports.getTags = async () => {
-     let requirementTag = await RequirementTag.find({}).sort({ name: 1 });
-    if (requirementTag.length != 0) {
-     return requirementTag;
-    } else {
-        return [];
-    }
-
-}
+  let requirementTag = await RequirementTag.find({}).sort({ name: 1 });
+  if (requirementTag.length != 0) {
+    return requirementTag;
+  } else {
+    return [];
+  }
+};
 
 module.exports.getTypes = async () => {
-    let requirementType = await RequirementType.find({}).sort({ name: 1 });
-    if (requirementType.length != 0) {
-        return requirementType;
-    } else {
-        return [];
-    }
-}
+  let requirementType = await RequirementType.find({}).sort({ name: 1 });
+  if (requirementType.length != 0) {
+    return requirementType;
+  } else {
+    return [];
+  }
+};
 
-
-
-module.exports.getUnpairedRequirementEstimation = async (requirementList,estHeader ) => {
+module.exports.getUnpairedRequirementEstimation = async (
+  requirementList,
+  estHeader
+) => {
   //  var requirementList = await getRequirementWithQuery(projectId);
-    var unpairedRequirement = [];
-    var index = 0;
-    
-    var result = await EstHeaderRequirement.find({ estHeader: estHeader });
-      
-    var temp = requirementList.forEach( (element) => {
-        
-        const found = result.find(({ requirement })=> String(requirement) === String(element._id));
-      if (!found) {
-            unpairedRequirement.push(element);
-        }
-       // if (index == (requirementList.length - 1)) {
-           
-            //callback(unpairedRequirement);
-        //}
-          index = index + 1;
-    });
-    return unpairedRequirement;
-}
+  var unpairedRequirement = [];
+  var index = 0;
+
+  var result = await EstHeaderRequirement.find({ estHeader: estHeader });
+
+  var temp = requirementList.forEach((element) => {
+    const found = result.find(
+      ({ requirement }) => String(requirement) === String(element._id)
+    );
+    if (!found) {
+      unpairedRequirement.push(element);
+    }
+    // if (index == (requirementList.length - 1)) {
+
+    //callback(unpairedRequirement);
+    //}
+    index = index + 1;
+  });
+  return unpairedRequirement;
+};
 
 module.exports.getContingency = async (estHeaderId) => {
   try {
@@ -176,309 +185,300 @@ module.exports.getContingency = async (estHeaderId) => {
     //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
-}
+};
 
 module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
-   try {
-  let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
-   console.log(estimations);
-  //if (estimations.length != 0) {
-      var requirementData = await requirementDataForEstHeader(estHeaderId);
-     //}
-     console.log("requirement: ", requirementData);
-     requirementData.forEach((requirementElement) => {
-       
-       console.log("--------------");
-        // console.log("---",requirementElement);
-       requirementElement.estRequirementData.forEach((estRequirement) => {
-             //   console.log("estRequirementData: ",estRequirement);
-         if (estRequirement.ESTData !== undefined && estRequirement.ESTData !== 0) {
-            estRequirement["ESTDataContingency"] = (estRequirement.ESTData * estimations.contingency)/100
-          } else {
-            estRequirement["ESTDataContingency"] = 0
-         }
-          console.log(estRequirement);
-       })
-     })
-     return requirementData;
-      } catch (err) {
+  try {
+    let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
+    console.log(estimations);
+    //if (estimations.length != 0) {
+    var requirementData = await requirementDataForEstHeader(estHeaderId);
+    //}
+    console.log("requirement: ", requirementData);
+    requirementData.forEach((requirementElement) => {
+      console.log("--------------");
+      // console.log("---",requirementElement);
+      requirementElement.estRequirementData.forEach((estRequirement) => {
+        //   console.log("estRequirementData: ",estRequirement);
+        if (
+          estRequirement.ESTData !== undefined &&
+          estRequirement.ESTData !== 0
+        ) {
+          estRequirement["ESTDataContingency"] =
+            (estRequirement.ESTData * estimations.contingency) / 100;
+        } else {
+          estRequirement["ESTDataContingency"] = 0;
+        }
+        console.log(estRequirement);
+      });
+    });
+    return requirementData;
+  } catch (err) {
     //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
-}
+};
 
-
-module.exports.getAttributesCalAttributesTotal= async (estHeaderId) => {
+module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   var resourceCount = {
     estHeaderId: estHeaderId,
     EstimationAttributes: [
       {
-        _id: new ObjectId("618a4976e2b03fc48cfadc8a"),
-        attributeCode: 'DEV',
-        attributeName: 'Front End',
-        description: 'name',
+        _id: "618a4976e2b03fc48cfadc8a",
+        attributeCode: "DEV",
+        attributeName: "Front End",
+        description: "name",
         Total: 265,
       },
       {
-        _id: new ObjectId("618a4976e2b03fc48cfadc7a"),
-        attributeCode: 'DEV',
-        attributeName: 'Back End',
-        description: 'Back End',
+        _id: "618a497fe2b03fc48cfadc90",
+        attributeCode: "DEV",
+        attributeName: "Back End",
+        description: "Back End",
         Total: 115,
-      }
+      },
     ],
-  EstimationCalcAttributes:  [
+    EstimationCalcAttributes: [
       {
-        _id: "619f91696779944466be276c",
+        _id: "618b8f4b6259f87257bc2201",
         calcAttribute: " ",
-        calcAttributeName: "ProjectManager",
-        ESTDataTotal: 45
+        calcAttributeName: "QA",
+        Total: 85,
       },
       {
-        _id: "619f91696779944466be275c",
+        _id: "618b8f5f6259f87257bc2203",
         calcAttribute: " ",
         calcAttributeName: "ProjectManager",
-        Total: 45
-      }
-    ]
+        Total: 95,
+      },
+    ],
   };
-  console.log("ResourceCount :",resourceCount);
+  console.log("ResourceCount :", resourceCount);
   return resourceCount;
-}
-
-
+};
 
 module.exports.getEstHeaderRequirement = async (estHeaderId) => {
+  return requirementDataForEstHeader(estHeaderId);
+};
 
-    return requirementDataForEstHeader(estHeaderId);
-}
-
- async function requirementDataForEstHeader(estHeaderId){
-
-    let estHeaderRequirement = await EstHeaderRequirement.aggregate([
-      {
-        $match: {
-          estHeader: ObjectId(estHeaderId),
-          isDeleted: false,
+async function requirementDataForEstHeader(estHeaderId) {
+  let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+    {
+      $match: {
+        estHeader: ObjectId(estHeaderId),
+        isDeleted: false,
+      },
+    },
+    {
+      $lookup: {
+        from: "estrequirementdatas",
+        localField: "_id",
+        foreignField: "ESTHeaderRequirementID",
+        as: "attributeData",
+      },
+    },
+    {
+      $lookup: {
+        from: "projectrequirements",
+        localField: "requirement",
+        foreignField: "_id",
+        as: "requirementData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$requirementData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "requirementtypes",
+        localField: "requirementData.type",
+        foreignField: "_id",
+        as: "requirementData.type",
+      },
+    },
+    {
+      $unwind: {
+        path: "$requirementData.type",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "requirementtags",
+        localField: "requirementData.tag",
+        foreignField: "_id",
+        as: "requirementData.tag",
+      },
+    },
+    {
+      $unwind: {
+        path: "$requirementData.tag",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: "$attributeData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "estimationattributes",
+        localField: "attributeData.ESTAttributeID",
+        foreignField: "_id",
+        as: "attributeData.ESTAttributeID",
+      },
+    },
+    {
+      $unwind: {
+        path: "$attributeData.ESTAttributeID",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        isDeleted: {
+          $first: "$isDeleted",
+        },
+        requirement: {
+          $first: "$requirementData",
+        },
+        estHeader: {
+          $first: "$estHeader",
+        },
+        estRequirementData: {
+          $push: "$attributeData",
         },
       },
-      {
-        $lookup: {
-          from: "estrequirementdatas",
-          localField: "_id",
-          foreignField: "ESTHeaderRequirementID",
-          as: "attributeData",
-        },
+    },
+    {
+      $project: {
+        _id: 1,
+        isDeleted: 1,
+        estRequirementData: 1,
+        requirement: 1,
       },
-      {
-        $lookup: {
-          from: "projectrequirements",
-          localField: "requirement",
-          foreignField: "_id",
-          as: "requirementData",
-        },
+    },
+    {
+      $lookup: {
+        from: "queryassumptions",
+        localField: "requirement._id",
+        foreignField: "projectRequirement",
+        as: "requirement.queryassumptions",
       },
-      {
-        $unwind: {
-          path: "$requirementData",
-          preserveNullAndEmptyArrays: true,
-        },
+    },
+    {
+      $sort: {
+        "requirement.title": 1,
       },
-      {
-        $lookup: {
-          from: "requirementtypes",
-          localField: "requirementData.type",
-          foreignField: "_id",
-          as: "requirementData.type",
-        },
-      },
-      {
-        $unwind: {
-          path: "$requirementData.type",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "requirementtags",
-          localField: "requirementData.tag",
-          foreignField: "_id",
-          as: "requirementData.tag",
-        },
-      },
-      {
-        $unwind: {
-          path: "$requirementData.tag",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $unwind: {
-          path: "$attributeData",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "estimationattributes",
-          localField: "attributeData.ESTAttributeID",
-          foreignField: "_id",
-          as: "attributeData.ESTAttributeID",
-        },
-      },
-      {
-        $unwind: {
-          path: "$attributeData.ESTAttributeID",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $group: {
-          _id: "$_id",
-          isDeleted: {
-            $first: "$isDeleted",
-          },
-          requirement: {
-            $first: "$requirementData",
-          },
-          estHeader: {
-            $first: "$estHeader",
-          },
-          estRequirementData: {
-            $push: "$attributeData",
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          isDeleted: 1,
-          estRequirementData: 1,
-          requirement: 1,
-        },
-      },{
-       $lookup: {
-        from: 'queryassumptions',
-        localField: 'requirement._id',
-        foreignField: 'projectRequirement',
-        as: 'requirement.queryassumptions'
-        }
-      },
-      {
-        $sort: {
-          "requirement.title": 1,
-        },
-      },
-    ]);
+    },
+  ]);
   return estHeaderRequirement;
 }
 
-
-
-
-
-
 module.exports.getRequirementWithQuery = async (projectId) => {
-   
-    let projectRequirement = await ProjectRequirement.aggregate(
-        [
-            {
-                $match: {
-                project: ObjectId(projectId)
-                }
-            },
-            {
-                $lookup: {
-                from: 'queryassumptions',
-                localField: '_id',
-                foreignField: 'projectRequirement',
-                as: 'queryassumptions'
-                }
-            },
-            {
-                $unwind: {
-                path: '$queryassumptions',
-                preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $lookup: {
-                from: 'requirementtypes',
-                localField: 'type',
-                foreignField: '_id',
-                as: 'type'
-                }
-            },
-            {
-                $unwind: {
-                path: '$type',
-                preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $lookup: {
-                    from: 'requirementtags',
-                    localField: 'tag',
-                    foreignField: '_id',
-                    as: 'tag'
-                }
-            },
-                {
-                    $unwind: {
-                    path: '$tag',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            {
-                $group: {
-                    _id: '$_id',
-                    id: {
-                        $first: '$_id'
-                    },
-                    isDeleted: {
-                        $first: '$isDeleted'
-                    },
-                    Requirement: {
-                        $first: '$title'
-                    },
-                    Description: {
-                        $first: '$description'
-                    },
-                    Tagid: {
-                        $first: '$tag._id'
-                    },
-                    Tag: {
-                        $first: '$tag.name'
-                    },
-                    Type: {
-                        $first: '$type.name'
-                    },
-                    Typeid: {
-                        $first: '$type._id'
-                    },
-                    requirementId: {
-                        $first: '$_id'
-                    },
-Query:{
-   $first: "$queryassumptions.query",
-},
-Assumption:{
-   $first: "$queryassumptions.assumption",
-},
-Reply:{
-   $first: "$queryassumptions.reply",
-},
-queryassumptionsId:{
-   $first: "$queryassumptions._id",
-}
-                }
-            }
-        ]
-    );
-    
-    if (projectRequirement.length != 0) {
-        return projectRequirement;
-    } else {
-        return [];
-    }
-}
+  let projectRequirement = await ProjectRequirement.aggregate([
+    {
+      $match: {
+        project: ObjectId(projectId),
+      },
+    },
+    {
+      $lookup: {
+        from: "queryassumptions",
+        localField: "_id",
+        foreignField: "projectRequirement",
+        as: "queryassumptions",
+      },
+    },
+    {
+      $unwind: {
+        path: "$queryassumptions",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "requirementtypes",
+        localField: "type",
+        foreignField: "_id",
+        as: "type",
+      },
+    },
+    {
+      $unwind: {
+        path: "$type",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "requirementtags",
+        localField: "tag",
+        foreignField: "_id",
+        as: "tag",
+      },
+    },
+    {
+      $unwind: {
+        path: "$tag",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        id: {
+          $first: "$_id",
+        },
+        isDeleted: {
+          $first: "$isDeleted",
+        },
+        Requirement: {
+          $first: "$title",
+        },
+        Description: {
+          $first: "$description",
+        },
+        Tagid: {
+          $first: "$tag._id",
+        },
+        Tag: {
+          $first: "$tag.name",
+        },
+        Type: {
+          $first: "$type.name",
+        },
+        Typeid: {
+          $first: "$type._id",
+        },
+        requirementId: {
+          $first: "$_id",
+        },
+        Query: {
+          $first: "$queryassumptions.query",
+        },
+        Assumption: {
+          $first: "$queryassumptions.assumption",
+        },
+        Reply: {
+          $first: "$queryassumptions.reply",
+        },
+        queryassumptionsId: {
+          $first: "$queryassumptions._id",
+        },
+      },
+    },
+  ]);
+
+  if (projectRequirement.length != 0) {
+    return projectRequirement;
+  } else {
+    return [];
+  }
+};

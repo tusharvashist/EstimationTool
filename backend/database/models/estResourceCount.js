@@ -15,7 +15,7 @@ const estResourceCount = new mongoose.Schema(
     },
     estCalcId: {
       type: Schema.Types.ObjectId,
-      ref: "EstimationCalcAttr",
+      ref: "estimationCalcAttr",
     },
     techSkill: {
       type: Schema.Types.ObjectId,

@@ -237,5 +237,6 @@ module.exports = {
     ResourceCount_UPDATE: "Resource count update successfully",
     ResourceCount_DELETE: "Resource count delete successfully",
     ResourceCount_DUPLICATE: "Resource count already exist.",
+    ResourceCountTech_UPDATE: "Resource count technology updated successfully",
   },
 };
