@@ -249,4 +249,9 @@ module.exports = {
     RESOURCEROLEMASTER_UPDATE: "Resource role master Attrupdate successfully",
     RESOURCEROLEMASTER_DELETE: "Resource role master delete successfully",
   },
+  resourceMixMessage: {
+    RESOURMIX_ERROR: "Resource mix master fetch fail",
+    RESOURMIX_FETCH: "Resource mix detail fetch successfully",
+    INVALID_ID: "Invalid id",
+  },
 };
