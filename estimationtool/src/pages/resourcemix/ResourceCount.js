@@ -2,7 +2,6 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import "../estimation-detail/estimation-detail.css";
 import React, { useState, useEffect } from "react";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import counting from "../../assests/team.png";
 import RoleCount from "./RoleCount";
 import ResourceMixService from "../resourcemix/resourcecount.service";
 import { DataGrid } from "@mui/x-data-grid";
@@ -10,7 +9,16 @@ import RoleEditCount from "./RoleEditCount";
 import { Select, MenuItem } from "@material-ui/core";
 //import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
 import ResourceMix from "../resourcemix/resourcecount.service";
+
+import { MdOutlineManageAccounts } from "react-icons/md";
+import { IoPricetagsOutline } from "react-icons/io5";
+import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
+
 const ResourceCountMatrix = (props) => {
+  const estimationHeaderId = props.data;
+
+  const [tableOpen, setTableOpen] = useState(false);
+
   const popupCount = () => {};
   const [technologySkills, setTechnolnogySkills] = useState();
   const [selectedTechnology, setSelectedTechnology] = useState();
@@ -22,6 +30,10 @@ const ResourceCountMatrix = (props) => {
   useEffect(() => {
     getTechnologySkill();
     getResourceCountData(estimationHeaderId);
+    if (estimationHeaderId) {
+      getTechnologySkill();
+      getResourceCountData();
+    }
   }, []);
 
   // Get All Technology Skills
@@ -48,6 +60,10 @@ const ResourceCountMatrix = (props) => {
 
   const getResourceCountAllData = (estimationHeaderId) => {
     ResourceMixService.getResourceCountAll(estimationHeaderId)
+  // Get All Technology Skills
+
+  const getResourceCountData = () => {
+    ResourceMixService.getAllResourceCount()
       .then((res) => {
         console.log("all Data", res.data.body);
         setResouceCountData(res.data.body);
@@ -144,27 +160,16 @@ const ResourceCountMatrix = (props) => {
   ];
 
   const handleCountTable = () => {
-    const tableDiv = document.querySelector(".estimation-detail-count-table");
-    if (tableDiv.classList.contains("close-resourceCountTable")) {
-      tableDiv.classList.remove("close-resourceCountTable");
-      tableDiv.classList.add("open");
-    } else {
-      tableDiv.classList.add("close-resourceCountTable");
-      tableDiv.classList.remove("open");
-    }
+    if (!tableOpen) setTableOpen(true);
+    if (tableOpen) setTableOpen(false);
   };
 
   const onChangeSelect = (e, rowData) => {
     console.log("selected", e.target.value, rowData);
     const techId = e.target.value;
     const { row } = rowData,
-      { estAttributeId } = row,
-      { _id } = estAttributeId || {};
     const req = {
       _id: row._id,
-      estAttributeId: _id || null,
-      estHeaderId: row.estHeaderId,
-      resourceCount: row.resourceCount,
       techSkill: techId,
     };
 
@@ -205,11 +210,13 @@ const ResourceCountMatrix = (props) => {
           onClick={handleCountTable}
           className="estimation-detail-count-button"
         >
-          <img src={counting} />
+          <MdOutlineManageAccounts
+            style={{ fontSize: "32px", color: "#1e7e1e" }}
+          />
         </button>
       </div>
     </div>
   );
 };
-
+}
 export default ResourceCountMatrix;

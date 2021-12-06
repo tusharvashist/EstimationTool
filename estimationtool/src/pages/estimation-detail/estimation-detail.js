@@ -14,7 +14,7 @@ import RoleCount from "../resourcemix/RoleCount";
 import ResourceCountMatrix from "../resourcemix/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
 
-import {RequirementTablePopup} from "../CreateRequirements/RequirementTable"
+import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
 import { DataGrid } from "@mui/x-data-grid";
 
 import { makeStyles, createStyles } from "@mui/styles";
@@ -55,30 +55,28 @@ const EstimationDetail = () => {
   ]);
   const [summaryDataArray, setSummaryDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([
-          {
-            headerName: "Requirement",
-            field: "Requirement",
-            editable: false,
-            width: 170 
-          },
-          {
-            headerName: "Tag",
-            field: "Tag",
-            editable: false,
-            width: 170 
-          },
-          {
-            headerName: "Description",
-            field: "Description",
-            editable: false,
-            width: 170,
-            editable: true
-          },
-        ]);
+    {
+      headerName: "Requirement",
+      field: "Requirement",
+      editable: false,
+      width: 170,
+    },
+    {
+      headerName: "Tag",
+      field: "Tag",
+      editable: false,
+      width: 170,
+    },
+    {
+      headerName: "Description",
+      field: "Description",
+      editable: false,
+      width: 170,
+    },
+  ]);
   const [loaderComponent, setLoader] = useLoader();
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
-   const [editRowsModel, setEditRowsModel] = React.useState({});
-   const [estimationHeaderId, setestimationHeaderId] = React.useState(location.state.estId);
+  const [editRowsModel, setEditRowsModel] = React.useState({});
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -207,21 +205,21 @@ const EstimationDetail = () => {
             field: "Requirement",
             //id: 1,
             //editable: false,
-            width: 170 
+            width: 170,
           },
           {
             headerName: "Tag",
             field: "Tag",
             //editable: false,
-           // id: 2,
-            width: 170 
+            // id: 2,
+            width: 170,
           },
           {
             headerName: "Description",
             field: "Description",
             //editable: false,
             //id: 3,
-            width: 170 
+            width: 170,
           },
         ];
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
@@ -331,23 +329,6 @@ const EstimationDetail = () => {
     },
   ];
 
-  const handleCountTable = () => {
-    const tableDiv = document.querySelector(".estimation-detail-count-table");
-    if (tableDiv.classList.contains("close-resourceCountTable")) {
-      tableDiv.classList.remove("close-resourceCountTable");
-      tableDiv.classList.add("open");
-    } else {
-      tableDiv.classList.add("close-resourceCountTable");
-      tableDiv.classList.remove("open");
-    }
-  };
-
-  const handleRowClick = (rowData) => {
-    console.log(rowData);
-    const roleDiv = document.querySelector(".rolelist");
-    roleDiv.classList.toggle("close-role");
-  };
-
   var selectedRequirementsRows = [];
   const handleCheckBoxClicked = (rows) => {
     console.log("rows:-- ", rows);
@@ -385,34 +366,32 @@ const EstimationDetail = () => {
       },
     })
   );
-const classes = useStyles();
-  
-  
-  
+  const classes = useStyles();
+
   // var headerS = [
   //         {
   //           headerName: "Requirement",
   //           field: "Requirement",
   //           //id: 1,
   //           //editable: false,
-  //           width: 170 
+  //           width: 170
   //         },
   //         {
   //           headerName: "Tag",
   //           field: "Tag",
   //           //editable: false,
   //          // id: 2,
-  //           width: 170 
+  //           width: 170
   //         },
   //         {
   //           headerName: "Description",
   //           field: "Description",
   //           //editable: false,
   //           //id: 3,
-  //           width: 170 
+  //           width: 170
   //         },
   //       ];
-  
+
   const rows = [
     {
       id: 1,
@@ -420,12 +399,13 @@ const classes = useStyles();
       Tag: "Tag",
       Description: "Description",
     },
-   {
+    {
       id: 2,
       Requirement: "Requirement",
       Tag: "Tag",
       Description: "Description",
-    }];
+    },
+  ];
   ///============== JS- Resource Count Pop up and table - END ==============///
 
   return (
@@ -532,19 +512,21 @@ const classes = useStyles();
         {loaderComponent ? (
           loaderComponent
         ) : (
-          <div style={{ height: 400, width: '100%' }}>    
-           <DataGrid
+          <div
+            style={{
+              height: 400,
+              width: "100%",
+            }}
+          >
+            <DataGrid
               className={classes.root}
-                rows={requirementDataArray}
-                columns={requirementHeaderArray}
-                editRowsModel={editRowsModel}
-                 onEditRowsModelChange={handleEditRowsModelChange}
-              />
-              </div>
-          
-        )
-        
-        }
+              rows={requirementDataArray}
+              columns={requirementHeaderArray}
+              editRowsModel={editRowsModel}
+              onEditRowsModelChange={handleEditRowsModelChange}
+            />
+          </div>
+        )}
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>

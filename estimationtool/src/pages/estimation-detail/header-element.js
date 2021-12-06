@@ -47,31 +47,21 @@ export const ClientProjectHeader = (props) => {
         <Grid item xs={12} sm={6}>
           <Header
             iconname="client"
-            title="Client Name"
-            name={props.client.clientName}
+            title="Client Details"
+            details={[
+              { name: props.client.clientName },
+              { website: props.client.website },
+            ]}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Header
-            iconname="link"
-            title="Client Website"
-            website={props.client.website}
-          />
-        </Grid>
-      </Grid>
-      <Grid container justify="space-between" alignItems="center">
         <Grid item xs={12} sm={6}>
           <Header
             iconname="project"
-            title="Project Name"
-            name={props.project.projectName}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Header
-            iconname="business"
-            title="Business Domain"
-            name={props.project.domain}
+            title="Project Details"
+            details={[
+              { name: props.project.projectName },
+              { name: props.project.domain },
+            ]}
           />
         </Grid>
       </Grid>

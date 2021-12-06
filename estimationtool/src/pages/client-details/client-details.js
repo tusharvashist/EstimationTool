@@ -155,18 +155,14 @@ export default function ClientDetails(props) {
                 </Grid>
               </Grid>
               <Grid container justify="space-between" alignItems="center">
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                   <Header
                     iconname="client"
-                    title="Client Name"
-                    name={clientUrlName}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <Header
-                    iconname="link"
-                    title="Client Website"
-                    website={clientDetails.website}
+                    title="Client Details"
+                    details={[
+                      { name: clientUrlName },
+                      { website: clientDetails.website },
+                    ]}
                   />
                 </Grid>
               </Grid>
