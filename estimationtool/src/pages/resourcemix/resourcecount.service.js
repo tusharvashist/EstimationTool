@@ -7,11 +7,21 @@ const ReourceMixService = {
     return axios.get(url);
   },
 
-
-
-  getAllResourceCount: function () {
+  getResourceCount: function (estheaderid) {
     let url = Url.getResourceCount;
-    return axios.get(url);
+    return axios.get(url + `?estheaderid=` + estheaderid);
+  },
+
+  getResourceCountAll: function (estheaderid) {
+    let url = Url.getResourceCountAll;
+    return axios.get(url + `?estheaderid=` + estheaderid);
+  },
+
+
+  updateTechnology: function (req) {
+    let url = Url.updateTechnology;
+    return axios.put(url, req);
   }
 };
 export default ReourceMixService;
+// '61a857b74ea3ae2a0627800a'

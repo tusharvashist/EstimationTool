@@ -224,14 +224,14 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
     estHeaderId: estHeaderId,
     EstimationAttributes: [
       {
-        _id: "618a4976e2b03fc48cfadc8a",
+        _id: "6177d49fb6e42413fe1baf18",
         attributeCode: "DEV",
         attributeName: "Front End",
         description: "name",
         Total: 265,
       },
       {
-        _id: "618a497fe2b03fc48cfadc90",
+        _id: "6177dc8bb6e42413fe1baf24",
         attributeCode: "DEV",
         attributeName: "Back End",
         description: "Back End",

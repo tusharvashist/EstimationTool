@@ -78,6 +78,7 @@ const EstimationDetail = () => {
   const [loaderComponent, setLoader] = useLoader();
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
    const [editRowsModel, setEditRowsModel] = React.useState({});
+   const [estimationHeaderId, setestimationHeaderId] = React.useState(location.state.estId);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -585,7 +586,7 @@ const classes = useStyles();
               state: {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
-                estimationHeaderId: estimationId,
+                estimationHeaderId: estimationHeaderId,
               },
             }}
           >
