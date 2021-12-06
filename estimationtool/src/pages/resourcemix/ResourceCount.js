@@ -86,12 +86,11 @@ const ResourceCountMatrix = (props) => {
       field: "techskill",
       width: 200,
       renderCell: (rowdata) => {
-        console.log("technologySkills", technologySkills);
         return (
           <Select
             style={{ width: "100%" }}
             onChange={(e) => onChangeSelect(e, rowdata)}
-            value={resouceCountData.techSkill}
+            value={rowdata.row.techSkill}
             //   label={technologySkills.skill}
 
             required
@@ -170,6 +169,7 @@ const ResourceCountMatrix = (props) => {
     ResourceMixService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
+        getResourceCountData(estimationHeaderId)
       })
       .catch((err) => {});
   };
