@@ -8,6 +8,8 @@ import EstimationService from "../estimation-detail/estimation.service";
 import { useLocation, Link } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { EstimationHeader, ClientProjectHeader } from "../estimation-detail/header-element";
+import ResourceCountMatrix from "../resourcemix/ResourceCount"
+import { DataGrid } from '@material-ui/data-grid';
 
 const RequirementMix = () => {
   const location = useLocation();
@@ -18,6 +20,8 @@ const RequirementMix = () => {
   const [loaderComponent, setLoader] = useLoader();
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
+  const [openRequirementTable, setOpenRequirementTable] = useState(false);
+
   useEffect(() => {
     getById();
   }, [estimationId]);
@@ -47,59 +51,76 @@ const RequirementMix = () => {
       });
   };
 
-
   const columns = [
-    { title: "S.no", field: "count", width: "5%" },
+    { field: 'name', headerName: 'Name', width: 180, editable: true },
+    { field: 'age', headerName: 'Age', type: 'number', editable: true },
     {
-      title: "Allocation%",
-      field: "allocation",
-      width: "40%",
+      field: 'dateCreated',
+      headerName: 'Date Created',
+      type: 'date',
+      width: 180,
+      editable: true,
     },
-    { title: "Role", field: "role", width: "20%" },
     {
-      title: "Skills(Effort & Summary Attributes)",
-      field: "skill",
-      width: "50%",
-    },{ title: "Cost", field: "cost", width: "20%" },
+      field: 'lastLogin',
+      headerName: 'Last Login',
+      type: 'dateTime',
+      width: 220,
+      editable: true,
+    },
+  ];
+  
+  const rowData = [
     {
-      title: "Price",
-      field: "price",
-      width: "20%"
+      id: 1,
+      name: "a",
+      age: 25,
+      dateCreated: 11/12/2021,
+      lastLogin: 10/12/2021,
+    },
+    {
+      id: 2,
+      name: "a",
+      age: 36,
+      dateCreated: 11/12/2021,
+      lastLogin: 10/12/2021,
+    },
+    {
+      id: 3,
+      name: "a",
+      age: 19,
+      dateCreated: 11/12/2021,
+      lastLogin: 10/12/2021,
+    },
+    {
+      id: 4,
+      name: "a",
+      age: 28,
+      dateCreated: 11/12/2021,
+      lastLogin: 10/12/2021,
+    },
+    {
+      id: 5,
+      name: "a",
+      age: 23,
+      dateCreated: 11/12/2021,
+      lastLogin: 10/12/2021,
     },
   ];
 
-  //Mock data resource planning 
-const rowData = [
-    {
-      count: 1,
-      allocation: "100.00",
-      role: "Lead",
-      skill: "React/Angular",
-      cost: "00.00",
-      price: "00.00"
+
   
-    },
-    {
-        count: 2,
-        allocation: "50.00",
-        role: "Sr",
-        skill: "React/Angular",
-        cost: "00.00",
-        price: "00.00"
-    },
-    {
-        count: 3,
-        allocation: "25.00",
-        role: "Jr",
-        skill: "React/Angular",
-        cost: "00.00",
-        price: "00.00"
-    },
-  ];
+  ///============== JS- Resource Count Pop up and table - START ==============///
+
+   ///============== JS- Resource Count Pop up and table - END ==============///
 
   return (
     <div className="estimation-detail-cover">
- 
+       {/*========= JSX- Resource Count Pop up and table - START ========= */}
+       <ResourceCountMatrix
+        data={estimationId}
+        />
+      {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
           <Link
@@ -137,21 +158,13 @@ const rowData = [
         {loaderComponent ? (
           loaderComponent
         ) : (
-          <MaterialTable
-            style={{ boxShadow: "none" }}
-            title={`Resource Planning`}
-            columns={columns}
-            data={rowData}
-            options={{
-              search: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-            }}
-          />
+            <div style={{ height: 300, width: "100%" }}>
+            <DataGrid
+              rows={rowData}
+              columns={columns}
+              isCellEditable={(params) => params.row.age % 2 === 0}
+            />
+      </div>
         )}
       </BorderedContainer>
 

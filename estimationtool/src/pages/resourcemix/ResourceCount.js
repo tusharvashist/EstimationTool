@@ -7,7 +7,10 @@ import RoleCount from "./RoleCount";
 import ResourceMixService from "../resourcemix/resourcecount.service";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
-
+import {
+  Select,
+  MenuItem,
+} from "@material-ui/core";
 const ResourceCountMatrix = (props) => {
   const estimationHeaderId = props.data;
 
@@ -17,24 +20,31 @@ const ResourceCountMatrix = (props) => {
   const [openEditCount, setOpenEditCount] = useState(false);
   const [rowEditData, setRowEditData] = useState();
 
-  // useEffect(() => {
-  //   if (estimationHeaderId) {
-  //     getTechnologySkill();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (estimationHeaderId) {
+      getTechnologySkill();
+    }
+  }, []);
 
   // Get All Technology Skills
 
-  // const getTechnologySkill = () => {
-  //   ResourceMixService.getAllTechnologies()
-  //     .then((res) => {
-  //       console.log("technology skills ", res.data.body);
-  //       setTechnolnogySkills(res.data.body);
-  //     })
-  //     .catch((err) => {});
-  // };
+  const getTechnologySkill = () => {
+    ResourceMixService.getAllTechnologies()
+      .then((res) => {
+        console.log("technology skills ", res.data.body);
+        setTechnolnogySkills(res.data.body);
+      })
+      .catch((err) => {});
+  };
 
-  const columns = [
+  const handleTechnology = (value) => {
+    if (value !== '') {
+      console.log("technology Id",value)
+    }
+  }
+
+  //console.log("technologySkills",technologySkills)
+  const getColumns = ({onChangeSelect,technologySkills}) => ([
     { headerName: "Resource Count", field: "count", width: 180 },
     {
       headerName: "Skills(Effort & summary Attribute)",
@@ -45,6 +55,25 @@ const ResourceCountMatrix = (props) => {
       headerName: "Technologies",
       field: "technology",
       width: 200,
+      renderCell: (rowdata) => {
+        console.log("technologySkills", technologySkills)
+        return (
+        <Select
+        style={{ width: "100%" }}
+              onChange={onChangeSelect}
+             value={technologySkills.id}
+              label={technologySkills.skill}
+              
+              required
+            >
+              {technologySkills.map((item) => (
+                <MenuItem key={item.skill} value={item.id}>
+                  {item.skill}
+                </MenuItem>
+              ))}
+            </Select>
+            )
+      }
     },
     {
       headerName: "Role",
@@ -52,7 +81,7 @@ const ResourceCountMatrix = (props) => {
       width: 300,
       renderCell: renderRole,
     },
-  ];
+  ]);
 
   function renderRole(params) {
     return <RoleCount data={params.value} />;
@@ -105,6 +134,9 @@ const ResourceCountMatrix = (props) => {
     }
   };
 
+  const onChangeSelect = (selected) => {
+    console.log("selected", selected.target.value)
+  }
   return (
     <div className="estimation-detail-cover">
       <div className="estimation-detail-count-table close-resourceCountTable">
@@ -113,7 +145,7 @@ const ResourceCountMatrix = (props) => {
           <div style={{ height: 300, width: "100%" }}>
             <DataGrid
               rows={rowData}
-              columns={columns}
+              columns={getColumns({onChangeSelect, technologySkills})}
               pageSize={5}
               onCellClick={handleCellClick}
             />
