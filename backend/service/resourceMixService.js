@@ -13,40 +13,40 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       //var resourceMixData = await ResourceMixRepository.getEstResourceMixbyEstimationId(id);
 
       let result = {
-            RequirmentMixList: [
+            ResourceMixList: [
               {
-                _id: "232525432guy8734523",
-                alocation: "100.00",
+                _id: "2325254324568734523",
+                allocation: "100.00",
                 role: {
                   id: "",
                   name: "Lead",
                   
                 },
-                Skills: "Frontend",
-                Cost: "100:00",
-                Price: "200:00"
+                skills: "Frontend",
+                cost: "100:00",
+                price: "200:00"
               },
               {
-                _id: "232525432guy8734523",
-                alocation: "100.00",
+                _id: "2325254324568734523",
+                allocation: "100.00",
                 role: {
                   id: "",
                   name: "Lead",
                   
                 },
-                Skills: "Frontend",
-                Cost: "100:00",
-                Price: "200:00"
+                skills: "Frontend",
+                cost: "100:00",
+                price: "200:00"
               }
             ],
-            RequirmentMixTotal: {
+            ResourceMixTotal: {
               total: {
                 cost: "1000",
                 Price: "2000",
                 
               },
               Margin: "10000",
-              MarginPercenteg: "50"
+              MarginPercentage: "50"
             }
           }
       
