@@ -24,3 +24,6 @@
   color: #000;
   font-weight: 400;
 }
+.detail {
+  display: flex;
+}

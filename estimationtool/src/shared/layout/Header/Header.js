@@ -8,8 +8,8 @@ const Header = (props) => {
       <HeaderTiles
         iconname={props.iconname}
         title={props.title}
+        details={props.details}
         name={props.name}
-        website={props.website}
       />
     </BorderedContainer>
   );

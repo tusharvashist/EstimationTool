@@ -10,6 +10,8 @@ import { Select, MenuItem } from "@material-ui/core";
 //import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
 import ResourceMix from "../resourcemix/resourcecount.service";
 import { MdOutlineManageAccounts } from "react-icons/md";
+import { IoPricetagsOutline } from "react-icons/io5";
+import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 
 const ResourceCountMatrix = (props) => {
   const estimationHeaderId = props.data;
@@ -141,32 +143,31 @@ const ResourceCountMatrix = (props) => {
   return (
     <div className="estimation-detail-cover">
       {tableOpen && (
-        <div className="estimation-detail-count-table close-resourceCountTable">
+        <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
             {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
             <div style={{ height: 300, width: "100%" }}>
               <DataGrid
                 rows={rowData}
                 columns={getColumns({ onChangeSelect, technologySkills })}
-                pageSize={5}
+                pageSize={4}
                 onCellClick={handleCellClick}
               />
             </div>
-            {/* <MaterialTable
-            style={{ boxShadow: "none" }}
-            title="Resource Count"
-            columns={columns}
-            options={{
-              search: false,
-              tableLayout: "auto",
-              paging: false,
-            }}
-            data={technologySkills}
-          /> */}
+
             <div className="resource-cont-costing">
-              <h4>Costing: $1000</h4>
-              <h4 className="inline-cost">Expected Timeline: $1000</h4>
-              <h4 className="inline-cost">Actual Timeline: $1000</h4>
+              <h4 className="inline-cost">
+                <IoPricetagsOutline style={{ color: "#1e7e1e" }} />
+                &nbsp;Costing: $1000
+              </h4>
+              <h4 className="inline-cost">
+                <RiTimerLine style={{ color: "#1e7e1e" }} />
+                &nbsp; Expected Timeline: 4 weeks
+              </h4>
+              <h4 className="inline-cost">
+                <RiTimerFlashLine style={{ color: "#1e7e1e" }} />
+                &nbsp; Actual Timeline: 5 weeeks
+              </h4>
             </div>
           </BorderedContainer>
         </div>
