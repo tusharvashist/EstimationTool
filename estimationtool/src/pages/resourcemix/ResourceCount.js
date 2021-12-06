@@ -59,17 +59,14 @@ const ResourceCountMatrix = (props) => {
 
   const getResourceCountAllData = (estimationHeaderId) => {
     ResourceMixService.getResourceCountAll(estimationHeaderId)
-  // Get All Technology Skills
-
-  const getResourceCountData = () => {
-    ResourceMixService.getAllResourceCount()
-      .then((res) => {
-        console.log("all Data", res.data.body);
-        setResouceCountData(res.data.body);
-        // setTechnolnogySkills(res.data.body);
-      })
-      .catch((err) => {});
-  };
+    .then((res) => {
+      console.log("all Data", res.data.body);
+      setResouceCountData(res.data.body);
+      // setTechnolnogySkills(res.data.body);
+    })
+    .catch((err) => {});
+  }
+ 
 
   //console.log("technologySkills",technologySkills)
   const getColumns = ({ onChangeSelect, technologySkills }) => [
@@ -96,7 +93,7 @@ const ResourceCountMatrix = (props) => {
           <Select
             style={{ width: "100%" }}
             onChange={(e) => onChangeSelect(e, rowdata)}
-            //  value={technologySkills.id}
+             value={resouceCountData.techSkill}
             //   label={technologySkills.skill}
 
             required
@@ -181,7 +178,7 @@ const ResourceCountMatrix = (props) => {
 
   return (
     <div className="estimation-detail-cover">
-      <div className="estimation-detail-count-table close-resourceCountTable">
+      <div className="estimation-detail-count-table ">
         <BorderedContainer className="count-box-shadow roleCountInputParent">
           {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
           <div style={{ height: 300, width: "100%" }}>
@@ -217,5 +214,5 @@ const ResourceCountMatrix = (props) => {
     </div>
   );
 };
-}
+
 export default ResourceCountMatrix;
