@@ -34,7 +34,6 @@ module.exports.updateTechnologyResourceCount = async (req, res) => {
   try {
     const responceGetByID =
       await estimationResourceCountService.updateTechnologyResourceCount({
-        id: req.params.id,
         updatedInfo: req.body,
       });
     responce.status = 200;

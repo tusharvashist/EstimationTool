@@ -83,17 +83,67 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
 };
 
 module.exports.getResourceCount = async ({ estheaderid }) => {
+  // let result = await EstResourceCount.aggregate([
+  //   {
+  //     $match: {
+  //       estHeaderId: mongoose.Types.ObjectId(estheaderid),
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "estimationattributes",
+  //       localField: "estAttributeId",
+  //       foreignField: "_id",
+  //       as: "attributes",
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "estimationcalcattrs",
+  //       localField: "estCalcId",
+  //       foreignField: "_id",
+  //       as: "calcattributes",
+  //     },
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: "techskillmasters",
+  //       localField: "techSkill",
+  //       foreignField: "_id",
+  //       as: "skills",
+  //     },
+  //   },
+  //   {
+  //     $unwind: {
+  //       path: "$attributes",
+  //       preserveNullAndEmptyArrays: true,
+  //     },
+  //   },
+  //   {
+  //     $unwind: {
+  //       path: "$attributesCalc",
+  //       preserveNullAndEmptyArrays: true,
+  //     },
+  //   },
+  //   {
+  //     $unwind: {
+  //       path: "$skills",
+  //       preserveNullAndEmptyArrays: true,
+  //     },
+  //   },
+  // ]);
   let result = await EstResourceCount.find({
-    estHeaderId: estheaderid,
-  }).populate("estAttributeId estCalcId");
-
+    estHeaderId: mongoose.Types.ObjectId(estheaderid),
+  })
+    .populate("estAttributeId")
+    .populate("estCalcId");
   return result;
 };
 
-module.exports.updateTechnologyResourceCount = async ({ id, updatedInfo }) => {
+module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
   try {
     let result = await EstResourceCount.findOneAndUpdate(
-      { _id: id },
+      { _id: updatedInfo._id },
       updatedInfo,
       { new: true }
     );

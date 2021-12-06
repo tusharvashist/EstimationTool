@@ -10,7 +10,7 @@ const estResourceCount = new mongoose.Schema(
     },
     resourceCount: Number,
     estAttributeId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "EstimationAttributes",
     },
     estCalcId: {

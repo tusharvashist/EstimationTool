@@ -28,7 +28,7 @@ router.get(
 
 //----- Update Technology-----------
 router.put(
-  "/tech/:id",
+  "/updatetechnology",
   tokenValidation.validateToken,
   resourceCountController.updateTechnologyResourceCount
 );
