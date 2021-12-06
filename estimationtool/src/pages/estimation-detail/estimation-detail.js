@@ -568,7 +568,7 @@ const EstimationDetail = () => {
               state: {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
-                estimationHeaderId: estimationHeaderId,
+                estimationHeaderId: estimationId,
               },
             }}
           >

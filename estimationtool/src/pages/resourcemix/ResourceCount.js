@@ -15,7 +15,6 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 
 const ResourceCountMatrix = (props) => {
-  const estimationHeaderId = props.data;
 
   const [tableOpen, setTableOpen] = useState(false);
 
@@ -167,8 +166,8 @@ const ResourceCountMatrix = (props) => {
   const onChangeSelect = (e, rowData) => {
     console.log("selected", e.target.value, rowData);
     const techId = e.target.value;
-    const { row } = rowData,
-    const req = {
+    const { row } = rowData;
+    let req = {
       _id: row._id,
       techSkill: techId,
     };
