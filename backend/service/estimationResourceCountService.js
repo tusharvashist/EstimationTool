@@ -142,16 +142,16 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
 
 module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
   try {
-    let result = await EstResourceCount.findOneAndUpdate(
-      { _id: updatedInfo._id },
-      updatedInfo,
-      { new: true }
-    );
-    if (!result) {
+    let rescount = await EstResourceCount.findById({
+      _id: mongoose.Types.ObjectId(updatedInfo._id),
+    });
+    if (!rescount) {
       throw new Error(constant.requirementMessage.INVALID_ID);
     }
+    rescount.techSkill = updatedInfo.techSkill;
+    rescount.save();
 
-    return formatMongoData(result);
+    return formatMongoData(rescount);
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Count Technology ",
