@@ -63,15 +63,38 @@ const HeaderTiles = (props) => {
       <div className={classes.icon}>{icon(props.iconname)}</div>
       <div className={classes.information}>
         <h4 className={classes.title}>{props.title}</h4>
-        <h4 className={classes.name}>
-          {props.website ? (
-            <a target="_blank" href={`//${props.website}`}>
-              {props.website}
-            </a>
-          ) : (
-            props.name
-          )}
-        </h4>
+        {props.details ? (
+          <div className={classes.detail}>
+            {props.details.map((el, i) =>
+              i > 0 ? (
+                <h4 className={classes.name}>
+                  &nbsp;|&nbsp;
+                  {el.website ? (
+                    <a target="_blank" href={`//${el.website}`}>
+                      {el.website}
+                    </a>
+                  ) : (
+                    el.name
+                  )}
+                </h4>
+              ) : (
+                <h4 className={classes.name}>
+                  {el.website ? (
+                    <a target="_blank" href={`//${el.website}`}>
+                      {el.website}
+                    </a>
+                  ) : (
+                    el.name
+                  )}
+                </h4>
+              )
+            )}
+          </div>
+        ) : (
+          <div className={classes.detail}>
+            <h4 className={classes.name}>{props.name}</h4>
+          </div>
+        )}
       </div>
     </div>
   );

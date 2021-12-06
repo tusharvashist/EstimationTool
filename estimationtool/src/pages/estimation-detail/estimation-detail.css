@@ -61,12 +61,13 @@
 }
 
 .resource-cont-costing {
-  margin: 20px;
+  margin: 20px 0 0 20px;
 }
 
 .inline-cost {
-  display: inline;
+  display: inline-flex;
   margin-right: 40px;
+  align-items: center;
 }
 
 .count-box-shadow {

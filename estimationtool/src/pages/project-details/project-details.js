@@ -152,6 +152,7 @@ export default function ClientDetails(props) {
     dispatch(setEstimationContingency(""));
   };
 
+  console.log(projectDetails);
   return (
     <div className="project-deatils-wrp">
       <Box>
@@ -160,32 +161,21 @@ export default function ClientDetails(props) {
             <Grid item xs={12} sm={6}>
               <Header
                 iconname="client"
-                title="Client Name"
-                name={clientDetails.clientName}
+                title="Client Details"
+                details={[
+                  { name: clientDetails.clientName },
+                  { website: clientDetails.website },
+                ]}
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Header
-                iconname="link"
-                title="Client Website"
-                website={clientDetails.website}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid container justify="space-between" alignItems="center">
             <Grid item xs={12} sm={6}>
               <Header
                 iconname="project"
-                title="Project Name"
-                name={projectDetails.projectName}
-              />
-            </Grid>
-            <Grid item xs={10} sm={6}>
-              <Header
-                iconname="business"
-                title="Business Domain"
-                name={projectDetails.domain}
+                title="Project Details"
+                details={[
+                  { name: projectDetails.projectName },
+                  { name: projectDetails.domain },
+                ]}
               />
             </Grid>
           </Grid>
