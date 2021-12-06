@@ -239,4 +239,14 @@ module.exports = {
     ResourceCount_DUPLICATE: "Resource count already exist.",
     ResourceCountTech_UPDATE: "Resource count technology updated successfully",
   },
+  resourceRoleMasterMessage: {
+    RESOURCEROLEMASTER_CREATED: "Resource role master created successfully",
+    RESOURCEROLEMASTER_ERROR: "Resource role master create fail",
+    RESOURCEROLEMASTER_FETCH: "Resource role master fetch successfully",
+    RESOURCEROLEMASTER_GET_ERROR: "Resource role master fetch error",
+    RESOURCEROLEMASTER_NOT_FOUND: "Resource role master not found",
+    INVALID_ID: "Invalid id",
+    RESOURCEROLEMASTER_UPDATE: "Resource role master Attrupdate successfully",
+    RESOURCEROLEMASTER_DELETE: "Resource role master delete successfully",
+  },
 };

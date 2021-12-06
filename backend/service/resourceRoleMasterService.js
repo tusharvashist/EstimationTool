@@ -20,10 +20,6 @@ module.exports.createEstResourcePlanning = async (serviceData) => {
     let estimationTemplate = new estResourcePlanningModel({ ...serviceData })
     let result = await estimationTemplate.save();
 
-    // const client = await Client.findById({ _id: project.client })
-    // client.projects.push(project);
-    // await client.save();
-
     return formatMongoData(result)
   } catch (err) {
     console.log("something went wrong: service est resource planning service ", err);
@@ -77,7 +73,7 @@ module.exports.getAllResources = async () => {
         if (estSelAttElement._id == element._id) {
           if (estSelAttElement.count > 0)
             element.count = estSelAttElement.count;
-          element.defaultAdjusted = estSelAttElement.defaultAdjusted;
+          element.defaultAdjusted = estSelAttElement.resourceRoleMasters.defaultAdjusted;
         }
       })
     });

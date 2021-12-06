@@ -1,104 +1,80 @@
 import { Box, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
+import Header from "../../shared/layout/Header/Header";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
-
 export const EstimationHeader = (props) => {
-
   return (
-     <BorderedContainer>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              {" "}
-              <span className="title-stl"> Estimation Name : </span>{" "}
-              {props.data.estName}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              {" "}
-              <span className="title-stl"> Estimation Type :</span>{" "}
-              {props.data.estTypeId.estType}
-            </p>
-          </Grid>
+    <>
+      <Grid container justify="space-between" alignItems="center">
+        <Grid item xs={12} sm={4}>
+          <Header
+            iconname="estimation"
+            title="Estimation Name"
+            name={props.data.estName}
+          />
         </Grid>
-        <Grid
-          container
-          justify="space-between"
-          alignItems="center"
-          className="block-section"
-        >
-          <p>
-            <span className="section-title"></span>
-          </p>
+        <Grid item xs={12} sm={3}>
+          <Header
+            iconname="estimationType"
+            title="Estimation Type"
+            name={props.data.estTypeId.estType}
+          />
         </Grid>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              <span className="title-stl"> Effort Unit : </span>
-              {props.data.effortUnit}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              <span className="title-stl"> Total Cost :</span> ${" "}
-              {props.data.totalCost}{" "}
-            </p>
-          </Grid>
+        <Grid item xs={12} sm={2}>
+          <Header
+            iconname="effortUnit"
+            title="Effort Unit"
+            name={props.data.effortUnit}
+          />
         </Grid>
-      </BorderedContainer>
+        <Grid item xs={12} sm={3}>
+          <Header
+            iconname="cost"
+            title="Total Cost"
+            name={props.data.totalCost}
+          />
+        </Grid>
+      </Grid>
+    </>
   );
 };
 
 export const ClientProjectHeader = (props) => {
-
   return (
-    <BorderedContainer>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              {" "}
-              <span className="title-stl"> Client Name :</span>{" "}
-              {props.client.clientName}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              {" "}
-              <span className="title-stl"> Client Website :</span>{" "}
-              <a target="blank" href={`//${props.client.website}`}>
-                {" "}
-                {props.client.website}
-              </a>
-            </p>
-          </Grid>
+    <>
+      <Grid container justify="space-between" alignItems="center">
+        <Grid item xs={12} sm={6}>
+          <Header
+            iconname="client"
+            title="Client Name"
+            name={props.client.clientName}
+          />
         </Grid>
-        <Grid
-          container
-          justify="space-between"
-          alignItems="center"
-          className="block-section"
-        >
-          <p>
-            <span className="section-title"></span>
-          </p>
+        <Grid item xs={12} sm={6}>
+          <Header
+            iconname="link"
+            title="Client Website"
+            website={props.client.website}
+          />
         </Grid>
-        <Grid container justify="space-between" alignItems="center">
-          <Grid item xs={10} sm={4}>
-            <p>
-              <span className="title-stl"> Project Name : </span>
-              {props.project.projectName}
-            </p>
-          </Grid>
-          <Grid item xs={10} sm={6}>
-            <p>
-              <span className="title-stl"> Business Domain :</span>{" "}
-              {props.project.domain}{" "}
-            </p>
-          </Grid>
+      </Grid>
+      <Grid container justify="space-between" alignItems="center">
+        <Grid item xs={12} sm={6}>
+          <Header
+            iconname="project"
+            title="Project Name"
+            name={props.project.projectName}
+          />
         </Grid>
-      </BorderedContainer>
+        <Grid item xs={12} sm={6}>
+          <Header
+            iconname="business"
+            title="Business Domain"
+            name={props.project.domain}
+          />
+        </Grid>
+      </Grid>
+    </>
   );
 };
-
