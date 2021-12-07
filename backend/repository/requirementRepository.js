@@ -221,22 +221,23 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
 function calculateContingency(value,contingency ) {
   return Math.round(value + ((value * contingency) / 100));
 }
-module.exports.tagWiseRequirementList = async (estHeaderId ,contingency,contingencySuffix) => {
+module.exports.tagWiseRequirementList = async (estHeaderId, contingency, contingencySuffix) => {
+  try{
    var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(estHeaderId);
    var tagSummaryDataArray = [];
    var attributeTotal = { id: 1, tag: "Total", };
   
   tagWiseRequirement.forEach((tags, i) => {
-     
-      var tagObject = {
-         id: tags._id._id,
-        tag: tags._id.name,
-      };
-      tags.estRequirementData.forEach((tag, i) => {
-
+     if(tags._id !== undefined && tags._id !== null){
+    var tagObject = {
+      id: tags._id._id,
+      tag: tags._id.name,
+    };
+    tags.estRequirementData.forEach((tag, i) => {
+      if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
+       
         // Normal Attribute
-        if (tagObject[tag.ESTAttributeID._id] !== undefined && tagObject[tag.ESTAttributeID._id] !== null)
-        {
+        if (tagObject[tag.ESTAttributeID._id] !== undefined && tagObject[tag.ESTAttributeID._id] !== null) {
           tagObject[tag.ESTAttributeID._id] = tagObject[tag.ESTAttributeID._id] + tag.ESTData;
         } else {
           tagObject[tag.ESTAttributeID._id] = tag.ESTData;
@@ -246,11 +247,11 @@ module.exports.tagWiseRequirementList = async (estHeaderId ,contingency,continge
         if (attributeTotal[tag.ESTAttributeID._id] !== undefined && attributeTotal[tag.ESTAttributeID._id] !== null) {
           attributeTotal[tag.ESTAttributeID._id] = attributeTotal[tag.ESTAttributeID._id] + tag.ESTData;
         } else {
-           attributeTotal[tag.ESTAttributeID._id] = tag.ESTData;
+          attributeTotal[tag.ESTAttributeID._id] = tag.ESTData;
         }
 
         // Total - Normal Attribute
-        if ( tagObject["total"] !== undefined &&  tagObject["total"] !== null) {
+        if (tagObject["total"] !== undefined && tagObject["total"] !== null) {
           tagObject["total"] = tagObject["total"] + tag.ESTData;
         } else {
           tagObject["total"] = tag.ESTData;
@@ -259,35 +260,42 @@ module.exports.tagWiseRequirementList = async (estHeaderId ,contingency,continge
         if (attributeTotal["total"] !== undefined && attributeTotal["total"] !== null) {
           attributeTotal["total"] = attributeTotal["total"] + tag.ESTData;
         } else {
-           attributeTotal["total"] = tag.ESTData;
+          attributeTotal["total"] = tag.ESTData;
         }
 
         //total_Contingency
         if (contingency > 0) {
-           tagObject[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tagObject[tag.ESTAttributeID._id],contingency);
-          tagObject["total_Contingency"] =  calculateContingency(tagObject["total"],contingency);
+          tagObject[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tagObject[tag.ESTAttributeID._id], contingency);
+          tagObject["total_Contingency"] = calculateContingency(tagObject["total"], contingency);
         }
 
         if (attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !== undefined
           && attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !== null) {
           attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
-            attributeTotal[tag.ESTAttributeID._id + contingencySuffix] + calculateContingency(tag.ESTData,contingency);
+            attributeTotal[tag.ESTAttributeID._id + contingencySuffix] + calculateContingency(tag.ESTData, contingency);
         } else {
-           attributeTotal[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tag.ESTData,contingency);
+          attributeTotal[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tag.ESTData, contingency);
         }
 
-          attributeTotal["total_Contingency"] = calculateContingency( attributeTotal["total"] ,contingency);
-      });
+        attributeTotal["total_Contingency"] = calculateContingency(attributeTotal["total"], contingency);
+     
+      }
+    });
        
  
-      tagSummaryDataArray.push(tagObject);
+    tagSummaryDataArray.push(tagObject);
+  }
       
     });
   
   tagSummaryDataArray.push(attributeTotal);
   
   return tagSummaryDataArray;
-
+ } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    console.log(err.stack);
+    throw new Error(err);
+  }
  }
 
 
