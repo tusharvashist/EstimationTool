@@ -15,11 +15,6 @@
   z-index: 4510;
 }
 .option {
-  margin: 10px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
   width: 100%;
   font-size: 14px;
 }
@@ -40,4 +35,15 @@
   border: 0px;
   background: rgb(229, 235, 247);
   cursor: pointer;
+}
+.roleitem {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.roleitem_list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px 0;
 }
