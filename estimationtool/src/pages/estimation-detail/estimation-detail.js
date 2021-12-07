@@ -291,7 +291,7 @@ const EstimationDetail = () => {
           editable: false,
           flex: 1,
           width: 200,
-          className: "darkbg",
+          cellClassName: "darkbg",
         });
         summaryHeader.push({
           headerName: "Total Contingency",
@@ -613,6 +613,12 @@ const EstimationDetail = () => {
               getRowClassName={(params) =>
                 params.row.tag === "Total" && "darkbg"
               }
+              getCellClassName={(params) => {
+                return (
+                  (params.colDef.field === "total" && "darkbg") ||
+                  (params.colDef.field === "total_Contingency" && "darkbg")
+                );
+              }}
             />
           )}
         </div>
@@ -636,6 +642,12 @@ const EstimationDetail = () => {
               onCellFocusOut={handleCellFocusOut}
               rows={summaryDataArray}
               columns={summaryHeaderArray}
+              getCellClassName={(params) => {
+                return (
+                  (params.colDef.field === "Effort" && "darkbg") ||
+                  (params.colDef.field === "Contingency" && "darkbg")
+                );
+              }}
             />
           )}
         </div>
