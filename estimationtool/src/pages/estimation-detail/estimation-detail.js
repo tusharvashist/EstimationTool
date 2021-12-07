@@ -16,24 +16,46 @@ import RequirementService from "../CreateRequirements/requirement.service";
 import requirementFooter from "./requirementFooter";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
-import { DataGrid,GridActionsCellItem ,  GridToolbarColumnsButton,
-  GridToolbarContainer,GridToolbarDensitySelector,GridToolbarExport} from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 import { makeStyles, createStyles } from "@mui/styles";
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import EditIcon from '@mui/icons-material/Edit';
-import Deletedailog from './delete-dailog';
-
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import EditIcon from "@mui/icons-material/Edit";
+import Deletedailog from "./delete-dailog";
 
 const EstimationDetail = () => {
   const location = useLocation();
   const estimationId = location.state.estId;
-  const [clientDetails, setClientDetails] = useState({_id: "", clientName: "", description: "", website: "",});
-  const [projectDetails, setProjectDetails] = useState({_id: "", projectName: "",projectDescription: "",businessDomain: "",});
-  const [headerData, setHeaderData] = useState({ estName: "", estDescription: "", effortUnit: "", totalCost: 0, estTypeId: {},});
+  const [clientDetails, setClientDetails] = useState({
+    _id: "",
+    clientName: "",
+    description: "",
+    website: "",
+  });
+  const [projectDetails, setProjectDetails] = useState({
+    _id: "",
+    projectName: "",
+    projectDescription: "",
+    businessDomain: "",
+  });
+  const [headerData, setHeaderData] = useState({
+    estName: "",
+    estDescription: "",
+    effortUnit: "",
+    totalCost: 0,
+    estTypeId: {},
+  });
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [openEditConfigurationBox, setOpenEditConfigurationBox] = useState(false);
+  const [openEditConfigurationBox, setOpenEditConfigurationBox] =
+    useState(false);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [openRequirementTable, setOpenRequirementTable] = useState(false);
   const [editData, setEditData] = useState([]);
@@ -43,26 +65,22 @@ const EstimationDetail = () => {
   const [selectedDelete, setSelectedDelete] = useState({});
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [editRowsModel, setEditRowsModel] = React.useState({});
-  
+
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([]);
   const [summaryDataArray, setSummaryDataArray] = useState([]);
 
   const [tagHeaderArray, setTagHeaderArray] = useState([]);
   const [tagDataArray, setTagDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
- 
 
-  
-  
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
   }, []);
- // console.log("editRowsModel: ",editRowsModel);
+  // console.log("editRowsModel: ",editRowsModel);
 
   useEffect(() => {
     getById();
   }, [estimationId]);
-
 
   const openFun = () => {
     setOpenEditConfigurationBox(true);
@@ -161,81 +179,85 @@ const EstimationDetail = () => {
         console.log("get EstimationService by id error", err);
       });
   };
-const deleteUser = React.useCallback(
+  const deleteUser = React.useCallback(
     (id) => () => {
-    setTimeout(() => {
-      console.log(id);
-      setSelectedDelete(id.row);
-      var msg = "Are you sure to delete \"" + id.row.Requirement + "\" ?" 
-      setDeleteMSG(msg);
-      setIsOpenDailog(true);
-     // var seletedRow = requirementDataArray.filter((data) => data.action === id);
-      //console.log(seletedRow);
-      
+      setTimeout(() => {
+        console.log(id);
+        setSelectedDelete(id.row);
+        var msg = 'Are you sure to delete "' + id.row.Requirement + '" ?';
+        setDeleteMSG(msg);
+        setIsOpenDailog(true);
+        // var seletedRow = requirementDataArray.filter((data) => data.action === id);
+        //console.log(seletedRow);
+
         // setRows((prevRows) => prevRows.filter((row) => row.id !== id));
       });
     },
-    [],
-);
-  
+    []
+  );
+
   const closeDeletePopup = () => {
     setIsOpenDailog(false);
   };
-// const openEditRequirement = ( rowData) => {
-//    console.log(rowData);
-//     //const updatedRows = [requirementDataArray[rowData.tableData.id]];
-//    //setEditData([rowData]);
-//     openFun();
-//   };
+  // const openEditRequirement = ( rowData) => {
+  //    console.log(rowData);
+  //     //const updatedRows = [requirementDataArray[rowData.tableData.id]];
+  //    //setEditData([rowData]);
+  //     openFun();
+  //   };
 
   const openEditRequirement = React.useCallback(
     (id) => () => {
-    setTimeout(() => {
-      console.log(id);
-         setEditData([id.row]);
-          openFun();
+      setTimeout(() => {
+        console.log(id);
+        setEditData([id.row]);
+        openFun();
       });
     },
-    [],
+    []
   );
-  
+
   const getRequirementDataById = (callback) => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
-       
+
         var estHeaderAttribute = [
-         {
-        field: 'action',
-        type: 'actions',
-        headerName: 'Actions',
-        width: 120,
+          {
+            field: "action",
+            type: "actions",
+            headerName: "Actions",
+
+            width: 120,
+            maxWidth: 60,
             getActions: (params) => [
-           <>
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-             onClick={deleteUser(params)}
+              <>
+                <GridActionsCellItem
+                  icon={<DeleteIcon />}
+                  label="Delete"
+                  onClick={deleteUser(params)}
                 />
-            <Box sx={{ width: "20px" }} className="estimation-detail-box" />
-           <GridActionsCellItem
-            icon={<EditIcon />}
-            label="Delete"
-             onClick={openEditRequirement(params)}
+                <Box sx={{ width: "20px" }} className="estimation-detail-box" />
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="Delete"
+                  onClick={openEditRequirement(params)}
                 />
-                </>
-        ],
-      },
+              </>,
+            ],
+          },
           {
             headerName: "Requirement",
             field: "Requirement",
             //id: 1,
             //editable: false,
+            flex: 1,
             width: 170,
           },
           {
             headerName: "Tag",
             field: "Tag",
+            flex: 1,
             //editable: false,
             // id: 2,
             width: 170,
@@ -243,6 +265,7 @@ const deleteUser = React.useCallback(
           {
             headerName: "Description",
             field: "Description",
+            flex: 1,
             //editable: false,
             //id: 3,
             width: 170,
@@ -251,29 +274,56 @@ const deleteUser = React.useCallback(
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
         setRequirementHeaderArray(estHeaderAttribute);
         setRequirementDataArray(dataResponse.requirementList);
-        
-        var summaryHeader = [{ headerName: "Tags", field: "Title", editable: false, width: 300 }];
+
+        var summaryHeader = [
+          {
+            headerName: "Tags",
+            field: "Title",
+            editable: false,
+            flex: 1,
+            width: 300,
+          },
+        ];
         summaryHeader.push(...dataResponse.estHeaderAttribute);
-        summaryHeader.push({ headerName: "Total", field: "Effort", editable: false, width: 200 });
-        summaryHeader.push({ headerName: "Total Contingency", field: "EffortContingency", editable: false, width: 200 });
+        summaryHeader.push({
+          headerName: "Total",
+          field: "Effort",
+          editable: false,
+          flex: 1,
+          width: 200,
+          className: "darkbg",
+        });
+        summaryHeader.push({
+          headerName: "Total Contingency",
+          field: "EffortContingency",
+          editable: false,
+          flex: 1,
+          width: 200,
+        });
 
         setTagHeaderArray([...dataResponse.tagSummaryHeader]);
         setTagDataArray([...dataResponse.tagSummaryData]);
-        
 
-
-
-
-        var calculativeHeader = [{ headerName: "Calculative", field: "Title", editable: false, width: 300 },
-          { headerName: "Total", field: "Effort", editable: false, width: 200 }];
-         calculativeHeader.push({ headerName: "Contingency", field: "Contingency", editable: false, width: 200 });
+        var calculativeHeader = [
+          {
+            headerName: "Calculative",
+            field: "Title",
+            editable: false,
+            flex: 1,
+            width: 300,
+          },
+          { headerName: "Total", field: "Effort", editable: false, width: 200 },
+        ];
+        calculativeHeader.push({
+          headerName: "Contingency",
+          field: "Contingency",
+          editable: false,
+          flex: 1,
+          width: 200,
+        });
 
         setSummaryHeaderArray(calculativeHeader);
         setSummaryDataArray([...dataResponse.summaryTagList]);
-        
-
-
-
 
         setLoader(false);
         callback();
@@ -286,21 +336,21 @@ const deleteUser = React.useCallback(
 
   const updateAttributeValue = async () => {
     setLoader(true);
-       console.log("End....", editRowsModel);
-      var editedValueArray = [];
-       for (const [key, value] of Object.entries(editRowsModel)) {
-         //  console.log(key, value);
-         for (const [key1, value1] of Object.entries(value)) {
-              var estRequirementData = {
-                            ESTAttributeID: key1,
-                            ESTHeaderRequirementID: key,
-                            ESTHeaderID: headerData._id,
-                            ESTData: value1.value,
-                          }
-                          console.log(estRequirementData);
-                          editedValueArray.push(estRequirementData);
-                      }
-                    }
+    console.log("End....", editRowsModel);
+    var editedValueArray = [];
+    for (const [key, value] of Object.entries(editRowsModel)) {
+      //  console.log(key, value);
+      for (const [key1, value1] of Object.entries(value)) {
+        var estRequirementData = {
+          ESTAttributeID: key1,
+          ESTHeaderRequirementID: key,
+          ESTHeaderID: headerData._id,
+          ESTData: value1.value,
+        };
+        console.log(estRequirementData);
+        editedValueArray.push(estRequirementData);
+      }
+    }
     if (editedValueArray.length !== 0) {
       setLoader(true);
       EstimationService.updateEstRequirementData(editedValueArray)
@@ -320,7 +370,7 @@ const deleteUser = React.useCallback(
   };
 
   const deleteRow = async (row) => {
-   // resolve();
+    // resolve();
     setIsOpenDailog(false);
     setLoader(true);
     EstimationService.deleteRequirement(row.id)
@@ -333,47 +383,6 @@ const deleteUser = React.useCallback(
         getById();
       });
   };
-
-  ///============== JS- Resource Count Pop up and table - START ==============///
-
-  const popupCount = () => {};
-
-  const columns = [
-    { title: "Count", field: "count", width: "1%" },
-    {
-      title: "Skills(Effort & summary Attribute)",
-      field: "skill",
-      width: "40%",
-    },
-    { title: "Technologies", field: "technology", width: "20%" },
-    {
-      title: "Role",
-      field: "role",
-      width: "50%",
-      render: (rowData) => <RoleCount className="roleCountInput" />,
-    },
-  ];
-
-  const rowData = [
-    {
-      count: 2,
-      skill: "Frontend",
-      technology: "React/Angular",
-      // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
-    },
-    {
-      count: 2,
-      skill: "Frontend",
-      technology: "React/Angular",
-      // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
-    },
-    {
-      count: 2,
-      skill: "Frontend",
-      technology: "React/Angular",
-      // role: "1 Lead, 1 Sr. Developer, 1 Jr Developer",
-    },
-  ];
 
   var selectedRequirementsRows = [];
   const handleCheckBoxClicked = (rows) => {
@@ -406,13 +415,20 @@ const deleteUser = React.useCallback(
   const useStyles = makeStyles((theme) =>
     createStyles({
       root: {
+        "& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders": {
+          backgroundColor: "rgb(229, 235, 247) !important",
+          fontWeight: "500",
+        },
         "& .MuiDataGrid-columnHeaderWrapper": {
           backgroundColor: "rgb(229, 235, 247)",
         },
       },
+      dataGrid: {
+        width: "100%",
+      },
     })
   );
-const classes = useStyles();
+  const classes = useStyles();
 
   ///============== JS- Resource Count Pop up and table - END ==============///
 
@@ -449,14 +465,14 @@ const classes = useStyles();
           cancelTitle="Cancel"
         />
       ) : null}
-       { isOpenDailog === true ? (
+      {isOpenDailog === true ? (
         <Deletedailog
           isOpen={isOpenDailog}
           openF={openFun}
           closeF={closeDeletePopup}
           title="Delete Requirement"
           message={deleteMSG}
-          row={ selectedDelete}
+          row={selectedDelete}
           okAction={deleteRow}
           oktitle="Ok"
           cancelTitle="Cancel"
@@ -545,80 +561,83 @@ const classes = useStyles();
         {loaderComponent ? (
           loaderComponent
         ) : (
-            <div>
-            <div className="addReqTableHeader" >
-               <h3>Estimation</h3>
-             </div>
-            <div style={{ height: 400, width: '100%' }}>
-               
-           <DataGrid
-                className={classes.root}
+          <div>
+            <div className="addReqTableHeader">
+              <h3>Estimation</h3>
+            </div>
+            <div style={{ height: 400, width: "100%" }}>
+              <DataGrid
+                className={`${classes.root} ${classes.dataGrid}`}
                 onRowEditStart={handleRowEditStart}
                 onRowEditStop={handleRowEditStop}
                 onCellFocusOut={handleCellFocusOut}
                 rows={requirementDataArray}
                 columns={requirementHeaderArray}
                 editRowsModel={editRowsModel}
-                 editMode="row"
-                  onRowEditStart={() => {
-                    console.log("Start....", editRowsModel);
-                  }}
-                  onRowEditStop={updateAttributeValue}
+                editMode="row"
+                onRowEditStart={() => {
+                  console.log("Start....", editRowsModel);
+                }}
+                onRowEditStop={updateAttributeValue}
                 onEditRowsModelChange={handleEditRowsModelChange}
-                 components={{
-                    Toolbar: CustomToolbar,
-                 }}
+                components={{
+                  Toolbar: CustomToolbar,
+                }}
               />
-              </div>
+            </div>
           </div>
-        )
-        
-        }
+        )}
       </BorderedContainer>
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box"></Box>
       </Container>
       <BorderedContainer>
-        <div className="addReqTableHeader" >
-               <h3>Summary</h3>
-             </div>
-          <div style={{ height: '100%' , width: '100%'}}>
-        {loaderComponent ? (
-          loaderComponent
-        ) : (
-              <DataGrid
-                autoHeight={true}
-                disableExtendRowFullWidth={false}
-                hideFooter={true}
-                className={classes.root}
-                onRowEditStart={handleRowEditStart}
-                onRowEditStop={handleRowEditStop}
-                onCellFocusOut={handleCellFocusOut}
-                rows={tagDataArray}
-                columns={tagHeaderArray}
-              />
-              
+        <div className="addReqTableHeader">
+          <h3>Summary</h3>
+        </div>
+        <div style={{ height: "100%", width: "100%" }}>
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <DataGrid
+              className={`${classes.root} ${classes.dataGrid}`}
+              autoHeight={true}
+              disableExtendRowFullWidth={false}
+              hideFooter={true}
+              className={classes.root}
+              onRowEditStart={handleRowEditStart}
+              onRowEditStop={handleRowEditStop}
+              onCellFocusOut={handleCellFocusOut}
+              rows={tagDataArray}
+              columns={tagHeaderArray}
+              getRowClassName={(params) =>
+                params.row.tag === "Total" && "darkbg"
+              }
+            />
           )}
         </div>
-        
-          <Box sx={{height:"20px", width: "20px" }} className="estimation-detail-box" />
-             <div style={{ height: '100%', width: "100%" }}>
-           {loaderComponent ? (
-          loaderComponent
-        ) : (
-              <DataGrid
-                autoHeight={true}
-                hideFooter={true}
-                disableExtendRowFullWidth={true}
-                className={classes.root}
-                onRowEditStart={handleRowEditStart}
-                onRowEditStop={handleRowEditStop}
-                onCellFocusOut={handleCellFocusOut}
-                rows={summaryDataArray}
-                columns={summaryHeaderArray}
-              />
-              
-        )}
+
+        <Box
+          sx={{ height: "20px", width: "20px" }}
+          className="estimation-detail-box"
+        />
+        <div style={{ height: "100%", width: "100%" }}>
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <DataGrid
+              className={`${classes.root} ${classes.dataGrid}`}
+              autoHeight={true}
+              hideFooter={true}
+              disableExtendRowFullWidth={true}
+              className={classes.root}
+              onRowEditStart={handleRowEditStart}
+              onRowEditStop={handleRowEditStop}
+              onCellFocusOut={handleCellFocusOut}
+              rows={summaryDataArray}
+              columns={summaryHeaderArray}
+            />
+          )}
         </div>
       </BorderedContainer>
       <Grid container justifyContent="flex-end" alignItems="center">
@@ -675,12 +694,11 @@ const classes = useStyles();
 
 export default EstimationDetail;
 
-
 function CustomToolbar(props) {
   return (
     <GridToolbarContainer {...props}>
       <GridToolbarColumnsButton />
-        <GridToolbarDensitySelector />
+      <GridToolbarDensitySelector />
       <GridToolbarExport />
     </GridToolbarContainer>
   );

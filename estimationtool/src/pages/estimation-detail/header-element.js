@@ -14,14 +14,14 @@ export const EstimationHeader = (props) => {
             name={props.data.estName}
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={4}>
           <Header
             iconname="estimationType"
             title="Estimation Type"
             name={props.data.estTypeId.estType}
           />
         </Grid>
-        <Grid item xs={12} sm={2}>
+        <Grid item xs={12} sm={4}>
           <Header
             iconname="effortUnit"
             title="Effort Unit"
@@ -30,9 +30,9 @@ export const EstimationHeader = (props) => {
         </Grid>
         <Grid item xs={12} sm={3}>
           <Header
-            iconname="cost"
-            title="Total Cost"
-            name={props.data.totalCost}
+            iconname="contingency"
+            title="Total Contingency"
+            name={`${props.data.contingency}%`}
           />
         </Grid>
       </Grid>

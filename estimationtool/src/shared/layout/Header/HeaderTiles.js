@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import classes from "./HeaderTile.module.css";
-import { MdPeopleOutline } from "react-icons/md";
+import { MdPeopleOutline, MdQueryStats } from "react-icons/md";
 import {
   IoPeopleCircleOutline,
   IoBusinessOutline,
@@ -52,6 +52,9 @@ const HeaderTiles = (props) => {
         break;
       case "cost":
         return <IoCalculatorOutline />;
+        break;
+      case "contingency":
+        return <MdQueryStats />;
         break;
       default:
         return <TextureOutlinedIcon />;
