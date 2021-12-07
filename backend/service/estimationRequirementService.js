@@ -242,7 +242,8 @@ module.exports.getRequirementData = async ({ id }) => {
 
     let response = { ...constant.requirementResponse };
 
- 
+    
+    await RequirementRepository.getAttributesCalAttributesTotal(id);
     var contingency = await RequirementRepository.getContingency(id);
     var contingencySuffix = " Contingency";
     var estHeaderRequirement = await RequirementRepository.getEstHeaderRequirementWithContingency(id);

@@ -221,6 +221,7 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
 function calculateContingency(value,contingency ) {
   return Math.round(value + ((value * contingency) / 100));
 }
+
 module.exports.tagWiseRequirementList = async (estHeaderId, contingency, contingencySuffix) => {
   try{
    var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(estHeaderId);
@@ -299,40 +300,131 @@ module.exports.tagWiseRequirementList = async (estHeaderId, contingency, conting
  }
 
 
+ 
 module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
+  
+  let estimations = await EstHeaderModel.findById({ _id: estHeaderId }).populate({ path: "effortUnit" });
+  var contingency = estimations.contingency;
+  var unit = estimations.effortUnit;
+  let estHeaderRequirement = await EstHeaderRequirement.aggregate([{
+    $match: {
+      estHeader: ObjectId(estHeaderId),
+      isDeleted: false
+    }
+  }, {
+    $lookup: {
+      from: 'estrequirementdatas',
+      localField: '_id',
+      foreignField: 'ESTHeaderRequirementID',
+      as: 'attributeData'
+    }
+  }, {
+    $unwind: {
+      path: '$attributeData',
+      preserveNullAndEmptyArrays: true
+    }
+  }, {
+    $lookup: {
+      from: 'estimationattributes',
+      localField: 'attributeData.ESTAttributeID',
+      foreignField: '_id',
+      as: 'attributeData.ESTAttributeID'
+    }
+  }, {
+    $unwind: {
+      path: '$attributeData.ESTAttributeID',
+      preserveNullAndEmptyArrays: true
+    }
+  }, {
+    $group: {
+      _id: '$_id',
+      estRequirementData: {
+        $push: '$attributeData'
+      }
+    }
+  }, {
+    $project: {
+      _id: 1,
+      isDeleted: 1,
+      estRequirementData: 1,
+      requirement: 1
+    }
+  }, {
+    $unwind: {
+      path: '$estRequirementData',
+      preserveNullAndEmptyArrays: true
+    }
+  }, {
+    $group: {
+      _id: '$estRequirementData.ESTAttributeID',
+      data: {
+        $sum: '$estRequirementData.ESTData'
+      }
+    }
+  }, {
+    $sort: {
+      '_id.attributeName': 1
+    }
+  }]);
+
+
+  var EstimationAttributes = [];
+  estHeaderRequirement.forEach((attribute, i) => {
+    var resourceCount = attribute._id;
+    if (contingency > 0) {
+      resourceCount["Total"] = calculateContingency(attribute.data, contingency) ;
+    } else {
+       resourceCount["Total"] = attribute.data;
+    }
+
+    if (unit == "Day") {
+      resourceCount["Total"] = resourceCount["Total"] * 8;
+      }
+    
+    if (unit == "Month") {
+      resourceCount["Total"] = resourceCount["Total"] * 8 * 30;
+      }
+
+    EstimationAttributes.push(resourceCount);
+  });
+
+
+
   var resourceCount = {
     estHeaderId: estHeaderId,
-    EstimationAttributes: [
-      {
-        _id: "6177d49fb6e42413fe1baf18",
-        attributeCode: "DEV",
-        attributeName: "Front End",
-        description: "name",
-        Total: 265,
-      },
-      {
-        _id: "6177dc8bb6e42413fe1baf24",
-        attributeCode: "DEV",
-        attributeName: "Back End",
-        description: "Back End",
-        Total: 115,
-      },
-    ],
-    EstimationCalcAttributes: [
-      {
-        _id: "618b8f4b6259f87257bc2201",
-        calcAttribute: " ",
-        calcAttributeName: "QA",
-        Total: 85,
-      },
-      {
-        _id: "618b8f5f6259f87257bc2203",
-        calcAttribute: " ",
-        calcAttributeName: "ProjectManager",
-        Total: 95,
-      },
-    ],
-  };
+    EstimationAttributes:EstimationAttributes
+   }
+  
+      //     {
+  //       _id: "6177d49fb6e42413fe1baf18",
+  //       attributeCode: "DEV",
+  //       attributeName: "Front End",
+  //       description: "name",
+  //       Total: 265,
+  //     },
+  //     {
+  //       _id: "6177dc8bb6e42413fe1baf24",
+  //       attributeCode: "DEV",
+  //       attributeName: "Back End",
+  //       description: "Back End",
+  //       Total: 115,
+  //     },
+  //   ],
+  //   EstimationCalcAttributes: [
+  //     {
+  //       _id: "618b8f4b6259f87257bc2201",
+  //       calcAttribute: " ",
+  //       calcAttributeName: "QA",
+  //       Total: 85,
+  //     },
+  //     {
+  //       _id: "618b8f5f6259f87257bc2203",
+  //       calcAttribute: " ",
+  //       calcAttributeName: "ProjectManager",
+  //       Total: 95,
+  //     },
+  //   ],
+  // };
   console.log("ResourceCount :", resourceCount);
   return resourceCount;
 };
