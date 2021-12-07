@@ -9,22 +9,25 @@ import RoleEditCount from "./RoleEditCount";
 import { Select, MenuItem } from "@material-ui/core";
 //import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
 import ResourceMix from "../resourcemix/resourcecount.service";
+
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 
 const ResourceCountMatrix = (props) => {
-  const estimationHeaderId = props.data;
-
   const [tableOpen, setTableOpen] = useState(false);
 
   const popupCount = () => {};
   const [technologySkills, setTechnolnogySkills] = useState();
   const [selectedTechnology, setSelectedTechnology] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
-  const [rowEditData, setRowEditData] = useState();
+  const [resouceCountData, setResouceCountData] = useState([]);
+  const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
+  const [rowEditData, setRowEditData] = useState([]);
 
   useEffect(() => {
+    getTechnologySkill();
+    getResourceCountData(estimationHeaderId);
     if (estimationHeaderId) {
       getTechnologySkill();
       getResourceCountData();
@@ -36,18 +39,28 @@ const ResourceCountMatrix = (props) => {
   const getTechnologySkill = () => {
     ResourceMixService.getAllTechnologies()
       .then((res) => {
-        console.log("technology skills ", res.data.body);
         setTechnolnogySkills(res.data.body);
       })
       .catch((err) => {});
   };
 
-  // Get All Technology Skills
+  // Get Resource Count
 
-  const getResourceCountData = () => {
-    ResourceMixService.getAllResourceCount()
+  const getResourceCountData = (estimationHeaderId) => {
+    ResourceMixService.getResourceCount(estimationHeaderId)
       .then((res) => {
-        console.log("technology skills ", res.data.body);
+        getResourceCountAllData(estimationHeaderId);
+      })
+      .catch((err) => {});
+  };
+
+  // Get All Resource Count Data
+
+  const getResourceCountAllData = (estimationHeaderId) => {
+    ResourceMixService.getResourceCountAll(estimationHeaderId)
+      .then((res) => {
+        console.log("all Data", res.data.body);
+        setResouceCountData(res.data.body);
         // setTechnolnogySkills(res.data.body);
       })
       .catch((err) => {});
@@ -55,24 +68,31 @@ const ResourceCountMatrix = (props) => {
 
   //console.log("technologySkills",technologySkills)
   const getColumns = ({ onChangeSelect, technologySkills }) => [
-    { headerName: "Resource Count", field: "count", width: 180 },
+    { headerName: "Resource Count", field: "resourceCount", width: 180 },
     {
       headerName: "Skills(Effort & summary Attribute)",
       field: "skill",
       width: 200,
+      valueFormatter: (params) => {
+        const { row } = params,
+          { estAttributeId, estCalcId } = row,
+          { calcAttributeName = "" } = estCalcId || {},
+          { attributeName = "" } = estAttributeId || {};
+        return attributeName || calcAttributeName;
+      },
     },
     {
       headerName: "Technologies",
-      field: "technology",
+      field: "techskill",
       width: 200,
       renderCell: (rowdata) => {
-        console.log("technologySkills", technologySkills);
         return (
           <Select
             style={{ width: "100%" }}
-            onChange={onChangeSelect}
-            value={technologySkills.id}
-            label={technologySkills.skill}
+            onChange={(e) => onChangeSelect(e, rowdata)}
+            value={rowdata.row.techSkill}
+            //   label={technologySkills.skill}
+
             required
           >
             {technologySkills.map((item) => (
@@ -111,23 +131,23 @@ const ResourceCountMatrix = (props) => {
   const rowData = [
     {
       id: 1,
-      count: 2,
+      resourceCount: 2,
       skill: "Frontend",
-      technology: "React/Angular",
+      techskill: "React/Angular",
       role: [1, 0, 0],
     },
     {
       id: 2,
-      count: 2,
+      resourceCount: 2,
       skill: "Frontend",
-      technology: "React/Angular",
+      techskill: "React/Angular",
       role: [2, 0, 0],
     },
     {
       id: 3,
-      count: 2,
+      resourceCount: 2,
       skill: "Frontend",
-      technology: "React/Angular",
+      techskill: "React/Angular",
       role: [3, 0, 0],
     },
   ];
@@ -137,9 +157,23 @@ const ResourceCountMatrix = (props) => {
     if (tableOpen) setTableOpen(false);
   };
 
-  const onChangeSelect = (selected) => {
-    console.log("selected", selected.target.value);
+  const onChangeSelect = (e, rowData) => {
+    console.log("selected", e.target.value, rowData);
+    const techId = e.target.value;
+    const { row } = rowData;
+    let req = {
+      _id: row._id,
+      techSkill: techId,
+    };
+
+    ResourceMixService.updateTechnology(req)
+      .then((res) => {
+        console.log("update technology", res.data.body);
+        getResourceCountData(estimationHeaderId)
+      })
+      .catch((err) => {});
   };
+
   return (
     <div className="estimation-detail-cover">
       {tableOpen && (
@@ -147,27 +181,22 @@ const ResourceCountMatrix = (props) => {
           <BorderedContainer className="count-box-shadow roleCountInputParent">
             {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
             <div style={{ height: 300, width: "100%" }}>
-              <DataGrid
-                rows={rowData}
-                columns={getColumns({ onChangeSelect, technologySkills })}
-                pageSize={4}
-                onCellClick={handleCellClick}
-              />
+              {resouceCountData.length && (
+                <DataGrid
+                  rows={resouceCountData}
+                  columns={getColumns({ onChangeSelect, technologySkills })}
+                  pageSize={5}
+                  onCellClick={handleCellClick}
+                  getRowId={({ _id }) => _id}
+                  key="_id"
+                />
+              )}
             </div>
 
             <div className="resource-cont-costing">
-              <h4 className="inline-cost">
-                <IoPricetagsOutline style={{ color: "#1e7e1e" }} />
-                &nbsp;Costing: $1000
-              </h4>
-              <h4 className="inline-cost">
-                <RiTimerLine style={{ color: "#1e7e1e" }} />
-                &nbsp; Expected Timeline: 4 weeks
-              </h4>
-              <h4 className="inline-cost">
-                <RiTimerFlashLine style={{ color: "#1e7e1e" }} />
-                &nbsp; Actual Timeline: 5 weeeks
-              </h4>
+              <h4>Costing: $1000</h4>
+              <h4 className="inline-cost">Expected Timeline: $1000</h4>
+              <h4 className="inline-cost">Actual Timeline: $1000</h4>
             </div>
           </BorderedContainer>
         </div>

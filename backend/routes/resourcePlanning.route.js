@@ -4,6 +4,7 @@ const router = exporess.Router();
 const joiSchemaValidation = require("../middleware/joiSchemaValidation");
 const joiClientSchema = require("../apiSchma/jioClientSchema");
 const tokenValidation = require("../middleware/tokenValidationJwt");
+const resourceMixController = require("../controller/resourcemixController");
 
 //----- Create -----------
 // router.post(
@@ -38,6 +39,13 @@ router.put(
   "/updateresourcerole",
   tokenValidation.validateToken,
   resourceCountController.updateResourcePlanning
+);
+
+//----- get Resource mix -----------
+router.get(
+  "/mix/:id",
+  tokenValidation.validateToken,
+  resourceMixController.getResourceMix
 );
 
 //----- Get all List -----------

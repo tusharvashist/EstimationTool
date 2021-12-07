@@ -23,8 +23,9 @@ const Url = {
    allCalculativeAttribute: `${process.env.REACT_APP_URL}estimation/atrributeCalc`,
    getRequirementTag: `${process.env.REACT_APP_URL}requirementTag`,
    getAllTechnologiesSkill: `${process.env.REACT_APP_URL}techskill/`,
-   getResourceCount: `${process.env.REACT_APP_URL}resource/all`
-
+   getResourceCountAll: `${process.env.REACT_APP_URL}resource/all`,
+   getResourceCount: `${process.env.REACT_APP_URL}resource/`,
+   updateTechnology: `${process.env.REACT_APP_URL}resource/updatetechnology`
 
 }
 export default Url;
