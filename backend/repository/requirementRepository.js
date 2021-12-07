@@ -218,6 +218,78 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
     throw new Error(err);
   }
 };
+function calculateContingency(value,contingency ) {
+  return Math.round(value + ((value * contingency) / 100));
+}
+module.exports.tagWiseRequirementList = async (estHeaderId ,contingency,contingencySuffix) => {
+   var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(estHeaderId);
+   var tagSummaryDataArray = [];
+   var attributeTotal = { id: 1, tag: "Total", };
+  
+  tagWiseRequirement.forEach((tags, i) => {
+     
+      var tagObject = {
+         id: tags._id._id,
+        tag: tags._id.name,
+      };
+      tags.estRequirementData.forEach((tag, i) => {
+
+        // Normal Attribute
+        if (tagObject[tag.ESTAttributeID._id] !== undefined && tagObject[tag.ESTAttributeID._id] !== null)
+        {
+          tagObject[tag.ESTAttributeID._id] = tagObject[tag.ESTAttributeID._id] + tag.ESTData;
+        } else {
+          tagObject[tag.ESTAttributeID._id] = tag.ESTData;
+        }
+
+        //Bottom
+        if (attributeTotal[tag.ESTAttributeID._id] !== undefined && attributeTotal[tag.ESTAttributeID._id] !== null) {
+          attributeTotal[tag.ESTAttributeID._id] = attributeTotal[tag.ESTAttributeID._id] + tag.ESTData;
+        } else {
+           attributeTotal[tag.ESTAttributeID._id] = tag.ESTData;
+        }
+
+        // Total - Normal Attribute
+        if ( tagObject["total"] !== undefined &&  tagObject["total"] !== null) {
+          tagObject["total"] = tagObject["total"] + tag.ESTData;
+        } else {
+          tagObject["total"] = tag.ESTData;
+        }
+
+        if (attributeTotal["total"] !== undefined && attributeTotal["total"] !== null) {
+          attributeTotal["total"] = attributeTotal["total"] + tag.ESTData;
+        } else {
+           attributeTotal["total"] = tag.ESTData;
+        }
+
+        //total_Contingency
+        if (contingency > 0) {
+           tagObject[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tagObject[tag.ESTAttributeID._id],contingency);
+          tagObject["total_Contingency"] =  calculateContingency(tagObject["total"],contingency);
+        }
+
+        if (attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !== undefined
+          && attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !== null) {
+          attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
+            attributeTotal[tag.ESTAttributeID._id + contingencySuffix] + calculateContingency(tag.ESTData,contingency);
+        } else {
+           attributeTotal[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tag.ESTData,contingency);
+        }
+
+          attributeTotal["total_Contingency"] = calculateContingency( attributeTotal["total"] ,contingency);
+      });
+       
+ 
+      tagSummaryDataArray.push(tagObject);
+      
+    });
+  
+  tagSummaryDataArray.push(attributeTotal);
+  
+  return tagSummaryDataArray;
+
+ }
+
 
 module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   var resourceCount = {
@@ -256,6 +328,19 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   console.log("ResourceCount :", resourceCount);
   return resourceCount;
 };
+
+
+module.exports.getTagSummary = async (estHeaderId) => {
+
+
+  return requirementDataForEstHeader(estHeaderId);
+
+
+  
+};
+
+
+
 
 module.exports.getEstHeaderRequirement = async (estHeaderId) => {
   return requirementDataForEstHeader(estHeaderId);
@@ -380,7 +465,132 @@ async function requirementDataForEstHeader(estHeaderId) {
   ]);
   return estHeaderRequirement;
 }
-
+module.exports.getTagWiseRequirementForEstHeader = async (estHeaderId) => {
+  return queryTagWiseRequirementForEstHeader(estHeaderId);
+};
+async function queryTagWiseRequirementForEstHeader(estHeaderId) {
+  let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+    {
+      $match: {
+        estHeader: ObjectId(estHeaderId),
+        isDeleted: false,
+      },
+    },
+    {
+      $lookup: {
+        from: "estrequirementdatas",
+        localField: "_id",
+        foreignField: "ESTHeaderRequirementID",
+        as: "attributeData",
+      },
+    },
+    {
+      $lookup: {
+        from: "projectrequirements",
+        localField: "requirement",
+        foreignField: "_id",
+        as: "requirementData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$requirementData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "requirementtypes",
+        localField: "requirementData.type",
+        foreignField: "_id",
+        as: "requirementData.type",
+      },
+    },
+    {
+      $unwind: {
+        path: "$requirementData.type",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "requirementtags",
+        localField: "requirementData.tag",
+        foreignField: "_id",
+        as: "requirementData.tag",
+      },
+    },
+    {
+      $unwind: {
+        path: "$requirementData.tag",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: "$attributeData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "estimationattributes",
+        localField: "attributeData.ESTAttributeID",
+        foreignField: "_id",
+        as: "attributeData.ESTAttributeID",
+      },
+    },
+    {
+      $unwind: {
+        path: "$attributeData.ESTAttributeID",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        isDeleted: {
+          $first: "$isDeleted",
+        },
+        requirement: {
+          $first: "$requirementData",
+        },
+        estHeader: {
+          $first: "$estHeader",
+        },
+        estRequirementData: {
+          $push: "$attributeData",
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        isDeleted: 1,
+        estRequirementData: 1,
+        requirement: 1,
+      },
+    },{
+    $unwind: {
+        path: '$estRequirementData',
+        preserveNullAndEmptyArrays: true
+    }
+    },
+    {
+    $group: {
+        _id: '$requirement.tag',
+        estRequirementData: {
+            $push: '$estRequirementData'
+        }
+    }
+    }, {
+      $sort: {
+        '_id.name': 1
+      }
+    }
+  ]);
+  return estHeaderRequirement;
+}
 module.exports.getRequirementWithQuery = async (projectId) => {
   let projectRequirement = await ProjectRequirement.aggregate([
     {

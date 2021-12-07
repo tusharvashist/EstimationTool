@@ -170,7 +170,7 @@ export const RequirementTable = (props) => {
             </div>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
-              className={classes.root}
+                className={classes.root}
                 rows={requirementHeaderDataFilter}
                 columns={requirementHeader}
                 pageSize={5}

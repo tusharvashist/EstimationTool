@@ -13,6 +13,8 @@ module.exports = {
     requirementList: [],
     summaryTagList: [],
     estHeaderAttribute: [],
+    tagSummaryHeader: [],
+    tagSummaryData:[],
     estHeaderCalculatedAttribute: [],
   },
   estimationAttribute: {

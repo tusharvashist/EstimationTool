@@ -130,10 +130,10 @@ module.exports.updateRequirementData = async (req, res) => {
 module.exports.requirementDelete = async (req,res)=>{
     let responce = {...constant.defaultResponse};
     try{
-       const responce = await estimationRequirementService.deleteRequirementData(req.params.id);
+       const responceDelete = await estimationRequirementService.deleteRequirementData(req.params.id);
         responce.status = 200;
         responce.message = constant.requirementMessage.REQUIREMENT_DELETE;
-        responce.body = responce;
+        responce.body = responceDelete;
     }catch(err){
         responce.message = err.message;
     }
