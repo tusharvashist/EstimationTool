@@ -24,6 +24,8 @@ const ResourceCountMatrix = (props) => {
   const [resouceCountData, setResouceCountData] = useState([]);
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
+  const [roleData, setRoleData] = useState();
+
 
   useEffect(() => {
     getTechnologySkill();
@@ -72,7 +74,7 @@ const ResourceCountMatrix = (props) => {
   const getResourceMasterRoleData = () => {
     ResourceMix.getResourceMasterRole().then((res) => {
       console.log("Resource Master Role Data", res.data.body);
-       // setTechnolnogySkills(res.data.body);
+      setRoleData(res.data.body)
     })
     .catch((err) => {});
   }
@@ -124,7 +126,7 @@ const ResourceCountMatrix = (props) => {
   ];
 
   function renderRole(params) {
-    return <RoleCount data={params.value} />;
+    return <RoleCount data={params.value} count = {roleData}/>;
   }
 
   function handleCellClick(param) {
@@ -190,7 +192,7 @@ const ResourceCountMatrix = (props) => {
       {tableOpen && (
         <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
-            {openEditCount && <RoleEditCount rowEditData={rowEditData} />}
+            {openEditCount && <RoleEditCount rowEditData={rowEditData} count = {roleData} />}
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
                 <DataGrid

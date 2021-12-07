@@ -7,7 +7,7 @@ const RoleEditCount = (props) => {
   return (
     <BorderedContainer className="rolelist parentrole">
       <div className="option">
-        <RoleEditItem rowEditData={props.rowEditData} />
+        <RoleEditItem rowEditData={props.rowEditData} count = {props.count}/>
       </div>
     </BorderedContainer>
   );

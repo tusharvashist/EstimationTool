@@ -9,8 +9,11 @@ const RoleCount = (props) => {
       <div className="role">
         
         <p>
-          {props.data} Lead, {props.data} Sr. Developer, {props.data}{" "}
-          Jr. Developer
+        {props.count.map(item => (
+           <span id={item._id}>{item.count} {item.skill}, </span>
+        )
+
+        )}
         </p>
       </div>
     </React.Fragment>
