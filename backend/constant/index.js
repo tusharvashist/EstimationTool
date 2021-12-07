@@ -238,6 +238,7 @@ module.exports = {
     ResourceCount_DELETE: "Resource count delete successfully",
     ResourceCount_DUPLICATE: "Resource count already exist.",
     ResourceCountTech_UPDATE: "Resource count technology updated successfully",
+    ResourceRoleCount_UPDATE: "Resource Role count update successfully",
   },
   resourceRoleMasterMessage: {
     RESOURCEROLEMASTER_CREATED: "Resource role master created successfully",

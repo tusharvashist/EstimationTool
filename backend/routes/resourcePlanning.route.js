@@ -33,6 +33,13 @@ router.put(
   resourceCountController.updateTechnologyResourceCount
 );
 
+//-------Update Resource Role Allocation
+router.put(
+  "/updateresourcerole",
+  tokenValidation.validateToken,
+  resourceCountController.updateResourcePlanning
+);
+
 //----- Get all List -----------
 // router.get(
 //   "/",

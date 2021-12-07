@@ -10,13 +10,13 @@ const estResourcePlanning = new mongoose.Schema(
     },
     resourceRoleID: {
       type: Schema.Types.ObjectId,
-      ref: "resourceRoleMaster",
+      ref: "ResourceRoleMaster",
     },
     cost: Number,
     currency: String,
     price: Number,
     allocationPercent: Number,
-    defaultAdjusted: Boolean
+    defaultAdjusted: Boolean,
   },
   {
     timestamps: true,

@@ -10,6 +10,7 @@ const EstResourceCount = require("../database/models/estResourceCount");
 const { ObjectId } = require("mongodb");
 const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
 const EstimationAttr = require("../database/models/estimationAttributesModel");
+const EstResourcePlanning = require("../database/models/estResourcePlanning");
 
 module.exports.generateResourceCount = async ({ estheaderid }) => {
   try {
@@ -30,9 +31,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         );
       console.log(estResourceCount);
       if (estResourceCount) {
-        estResourceCount.resourceCount =
+        estResourceCount.resourceCount = (
           element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline);
+          (global.ResourceWeekHours * estimation.estTentativeTimeline)
+        ).toFixed(2);
         let estimationCalcAttr = EstResourceCount.findOneAndUpdate(
           { _id: estResourceCount._id },
           estResourceCount,
@@ -42,9 +44,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         let estResourceCount = new EstResourceCount();
         estResourceCount.estAttributeId = element._id;
         estResourceCount.estHeaderId = estheaderid;
-        estResourceCount.resourceCount =
+        estResourceCount.resourceCount = (
           element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline);
+          (global.ResourceWeekHours * estimation.estTentativeTimeline)
+        ).toFixed(2);
         estResourceCount.save();
       }
     });
@@ -56,9 +59,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         );
       console.log(estResourceCount);
       if (estResourceCount) {
-        estResourceCount.resourceCount =
+        estResourceCount.resourceCount = (
           element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline);
+          (global.ResourceWeekHours * estimation.estTentativeTimeline)
+        ).toFixed(2);
         let estimationCalcAttr = EstResourceCount.findOneAndUpdate(
           { _id: estResourceCount._id },
           estResourceCount,
@@ -68,9 +72,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         let estResourceCount = new EstResourceCount();
         estResourceCount.estCalcId = element._id;
         estResourceCount.estHeaderId = estheaderid;
-        estResourceCount.resourceCount =
+        estResourceCount.resourceCount = (
           element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline);
+          (global.ResourceWeekHours * estimation.estTentativeTimeline)
+        ).toFixed(2);
         estResourceCount.save();
       }
     });
@@ -159,4 +164,30 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
     );
     throw new Error(err);
   }
+};
+
+module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
+  if (updatedInfo.qty > 0) {
+    let estResourcePlanning = new EstResourcePlanning();
+    estResourcePlanning.defaultAdjusted = updatedInfo.defaultAdjusted;
+    estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
+    estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
+    estResourcePlanning.allocationPercent = 100;
+    return estResourcePlanning.save();
+  } else {
+    let deleted = await EstResourcePlanning.findOneAndDelete({
+      estResourceCountID: mongoose.Types.ObjectId(
+        updatedInfo.estResourceCountID
+      ),
+      resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
+    });
+    return deleted;
+  }
+
+  // let result = await EstResourcePlanning.find({
+  //   estResourceCountID: mongoose.Types.ObjectId(updatedInfo.estResourceCountID),
+  // })
+  //   .populate("resourceRoleID")
+  //   .populate("estResourceCountID");
+  // return result;
 };
