@@ -21,6 +21,19 @@ const ReourceMixService = {
   updateTechnology: function (req) {
     let url = Url.updateTechnology;
     return axios.put(url, req);
+  },
+
+  
+
+  getResourceMasterRole: function (estheaderid) {
+    let url = Url.getResourceRoleMaster;
+    return axios.get(url);
+  },
+
+
+  updateResourceRole: function (req) {
+    let url = Url.updateResourceRole;
+    return axios.put(url, req);
   }
 };
 export default ReourceMixService;

@@ -49,6 +49,7 @@ const ResourceCountMatrix = (props) => {
   const getResourceCountData = (estimationHeaderId) => {
     ResourceMixService.getResourceCount(estimationHeaderId)
       .then((res) => {
+        getResourceMasterRoleData();
         getResourceCountAllData(estimationHeaderId);
       })
       .catch((err) => {});
@@ -65,6 +66,16 @@ const ResourceCountMatrix = (props) => {
       })
       .catch((err) => {});
   };
+
+  // Get Resource Master Role Data
+
+  const getResourceMasterRoleData = () => {
+    ResourceMix.getResourceMasterRole().then((res) => {
+      console.log("Resource Master Role Data", res.data.body);
+       // setTechnolnogySkills(res.data.body);
+    })
+    .catch((err) => {});
+  }
 
   //console.log("technologySkills",technologySkills)
   const getColumns = ({ onChangeSelect, technologySkills }) => [

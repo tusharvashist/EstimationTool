@@ -25,7 +25,9 @@ const Url = {
    getAllTechnologiesSkill: `${process.env.REACT_APP_URL}techskill/`,
    getResourceCountAll: `${process.env.REACT_APP_URL}resource/all`,
    getResourceCount: `${process.env.REACT_APP_URL}resource/`,
-   updateTechnology: `${process.env.REACT_APP_URL}resource/updatetechnology`
+   updateTechnology: `${process.env.REACT_APP_URL}resource/updatetechnology`,
+   updateResourceRole: `${process.env.REACT_APP_URL}resource/updateresourcerole`,
+   getResourceRoleMaster: `${process.env.REACT_APP_URL}resourceRoleMaster`
 
 }
 export default Url;
