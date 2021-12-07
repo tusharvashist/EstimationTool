@@ -205,7 +205,7 @@ const ResourceCountMatrix = (props) => {
             </div>
 
             <div className="resource-cont-costing">
-              <h4>Costing: $1000</h4>
+              <h4 className="inline-cost">Costing: $1000</h4>
               <h4 className="inline-cost">Expected Timeline: $1000</h4>
               <h4 className="inline-cost">Actual Timeline: $1000</h4>
             </div>

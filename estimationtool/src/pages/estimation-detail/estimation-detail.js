@@ -13,6 +13,7 @@ import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import RoleCount from "../resourcemix/RoleCount";
 import ResourceCountMatrix from "../resourcemix/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
+import requirementFooter from "./requirementFooter";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
 import { DataGrid } from "@mui/x-data-grid";
@@ -512,20 +513,29 @@ const EstimationDetail = () => {
         {loaderComponent ? (
           loaderComponent
         ) : (
-          <div
-            style={{
-              height: 400,
-              width: "100%",
-            }}
-          >
-            <DataGrid
-              className={classes.root}
-              rows={requirementDataArray}
-              columns={requirementHeaderArray}
-              editRowsModel={editRowsModel}
-              onEditRowsModelChange={handleEditRowsModelChange}
-            />
-          </div>
+          <>
+            <h3 className="tableHeader">Requirements</h3>
+            <div
+              style={{
+                height: 400,
+                width: "100%",
+              }}
+            >
+              <DataGrid
+                className={classes.root}
+                rows={requirementDataArray}
+                columns={requirementHeaderArray}
+                editRowsModel={editRowsModel}
+                onEditRowsModelChange={handleEditRowsModelChange}
+                // components={{
+                //   Footer: requirementFooter,
+                // }}
+                // componentsProps={{
+                //   Footer: { className: "tablefooter" },
+                // }}
+              />
+            </div>
+          </>
         )}
       </BorderedContainer>
       <Container>
