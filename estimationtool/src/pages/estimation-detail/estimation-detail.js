@@ -65,7 +65,7 @@ const EstimationDetail = () => {
   const [selectedDelete, setSelectedDelete] = useState({});
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [editRowsModel, setEditRowsModel] = React.useState({});
-
+  const [editManualCallAtt, setEditManualCallAtt] = React.useState({});
   const [summaryHeaderArray, setSummaryHeaderArray] = useState([]);
   const [summaryDataArray, setSummaryDataArray] = useState([]);
 
@@ -76,6 +76,12 @@ const EstimationDetail = () => {
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
   }, []);
+
+
+    const handleEditManualCallAttChange = React.useCallback((model) => {
+    setEditManualCallAtt(model);
+    }, []);
+  
   // console.log("editRowsModel: ",editRowsModel);
 
   useEffect(() => {
@@ -161,7 +167,7 @@ const EstimationDetail = () => {
       callBack();
     }
   };
-
+console.log("HeaderData: ",headerData);
   const getBasicDetailById = (calback) => {
     setLoader(true);
     console.log("Request for getById: ");
@@ -277,26 +283,8 @@ const EstimationDetail = () => {
         setTagHeaderArray([...dataResponse.tagSummaryHeader]);
         setTagDataArray([...dataResponse.tagSummaryData]);
 
-        var calculativeHeader = [
-          {
-            headerName: "Calculative",
-            field: "Title",
-            editable: false,
-            flex: 1,
-            width: 300,
-          },
-          { headerName: "Total", field: "Effort", editable: false, width: 200 },
-        ];
-        calculativeHeader.push({
-          headerName: "Contingency",
-          field: "Contingency",
-          editable: false,
-          flex: 1,
-          width: 200,
-        });
-
-        setSummaryHeaderArray(calculativeHeader);
-        setSummaryDataArray([...dataResponse.summaryTagList]);
+        setSummaryHeaderArray([...dataResponse.summaryCallHeader]);
+        setSummaryDataArray([...dataResponse.summaryCalData]);
 
         setLoader(false);
         callback();
@@ -306,6 +294,31 @@ const EstimationDetail = () => {
         callback();
       });
   };
+
+
+  const updateManualCallAttributeValue = async () => {
+    var id = "";
+    var body = "";
+    for (const [key, value] of Object.entries(editManualCallAtt)) {
+   
+      id = key;
+      body = { "value": value.Effort.value }
+      
+         console.log("Key value: ", id, body);
+    }
+
+     EstimationService.updateManualCallAttribute(id, body)
+        .then((res) => {
+          setLoader(false);
+          getRequirementDataById(() => {});
+        })
+        .catch((err) => {
+          setLoader(false);
+          console.log("get deleteRequirement by id error", err);
+          getRequirementDataById(() => {});
+        });
+    console.log("updateManualCallAttributeValue End....", editManualCallAtt);
+  }
 
   const updateAttributeValue = async () => {
     setLoader(true);
@@ -536,13 +549,12 @@ const EstimationDetail = () => {
         ) : (
           <div>
             <div className="addReqTableHeader">
-              <h3>Estimation</h3>
+                <h3>Estimation (in {headerData.effortUnit}s)</h3>
             </div>
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
                 className={`${classes.root} ${classes.dataGrid}`}
-                onRowEditStart={handleRowEditStart}
-                onRowEditStop={handleRowEditStop}
+             
                 onCellFocusOut={handleCellFocusOut}
                 rows={requirementDataArray}
                 columns={requirementHeaderArray}
@@ -566,7 +578,7 @@ const EstimationDetail = () => {
       </Container>
       <BorderedContainer>
         <div className="addReqTableHeader">
-          <h3>Summary</h3>
+          <h3>Summary (in { headerData.effortUnit}s)</h3>
         </div>
          <div className="addReqTableHeader">
           <h4>Tag</h4>
@@ -613,17 +625,27 @@ const EstimationDetail = () => {
           {loaderComponent ? (
             loaderComponent
           ) : (
+               
             <DataGrid
               className={`${classes.root} ${classes.dataGrid}`}
               autoHeight={true}
               hideFooter={true}
               disableExtendRowFullWidth={true}
               className={classes.root}
-              onRowEditStart={handleRowEditStart}
-              onRowEditStop={handleRowEditStop}
               onCellFocusOut={handleCellFocusOut}
               rows={summaryDataArray}
-              columns={summaryHeaderArray}
+                columns={summaryHeaderArray}
+                
+               editRowsModel={editManualCallAtt}
+                editMode="row"
+                onRowEditStart={() => {
+                  console.log("Start....", editRowsModel);
+                }}
+                onRowEditStop={updateManualCallAttributeValue}
+                onEditRowsModelChange={handleEditManualCallAttChange}
+
+                
+              isCellEditable={(params) => params.row.calcType  === "manual"}
               getCellClassName={(params) => {
                 return (
                   (params.colDef.field === "Effort" && "darkbg") ||

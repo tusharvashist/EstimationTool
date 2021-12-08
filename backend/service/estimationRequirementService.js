@@ -1,19 +1,15 @@
 const constant = require("../constant")
 const {ObjectId} = require('mongodb');
-const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel")
-const Client = require("../database/models/clientModel")
 const EstHeaderModel = require("../database/models/estHeaderModel")
 const ProjectRequirement = require("../database/models/projectRequirement")
 const EstHeaderRequirement = require("../database/models/estHeaderRequirement")
 const EstRequirementData =  require("../database/models/estRequirementData")
 const { formatMongoData } = require("../helper/dbhelper")
-const RequirementType = require("../database/models/requirementType")
-const RequirementTag = require("../database/models/requirementTag")
 const EstimationHeaderAttributeModel = require("../database/models/estimationHeaderAtrributeModel")
-const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
-const EstimationAttributes = require("../database/models/estimationAttributesModel")
 const mongoose = require("mongoose")
 const RequirementRepository = require("../repository/requirementRepository")
+
+const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
 
 module.exports.create = async (serviceData) => {
   try {
@@ -79,6 +75,29 @@ module.exports.getUnpairedRequirementEstimation = async ( query) => {
     throw new Error(err);
   }
 };
+
+
+module.exports.updateManualCallAttribute = async ( id, updateInfo ) => {
+  try {
+
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.requirementMessage.INVALID_ID);
+    }
+
+  let requirement = await EstimationHeaderAttributeCalc.findOneAndUpdate(
+          { _id: id },
+          updateInfo,
+          { new: true }
+        );
+        if (!requirement) {
+          throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+        }
+    return formatMongoData(requirement);
+    } catch (err) {
+    ////console.log("something went wrong: service > createEstimation ", err);
+    throw new Error(err);
+  }
+}
 
 module.exports.updateRequirement = async ({ id, updateInfo }) => {
   try {
@@ -241,107 +260,60 @@ module.exports.getRequirementData = async ({ id }) => {
     }
 
     let response = { ...constant.requirementResponse };
-
     var contingency = await RequirementRepository.getContingency(id);
     var contingencySuffix = " Contingency";
     var estHeaderRequirement = await RequirementRepository.getEstHeaderRequirementWithContingency(id);
-
     if (estHeaderRequirement.length != 0) {
       response.featureList = estHeaderRequirement;
     }
-
-    var summaryTagList = [];
-    var GrandTotal = 0;
-    var DevTotal = 0;
-
-    estHeaderRequirement.forEach((element) => {
-      if (element.isDeleted == false) {
-        element.estRequirementData = element.estRequirementData.filter(
-          function (item, pos) {
-            return element.estRequirementData.indexOf(item) == pos;
-          }
-        );
-        var totalEffortOfElement = 0;
-
-        element.estRequirementData.forEach((effort) => {
-          if (typeof effort.ESTData === "number") {
-            totalEffortOfElement = totalEffortOfElement + effort.ESTData;
-          }
+    response.requirementList = await getRequirementList(estHeaderRequirement, contingency, contingencySuffix);
+   
+    // //1
+    // let estHeaderModelTotal = await EstHeaderModel.updateOne(
+    //   { _id: id },
+    //   { totalCost: GrandTotal }
+    // );
+    // if (!estHeaderModelTotal) {
+    //   // throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND)
+    // }
+   
+    response.tagSummaryHeader = await getTagSummaryHeader(id);
+    response.tagSummaryData = await RequirementRepository.tagWiseRequirementList(id, contingency, contingencySuffix);
+   
+    response.summaryCalData = await RequirementRepository.getCalculativeAttributes(id, contingency, contingencySuffix);
+   
+    var calculativeHeader = [
+      {
+        headerName: "Calculative",
+        field: "calculative",
+        editable: false,
+        flex: 2,
+        width: 500,
+      },
+      { headerName: "Total", field: "Effort",flex: 1, editable: true, width: 200 },
+    ];
+      if (contingency > 0) { 
+          calculativeHeader.push({
+          headerName: "Contingency",
+           field: "Contingency",
+            editable: false,
+           flex: 1,
+            width: 200,
         });
-
-        DevTotal = DevTotal + totalEffortOfElement;
-
-        if (DevTotal) {
-          if (summaryTagList.length == 0) {
-            summaryTagList.push({
-              Title: element.requirement.tag.name,
-              Effort: totalEffortOfElement,
-              id: element.requirement.tag._id,
-            });
-          } else {
-            var tagName = element.requirement.tag.name;
-            var index = -1;
-            var currentIndex = 0;
-            summaryTagList.forEach((effort) => {
-              if (effort.Title === tagName) {
-                index = currentIndex;
-              }
-              currentIndex = currentIndex + 1;
-            });
-
-            if (index >= 0) {
-              summaryTagList[index].Effort =
-                summaryTagList[index].Effort + totalEffortOfElement;
-            } else {
-              summaryTagList.push({
-                Title: element.requirement.tag.name,
-                Effort: totalEffortOfElement,
-                id: element.requirement.tag._id,
-              });
-            }
-          }
-        }
       }
-    });
+    response.summaryCallHeader = calculativeHeader;
+    //4
+    response.estHeaderAttribute = await getEstHeaderAttribute(id);
+    return formatMongoData(response);
+  } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    throw new Error(err);
+  }
+};
 
-    //calc Attribute
-    var calAttributeTotal = 0;
-    let estHeaderAttributeCalc = await EstimationHeaderAttributeCalc.find({
-      estHeaderId: id,
-    });
-
-    if (estHeaderAttributeCalc.length != 0) {
-      estHeaderAttributeCalc = estHeaderAttributeCalc.filter(function (
-        item,
-        pos
-      ) {
-        return estHeaderAttributeCalc.indexOf(item) == pos;
-      });
-
-      estHeaderAttributeCalc.forEach((element) => {
-        var effort = DevTotal * (element.unit / 100);
-        effort = Math.round(effort);
-        calAttributeTotal = calAttributeTotal + effort;
-
-        var formula =
-          element.calcAttributeName + " @" + element.unit + "% All ";
-
-        summaryTagList.push({
-          Title: formula,
-          Effort: effort,
-          id: element._id,
-        });
-      });
-    }
-
-    GrandTotal = DevTotal + calAttributeTotal;
-    GrandTotal = Math.round(GrandTotal);
-
-
-
-
+async function getRequirementList(estHeaderRequirement ,contingency ,contingencySuffix) {
     var arrayRequirement = [];
-    response.featureList.forEach((item, i) => {
+    estHeaderRequirement.forEach((item, i) => {
       if (item.isDeleted === false) {
         var field = item.requirement.title;
         var requirement = {
@@ -368,51 +340,16 @@ module.exports.getRequirementData = async ({ id }) => {
             requirement[item.ESTAttributeID._id] = item.ESTData;
                if (contingency > 0) {
                  requirement[item.ESTAttributeID._id + contingencySuffix] = item.ESTDataContingency;
-
-               }              }
+               }
+             }
           }
-
-        
         });
         arrayRequirement.push(requirement);
       }
     });
-    response.requirementList = arrayRequirement;
    
-   
-    //1
-    let estHeaderModelTotal = await EstHeaderModel.updateOne(
-      { _id: id },
-      { totalCost: GrandTotal }
-    );
-    if (!estHeaderModelTotal) {
-      // throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND)
-    }
-   
-    summaryTagList.push({
-      Title: "Estimation Total",
-      Effort: GrandTotal,
-      id: 0,
-    });
-   
-    summaryTagList = summaryTagList.filter(function (item, pos) {
-      return summaryTagList.indexOf(item) == pos;
-    });
-   
-    response.summaryTagList = summaryTagList;
-    response.tagSummaryHeader = await getTagSummaryHeader(id);
-    response.tagSummaryData= await RequirementRepository.tagWiseRequirementList(id,contingency,contingencySuffix);
-
-    //4
-    response.estHeaderAttribute = await getEstHeaderAttribute(id);
-    return formatMongoData(response);
-  } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
-    throw new Error(err);
-  }
-};
-
-
+  return arrayRequirement;
+}
 
 async function getTagSummaryHeader( estHeaderId ) {
 

@@ -13,6 +13,7 @@ import ResourceMix from "../resourcemix/resourcecount.service";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
+import NoRowOverlay from "../../shared/ui-view/NoRowOverlay/NoRowOverlay";
 
 const ResourceCountMatrix = (props) => {
   const [tableOpen, setTableOpen] = useState(false);
@@ -25,7 +26,6 @@ const ResourceCountMatrix = (props) => {
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
-
 
   useEffect(() => {
     getTechnologySkill();
@@ -72,12 +72,13 @@ const ResourceCountMatrix = (props) => {
   // Get Resource Master Role Data
 
   const getResourceMasterRoleData = () => {
-    ResourceMix.getResourceMasterRole().then((res) => {
-      console.log("Resource Master Role Data", res.data.body);
-      setRoleData(res.data.body)
-    })
-    .catch((err) => {});
-  }
+    ResourceMix.getResourceMasterRole()
+      .then((res) => {
+        console.log("Resource Master Role Data", res.data.body);
+        setRoleData(res.data.body);
+      })
+      .catch((err) => {});
+  };
 
   //console.log("technologySkills",technologySkills)
   const getColumns = ({ onChangeSelect, technologySkills }) => [
@@ -126,7 +127,7 @@ const ResourceCountMatrix = (props) => {
   ];
 
   function renderRole(params) {
-    return <RoleCount data={params.value} count = {roleData}/>;
+    return <RoleCount data={params.value} count={roleData} />;
   }
 
   function handleCellClick(param) {
@@ -182,7 +183,7 @@ const ResourceCountMatrix = (props) => {
     ResourceMixService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
-        getResourceCountData(estimationHeaderId)
+        getResourceCountData(estimationHeaderId);
       })
       .catch((err) => {});
   };
@@ -192,16 +193,22 @@ const ResourceCountMatrix = (props) => {
       {tableOpen && (
         <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
-            {openEditCount && <RoleEditCount rowEditData={rowEditData} count = {roleData} />}
+            {openEditCount && (
+              <RoleEditCount rowEditData={rowEditData} count={roleData} />
+            )}
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
                 <DataGrid
-                  rows={resouceCountData}
+                  // rows={resouceCountData}
+                  rows={[]}
                   columns={getColumns({ onChangeSelect, technologySkills })}
                   pageSize={5}
                   onCellClick={handleCellClick}
                   getRowId={({ _id }) => _id}
                   key="_id"
+                  components={{
+                    NoRowsOverlay: NoRowOverlay,
+                  }}
                 />
               )}
             </div>

@@ -27,6 +27,11 @@ const EstimationService = {
         let url = Url.estimationDetail+"/"+actionId;        
         return axios.put(url,requirementData);
     },
+
+    updateManualCallAttribute:  function(actionId,requirementData){
+        let url = Url.estimationDetail+"/update/ManualCallAttribute/"+actionId;        
+        return axios.put(url,requirementData);
+    },
     
     deleteRequirement: function (actionId) {
         let url = Url.estimationDetail+"/"+actionId;        
