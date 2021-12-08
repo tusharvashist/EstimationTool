@@ -12,6 +12,14 @@ const estResourcePlanning = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "ResourceRoleMaster",
     },
+    estAttributeId: {
+      type: Schema.Types.ObjectId,
+      ref: "EstimationAttributes",
+    },
+    estCalcId: {
+      type: Schema.Types.ObjectId,
+      ref: "estimationCalcAttr",
+    },
     cost: Number,
     currency: String,
     price: Number,

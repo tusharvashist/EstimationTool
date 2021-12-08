@@ -77,11 +77,10 @@ const EstimationDetail = () => {
     setEditRowsModel(model);
   }, []);
 
-
-    const handleEditManualCallAttChange = React.useCallback((model) => {
+  const handleEditManualCallAttChange = React.useCallback((model) => {
     setEditManualCallAtt(model);
-    }, []);
-  
+  }, []);
+
   // console.log("editRowsModel: ",editRowsModel);
 
   useEffect(() => {
@@ -167,7 +166,7 @@ const EstimationDetail = () => {
       callBack();
     }
   };
-console.log("HeaderData: ",headerData);
+  console.log("HeaderData: ", headerData);
   const getBasicDetailById = (calback) => {
     setLoader(true);
     console.log("Request for getById: ");
@@ -295,30 +294,28 @@ console.log("HeaderData: ",headerData);
       });
   };
 
-
   const updateManualCallAttributeValue = async () => {
     var id = "";
     var body = "";
     for (const [key, value] of Object.entries(editManualCallAtt)) {
-   
       id = key;
-      body = { "value": value.Effort.value }
-      
-         console.log("Key value: ", id, body);
+      body = { value: value.Effort.value };
+
+      console.log("Key value: ", id, body);
     }
 
-     EstimationService.updateManualCallAttribute(id, body)
-        .then((res) => {
-          setLoader(false);
-          getRequirementDataById(() => {});
-        })
-        .catch((err) => {
-          setLoader(false);
-          console.log("get deleteRequirement by id error", err);
-          getRequirementDataById(() => {});
-        });
+    EstimationService.updateManualCallAttribute(id, body)
+      .then((res) => {
+        setLoader(false);
+        getRequirementDataById(() => {});
+      })
+      .catch((err) => {
+        setLoader(false);
+        console.log("get deleteRequirement by id error", err);
+        getRequirementDataById(() => {});
+      });
     console.log("updateManualCallAttributeValue End....", editManualCallAtt);
-  }
+  };
 
   const updateAttributeValue = async () => {
     setLoader(true);
@@ -530,7 +527,7 @@ console.log("HeaderData: ",headerData);
             onClick={openAddAvailableRequirement}
           >
             {" "}
-            <Add /> Add Available Requirements
+            <Add /> Include Project Requirements
           </Button>
           <Box sx={{ width: "20px" }} className="estimation-detail-box" />
           <Button
@@ -539,7 +536,7 @@ console.log("HeaderData: ",headerData);
             onClick={openAddRequirement}
           >
             {" "}
-            <Add /> Add Requirements
+            <Add /> Create New Requirements
           </Button>
         </Box>
       </Container>
@@ -549,12 +546,11 @@ console.log("HeaderData: ",headerData);
         ) : (
           <div>
             <div className="addReqTableHeader">
-                <h3>Estimation (in {headerData.effortUnit}s)</h3>
+              <h3>Estimation (in {headerData.effortUnit}s)</h3>
             </div>
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
                 className={`${classes.root} ${classes.dataGrid}`}
-             
                 onCellFocusOut={handleCellFocusOut}
                 rows={requirementDataArray}
                 columns={requirementHeaderArray}
@@ -578,10 +574,10 @@ console.log("HeaderData: ",headerData);
       </Container>
       <BorderedContainer>
         <div className="addReqTableHeader">
-          <h3>Summary (in { headerData.effortUnit}s)</h3>
+          <h3>Summary (in {headerData.effortUnit}s)</h3>
         </div>
-         <div className="addReqTableHeader">
-          <h4>Tag</h4>
+        <div className="addReqTableHeader">
+          <h4>Tags Total</h4>
         </div>
         <div style={{ height: "100%", width: "100%" }}>
           {loaderComponent ? (
@@ -597,10 +593,10 @@ console.log("HeaderData: ",headerData);
               onRowEditStop={handleRowEditStop}
               onCellFocusOut={handleCellFocusOut}
               rows={tagDataArray}
-                columns={tagHeaderArray}
-                components={{
-                  Toolbar: CustomToolbar,
-                }}
+              columns={tagHeaderArray}
+              components={{
+                Toolbar: CustomToolbar,
+              }}
               getRowClassName={(params) =>
                 params.row.tag === "Total" && "darkbg"
               }
@@ -618,14 +614,13 @@ console.log("HeaderData: ",headerData);
           sx={{ height: "20px", width: "20px" }}
           className="estimation-detail-box"
         />
-            <div className="addReqTableHeader">
-          <h4>Calculated Attributes</h4>
+        <div className="addReqTableHeader">
+          <h4>Calculated Attributes Total</h4>
         </div>
         <div style={{ height: "100%", width: "100%" }}>
           {loaderComponent ? (
             loaderComponent
           ) : (
-               
             <DataGrid
               className={`${classes.root} ${classes.dataGrid}`}
               autoHeight={true}
@@ -634,18 +629,15 @@ console.log("HeaderData: ",headerData);
               className={classes.root}
               onCellFocusOut={handleCellFocusOut}
               rows={summaryDataArray}
-                columns={summaryHeaderArray}
-                
-               editRowsModel={editManualCallAtt}
-                editMode="row"
-                onRowEditStart={() => {
-                  console.log("Start....", editRowsModel);
-                }}
-                onRowEditStop={updateManualCallAttributeValue}
-                onEditRowsModelChange={handleEditManualCallAttChange}
-
-                
-              isCellEditable={(params) => params.row.calcType  === "manual"}
+              columns={summaryHeaderArray}
+              editRowsModel={editManualCallAtt}
+              editMode="row"
+              onRowEditStart={() => {
+                console.log("Start....", editRowsModel);
+              }}
+              onRowEditStop={updateManualCallAttributeValue}
+              onEditRowsModelChange={handleEditManualCallAttChange}
+              isCellEditable={(params) => params.row.calcType === "manual"}
               getCellClassName={(params) => {
                 return (
                   (params.colDef.field === "Effort" && "darkbg") ||

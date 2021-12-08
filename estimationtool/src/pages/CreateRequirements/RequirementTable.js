@@ -38,8 +38,7 @@ export const RequirementTable = (props) => {
     { headerName: "Requirement", field: "Requirement", width: 170 },
     { headerName: "Description", field: "Description", width: 200 },
     { headerName: "Tag", field: "Tag", width: 150 },
-    { headerName: "Type",  field: "Type",   width: 130,
-    },
+    { headerName: "Type", field: "Type", width: 130 },
     { headerName: "Query", field: "Query", width: 200 },
     { headerName: "Assumption", field: "Assumption", width: 200 },
     { headerName: "Reply", field: "Reply", width: 200 },
@@ -148,7 +147,7 @@ export const RequirementTable = (props) => {
       ) : (
         <>
           <div className="addReqTableHeader">
-            <h3>Requirements</h3>
+            <h3>Requirement Types</h3>
             <Select
               labelId="demo-multiple-checkbox-label"
               id="demo-multiple-checkbox"
@@ -167,30 +166,29 @@ export const RequirementTable = (props) => {
                 </MenuItem>
               ))}
             </Select>
-            </div>
-            <div style={{ height: 400, width: '100%' }}>
-              <DataGrid
-                className={classes.root}
-                rows={requirementHeaderDataFilter}
-                columns={requirementHeader}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                checkboxSelection={props.selection}
-                onRowClick={(params, event) => {
+          </div>
+          <div style={{ height: 400, width: "100%" }}>
+            <DataGrid
+              className={classes.root}
+              rows={requirementHeaderDataFilter}
+              columns={requirementHeader}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              checkboxSelection={props.selection}
+              onRowClick={(params, event) => {
                 //selected={(event, rowData, togglePanel) => {
-                    if (props.isEditable) {
-                      props.openEditRequirement(event, params.row);
-                     }
-                }}
-                onSelectionModelChange={(rows) => {
-                  console.log("onSelectionModelChange: ",rows);
-                   if (props.selection === true) {
-                      props.handleCheckBoxClicked(rows);
-                 }
-                
-                }}
-              />
-              </div>
+                if (props.isEditable) {
+                  props.openEditRequirement(event, params.row);
+                }
+              }}
+              onSelectionModelChange={(rows) => {
+                console.log("onSelectionModelChange: ", rows);
+                if (props.selection === true) {
+                  props.handleCheckBoxClicked(rows);
+                }
+              }}
+            />
+          </div>
           {/* <MaterialTable
             style={{ boxShadow: "none" }}
             columns={requirementHeader}

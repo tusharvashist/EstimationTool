@@ -31,7 +31,7 @@ export const EstimationHeader = (props) => {
         <Grid item xs={12} sm={3}>
           <Header
             iconname="contingency"
-            title="Total Contingency"
+            title="Contingency"
             name={`${props.data.contingency}%`}
           />
         </Grid>
