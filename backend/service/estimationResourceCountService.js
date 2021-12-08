@@ -25,6 +25,9 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     let estimation = await EstimationHeader.findById(estheaderid);
 
     estHeaderRequirement.EstimationAttributes.forEach(async (element) => {
+      if (element.Total == 0) {
+        return;
+      }
       let estResourceCount =
         await ResourceCountRepository.getEstResourceCountByAttrId(
           mongoose.Types.ObjectId(element._id)
