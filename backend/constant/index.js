@@ -23,6 +23,13 @@ module.exports = {
     description: "",
   },
 
+  resourceMixPlanningResponse:{
+    resourceMixData: [],
+    total: {},
+    margin: "",
+    marginPercent: ""
+    },
+
   userMessage: {
     SIGNUP_SUCCESS: "Signup successfully",
     DUPLICATE_EMAIL: "User alrady exsist with given email",

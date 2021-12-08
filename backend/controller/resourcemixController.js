@@ -5,7 +5,7 @@ const constant = require("../constant");
 module.exports.getResourceMix = async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
-        const responceResourceMix = await resourceMixService.getResourceMixPlanning(req.query);
+        const responceResourceMix = await resourceMixService.getResourceMixPlanning(req.params);
         responce.status = 200;
         responce.message = constant.resourceMixMessage.RESOURMIX_FETCH;
         responce.body = responceResourceMix;
