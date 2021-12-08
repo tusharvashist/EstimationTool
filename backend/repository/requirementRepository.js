@@ -218,192 +218,234 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
     throw new Error(err);
   }
 };
-function calculateContingency(value,contingency ) {
-  return Math.round(value + ((value * contingency) / 100));
+function calculateContingency(value, contingency) {
+  return Math.round(value + (value * contingency) / 100);
 }
 
-module.exports.tagWiseRequirementList = async (estHeaderId, contingency, contingencySuffix) => {
-  try{
-   var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(estHeaderId);
-   var tagSummaryDataArray = [];
-   var attributeTotal = { id: 1, tag: "Total", };
-  
-  tagWiseRequirement.forEach((tags, i) => {
-     if(tags._id !== undefined && tags._id !== null){
-    var tagObject = {
-      id: tags._id._id,
-      tag: tags._id.name,
-    };
-    tags.estRequirementData.forEach((tag, i) => {
-      if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
-       
-        // Normal Attribute
-        if (tagObject[tag.ESTAttributeID._id] !== undefined && tagObject[tag.ESTAttributeID._id] !== null) {
-          tagObject[tag.ESTAttributeID._id] = tagObject[tag.ESTAttributeID._id] + tag.ESTData;
-        } else {
-          tagObject[tag.ESTAttributeID._id] = tag.ESTData;
-        }
+module.exports.tagWiseRequirementList = async (
+  estHeaderId,
+  contingency,
+  contingencySuffix
+) => {
+  try {
+    var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(
+      estHeaderId
+    );
+    var tagSummaryDataArray = [];
+    var attributeTotal = { id: 1, tag: "Total" };
 
-        //Bottom
-        if (attributeTotal[tag.ESTAttributeID._id] !== undefined && attributeTotal[tag.ESTAttributeID._id] !== null) {
-          attributeTotal[tag.ESTAttributeID._id] = attributeTotal[tag.ESTAttributeID._id] + tag.ESTData;
-        } else {
-          attributeTotal[tag.ESTAttributeID._id] = tag.ESTData;
-        }
+    tagWiseRequirement.forEach((tags, i) => {
+      if (tags._id !== undefined && tags._id !== null) {
+        var tagObject = {
+          id: tags._id._id,
+          tag: tags._id.name,
+        };
+        tags.estRequirementData.forEach((tag, i) => {
+          if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
+            // Normal Attribute
+            if (
+              tagObject[tag.ESTAttributeID._id] !== undefined &&
+              tagObject[tag.ESTAttributeID._id] !== null
+            ) {
+              tagObject[tag.ESTAttributeID._id] =
+                tagObject[tag.ESTAttributeID._id] + tag.ESTData;
+            } else {
+              tagObject[tag.ESTAttributeID._id] = tag.ESTData;
+            }
 
-        // Total - Normal Attribute
-        if (tagObject["total"] !== undefined && tagObject["total"] !== null) {
-          tagObject["total"] = tagObject["total"] + tag.ESTData;
-        } else {
-          tagObject["total"] = tag.ESTData;
-        }
+            //Bottom
+            if (
+              attributeTotal[tag.ESTAttributeID._id] !== undefined &&
+              attributeTotal[tag.ESTAttributeID._id] !== null
+            ) {
+              attributeTotal[tag.ESTAttributeID._id] =
+                attributeTotal[tag.ESTAttributeID._id] + tag.ESTData;
+            } else {
+              attributeTotal[tag.ESTAttributeID._id] = tag.ESTData;
+            }
 
-        if (attributeTotal["total"] !== undefined && attributeTotal["total"] !== null) {
-          attributeTotal["total"] = attributeTotal["total"] + tag.ESTData;
-        } else {
-          attributeTotal["total"] = tag.ESTData;
-        }
+            // Total - Normal Attribute
+            if (
+              tagObject["total"] !== undefined &&
+              tagObject["total"] !== null
+            ) {
+              tagObject["total"] = tagObject["total"] + tag.ESTData;
+            } else {
+              tagObject["total"] = tag.ESTData;
+            }
 
-        //total_Contingency
-        if (contingency > 0) {
-          tagObject[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tagObject[tag.ESTAttributeID._id], contingency);
-          tagObject["total_Contingency"] = calculateContingency(tagObject["total"], contingency);
-        }
+            if (
+              attributeTotal["total"] !== undefined &&
+              attributeTotal["total"] !== null
+            ) {
+              attributeTotal["total"] = attributeTotal["total"] + tag.ESTData;
+            } else {
+              attributeTotal["total"] = tag.ESTData;
+            }
 
-        if (attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !== undefined
-          && attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !== null) {
-          attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
-            attributeTotal[tag.ESTAttributeID._id + contingencySuffix] + calculateContingency(tag.ESTData, contingency);
-        } else {
-          attributeTotal[tag.ESTAttributeID._id + contingencySuffix] = calculateContingency(tag.ESTData, contingency);
-        }
+            //total_Contingency
+            if (contingency > 0) {
+              tagObject[tag.ESTAttributeID._id + contingencySuffix] =
+                calculateContingency(
+                  tagObject[tag.ESTAttributeID._id],
+                  contingency
+                );
+              tagObject["total_Contingency"] = calculateContingency(
+                tagObject["total"],
+                contingency
+              );
+            }
 
-        attributeTotal["total_Contingency"] = calculateContingency(attributeTotal["total"], contingency);
-     
+            if (
+              attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !==
+                undefined &&
+              attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !==
+                null
+            ) {
+              attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
+                attributeTotal[tag.ESTAttributeID._id + contingencySuffix] +
+                calculateContingency(tag.ESTData, contingency);
+            } else {
+              attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
+                calculateContingency(tag.ESTData, contingency);
+            }
+
+            attributeTotal["total_Contingency"] = calculateContingency(
+              attributeTotal["total"],
+              contingency
+            );
+          }
+        });
+
+        tagSummaryDataArray.push(tagObject);
       }
     });
-       
- 
-    tagSummaryDataArray.push(tagObject);
-  }
-      
-    });
-  
-  tagSummaryDataArray.push(attributeTotal);
-  
-  return tagSummaryDataArray;
- } catch (err) {
+
+    tagSummaryDataArray.push(attributeTotal);
+
+    return tagSummaryDataArray;
+  } catch (err) {
     //console.log("something went wrong: service > GetEstimation data", err);
     console.log(err.stack);
     throw new Error(err);
   }
- }
+};
 
-
- 
 module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
-  
-  let estimations = await EstHeaderModel.findById({ _id: estHeaderId }).populate({ path: "effortUnit" });
+  let estimations = await EstHeaderModel.findById({
+    _id: estHeaderId,
+  }).populate({ path: "effortUnit" });
   var contingency = estimations.contingency;
   var unit = estimations.effortUnit;
-  let estHeaderRequirement = await EstHeaderRequirement.aggregate([{
-    $match: {
-      estHeader: ObjectId(estHeaderId),
-      isDeleted: false
-    }
-  }, {
-    $lookup: {
-      from: 'estrequirementdatas',
-      localField: '_id',
-      foreignField: 'ESTHeaderRequirementID',
-      as: 'attributeData'
-    }
-  }, {
-    $unwind: {
-      path: '$attributeData',
-      preserveNullAndEmptyArrays: true
-    }
-  }, {
-    $lookup: {
-      from: 'estimationattributes',
-      localField: 'attributeData.ESTAttributeID',
-      foreignField: '_id',
-      as: 'attributeData.ESTAttributeID'
-    }
-  }, {
-    $unwind: {
-      path: '$attributeData.ESTAttributeID',
-      preserveNullAndEmptyArrays: true
-    }
-  }, {
-    $group: {
-      _id: '$_id',
-      estRequirementData: {
-        $push: '$attributeData'
-      }
-    }
-  }, {
-    $project: {
-      _id: 1,
-      isDeleted: 1,
-      estRequirementData: 1,
-      requirement: 1
-    }
-  }, {
-    $unwind: {
-      path: '$estRequirementData',
-      preserveNullAndEmptyArrays: true
-    }
-  }, {
-    $group: {
-      _id: '$estRequirementData.ESTAttributeID',
-      data: {
-        $sum: '$estRequirementData.ESTData'
-      }
-    }
-  }, {
-    $sort: {
-      '_id.attributeName': 1
-    }
-  }]);
-
+  let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+    {
+      $match: {
+        estHeader: ObjectId(estHeaderId),
+        isDeleted: false,
+      },
+    },
+    {
+      $lookup: {
+        from: "estrequirementdatas",
+        localField: "_id",
+        foreignField: "ESTHeaderRequirementID",
+        as: "attributeData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$attributeData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "estimationattributes",
+        localField: "attributeData.ESTAttributeID",
+        foreignField: "_id",
+        as: "attributeData.ESTAttributeID",
+      },
+    },
+    {
+      $unwind: {
+        path: "$attributeData.ESTAttributeID",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$_id",
+        estRequirementData: {
+          $push: "$attributeData",
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        isDeleted: 1,
+        estRequirementData: 1,
+        requirement: 1,
+      },
+    },
+    {
+      $unwind: {
+        path: "$estRequirementData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$estRequirementData.ESTAttributeID",
+        data: {
+          $sum: "$estRequirementData.ESTData",
+        },
+      },
+    },
+    {
+      $sort: {
+        "_id.attributeName": 1,
+      },
+    },
+  ]);
 
   var EstimationAttributes = [];
   estHeaderRequirement.forEach((attribute, i) => {
-
     if (attribute._id !== undefined && attribute._id !== null) {
       var resourceCount = attribute._id;
       if (contingency > 0) {
-        resourceCount["Total"] = calculateContingency(attribute.data, contingency);
+        resourceCount["Total"] = calculateContingency(
+          attribute.data,
+          contingency
+        );
       } else {
         resourceCount["Total"] = attribute.data;
       }
 
-
-
-      if (resourceCount["Total"] !== undefined && resourceCount["Total"] !== null) {
+      if (
+        resourceCount["Total"] !== undefined &&
+        resourceCount["Total"] !== null
+      ) {
         if (unit == "Day") {
           resourceCount["Total"] = resourceCount["Total"] * 8;
         }
-    
+
         if (unit == "Month") {
           resourceCount["Total"] = resourceCount["Total"] * 8 * 30;
         }
       }
-    
-    
+
       EstimationAttributes.push(resourceCount);
     }
   });
 
-
-
   var resourceCount = {
     estHeaderId: estHeaderId,
-    EstimationAttributes:EstimationAttributes
-   }
-  
-      //     {
+    EstimationAttributes: EstimationAttributes,
+    EstimationCalcAttributes: [],
+  };
+
+  //     {
   //       _id: "6177d49fb6e42413fe1baf18",
   //       attributeCode: "DEV",
   //       attributeName: "Front End",
@@ -437,18 +479,9 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   return resourceCount;
 };
 
-
 module.exports.getTagSummary = async (estHeaderId) => {
-
-
   return requirementDataForEstHeader(estHeaderId);
-
-
-  
 };
-
-
-
 
 module.exports.getEstHeaderRequirement = async (estHeaderId) => {
   return requirementDataForEstHeader(estHeaderId);
@@ -678,24 +711,26 @@ async function queryTagWiseRequirementForEstHeader(estHeaderId) {
         estRequirementData: 1,
         requirement: 1,
       },
-    },{
-    $unwind: {
-        path: '$estRequirementData',
-        preserveNullAndEmptyArrays: true
-    }
     },
     {
-    $group: {
-        _id: '$requirement.tag',
+      $unwind: {
+        path: "$estRequirementData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$requirement.tag",
         estRequirementData: {
-            $push: '$estRequirementData'
-        }
-    }
-    }, {
+          $push: "$estRequirementData",
+        },
+      },
+    },
+    {
       $sort: {
-        '_id.name': 1
-      }
-    }
+        "_id.name": 1,
+      },
+    },
   ]);
   return estHeaderRequirement;
 }
