@@ -28,11 +28,11 @@ const ResourceCountMatrix = (props) => {
   const [roleData, setRoleData] = useState();
 
   useEffect(() => {
-    getTechnologySkill();
-    getResourceCountData(estimationHeaderId);
+    // getTechnologySkill();
+    // getResourceCountData(estimationHeaderId);
     if (estimationHeaderId) {
       getTechnologySkill();
-      getResourceCountData();
+      getResourceCountData(estimationHeaderId);
     }
   }, []);
 
@@ -89,7 +89,7 @@ const ResourceCountMatrix = (props) => {
       width: 200,
       valueFormatter: (params) => {
         const { row } = params,
-          { estAttributeId, estCalcId } = row,
+          { estAttributeId, estCalcId } = row || {},
           { calcAttributeName = "" } = estCalcId || {},
           { attributeName = "" } = estAttributeId || {};
         return attributeName || calcAttributeName;

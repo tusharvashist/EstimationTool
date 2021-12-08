@@ -28,6 +28,6 @@ const Url = {
   updateTechnology: `${process.env.REACT_APP_URL}resource/updatetechnology`,
   updateResourceRole: `${process.env.REACT_APP_URL}resource/updateresourcerole`,
   getResourceRoleMaster: `${process.env.REACT_APP_URL}resourceRoleMaster`,
-  getResourceMixData: `${process.env.REACT_APP_URL}resource/mix/61a5fbfc0a16cd466be0b076`,
+  getResourceMixData: `${process.env.REACT_APP_URL}resource/mix`,
 };
 export default Url;

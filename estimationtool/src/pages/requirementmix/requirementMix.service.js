@@ -2,9 +2,9 @@ import axios from "axios";
 import Url from "../../shared/service/urls.service";
 
 const RequirementMixService = {
-  getResourceMixData: function () {
+  getResourceMixData: function (estid) {
     let url = Url.getResourceMixData;
-    return axios.get(url);
+    return axios.get(url + "/" + estid);
   },
 };
 export default RequirementMixService;

@@ -664,6 +664,7 @@ const EstimationDetail = () => {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
                 estimationHeaderId: estimationId,
+                headerData: headerData,
               },
             }}
           >
