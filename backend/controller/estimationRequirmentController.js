@@ -112,6 +112,22 @@ module.exports.getRequirementData = async (req, res) => {
     }
     return res.status(responce.status).send(responce);
 }
+module.exports.updateManualCallAttribute = async (req, res) => {
+    let responce = { ...constant.defaultResponse };
+    try {
+        const responceGetByID = await estimationRequirementService.updateManualCallAttribute(req.params.id,req.body);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_DATA_UPDATE;
+        responce.body = responceGetByID;
+    } catch (err) {
+        responce.message = err.message;
+         responce.status = 404;
+        responce.message ="";
+        responce.body = "";
+    }
+    return res.status(responce.status).send(responce);
+}
+
 
 module.exports.updateRequirementData = async (req, res) => {
     let responce = { ...constant.defaultResponse };

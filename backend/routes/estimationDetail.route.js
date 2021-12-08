@@ -26,7 +26,13 @@ router.put("/map/Header/ToMultipleRequirement/:id",
     //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
     estimationDetail.mapHeaderToMultipleRequirement
 );
+router.put("/update/ManualCallAttribute/:id",
+    tokenValidation.validateToken,
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
+    estimationDetail.updateManualCallAttribute
+);
 
+//
 router.get("/get/data/:id",
     tokenValidation.validateToken,
     //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),

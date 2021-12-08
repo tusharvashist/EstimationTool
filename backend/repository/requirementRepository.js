@@ -14,7 +14,6 @@ const EstimationHeaderAttributeModel = require("../database/models/estimationHea
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
 const EstimationAttributes = require("../database/models/estimationAttributesModel");
 const mongoose = require("mongoose");
-
 module.exports.createRequirement = async (serviceData) => {
   let projectRequirement = new ProjectRequirement({ ...serviceData });
   let requirementId = "";
@@ -204,8 +203,7 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
           estRequirement.ESTData !== undefined &&
           estRequirement.ESTData !== 0
         ) {
-          estRequirement["ESTDataContingency"] =
-            (estRequirement.ESTData * estimations.contingency) / 100;
+          estRequirement["ESTDataContingency"] = estRequirement.ESTData + ((estRequirement.ESTData * estimations.contingency) / 100);
         } else {
           estRequirement["ESTDataContingency"] = 0;
         }
@@ -331,6 +329,139 @@ module.exports.tagWiseRequirementList = async (
   }
 };
 
+<<<<<<< Updated upstream
+=======
+module.exports.getCalculativeAttributes = async (estHeaderId, contingency, contingencySuffix) => {
+  try {
+    var tagsTotal = await getTagsTotal(estHeaderId, contingency, contingencySuffix);
+    var estimationCalAtt = await getEstimationCalculativeAttributes(estHeaderId);
+    var summaryCalculatedAttArray = [];
+     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
+    var contingency = estimations.contingency;
+    estimationCalAtt.forEach((calAtt, i) => {
+      if (calAtt.calcType === "percentage") {
+        var calculative = calAtt.calcAttributeName + " " + calAtt.unit + " % of ";
+        var totalValue = 0;
+        calAtt.formulaTags.forEach((formula, i) => {
+          var coma = ",";
+          if (i == calAtt.formulaTags.length - 1) {
+            coma = "";
+          }
+          calculative = calculative + " " + formula.name + coma
+          tagsTotal.forEach((summaryTag, i) => {
+            if (summaryTag.tag === formula.name) {
+
+              totalValue = totalValue + summaryTag.total;
+          }
+
+          })
+        });
+
+        totalValue = (totalValue * calAtt.unit) / 100;
+        var totalContingency = totalValue + ((totalValue * contingency) / 100);
+        var summaryCalculated = {
+          id: calAtt._id,
+          calcType: calAtt.calcType,
+          Effort: totalValue,
+          Contingency: totalContingency,
+          calculative: calculative,
+        };
+        summaryCalculatedAttArray.push(summaryCalculated);
+      } else {
+        var calculative = calAtt.calcAttributeName + "(Manual)";
+        var conti = ((calAtt.value * contingency) / 100);
+          var totalContingency =parseInt( calAtt.value) + conti;
+        var summaryCalculated = {
+          id: calAtt._id,
+          calcType: calAtt.calcType,
+          calculative: calculative,
+          Effort: calAtt.value,
+          Contingency: totalContingency,
+        };
+        summaryCalculatedAttArray.push(summaryCalculated);
+        
+      }
+    });
+    return summaryCalculatedAttArray;
+    } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    console.log(err.stack);
+    throw new Error(err);
+  }
+
+}
+
+ 
+ async function getEstimationCalculativeAttributes(estHeaderId){
+
+  let estHeaderRequirement = await EstimationHeaderAttributeCalc.aggregate([
+    {
+      $match: {
+        estHeaderId: ObjectId(estHeaderId)
+      }
+    },
+    {
+      $lookup: {
+        from: 'requirementtags',
+        localField: 'formulaTags',
+        foreignField: '_id',
+        as: 'formulaTags'
+      }
+    }
+  ]);
+
+  return estHeaderRequirement;
+}
+
+
+async function getTagsTotal(estHeaderId, contingency, contingencySuffix) {
+  try{
+   var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(estHeaderId);
+   var tagSummaryDataArray = [];
+   var attributeTotal = { id: 1, tag: "Total", };
+    
+  tagWiseRequirement.forEach((tags, i) => {
+     if(tags._id !== undefined && tags._id !== null){
+    var tagObject = {
+      id: tags._id._id,
+      tag: tags._id.name,
+    };
+    tags.estRequirementData.forEach((tag, i) => {
+      if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
+       
+        if (tagObject["total"] !== undefined && tagObject["total"] !== null) {
+          tagObject["total"] = tagObject["total"] + tag.ESTData;
+        } else {
+          tagObject["total"] = tag.ESTData;
+        }
+
+        if (contingency > 0) {
+          tagObject["total_Contingency"] = calculateContingency(tagObject["total"], contingency);
+        }
+
+      }
+    });
+       
+ 
+    tagSummaryDataArray.push(tagObject);
+  }
+      
+    });
+  
+  tagSummaryDataArray.push(attributeTotal);
+  
+  return tagSummaryDataArray;
+ } catch (err) {
+    //console.log("something went wrong: service > GetEstimation data", err);
+    console.log(err.stack);
+    throw new Error(err);
+  }
+ }
+
+
+
+ 
+>>>>>>> Stashed changes
 module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   let estimations = await EstHeaderModel.findById({
     _id: estHeaderId,
