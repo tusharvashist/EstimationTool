@@ -17,7 +17,7 @@ import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 import EstimationDetail from "../../pages/estimation-detail/estimation-detail";
 import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
-import RequirementMix from "../../pages/requirementmix/requirementmix";
+import ResourceMix from "../../pages/ResourceMix/ResourceMix";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -105,9 +105,9 @@ export default class Layout extends Component {
                   </Route>
                   <Route
                     exact
-                    path="/All-Clients/:clientName/:projectid/:estimationname/requirement-mix"
+                    path="/All-Clients/:clientName/:projectid/:estimationname/ResourceMix"
                   >
-                    <RequirementMix />
+                    <ResourceMix />
                   </Route>
                 </Switch>
               </Grid>

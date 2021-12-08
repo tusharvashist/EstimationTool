@@ -2,19 +2,14 @@ import { Button, Container } from "@material-ui/core";
 import { Box } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import EstimationService from "../estimation-detail/estimation.service";
 import { useLocation, Link } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import {
   EstimationHeader,
   ClientProjectHeader,
 } from "../estimation-detail/header-element";
-import ResourceCountMatrix from "../resourcemix/ResourceCount";
 import { DataGrid } from "@material-ui/data-grid";
-import RequirementMixService from "./requirementMix.service";
-
-import NNoRowOverlay from "../../shared/ui-view/NoRowOverlay/NoRowOverlay";
-import RoleCount from "../resourcemix/RoleCount";
+import ResourceMixService from "./ResourceMix.service";
 
 const RequirementMix = () => {
   const location = useLocation();
@@ -32,7 +27,7 @@ const RequirementMix = () => {
   }, [estimationId]);
 
   const getAllResourceMixData = (estimationId) => {
-    RequirementMixService.getResourceMixData("619e3ddb8c705cf78e273c02")
+    ResourceMixService.getResourceMixData("619e3ddb8c705cf78e273c02")
       .then((res) => {
         let objArr = res.data.body.resourceMixData.map((el, i) => {
           return {
