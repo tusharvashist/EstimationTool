@@ -3,12 +3,10 @@ import "../estimation-detail/estimation-detail.css";
 import React, { useState, useEffect } from "react";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import RoleCount from "./RoleCount";
-import ResourceMixService from "../resourcemix/resourcecount.service";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
 import { Select, MenuItem } from "@material-ui/core";
-//import { getResourceCount } from "../../../../backend/service/estimationResourceCountService";
-import ResourceMix from "../resourcemix/resourcecount.service";
+import ReourceCountService from "./resourcecount.service";
 
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { IoPricetagsOutline } from "react-icons/io5";
@@ -39,7 +37,7 @@ const ResourceCountMatrix = (props) => {
   // Get All Technology Skills
 
   const getTechnologySkill = () => {
-    ResourceMixService.getAllTechnologies()
+    ReourceCountService.getAllTechnologies()
       .then((res) => {
         setTechnolnogySkills(res.data.body);
       })
@@ -49,7 +47,7 @@ const ResourceCountMatrix = (props) => {
   // Get Resource Count
 
   const getResourceCountData = (estimationHeaderId) => {
-    ResourceMixService.getResourceCount(estimationHeaderId)
+    ReourceCountService.getResourceCount(estimationHeaderId)
       .then((res) => {
         getResourceMasterRoleData();
         getResourceCountAllData(estimationHeaderId);
@@ -60,7 +58,7 @@ const ResourceCountMatrix = (props) => {
   // Get All Resource Count Data
 
   const getResourceCountAllData = (estimationHeaderId) => {
-    ResourceMixService.getResourceCountAll(estimationHeaderId)
+    ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
         console.log("all Data", res.data.body);
         setResouceCountData(res.data.body);
@@ -72,7 +70,7 @@ const ResourceCountMatrix = (props) => {
   // Get Resource Master Role Data
 
   const getResourceMasterRoleData = () => {
-    ResourceMix.getResourceMasterRole()
+    ReourceCountService.getResourceMasterRole()
       .then((res) => {
         console.log("Resource Master Role Data", res.data.body);
         setRoleData(res.data.body);
@@ -180,7 +178,7 @@ const ResourceCountMatrix = (props) => {
       techSkill: techId,
     };
 
-    ResourceMixService.updateTechnology(req)
+    ReourceCountService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
         getResourceCountData(estimationHeaderId);

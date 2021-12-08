@@ -10,8 +10,8 @@ import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { EstimationHeader, ClientProjectHeader } from "./header-element";
-import RoleCount from "../resourcemix/RoleCount";
-import ResourceCountMatrix from "../resourcemix/ResourceCount";
+import RoleCount from "../ResourceCount/RoleCount";
+import ResourceCountMatrix from "../ResourceCount/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
 import requirementFooter from "./requirementFooter";
 
@@ -659,7 +659,7 @@ const EstimationDetail = () => {
                 projectDetails.projectName +
                 "/" +
                 headerData.estName +
-                "/requirement-mix",
+                "/ResourceMix",
               state: {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
