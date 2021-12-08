@@ -183,30 +183,38 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
 
 module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
   try {
+    let filter = {};
+    let groupby = "";
+    if (updatedInfo.estAttributeId) {
+      filter = {
+        estAttributeId: mongoose.Types.ObjectId(updatedInfo.estAttributeId),
+      };
+      groupby = "$estAttributeId";
+    } else {
+      filter = {
+        estCalcId: mongoose.Types.ObjectId(updatedInfo.estCalcId),
+      };
+      groupby = "$estCalcId";
+    }
+
     if (updatedInfo.qty > 0) {
       //Logic for Resource Count Data check
-      let rescount = await EstResourceCount.findById({
-        _id: mongoose.Types.ObjectId(updatedInfo.estResourceCountID),
-      });
+      let rescount = await EstResourceCount.findOne(filter);
 
       //Get Total Resource Mix
       let mixsum = await EstResourcePlanning.aggregate([
         {
-          $match: {
-            estResourceCountID: mongoose.Types.ObjectId(
-              updatedInfo.estResourceCountID
-            ),
-          },
+          $match: filter,
         },
         {
           $group: {
-            _id: "$estResourceCountID",
+            _id: groupby,
             sum: { $sum: 1 },
           },
         },
       ]);
 
-      let maxcount = Math.ceil(rescount.resourceCount);
+      let maxcount = Math.ceil(rescount?.resourceCount);
 
       let totalresource = 0;
       if (mixsum.length > 0) {
@@ -224,6 +232,8 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       let estResourcePlanning = new EstResourcePlanning();
       estResourcePlanning.defaultAdjusted = updatedInfo.defaultAdjusted;
       estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
+      estResourcePlanning.estAttributeId = updatedInfo.estAttributeId;
+      estResourcePlanning.estCalcId = updatedInfo.estCalcId;
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
       switch (true) {
@@ -242,9 +252,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       return estResourcePlanning.save();
     } else {
       let deleted = await EstResourcePlanning.findOneAndDelete({
-        estResourceCountID: mongoose.Types.ObjectId(
-          updatedInfo.estResourceCountID
-        ),
+        filter,
         resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
       });
       return deleted;
