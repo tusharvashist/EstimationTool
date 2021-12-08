@@ -7,14 +7,14 @@ const RoleCount = (props) => {
   return (
     <React.Fragment>
       <div className="role">
-        
+{/*         
         <p>
         {props.count.map(item => (
            <span id={item._id}>{item.count} {item.skill}, </span>
         )
 
         )}
-        </p>
+        </p> */}
       </div>
     </React.Fragment>
   );
