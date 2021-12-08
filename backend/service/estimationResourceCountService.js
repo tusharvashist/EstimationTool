@@ -194,20 +194,21 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     {
       $group: {
         _id: {
+          _id: "$_id",
           resourceCount: "$resourceCount",
           estAttributeId: "$estAttributeId",
           estHeaderId: "$estHeaderId",
           estCalcId: "$estCalcId",
           attributeName: "$attributes.attributeName",
           skills: "$skills.skill",
+          skillsId: "$skills._id",
           calcattributeName: "$calcattributes.calcAttributeName",
         },
         rolecount: {
           $push: {
+            roleId: "$resourcelist.detail._id",
             role: "$resourcelist.detail.resourceRole",
-            count: {
-              $sum: 1,
-            },
+            count: { $sum: 1 },
           },
         },
       },
