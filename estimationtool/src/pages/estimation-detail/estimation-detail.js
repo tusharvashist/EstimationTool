@@ -274,33 +274,6 @@ const EstimationDetail = () => {
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);
         setRequirementHeaderArray(estHeaderAttribute);
         setRequirementDataArray(dataResponse.requirementList);
-
-        var summaryHeader = [
-          {
-            headerName: "Tags",
-            field: "Title",
-            editable: false,
-            flex: 1,
-            width: 300,
-          },
-        ];
-        summaryHeader.push(...dataResponse.estHeaderAttribute);
-        summaryHeader.push({
-          headerName: "Total",
-          field: "Effort",
-          editable: false,
-          flex: 1,
-          width: 200,
-          cellClassName: "darkbg",
-        });
-        summaryHeader.push({
-          headerName: "Total Contingency",
-          field: "EffortContingency",
-          editable: false,
-          flex: 1,
-          width: 200,
-        });
-
         setTagHeaderArray([...dataResponse.tagSummaryHeader]);
         setTagDataArray([...dataResponse.tagSummaryData]);
 
@@ -595,6 +568,9 @@ const EstimationDetail = () => {
         <div className="addReqTableHeader">
           <h3>Summary</h3>
         </div>
+         <div className="addReqTableHeader">
+          <h4>Tag</h4>
+        </div>
         <div style={{ height: "100%", width: "100%" }}>
           {loaderComponent ? (
             loaderComponent
@@ -609,7 +585,10 @@ const EstimationDetail = () => {
               onRowEditStop={handleRowEditStop}
               onCellFocusOut={handleCellFocusOut}
               rows={tagDataArray}
-              columns={tagHeaderArray}
+                columns={tagHeaderArray}
+                components={{
+                  Toolbar: CustomToolbar,
+                }}
               getRowClassName={(params) =>
                 params.row.tag === "Total" && "darkbg"
               }
@@ -627,6 +606,9 @@ const EstimationDetail = () => {
           sx={{ height: "20px", width: "20px" }}
           className="estimation-detail-box"
         />
+            <div className="addReqTableHeader">
+          <h4>Calculated Attributes</h4>
+        </div>
         <div style={{ height: "100%", width: "100%" }}>
           {loaderComponent ? (
             loaderComponent
@@ -711,7 +693,6 @@ function CustomToolbar(props) {
     <GridToolbarContainer {...props}>
       <GridToolbarColumnsButton />
       <GridToolbarDensitySelector />
-      <GridToolbarExport />
     </GridToolbarContainer>
   );
 }

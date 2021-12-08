@@ -370,22 +370,30 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
 
   var EstimationAttributes = [];
   estHeaderRequirement.forEach((attribute, i) => {
-    var resourceCount = attribute._id;
-    if (contingency > 0) {
-      resourceCount["Total"] = calculateContingency(attribute.data, contingency) ;
-    } else {
-       resourceCount["Total"] = attribute.data;
-    }
 
-    if (unit == "Day") {
-      resourceCount["Total"] = resourceCount["Total"] * 8;
+    if (attribute._id !== undefined && attribute._id !== null) {
+      var resourceCount = attribute._id;
+      if (contingency > 0) {
+        resourceCount["Total"] = calculateContingency(attribute.data, contingency);
+      } else {
+        resourceCount["Total"] = attribute.data;
+      }
+
+
+
+      if (resourceCount["Total"] !== undefined && resourceCount["Total"] !== null) {
+        if (unit == "Day") {
+          resourceCount["Total"] = resourceCount["Total"] * 8;
+        }
+    
+        if (unit == "Month") {
+          resourceCount["Total"] = resourceCount["Total"] * 8 * 30;
+        }
       }
     
-    if (unit == "Month") {
-      resourceCount["Total"] = resourceCount["Total"] * 8 * 30;
-      }
-
-    EstimationAttributes.push(resourceCount);
+    
+      EstimationAttributes.push(resourceCount);
+    }
   });
 
 

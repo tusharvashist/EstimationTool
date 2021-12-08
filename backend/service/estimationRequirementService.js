@@ -242,8 +242,6 @@ module.exports.getRequirementData = async ({ id }) => {
 
     let response = { ...constant.requirementResponse };
 
-    
-    await RequirementRepository.getAttributesCalAttributesTotal(id);
     var contingency = await RequirementRepository.getContingency(id);
     var contingencySuffix = " Contingency";
     var estHeaderRequirement = await RequirementRepository.getEstHeaderRequirementWithContingency(id);
@@ -440,7 +438,7 @@ async function getTagSummaryHeader( estHeaderId ) {
             id: 1,
             code:1,
             editable: false,
-            width: 200 ,
+            width: 300 ,
           });
   
   
