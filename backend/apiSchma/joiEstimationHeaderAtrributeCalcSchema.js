@@ -8,7 +8,7 @@ module.exports.estimationHeaderAtrributeCalcSchema = Joi.object({
     operator: Joi.string().required(),
     unit: Joi.number().required(),
     description: Joi.string(),
-    tag: Joi.string().required,
+    tag: Joi.string().required(),
     formulaTags: Joi.array(),
     calcType: Joi.string()
 })

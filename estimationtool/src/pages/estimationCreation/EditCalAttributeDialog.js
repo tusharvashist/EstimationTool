@@ -122,12 +122,12 @@ const EditCalAttributeDialog = (props) => {
     >
       <Grid container>
         <Grid item md={12}>
-          <TextField
+          <label
             required
             error={showError && !calcAttributeName}
             autoFocus
             id="standard-basic"
-            label="Calculated Attribute Name"
+            // label="Calculated Attribute Name"
             className="full-width"
             onChange={handelCalAttributeName}
             variant="outlined"

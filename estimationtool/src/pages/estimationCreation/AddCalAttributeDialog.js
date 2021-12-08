@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
+
 import {
   Select,
   MenuItem,
@@ -37,7 +38,7 @@ const AddCalAttributeDialog = (props) => {
     description: " ",
     formulaTags: [""],
     calcType: "",
-    tag: {},
+    tag: { _id: "", name: "" },
   });
 
   useEffect(() => {
@@ -187,28 +188,45 @@ const AddCalAttributeDialog = (props) => {
             required
             error={showError && !calcAttributeName}
             autoFocus
-            id="standard-basic"
+            id="filled-basic"
             label="Calculated Attribute Name"
             className="full-width"
+            disabled={props.id}
             onChange={handelCalAttributeName}
-            variant="outlined"
+            variant="filled"
             value={calcAttributeName}
           />
         </Grid>
+        {/*  <Grid item md={12}>
+
+            <TextField
+              required
+              error={showError && !calcAttributeName}
+              autoFocus
+              id="standard-basic"
+              label="Calculated Attribute Name"
+              className="full-width"
+              onChange={handelCalAttributeName}
+              variant="outlined"
+              disabled={!props.id}
+              value={calcAttributeName}
+            />
+          </Grid> */}
+
         <Grid item xs={12}>
           {/* <InputLabel htmlFor="Calculation Type">Calculation Type</InputLabel> */}
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
             <Select
-              error={showError && !tag}
-              onChange={handleTag}
-              value={formData.tag.id}
-              label={formData.tag.name}
-              defaultValue={selectTagValue}
               required
+              onChange={handleTag}
+              value={formData.tag._id}
+              label={formData.tag.name}
+              error={showError && !formData.tag._id}
+              helperText={showError ? "Select one tag atleast" : ""}
             >
               {requirementTagArray.map((item) => (
-                <MenuItem key={item.name} value={item.id}>
+                <MenuItem key={item.name} value={item.id} >
                   {item.name}
                 </MenuItem>
               ))}
