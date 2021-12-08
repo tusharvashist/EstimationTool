@@ -167,27 +167,78 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
 };
 
 module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
-  if (updatedInfo.qty > 0) {
-    let estResourcePlanning = new EstResourcePlanning();
-    estResourcePlanning.defaultAdjusted = updatedInfo.defaultAdjusted;
-    estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
-    estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
-    estResourcePlanning.allocationPercent = 100;
-    return estResourcePlanning.save();
-  } else {
-    let deleted = await EstResourcePlanning.findOneAndDelete({
-      estResourceCountID: mongoose.Types.ObjectId(
-        updatedInfo.estResourceCountID
-      ),
-      resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
-    });
-    return deleted;
-  }
+  try {
+    if (updatedInfo.qty > 0) {
+      //Logic for Resource Count Data check
+      let rescount = await EstResourceCount.findById({
+        _id: mongoose.Types.ObjectId(updatedInfo.estResourceCountID),
+      });
 
-  // let result = await EstResourcePlanning.find({
-  //   estResourceCountID: mongoose.Types.ObjectId(updatedInfo.estResourceCountID),
-  // })
-  //   .populate("resourceRoleID")
-  //   .populate("estResourceCountID");
-  // return result;
+      //Get Total Resource Mix
+      let mixsum = await EstResourcePlanning.aggregate([
+        {
+          $match: {
+            estResourceCountID: mongoose.Types.ObjectId(
+              updatedInfo.estResourceCountID
+            ),
+          },
+        },
+        {
+          $group: {
+            _id: "$estResourceCountID",
+            sum: { $sum: 1 },
+          },
+        },
+      ]);
+
+      let maxcount = Math.ceil(rescount.resourceCount);
+
+      let totalresource = 0;
+      if (mixsum.length > 0) {
+        totalresource = mixsum[0].sum;
+      }
+      let mincount = rescount.resourceCount - totalresource;
+
+      if (totalresource >= maxcount) {
+        //Not To any Add Resource and throw exception
+        throw new Error(
+          "Resource Planning already done for this resource count data."
+        );
+      }
+
+      let estResourcePlanning = new EstResourcePlanning();
+      estResourcePlanning.defaultAdjusted = updatedInfo.defaultAdjusted;
+      estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
+      estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
+      //Then check for allocation percentage
+      switch (true) {
+        case mincount <= 0.25:
+          estResourcePlanning.allocationPercent = 25;
+          break;
+        case mincount <= 0.5:
+          estResourcePlanning.allocationPercent = 50;
+          break;
+        case mincount <= 0.75:
+          estResourcePlanning.allocationPercent = 75;
+          break;
+        default:
+          estResourcePlanning.allocationPercent = 100;
+      }
+      return estResourcePlanning.save();
+    } else {
+      let deleted = await EstResourcePlanning.findOneAndDelete({
+        estResourceCountID: mongoose.Types.ObjectId(
+          updatedInfo.estResourceCountID
+        ),
+        resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
+      });
+      return deleted;
+    }
+  } catch (err) {
+    console.log(
+      "something went wrong: service > Update Resource Planning",
+      err
+    );
+    throw new Error(err);
+  }
 };
