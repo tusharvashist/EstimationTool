@@ -14,7 +14,6 @@ const EstResourcePlanning = require("../database/models/estResourcePlanning");
 
 module.exports.generateResourceCount = async ({ estheaderid }) => {
   try {
-    //console.log("GetByID Starts");
     if (!mongoose.Types.ObjectId(estheaderid)) {
       throw new Error(constant.requirementMessage.INVALID_ID);
     }
@@ -32,16 +31,22 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         await ResourceCountRepository.getEstResourceCountByAttrId(
           mongoose.Types.ObjectId(element._id)
         );
-      console.log(estResourceCount);
+
       if (estResourceCount) {
-        estResourceCount.resourceCount = (
+        let resourceCount = (
           element.Total /
           (global.ResourceWeekHours * estimation.estTentativeTimeline)
         ).toFixed(2);
-        let estimationCalcAttr = EstResourceCount.findOneAndUpdate(
-          { _id: estResourceCount._id },
-          estResourceCount,
-          { new: true }
+
+        const filter = { _id: mongoose.Types.ObjectId(estResourceCount._id) };
+        const update = { resourceCount: resourceCount };
+
+        let updateresource = await EstResourceCount.findOneAndUpdate(
+          filter,
+          update,
+          {
+            new: true,
+          }
         );
       } else {
         let estResourceCount = new EstResourceCount();
@@ -51,7 +56,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           element.Total /
           (global.ResourceWeekHours * estimation.estTentativeTimeline)
         ).toFixed(2);
-        estResourceCount.save();
+        await estResourceCount.save();
       }
     });
 
@@ -60,17 +65,24 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         await ResourceCountRepository.getEstResourceCountByCalcAttrId(
           mongoose.Types.ObjectId(element._id)
         );
-      console.log(estResourceCount);
+
       if (estResourceCount) {
-        estResourceCount.resourceCount = (
+        let resourceCount = (
           element.Total /
           (global.ResourceWeekHours * estimation.estTentativeTimeline)
         ).toFixed(2);
-        let estimationCalcAttr = EstResourceCount.findOneAndUpdate(
-          { _id: estResourceCount._id },
-          estResourceCount,
-          { new: true }
+
+        const filter = { _id: mongoose.Types.ObjectId(estResourceCount._id) };
+        const update = { resourceCount: resourceCount };
+
+        let updateresource = await EstResourceCount.findOneAndUpdate(
+          filter,
+          update,
+          {
+            new: true,
+          }
         );
+        console.log(updateresource);
       } else {
         let estResourceCount = new EstResourceCount();
         estResourceCount.estCalcId = element._id;
@@ -79,7 +91,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           element.Total /
           (global.ResourceWeekHours * estimation.estTentativeTimeline)
         ).toFixed(2);
-        estResourceCount.save();
+        await estResourceCount.save();
       }
     });
 
@@ -244,4 +256,11 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
     );
     throw new Error(err);
   }
+};
+
+calculateResourceCount = async ({ estimation, total }) => {
+  return (
+    total /
+    (global.ResourceWeekHours * estimation.estTentativeTimeline)
+  ).toFixed(2);
 };
