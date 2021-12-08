@@ -296,10 +296,11 @@ const EstimationDetail = () => {
 
   const updateManualCallAttributeValue = async () => {
     var id = "";
-    var body = "";
+    var body = [];
+
     for (const [key, value] of Object.entries(editManualCallAtt)) {
       id = key;
-      body = { value: value.Effort.value };
+      body.push( {_id: key, value: value.Effort.value });
 
       console.log("Key value: ", id, body);
     }
@@ -316,6 +317,10 @@ const EstimationDetail = () => {
       });
     console.log("updateManualCallAttributeValue End....", editManualCallAtt);
   };
+function roundToTwo(value) {
+  
+  return Number(Number(value).toFixed(2));
+}
 
   const updateAttributeValue = async () => {
     setLoader(true);
@@ -328,7 +333,7 @@ const EstimationDetail = () => {
           ESTAttributeID: key1,
           ESTHeaderRequirementID: key,
           ESTHeaderID: headerData._id,
-          ESTData: value1.value,
+          ESTData: roundToTwo( value1.value),
         };
         console.log(estRequirementData);
         editedValueArray.push(estRequirementData);

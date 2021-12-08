@@ -75,24 +75,82 @@ module.exports.getUnpairedRequirementEstimation = async ( query) => {
     throw new Error(err);
   }
 };
+/*
+ var bulk = EstRequirementData.collection.initializeUnorderedBulkOp();
+    serviceDataArray.data.forEach(async (serviceData) => {
+      let estRequirementData = new EstRequirementData({ ...serviceData });
+      let result = bulk
+        .find({
+          ESTAttributeID: estRequirementData.ESTAttributeID,
+          ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
+        })
+        .upsert()
+        .updateOne(
+          {
+            $set: {
+              ESTAttributeID: estRequirementData.ESTAttributeID,
+              ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
+              ESTData: estRequirementData.ESTData,
+            },
+          },
+          { upsert: true, new: true }
+      );
+      estHeader = serviceData.ESTHeaderID;
+    });
 
+    const result = await bulk.execute();
+    if (estHeader.length !== 0) {
+      //Update EstHeader for UpdatedBy
+      const estHeaderModel = await EstHeaderModel.findById({
+        _id: estHeader,
+      });
+      if (estHeaderModel.length == 0) {
+        estHeaderModel.updatedBy = global.loginId;
+        estHeaderModel.save();
+      }
+    }
+     */
 
 module.exports.updateManualCallAttribute = async ( id, updateInfo ) => {
   try {
 
-    if (!mongoose.Types.ObjectId(id)) {
-      throw new Error(constant.requirementMessage.INVALID_ID);
-    }
+    // if (!mongoose.Types.ObjectId(id)) {
+    //   throw new Error(constant.requirementMessage.INVALID_ID);
+    // }
+    var bulk = EstimationHeaderAttributeCalc.collection.initializeUnorderedBulkOp();
+    updateInfo.forEach(async (serviceData) => {
+      let manualCallAttribute = new EstimationHeaderAttributeCalc({ ...serviceData });
+      let result = bulk
+        .find({
+          _id: manualCallAttribute._id,
+        })
+        .upsert()
+        .updateOne(
+          {
+            $set: {
+              value: manualCallAttribute.value,
+            },
+          },
+          {
+            upsert: true,
+            new: true
+          });
 
-  let requirement = await EstimationHeaderAttributeCalc.findOneAndUpdate(
-          { _id: id },
-          updateInfo,
-          { new: true }
-        );
-        if (!requirement) {
-          throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
-        }
-    return formatMongoData(requirement);
+        });
+
+
+      const result = await bulk.execute();
+  // let requirement = await EstimationHeaderAttributeCalc.findOneAndUpdate(
+  //         { _id: id },
+  //         updateInfo,
+  //         { new: true }
+  //       );
+  //       if (!requirement) {
+  //         throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+  //       }
+    
+    
+    return formatMongoData(result);
     } catch (err) {
     ////console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
@@ -229,6 +287,7 @@ module.exports.getById = async ({ id }) => {
     }
 
     let response = { ...constant.requirementResponse };
+    
     //2
       response.requirementType = await RequirementRepository.getTypes();
     //3
@@ -261,6 +320,9 @@ module.exports.getRequirementData = async ({ id }) => {
 
     let response = { ...constant.requirementResponse };
     var contingency = await RequirementRepository.getContingency(id);
+
+    //var callAttribute = await RequirementRepository.getAttributesCalAttributesTotal(id, contingency);
+   // console.log("CallAttribute: ",callAttribute);
     var contingencySuffix = " Contingency";
     var estHeaderRequirement = await RequirementRepository.getEstHeaderRequirementWithContingency(id);
     if (estHeaderRequirement.length != 0) {
@@ -350,7 +412,9 @@ async function getRequirementList(estHeaderRequirement ,contingency ,contingency
    
   return arrayRequirement;
 }
-
+function roundToTwo(value) {
+  return value.toFixed(2);
+}
 async function getTagSummaryHeader( estHeaderId ) {
 
   var contingency = await RequirementRepository.getContingency(estHeaderId);
@@ -371,7 +435,7 @@ async function getTagSummaryHeader( estHeaderId ) {
    estHeaderAttribute.push({
             field: "tag",
             description: "",
-            headerName: "Tag",
+            headerName: "",
             id: 1,
             code:1,
             editable: false,
