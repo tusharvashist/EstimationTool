@@ -199,8 +199,8 @@ const ResourceCountMatrix = (props) => {
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
                 <DataGrid
-                  // rows={resouceCountData}
-                  rows={[]}
+                  rows={resouceCountData}
+                  // rows={[]}
                   columns={getColumns({ onChangeSelect, technologySkills })}
                   pageSize={5}
                   onCellClick={handleCellClick}
