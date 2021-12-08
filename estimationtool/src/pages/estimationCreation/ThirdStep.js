@@ -209,7 +209,7 @@ const ThirdStep = (props) => {
     let filterArray = [];
     let arry = data.formulaTags.map((item) => {
       let ob = {
-        _id: item.id,
+        _id: item.id || item._id,
         name: item.name,
       };
       filterArray.push(ob);
@@ -256,28 +256,28 @@ const ThirdStep = (props) => {
   // while editing the comment box and unit box
   const onChangeField =
     ({ data }) =>
-    ({ target }) => {
-      setAttributes(
-        attributes.map((obj) => {
+      ({ target }) => {
+        setAttributes(
+          attributes.map((obj) => {
+            if (obj._id === data._id) {
+              const newobj = { ...obj, [target.name]: target.value };
+              return newobj;
+            } else {
+              return obj;
+            }
+          })
+        );
+        const newData = attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        })
-      );
-      const newData = attributes.map((obj) => {
-        if (obj._id === data._id) {
-          const newobj = { ...obj, [target.name]: target.value };
-          return newobj;
-        } else {
-          return obj;
-        }
-      });
-      setAttributes(newData);
-      updateStore(newData);
-    };
+        });
+        setAttributes(newData);
+        updateStore(newData);
+      };
 
   // while check or uncheck checkbox
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
@@ -403,7 +403,7 @@ const ThirdStep = (props) => {
                                   symbolsArr.includes(evt.key) &&
                                   evt.preventDefault()
                                 }
-                                // pattern="\b([0-9]|[1-9][0-9])\b"
+                              // pattern="\b([0-9]|[1-9][0-9])\b"
                               />
 
                               <p className={classes.pof}>% of</p>
