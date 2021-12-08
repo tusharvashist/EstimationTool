@@ -180,7 +180,7 @@ export default function ClientDetails(props) {
             </Grid>
           </Grid>
           <Grid container alignItems="center">
-            <Grid item xs={7}>
+            <Grid item xs={6}>
               <Box sx={{ maxWidth: 200 }}>
                 <FormControl width="300px">
                   <InputLabel id="client-simple-select">
@@ -212,8 +212,9 @@ export default function ClientDetails(props) {
             /> */}
             <Grid
               item
-              style={{ textAlign: "right", paddingRight: "10px" }}
+              style={{ textAlign: "right" }}
               xs={3}
+              justifyContent="flex-end"
             >
               <Link
                 to={{
@@ -237,7 +238,12 @@ export default function ClientDetails(props) {
                 </Button>
               </Link>
             </Grid>
-            <Grid item xs={2}>
+            <Grid
+              item
+              xs={3}
+              justifyContent="flex-end"
+              style={{ textAlign: "right" }}
+            >
               <Link
                 to={{
                   pathname:
