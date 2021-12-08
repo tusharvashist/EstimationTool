@@ -329,8 +329,6 @@ module.exports.tagWiseRequirementList = async (
   }
 };
 
-<<<<<<< Updated upstream
-=======
 module.exports.getCalculativeAttributes = async (estHeaderId, contingency, contingencySuffix) => {
   try {
     var tagsTotal = await getTagsTotal(estHeaderId, contingency, contingencySuffix);
@@ -461,7 +459,6 @@ async function getTagsTotal(estHeaderId, contingency, contingencySuffix) {
 
 
  
->>>>>>> Stashed changes
 module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   let estimations = await EstHeaderModel.findById({
     _id: estHeaderId,
