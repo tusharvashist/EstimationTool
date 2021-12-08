@@ -1,20 +1,16 @@
 import React from "react";
 import "./RoleCount.css";
 
-const RoleCount = (props) => {
-  console.log("props",props)
+const RoleCount = ({ data: { rolecount = [] } = {} }) => {
+ // console.log("props", props);
 
   return (
     <React.Fragment>
       <div className="role">
-{/*         
-        <p>
-        {props.count.map(item => (
-           <span id={item._id}>{item.count} {item.skill}, </span>
-        )
-
-        )}
-        </p> */}
+        {rolecount.reduce((acc, value) => {
+          console.log("acc, value", acc, value);
+          return acc + value.count + " " + (value.role || "Lead") + "/ ";
+        }, "")}
       </div>
     </React.Fragment>
   );

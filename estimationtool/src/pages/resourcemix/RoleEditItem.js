@@ -9,7 +9,7 @@ const RoleEditItem = (props) => {
 
   return (
     <div className="roleitem">
-      {props.count.map((item) => (
+      {/* {props.count.map((item) => (
         <div className="roleitem_list">
           <p>{item.skill}</p>
           <div className="optionbtn">
@@ -18,7 +18,7 @@ const RoleEditItem = (props) => {
             <button onClick={handleDecrementCount}>-</button>
           </div>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 };
