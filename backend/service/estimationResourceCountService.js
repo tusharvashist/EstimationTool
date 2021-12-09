@@ -173,6 +173,14 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
       },
     },
     {
+      $lookup: {
+        from: "estresourceplannings",
+        localField: "estCalcId",
+        foreignField: "estCalcId",
+        as: "resourcelist",
+      },
+    },
+    {
       $unwind: {
         path: "$resourcelist",
         preserveNullAndEmptyArrays: true,
