@@ -10,8 +10,11 @@ import {
 } from "../estimation-detail/header-element";
 import { DataGrid } from "@material-ui/data-grid";
 import ResourceMixService from "./ResourceMix.service";
+import styleClasses from "./resourcemix.module.css";
+import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 
 const RequirementMix = () => {
+  const classes = useTableStyle();
   const location = useLocation();
   const estimationId = location.state.estimationHeaderId;
   const clientDetails = location.state.clientInfo;
@@ -21,6 +24,7 @@ const RequirementMix = () => {
   const [loaderComponent, setLoader] = useLoader();
 
   const [resourceMixList, setResourceMixList] = useState([]);
+  const [totalMargin, setTotalMargin] = useState({});
 
   useEffect(() => {
     getAllResourceMixData(estimationId);
@@ -39,8 +43,13 @@ const RequirementMix = () => {
             price: el.pricecal,
           };
         });
-        console.log(objArr);
         setResourceMixList(objArr);
+        setTotalMargin({
+          cost: res.data.body.total.cost,
+          price: res.data.body.total.price,
+          margin: res.data.body.margin,
+          marginPercent: res.data.body.marginPercent,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -85,8 +94,7 @@ const RequirementMix = () => {
       width: 160,
     },
   ];
-
-  console.log(resourceMixList);
+  console.log(totalMargin);
 
   return (
     <div className="estimation-detail-cover">
@@ -120,18 +128,32 @@ const RequirementMix = () => {
         {loaderComponent ? (
           loaderComponent
         ) : (
-          <div style={{ height: 400, width: "100%" }}>
-            <DataGrid
-              rows={resourceMixList}
-              columns={columns}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              disableSelectionOnClick
-              // components={{
-              //   NoRowsOverlay: NNoRowOverlay,
-              // }}
-            />
-          </div>
+          <>
+            <div style={{ height: 400, width: "100%" }}>
+              <DataGrid
+                rows={resourceMixList}
+                columns={columns}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                disableSelectionOnClick
+                // components={{
+                //   NoRowsOverlay: NNoRowOverlay,
+                // }}
+              />
+            </div>
+            <div className={styleClasses.totalcontainer}>
+              <div className={styleClasses.total_item}>
+                Total: <span>{totalMargin.cost}</span>
+                <span>{totalMargin.price}</span>
+              </div>
+              <div className={styleClasses.total_item}>
+                Margin = Price - Cost: <span>{totalMargin.margin}</span>
+              </div>
+              <div className={styleClasses.total_item}>
+                Margin %: <span>{totalMargin.marginPercent}</span>
+              </div>
+            </div>
+          </>
         )}
       </BorderedContainer>
     </div>

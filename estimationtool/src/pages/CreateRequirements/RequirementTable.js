@@ -48,7 +48,7 @@ export const RequirementTable = (props) => {
     useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
-  const [available, setAvailable] = useState([]);
+  const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
   //const [requirementTypeArray, setRequirementTypeArray] = useState([]);
 
   useEffect(() => {

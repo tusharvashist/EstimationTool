@@ -24,12 +24,13 @@ import {
   GridToolbarDensitySelector,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { makeStyles, createStyles } from "@mui/styles";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import Deletedailog from "./delete-dailog";
+import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 
 const EstimationDetail = () => {
+  const classes = useTableStyle();
   const location = useLocation();
   const estimationId = location.state.estId;
   const [clientDetails, setClientDetails] = useState({
@@ -189,7 +190,18 @@ const EstimationDetail = () => {
       setTimeout(() => {
         console.log(id);
         setSelectedDelete(id.row);
-        var msg = 'Are you sure to delete "' + id.row.Requirement + '" ?';
+        var msg = (
+          <center>
+            <p>
+              Do you want to remove this requirement from estimation?
+              <br />
+              <em>
+                Note: You can import this requiremnet agin from project
+                requirements
+              </em>
+            </p>
+          </center>
+        );
         setDeleteMSG(msg);
         setIsOpenDailog(true);
         // var seletedRow = requirementDataArray.filter((data) => data.action === id);
@@ -300,7 +312,7 @@ const EstimationDetail = () => {
 
     for (const [key, value] of Object.entries(editManualCallAtt)) {
       id = key;
-      body.push( {_id: key, value: value.Effort.value });
+      body.push({ _id: key, value: value.Effort.value });
 
       console.log("Key value: ", id, body);
     }
@@ -317,10 +329,9 @@ const EstimationDetail = () => {
       });
     console.log("updateManualCallAttributeValue End....", editManualCallAtt);
   };
-function roundToTwo(value) {
-  
-  return Number(Number(value).toFixed(2));
-}
+  function roundToTwo(value) {
+    return Number(Number(value).toFixed(2));
+  }
 
   const updateAttributeValue = async () => {
     setLoader(true);
@@ -333,7 +344,7 @@ function roundToTwo(value) {
           ESTAttributeID: key1,
           ESTHeaderRequirementID: key,
           ESTHeaderID: headerData._id,
-          ESTData: roundToTwo( value1.value),
+          ESTData: roundToTwo(value1.value),
         };
         console.log(estRequirementData);
         editedValueArray.push(estRequirementData);
@@ -400,24 +411,6 @@ function roundToTwo(value) {
     }
   };
 
-  const useStyles = makeStyles((theme) =>
-    createStyles({
-      root: {
-        "& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders": {
-          backgroundColor: "rgb(229, 235, 247) !important",
-          fontWeight: "500",
-        },
-        "& .MuiDataGrid-columnHeaderWrapper": {
-          backgroundColor: "rgb(229, 235, 247)",
-        },
-      },
-      dataGrid: {
-        width: "100%",
-      },
-    })
-  );
-  const classes = useStyles();
-
   ///============== JS- Resource Count Pop up and table - END ==============///
 
   const handleRowEditStart = (params, event) => {
@@ -458,7 +451,7 @@ function roundToTwo(value) {
           isOpen={isOpenDailog}
           openF={openFun}
           closeF={closeDeletePopup}
-          title="Delete Requirement"
+          title="Remove Requirement"
           message={deleteMSG}
           row={selectedDelete}
           okAction={deleteRow}
@@ -558,8 +551,12 @@ function roundToTwo(value) {
                 className={`${classes.root} ${classes.dataGrid}`}
                 onCellFocusOut={handleCellFocusOut}
                 rows={requirementDataArray}
-                columns={requirementHeaderArray}
+                columns={requirementHeaderArray.map((column) => ({
+                  ...column,
+                  sortable: false,
+                }))}
                 editRowsModel={editRowsModel}
+                sort
                 editMode="row"
                 onRowEditStart={() => {
                   console.log("Start....", editRowsModel);
@@ -598,7 +595,10 @@ function roundToTwo(value) {
               onRowEditStop={handleRowEditStop}
               onCellFocusOut={handleCellFocusOut}
               rows={tagDataArray}
-              columns={tagHeaderArray}
+              columns={tagHeaderArray.map((column) => ({
+                ...column,
+                sortable: false,
+              }))}
               components={{
                 Toolbar: CustomToolbar,
               }}
