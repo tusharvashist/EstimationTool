@@ -4,9 +4,10 @@ import Header from "../../shared/layout/Header/Header";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 export const EstimationHeader = (props) => {
+  console.log(props.data);
   return (
     <>
-      <Grid container justify="space-between" alignItems="center">
+      <Grid container justify="flex-start" alignItems="center">
         <Grid item xs={12} sm={4}>
           <Header
             iconname="estimation"
@@ -28,11 +29,20 @@ export const EstimationHeader = (props) => {
             name={props.data.effortUnit}
           />
         </Grid>
-        <Grid item xs={12} sm={3}>
+        <Grid item xs={12} sm={4}>
           <Header
             iconname="contingency"
-            title="Contingency"
+            title="Contingency Percentage"
             name={`${props.data.contingency}%`}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Header
+            iconname="timeline"
+            title="Tentative Timeline"
+            name={`${props.data.estTentativeTimeline} week${
+              props.data.estTentativeTimeline > 1 ? "s" : ""
+            }`}
           />
         </Grid>
       </Grid>
