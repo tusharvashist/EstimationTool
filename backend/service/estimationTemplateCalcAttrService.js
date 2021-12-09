@@ -19,10 +19,6 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
     });
     let result = await estimationTemplateCalcAttr.save();
 
-    // const client = await Client.findById({ _id: project.client })
-    // client.projects.push(project);
-    // await client.save();
-
     return formatMongoData(result);
   } catch (err) {
     console.log(
@@ -32,49 +28,6 @@ module.exports.createEstimationTemplateCalcAttr = async (serviceData) => {
     throw new Error(err);
   }
 };
-
-//-------------------------
-// module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => {
-//     try {
-//         let estAtt = await EstimationAttribute.aggregate().addFields({ selected: false });
-//         if (estheaderid) {
-//             let estSelAtt = await EstimationHeaderAttributes.find({ estHeaderId: estheaderid });
-//             var index = 0;
-//             estAtt.forEach(element => {
-//                 estSelAtt.forEach(estSelAttElement => {
-//                     if (String(estSelAttElement.estAttributeId) == String(element._id)) {
-//                         estAtt[index].selected = true;
-//                     }
-//                 });
-//                 index = index + 1;
-//             });
-//         }
-
-//         if (esttype) {
-//             let estSelAtt = await EstimationTemplateAttribute.find({ estTypeId: esttype });
-//             var index = 0;
-//             estAtt.forEach(element => {
-//                 estSelAtt.forEach(estSelAttElement => {
-//                     if (String(estSelAttElement.estAttrId) == String(element._id)) {
-//                         estAtt[index].selected = true;
-//                     }
-//                 });
-//                 index = index + 1;
-//             });
-//         }
-//         return (estAtt);
-//         // var est = ObjectID(esttype);
-//         // console.log(est);
-//         // let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
-//         // console.log(estSelAtt);
-
-//     } catch (err) {
-//         console.log("something went wrong: service > Get All Estimation Attribute Service ", err);
-//         throw new Error(err)
-//     }
-// }
-
-//-----------------------------
 
 module.exports.getAllEstimationTemplateCalcAttr = async ({
   esttype,

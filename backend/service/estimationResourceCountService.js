@@ -22,6 +22,18 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       await RequirementRepository.getAttributesCalAttributesTotal(estheaderid);
 
     //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
+    // let rescountList = await EstResourceCount.find({
+    //   estHeaderId: estheaderid,
+    // });
+    // let ids = "";
+    // rescountList.forEach(async (element) => {
+    //   ids = ids + "," + element.estAttributeId;
+    // });
+    // if (ids) {
+    //   let deleteall = await EstResourceCount.remove({
+    //     estAttributeId: { $nin: [ids], estHeaderId: estheaderid },
+    //   });
+    // }
     console.log(estHeaderRequirement);
     let estimation = await EstimationHeader.findById(estheaderid);
 

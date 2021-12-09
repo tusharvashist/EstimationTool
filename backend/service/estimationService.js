@@ -291,16 +291,6 @@ module.exports.estimationHeaderAtrributeDelete = async ({ id }) => {
 //============================EstimationHeaderAtrributeCalc=======================================================================
 module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
   try {
-    // let estimationHeaderAtrributeCalc = new EstimationHeaderAtrributeCalc({ ...serviceData })
-    // console.log(">>>>>estimationHeaderAtrributeCalc>>>", estimationHeaderAtrributeCalc)
-    // let findRecord = await EstimationHeaderAtrributeCalc.find({ estHeaderId: estimationHeaderAtrributeCalc.estHeaderId });
-    // if (findRecord.length != 0) {
-    //   throw new Error(constant.estimationHeaderAtrributeCalcMessage.DUPLICATE_estimationHeaderAtrributeCalc);
-
-    // }
-    // let result = await estimationHeaderAtrributeCalc.save();
-    // return formatMongoData(result)
-
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
@@ -311,6 +301,22 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
         estimation.updatedBy = global.loginId;
         estimation.save();
       }
+      //Delete only which got unselected next save
+      let allcalc = await EstimationHeaderAtrributeCalc.find({
+        estHeaderId: serviceData[0].estHeaderId,
+      });
+
+      allcalc.forEach(async (element) => {
+        let checkexists = serviceData.filter(
+          (x) => x.estCalcId == element.estCalcId
+        );
+        if (checkexists.length == 0) {
+          let resultdelete = await EstimationHeaderAtrributeCalc.deleteOne({
+            estHeaderId: serviceData[0].estHeaderId,
+            estCalcId: element.estCalcId,
+          });
+        }
+      });
       // let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({
       //   estHeaderId: serviceData[0].estHeaderId,
       // });
@@ -349,29 +355,19 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
           );
       });
 
-      const result = await bulk.execute();
-
-      return result;
+      return await bulk.execute();
     } else
       throw new Error(
         constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_ERROR
       );
   } catch (err) {
-    // if (serviceData) {
-    //   let resultdelete = await EstimationHeaderAtrribute.deleteMany({ estHeaderId: serviceData[0].estHeaderId });
-    //   let result = await EstimationHeaderAtrribute.insertMany(serviceData);
-
-    //   return formatMongoData(result)
-    // }
-    // else
-    // throw new Error(constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR);
-    //}
-    //------
     console.log(
       "something went wrong: service 12121`22> createEstimation ",
       err
     );
-    throw new Error(err);
+    throw new Error(
+      constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR
+    );
   }
 };
 
