@@ -84,7 +84,7 @@ module.exports.estimationDelete = async ({ id }) => {
 
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
-    let estimations = await EstimationHeader.find( {isDeleted: false})
+    let estimations = await EstimationHeader.find({ isDeleted: false })
       //TODO: Please do not remove below liine , will implement this when implement permission based things
       //.or([{createdBy: global.loginId}, {updatedBy: global.loginId }])
       .populate({
@@ -314,11 +314,35 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
         estimation.updatedBy = global.loginId;
         estimation.save();
       }
-      let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({
-        estHeaderId: serviceData[0].estHeaderId,
+      // let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({
+      //   estHeaderId: serviceData[0].estHeaderId,
+      // });
+      // let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
+
+
+      //check data based on est header id and calc id , if found- then update , else insert  
+
+
+      var bulk = EstimationHeaderAtrributeCalc.collection.initializeUnorderedBulkOp();
+      serviceData.forEach(async (element) => {
+        let estRequirementData = new EstimationHeaderAtrributeCalc({ ...element });
+        let result = bulk
+          .find({
+            estHeaderId: serviceData[0].estHeaderId,
+            estCalcId: element.estCalcId,
+          })
+          .upsert()
+          .updateOne(
+            {
+              $set: estRequirementData
+
+            },
+            { upsert: true, new: true }
+          );
+
       });
-      let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
-      return formatMongoData(result);
+
+      return "";
     } else
       throw new Error(
         constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_ERROR
