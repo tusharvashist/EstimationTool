@@ -189,13 +189,13 @@ module.exports.getContingency = async (estHeaderId) => {
 module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
   try {
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
-   // console.log(estimations);
+    // console.log(estimations);
     //if (estimations.length != 0) {
     var requirementData = await requirementDataForEstHeader(estHeaderId);
     //}
-  //  console.log("requirement: ", requirementData);
+    //  console.log("requirement: ", requirementData);
     requirementData.forEach((requirementElement) => {
-   //   console.log("--------------");
+      //   console.log("--------------");
       // console.log("---",requirementElement);
       requirementElement.estRequirementData.forEach((estRequirement) => {
         //   console.log("estRequirementData: ",estRequirement);
@@ -203,11 +203,14 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
           estRequirement.ESTData !== undefined &&
           estRequirement.ESTData !== 0
         ) {
-          estRequirement["ESTDataContingency"] =roundToTwo(  estRequirement.ESTData + ((estRequirement.ESTData * estimations.contingency) / 100));
+          estRequirement["ESTDataContingency"] = roundToTwo(
+            estRequirement.ESTData +
+              (estRequirement.ESTData * estimations.contingency) / 100
+          );
         } else {
           estRequirement["ESTDataContingency"] = 0;
         }
-       // console.log(estRequirement);
+        // console.log(estRequirement);
       });
     });
     return requirementData;
@@ -217,7 +220,7 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
   }
 };
 function calculateContingency(value, contingency) {
-  return (value + (value * contingency) / 100);
+  return value + (value * contingency) / 100;
 }
 
 module.exports.tagWiseRequirementList = async (
@@ -276,7 +279,9 @@ module.exports.tagWiseRequirementList = async (
               attributeTotal["total"] !== undefined &&
               attributeTotal["total"] !== null
             ) {
-              attributeTotal["total"] = roundToTwo(attributeTotal["total"] + tag.ESTData);
+              attributeTotal["total"] = roundToTwo(
+                attributeTotal["total"] + tag.ESTData
+              );
             } else {
               attributeTotal["total"] = roundToTwo(tag.ESTData);
             }
@@ -284,14 +289,15 @@ module.exports.tagWiseRequirementList = async (
             //total_Contingency
             if (contingency > 0) {
               tagObject[tag.ESTAttributeID._id + contingencySuffix] =
-               roundToTwo( calculateContingency(
-                  tagObject[tag.ESTAttributeID._id],
-                  contingency
-                ));
-              tagObject["total_Contingency"] = roundToTwo(calculateContingency(
-                tagObject["total"],
-                contingency
-              ));
+                roundToTwo(
+                  calculateContingency(
+                    tagObject[tag.ESTAttributeID._id],
+                    contingency
+                  )
+                );
+              tagObject["total_Contingency"] = roundToTwo(
+                calculateContingency(tagObject["total"], contingency)
+              );
             }
 
             if (
@@ -300,18 +306,19 @@ module.exports.tagWiseRequirementList = async (
               attributeTotal[tag.ESTAttributeID._id + contingencySuffix] !==
                 null
             ) {
-              attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =roundToTwo(
-                attributeTotal[tag.ESTAttributeID._id + contingencySuffix] +
-                calculateContingency(tag.ESTData, contingency));
+              attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
+                roundToTwo(
+                  attributeTotal[tag.ESTAttributeID._id + contingencySuffix] +
+                    calculateContingency(tag.ESTData, contingency)
+                );
             } else {
               attributeTotal[tag.ESTAttributeID._id + contingencySuffix] =
                 roundToTwo(calculateContingency(tag.ESTData, contingency));
             }
 
-            attributeTotal["total_Contingency"] = roundToTwo(calculateContingency(
-              attributeTotal["total"],
-              contingency
-            ));
+            attributeTotal["total_Contingency"] = roundToTwo(
+              calculateContingency(attributeTotal["total"], contingency)
+            );
           }
         });
 
@@ -332,34 +339,36 @@ module.exports.tagWiseRequirementList = async (
 module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
   try {
     var tagsTotal = await getTagsTotal(estHeaderId, contingency);
-    var estimationCalAtt = await getEstimationCalculativeAttributes(estHeaderId);
+    var estimationCalAtt = await getEstimationCalculativeAttributes(
+      estHeaderId
+    );
     var summaryCalculatedAttArray = [];
-     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
+    let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
     var contingency = estimations.contingency;
     estimationCalAtt.forEach((calAtt, i) => {
       if (calAtt.calcType === "percentage") {
-        var calculative = calAtt.calcAttributeName + " " + calAtt.unit + " % of ";
+        var calculative =
+          calAtt.calcAttributeName + " " + calAtt.unit + " % of ";
         var totalValue = 0;
         calAtt.formulaTags.forEach((formula, i) => {
           var coma = ",";
           if (i == calAtt.formulaTags.length - 1) {
             coma = "";
           }
-          calculative = calculative + " " + formula.name + coma
+          calculative = calculative + " " + formula.name + coma;
           tagsTotal.forEach((summaryTag, i) => {
             if (summaryTag.tag === formula.name) {
               if (summaryTag.total !== undefined && summaryTag.total !== null) {
                 totalValue = totalValue + summaryTag.total;
               }
-          }
-
-          })
+            }
+          });
         });
 
         totalValue = (totalValue * calAtt.unit) / 100;
-        var totalContingency = totalValue + ((totalValue * contingency) / 100);
-        totalValue =  roundToTwo(totalValue);
-        totalContingency =  roundToTwo(totalContingency);
+        var totalContingency = totalValue + (totalValue * contingency) / 100;
+        totalValue = roundToTwo(totalValue);
+        totalContingency = roundToTwo(totalContingency);
         var summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
@@ -370,11 +379,11 @@ module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
         summaryCalculatedAttArray.push(summaryCalculated);
       } else {
         var calculative = calAtt.calcAttributeName + "(Manual)";
-        var conti = ((calAtt.value * contingency) / 100);
+        var conti = (calAtt.value * contingency) / 100;
         var totalContingency = parseInt(calAtt.value) + conti;
-        
-        totalContingency =  roundToTwo(totalContingency);
-        
+
+        totalContingency = roundToTwo(totalContingency);
+
         var summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
@@ -383,93 +392,89 @@ module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
           Contingency: totalContingency,
         };
         summaryCalculatedAttArray.push(summaryCalculated);
-        
       }
     });
     return summaryCalculatedAttArray;
-    } catch (err) {
+  } catch (err) {
     //console.log("something went wrong: service > GetEstimation data", err);
     console.log(err.stack);
     throw new Error(err);
   }
+};
 
-}
-
- 
-
-
- async function getEstimationCalculativeAttributes(estHeaderId){
-
+async function getEstimationCalculativeAttributes(estHeaderId) {
   let estHeaderRequirement = await EstimationHeaderAttributeCalc.aggregate([
     {
       $match: {
-        estHeaderId: ObjectId(estHeaderId)
-      }
+        estHeaderId: ObjectId(estHeaderId),
+      },
     },
     {
       $lookup: {
-        from: 'requirementtags',
-        localField: 'formulaTags',
-        foreignField: '_id',
-        as: 'formulaTags'
-      }
-    }
+        from: "requirementtags",
+        localField: "formulaTags",
+        foreignField: "_id",
+        as: "formulaTags",
+      },
+    },
   ]);
 
   return estHeaderRequirement;
 }
 
-
 async function getTagsTotal(estHeaderId, contingency) {
-  try{
-   var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(estHeaderId);
-   var tagSummaryDataArray = [];
-   var attributeTotal = { id: 1, tag: "Total", };
-    
-  tagWiseRequirement.forEach((tags, i) => {
-     if(tags._id !== undefined && tags._id !== null){
-    var tagObject = {
-      id: tags._id._id,
-      tag: tags._id.name,
-    };
-    tags.estRequirementData.forEach((tag, i) => {
-      if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
-       
-        if (tagObject["total"] !== undefined && tagObject["total"] !== null) {
-          tagObject["total"] = tagObject["total"] + tag.ESTData;
-        } else {
-          tagObject["total"] = tag.ESTData;
-        }
+  try {
+    var tagWiseRequirement = await queryTagWiseRequirementForEstHeader(
+      estHeaderId
+    );
+    var tagSummaryDataArray = [];
+    var attributeTotal = { id: 1, tag: "Total" };
 
-        if (contingency > 0) {
-          tagObject["total_Contingency"] = calculateContingency(tagObject["total"], contingency);
-        }
+    tagWiseRequirement.forEach((tags, i) => {
+      if (tags._id !== undefined && tags._id !== null) {
+        var tagObject = {
+          id: tags._id._id,
+          tag: tags._id.name,
+        };
+        tags.estRequirementData.forEach((tag, i) => {
+          if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
+            if (
+              tagObject["total"] !== undefined &&
+              tagObject["total"] !== null
+            ) {
+              tagObject["total"] = tagObject["total"] + tag.ESTData;
+            } else {
+              tagObject["total"] = tag.ESTData;
+            }
 
+            if (contingency > 0) {
+              tagObject["total_Contingency"] = calculateContingency(
+                tagObject["total"],
+                contingency
+              );
+            }
+          }
+        });
+
+        tagSummaryDataArray.push(tagObject);
       }
     });
-       
- 
-    tagSummaryDataArray.push(tagObject);
-  }
-      
-    });
-  
-  tagSummaryDataArray.push(attributeTotal);
-  
-  return tagSummaryDataArray;
- } catch (err) {
+
+    tagSummaryDataArray.push(attributeTotal);
+
+    return tagSummaryDataArray;
+  } catch (err) {
     //console.log("something went wrong: service > GetEstimation data", err);
     console.log(err.stack);
     throw new Error(err);
   }
- }
+}
 
-
-//Resource Count 
-  //       _id: "618b8f4b6259f87257bc2201",
-  //       calcAttribute: " ",
-  //       calcAttributeName: "QA",
-  //       Total: 85,
+//Resource Count
+//       _id: "618b8f4b6259f87257bc2201",
+//       calcAttribute: " ",
+//       calcAttributeName: "QA",
+//       Total: 85,
 // function roundToTwo(value) {
 //    var multiplier = Math.pow(10, 2);
 
@@ -477,38 +482,40 @@ async function getTagsTotal(estHeaderId, contingency) {
 // }
 
 function roundToTwo(value) {
-  
   return Number(Number(value).toFixed(2));
 }
 
-async function getCalcAttrTotalResourceCount(estHeaderId, contingency){
+async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
   try {
     var tagsTotal = await getTagsTotal(estHeaderId, contingency);
-    var estimationCalAtt = await getEstimationCalculativeAttributes(estHeaderId);
+    var estimationCalAtt = await getEstimationCalculativeAttributes(
+      estHeaderId
+    );
     var summaryCalculatedAttArray = [];
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
     var contingency = estimations.contingency;
     var unit = estimations.effortUnit;
-   
+
     estimationCalAtt.forEach((calAtt, i) => {
       if (calAtt.calcType === "percentage") {
-
         var totalValue = 0;
         calAtt.formulaTags.forEach((formula, i) => {
-         
           tagsTotal.forEach((summaryTag, i) => {
             if (summaryTag.tag === formula.name) {
-              if (summaryTag.total !== undefined && summaryTag.total !== null && isNaN(summaryTag.total)) {
+              if (
+                summaryTag.total !== undefined &&
+                summaryTag.total !== null &&
+                isNaN(summaryTag.total)
+              ) {
                 totalValue = totalValue + summaryTag.total;
               }
-          }
-
-          })
+            }
+          });
         });
 
         totalValue = (totalValue * calAtt.unit) / 100;
-        var totalContingency = totalValue + ((totalValue * contingency) / 100);
-        totalValue =  roundToTwo(totalValue);
+        var totalContingency = totalValue + (totalValue * contingency) / 100;
+        totalValue = roundToTwo(totalValue);
         totalContingency = roundToTwo(totalContingency);
         if (isNaN(totalValue)) {
           totalValue = 0;
@@ -516,44 +523,42 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency){
         if (isNaN(totalContingency)) {
           totalContingency = 0;
         }
-        totalContingency =  unitWiseHours(unit, totalContingency);
+        totalContingency = unitWiseHours(unit, totalContingency);
         var summaryCalculated = {
-          id: calAtt._id,
+          _id: calAtt._id,
           calcType: calAtt.calcType,
-          calcAttribute:calAtt.calcAttribute,
-          calcAttributeName:calAtt.calcAttributeName,
+          calcAttribute: calAtt.calcAttribute,
+          calcAttributeName: calAtt.calcAttributeName,
           Total: totalContingency,
         };
         summaryCalculatedAttArray.push(summaryCalculated);
       } else {
-        var conti = ((calAtt.value * contingency) / 100);
+        var conti = (calAtt.value * contingency) / 100;
         var totalContingency = parseInt(calAtt.value) + conti;
         totalContingency = roundToTwo(totalContingency);
-         
+
         if (isNaN(totalContingency)) {
           totalContingency = 0;
         }
-        
-        totalContingency =  unitWiseHours(unit, totalContingency);
+
+        totalContingency = unitWiseHours(unit, totalContingency);
         var summaryCalculated = {
-          id: calAtt._id,
+          _id: calAtt._id,
           calcType: calAtt.calcType,
-          calcAttribute:calAtt.calcAttribute,
-          calcAttributeName:calAtt.calcAttributeName,
+          calcAttribute: calAtt.calcAttribute,
+          calcAttributeName: calAtt.calcAttributeName,
           Total: totalContingency,
         };
         summaryCalculatedAttArray.push(summaryCalculated);
-        
       }
     });
     return summaryCalculatedAttArray;
-    } catch (err) {
+  } catch (err) {
     console.log(err.stack);
     throw new Error(err);
   }
-
 }
- 
+
 module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   let estimations = await EstHeaderModel.findById({
     _id: estHeaderId,
@@ -661,12 +666,15 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
       EstimationAttributes.push(resourceCount);
     }
   });
- var EstimationCalcAttributes = await getCalcAttrTotalResourceCount(estHeaderId,contingency)
+  var EstimationCalcAttributes = await getCalcAttrTotalResourceCount(
+    estHeaderId,
+    contingency
+  );
 
   var resourceCount = {
     estHeaderId: estHeaderId,
     EstimationAttributes: EstimationAttributes,
-    EstimationCalcAttributes: EstimationCalcAttributes
+    EstimationCalcAttributes: EstimationCalcAttributes,
   };
 
   //     {
@@ -703,18 +711,18 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   return resourceCount;
 };
 
- function unitWiseHours(unit, value) {
+function unitWiseHours(unit, value) {
   var total = value;
   if (unit == "Day") {
-          total = value * 8;
-        }
+    total = value * 8;
+  }
 
-        if (unit == "Month") {
-          total = value * 8 * 30;
-        }
-  
+  if (unit == "Month") {
+    total = value * 8 * 30;
+  }
+
   return total;
-} 
+}
 
 module.exports.getTagSummary = async (estHeaderId) => {
   return requirementDataForEstHeader(estHeaderId);
