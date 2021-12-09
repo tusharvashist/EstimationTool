@@ -17,6 +17,7 @@ const estResourceCount = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "estimationCalcAttr",
     },
+    attributeName: String,
     techSkill: {
       type: Schema.Types.ObjectId,
       ref: "TechSkillMaster",

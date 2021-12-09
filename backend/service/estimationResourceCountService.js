@@ -21,6 +21,8 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     let estHeaderRequirement =
       await RequirementRepository.getAttributesCalAttributesTotal(estheaderid);
 
+    //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
+    console.log(estHeaderRequirement);
     let estimation = await EstimationHeader.findById(estheaderid);
 
     estHeaderRequirement.EstimationAttributes.forEach(async (element) => {
@@ -39,7 +41,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         ).toFixed(2);
 
         const filter = { _id: mongoose.Types.ObjectId(estResourceCount._id) };
-        const update = { resourceCount: resourceCount };
+        const update = {
+          resourceCount: resourceCount,
+          attributeName: element.attributeName,
+        };
 
         let updateresource = await EstResourceCount.findOneAndUpdate(
           filter,
@@ -52,6 +57,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         let estResourceCount = new EstResourceCount();
         estResourceCount.estAttributeId = element._id;
         estResourceCount.estHeaderId = estheaderid;
+        estResourceCount.attributeName = element.attributeName;
         estResourceCount.resourceCount = (
           element.Total /
           (global.ResourceWeekHours * estimation.estTentativeTimeline)
@@ -61,6 +67,9 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     });
 
     estHeaderRequirement.EstimationCalcAttributes.forEach(async (element) => {
+      if (element.Total == 0) {
+        return;
+      }
       let estResourceCount =
         await ResourceCountRepository.getEstResourceCountByCalcAttrId(
           mongoose.Types.ObjectId(element._id)
@@ -73,7 +82,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         ).toFixed(2);
 
         const filter = { _id: mongoose.Types.ObjectId(estResourceCount._id) };
-        const update = { resourceCount: resourceCount };
+        const update = {
+          resourceCount: resourceCount,
+          attributeName: element.calcAttributeName,
+        };
 
         let updateresource = await EstResourceCount.findOneAndUpdate(
           filter,
@@ -87,6 +99,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         let estResourceCount = new EstResourceCount();
         estResourceCount.estCalcId = element._id;
         estResourceCount.estHeaderId = estheaderid;
+        estResourceCount.attributeName = element.calcAttributeName;
         estResourceCount.resourceCount = (
           element.Total /
           (global.ResourceWeekHours * estimation.estTentativeTimeline)
@@ -109,22 +122,22 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
         estHeaderId: mongoose.Types.ObjectId(estheaderid),
       },
     },
-    {
-      $lookup: {
-        from: "estimationattributes",
-        localField: "estAttributeId",
-        foreignField: "_id",
-        as: "attributes",
-      },
-    },
-    {
-      $lookup: {
-        from: "estimationcalcattrs",
-        localField: "estCalcId",
-        foreignField: "_id",
-        as: "calcattributes",
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: "estimationattributes",
+    //     localField: "estAttributeId",
+    //     foreignField: "_id",
+    //     as: "attributes",
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: "estimationcalcattrs",
+    //     localField: "estCalcId",
+    //     foreignField: "_id",
+    //     as: "calcattributes",
+    //   },
+    // },
     {
       $lookup: {
         from: "techskillmasters",
@@ -133,18 +146,18 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
         as: "skills",
       },
     },
-    {
-      $unwind: {
-        path: "$attributes",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $unwind: {
-        path: "$attributesCalc",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
+    // {
+    //   $unwind: {
+    //     path: "$attributes",
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    // {
+    //   $unwind: {
+    //     path: "$attributesCalc",
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
     {
       $unwind: {
         path: "$skills",
@@ -154,7 +167,7 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     {
       $lookup: {
         from: "estresourceplannings",
-        localField: "attributes._id",
+        localField: "estAttributeId",
         foreignField: "estAttributeId",
         as: "resourcelist",
       },
@@ -179,18 +192,18 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
         preserveNullAndEmptyArrays: true,
       },
     },
-    {
-      $project: {
-        estHeaderId: 1,
-        estAttributeId: 1,
-        estCalcId: 1,
-        resourceCount: 1,
-        attributes: 1,
-        calcattributes: 1,
-        resourcelist: 1,
-        skills: 1,
-      },
-    },
+    // {
+    //   $project: {
+    //     estHeaderId: 1,
+    //     estAttributeId: 1,
+    //     estCalcId: 1,
+    //     resourceCount: 1,
+    //     attributes: 1,
+    //     calcattributes: 1,
+    //     resourcelist: 1,
+    //     skills: 1,
+    //   },
+    // },
     {
       $group: {
         _id: {
@@ -199,10 +212,9 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
           estAttributeId: "$estAttributeId",
           estHeaderId: "$estHeaderId",
           estCalcId: "$estCalcId",
-          attributeName: "$attributes.attributeName",
+          attributeName: "$attributeName",
           skills: "$skills.skill",
           skillsId: "$skills._id",
-          calcattributeName: "$calcattributes.calcAttributeName",
         },
         rolecount: {
           $push: {

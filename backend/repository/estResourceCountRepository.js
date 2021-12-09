@@ -9,9 +9,9 @@ module.exports.getEstResourceCountByAttrId = async (estAttributeId) => {
   });
 };
 
-module.exports.getEstResourceCountByCalcAttrId = async (estAttributeId) => {
+module.exports.getEstResourceCountByCalcAttrId = async (estcalcAttributeId) => {
   return EstResourceCount.findOne({
-    estCalcId: estAttributeId,
+    estCalcId: estcalcAttributeId,
   });
 };
 
