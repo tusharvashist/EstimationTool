@@ -7,6 +7,10 @@ const estimationHeaderAtrributeCalcSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'EstHeader'
     },
+    estCalcId: {
+        type: Schema.Types.ObjectId,
+        ref: 'estimationCalcAttr'
+    },// we get this when sel tag is true
     calcAttribute: String,
     calcAttributeName: String,
     isFormula: Boolean,

@@ -7,6 +7,7 @@ import {
   IoTodayOutline,
   IoCalculatorOutline,
 } from "react-icons/io5";
+import { RiTimeLine } from "react-icons/ri";
 import { VscNote, VscTypeHierarchy } from "react-icons/vsc";
 import { BsMenuAppFill, BsStopwatch, BsCalendar3 } from "react-icons/bs";
 import TextureOutlinedIcon from "@mui/icons-material/TextureOutlined";
@@ -55,6 +56,9 @@ const HeaderTiles = (props) => {
         break;
       case "contingency":
         return <MdQueryStats />;
+        break;
+      case "timeline":
+        return <RiTimeLine />;
         break;
       default:
         return <TextureOutlinedIcon />;
