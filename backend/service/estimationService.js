@@ -167,7 +167,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
-    console.log(".>>>>>>....>>>>>>>." + serviceData)
+    console.log(".>>>>>>....>>>>>>>." + serviceData);
     //Remove All Attributes from Estimation Header
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
       serviceData,
@@ -188,8 +188,6 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
         serviceData,
         (forceServerObjectId = true)
       );
-
-
 
       return formatMongoData(result);
     } else
@@ -306,9 +304,8 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
-
       );
-      console.log("hi this is service data of final step " + estimation)
+      console.log("hi this is service data of final step " + estimation);
       if (estimation) {
         estimation.estStep = "3";
         estimation.updatedBy = global.loginId;
@@ -319,30 +316,42 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
       // });
       // let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
 
+      //check data based on est header id and calc id , if found- then update , else insert
 
-      //check data based on est header id and calc id , if found- then update , else insert  
-
-
-      var bulk = EstimationHeaderAtrributeCalc.collection.initializeUnorderedBulkOp();
+      var bulk =
+        EstimationHeaderAtrributeCalc.collection.initializeUnorderedBulkOp();
       serviceData.forEach(async (element) => {
-        let estRequirementData = new EstimationHeaderAtrributeCalc({ ...element });
+        // let estRequirementData = new EstimationHeaderAtrributeCalc({
+        //   ...element,
+        // });
         let result = bulk
           .find({
-            estHeaderId: serviceData[0].estHeaderId,
-            estCalcId: element.estCalcId,
+            estHeaderId: mongoose.Types.ObjectId(serviceData[0].estHeaderId),
+            estCalcId: mongoose.Types.ObjectId(element.estCalcId),
           })
           .upsert()
           .updateOne(
             {
-              $set: estRequirementData
-
+              $set: {
+                isFormula: element.isFormula,
+                formula: element.formula,
+                tag: element.tag,
+                calcType: element.calcType,
+                formulaTags: element.formulaTags,
+                operator: element.operator,
+                unit: element.unit,
+                description: element.description,
+                value: element.value,
+                calcAttributeName: element.calcAttributeName,
+              },
             },
             { upsert: true, new: true }
           );
-
       });
 
-      return "";
+      const result = await bulk.execute();
+
+      return result;
     } else
       throw new Error(
         constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalc_ERROR

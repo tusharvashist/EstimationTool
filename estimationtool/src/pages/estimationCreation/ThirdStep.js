@@ -76,6 +76,7 @@ const ThirdStep = (props) => {
           formulaTags,
           tag,
           calcType,
+          _id,
         }) => ({
           estHeaderId: localStorage.estimationHeaderId,
           calcAttribute,
@@ -87,8 +88,8 @@ const ThirdStep = (props) => {
           description,
           formulaTags,
           tag,
-          calcType
-
+          calcType,
+          estCalcId: _id,
         })
       );
     dispatch(setCalcAttributeData(newList));

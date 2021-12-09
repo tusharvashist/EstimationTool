@@ -28,11 +28,12 @@ const RequirementMix = () => {
 
   useEffect(() => {
     getAllResourceMixData(estimationId);
-  }, [estimationId]);
+  }, [estimationId, resourceMixList, totalMargin]);
 
   const getAllResourceMixData = (estimationId) => {
     ResourceMixService.getResourceMixData("619e3ddb8c705cf78e273c02")
       .then((res) => {
+        console.log(res);
         let objArr = res.data.body.resourceMixData.map((el, i) => {
           return {
             id: i + 1,
@@ -42,7 +43,27 @@ const RequirementMix = () => {
             cost: el.costcal,
             price: el.pricecal,
           };
+          // if (!el.attributeSkill.calcAttributeName) {
+          //   return {
+          //     id: i + 1,
+          //     allocationPercent: el.resourceMix.allocationPercent,
+          //     resourceRole: el.resourceMix.role.resourceRole,
+          //     attributeName: el.attributeSkill.attributeName,
+          //     cost: el.costcal,
+          //     price: el.pricecal,
+          //   };
+          // } else {
+          //   return {
+          //     id: i + 1,
+          //     allocationPercent: el.resourceMix.allocationPercent,
+          //     resourceRole: el.resourceMix.role.resourceRole,
+          //     calcAttributeName: el.attributeSkill.calcAttributeName,
+          //     cost: el.costcal,
+          //     price: el.pricecal,
+          //   };
+          // }
         });
+        console.log(objArr);
         setResourceMixList(objArr);
         setTotalMargin({
           cost: res.data.body.total.cost,
@@ -94,7 +115,7 @@ const RequirementMix = () => {
       width: 160,
     },
   ];
-  console.log(totalMargin);
+  console.log(resourceMixList, totalMargin);
 
   return (
     <div className="estimation-detail-cover">
@@ -143,14 +164,24 @@ const RequirementMix = () => {
             </div>
             <div className={styleClasses.totalcontainer}>
               <div className={styleClasses.total_item}>
-                Total: <span>{totalMargin.cost}</span>
-                <span>{totalMargin.price}</span>
+                <h4>
+                  Total Cost: <span>{totalMargin.cost}</span>
+                </h4>
               </div>
               <div className={styleClasses.total_item}>
-                Margin = Price - Cost: <span>{totalMargin.margin}</span>
+                <h4>
+                  Total Price: <span>{totalMargin.cost}</span>
+                </h4>
               </div>
               <div className={styleClasses.total_item}>
-                Margin %: <span>{totalMargin.marginPercent}</span>
+                <h4>
+                  Margin = Price - Cost: <span>{totalMargin.margin}</span>
+                </h4>
+              </div>
+              <div className={styleClasses.total_item}>
+                <h4>
+                  Margin %: <span>{totalMargin.marginPercent}</span>
+                </h4>
               </div>
             </div>
           </>
