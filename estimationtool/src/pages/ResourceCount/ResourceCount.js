@@ -18,20 +18,16 @@ const ResourceCountMatrix = (props) => {
 
   const popupCount = () => {};
   const [technologySkills, setTechnolnogySkills] = useState();
-  const [selectedTechnology, setSelectedTechnology] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
   const [resouceCountData, setResouceCountData] = useState([]);
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
+  const [count, setCount] = useState({});
 
   useEffect(() => {
     // getTechnologySkill();
     // getResourceCountData(estimationHeaderId);
-    if (estimationHeaderId) {
-      getTechnologySkill();
-      getResourceCountData(estimationHeaderId);
-    }
   }, []);
 
   // Get All Technology Skills
@@ -55,41 +51,65 @@ const ResourceCountMatrix = (props) => {
       .catch((err) => {});
   };
 
+  // Get Resource Master Role Data
+
+  const getResourceMasterRoleData = () => {
+    ReourceCountService.getResourceMasterRole()
+      .then((res) => {
+        //Array:
+        // cost: 20
+        // count: 0
+        // isDeleted: false
+        // location: "india"
+        // price: 30
+        // resourceRole: "Sr Lead"
+        // techSkill: "frontend"
+        // _id: "61ae02114fdff5af9831741e
+        setRoleData(res.data.body);
+        let objArr = res.data.body.map((el) => {
+          return {
+            count: el.count,
+            resourceRole: el.resourceRole,
+            _id: el._id,
+          };
+        });
+        setCount(objArr);
+      })
+      .catch((err) => {});
+  };
+
   // Get All Resource Count Data
 
   const getResourceCountAllData = (estimationHeaderId) => {
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
         console.log("all Data getResourceCountAllData", res.data.body);
-        setResouceCountData(res.data.body.map(({rolecount, _id}) => {
-          return ({..._id,rolecount: [...rolecount] })
-        }));
+        setResouceCountData(
+          res.data.body.map(({ rolecount, _id }) => {
+            return { ..._id, rolecount: [...rolecount] };
+          })
+        );
+        res.data.body.map((el) => {
+          if (el.rolecount) {
+            //to be added after we get id from api
+          }
+        });
         // setRoleData(res.data.body)
         // setTechnolnogySkills(res.data.body);
       })
       .catch((err) => {});
   };
 
-  // Get Resource Master Role Data
-
-  const getResourceMasterRoleData = () => {
-    ReourceCountService.getResourceMasterRole()
-      .then((res) => {
-        console.log("Resource Master Role Data", res.data.body);
-        setRoleData(res.data.body);
-      })
-      .catch((err) => {});
-  };
-
-  //console.log("technologySkills",technologySkills)
+  console.log("resouceCountData", resouceCountData);
   const getColumns = ({ onChangeSelect, technologySkills }) => [
-    { headerName: "Resource Count",
-     field: "resourceCount",
+    {
+      headerName: "Resource Count",
+      field: "resourceCount",
       width: 180,
       valueFormatter: (params) => {
         // console.log("resource count params",params)
         const { id } = params,
-        {resourceCount} = id || {};
+          { resourceCount } = id || {};
         return resourceCount;
       },
     },
@@ -98,20 +118,19 @@ const ResourceCountMatrix = (props) => {
       field: "skill",
       width: 200,
       renderCell: (rowData) => {
-        console.log("Skills params", rowData)
+        console.log("Skills params", rowData);
         const { row } = rowData,
-        { calcAttributeName = "" } = row || {},
-        { attributeName = "" } = row || {};
-      return attributeName || calcAttributeName;
+          { calcAttributeName = "" } = row || {},
+          { attributeName = "" } = row || {};
+        return attributeName || calcAttributeName;
       },
-     
     },
     {
       headerName: "Technologies",
       field: "techskills",
       width: 200,
       renderCell: (rowdata) => {
-        console.log("rowdata technology",rowdata)
+        console.log("rowdata technology", rowdata);
         return (
           <Select
             style={{ width: "100%" }}
@@ -133,34 +152,22 @@ const ResourceCountMatrix = (props) => {
       field: "role",
       width: 300,
       renderCell: renderRole,
-      // valueFormatter: (params) => {
-      //   console.log("role params",params)
-      //   console.log("vresouceCountData", resouceCountData)
-
-      //    // const { row } = params,
-      //   //   { rolecount } = row,
-      //   // return arr.reduce((acc, value) => {
-      //   //   return acc + value.count +' '+ value.role +" / "
-      //   //   }, "")
-       
-      //   //   { role, count  } = rolecount || {};
-      //   // return count + role;
-      // },
     },
   ];
 
   function renderRole(params) {
-    console.log("renmderROle", params)
-     return <RoleCount data={params.row} masterData={roleData} />;
+    console.log("renmderROle", params);
+    return <RoleCount data={params.row} masterData={roleData} />;
   }
 
   function handleCellClick(param) {
+    console.log("param", param);
     if (param.field === "role" && !openEditCount) {
-      console.log("this");
-      setRowEditData(param.value);
+      console.log("roweditdata", param.value);
+
+      setRowEditData(param.row);
       setOpenEditCount(true);
     } else if (param.field === "role" && openEditCount) {
-      console.log("that");
       setOpenEditCount(false);
     }
   }
@@ -191,6 +198,10 @@ const ResourceCountMatrix = (props) => {
   ];
 
   const handleCountTable = () => {
+    if (estimationHeaderId) {
+      getTechnologySkill();
+      getResourceCountData(estimationHeaderId);
+    }
     if (!tableOpen) setTableOpen(true);
     if (tableOpen) setTableOpen(false);
   };
@@ -203,8 +214,8 @@ const ResourceCountMatrix = (props) => {
       _id: row._id,
       techSkill: techId,
       estAttributeId: row.estAttributeId || null,
-estCalcId : row.estCalcId ||null,
-estHeaderId: rowData.estHeaderId,
+      estCalcId: row.estCalcId || null,
+      estHeaderId: rowData.estHeaderId,
     };
 
     ReourceCountService.updateTechnology(req)
@@ -215,14 +226,14 @@ estHeaderId: rowData.estHeaderId,
       .catch((err) => {});
   };
 
-  console.log("resouceCountData",resouceCountData)
+  console.log("resouceCountData", resouceCountData);
   return (
     <div className="estimation-detail-cover">
       {tableOpen && (
         <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
             {openEditCount && (
-              <RoleEditCount rowEditData={rowEditData} count={roleData} />
+              <RoleEditCount rowEditData={rowEditData} masterData={roleData} />
             )}
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (

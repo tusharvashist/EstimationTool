@@ -4,10 +4,14 @@ import "./RoleCount.css";
 import RoleEditItem from "./RoleEditItem";
 
 const RoleEditCount = (props) => {
+  console.log("propsEdit ", props);
   return (
     <BorderedContainer className="rolelist parentrole">
       <div className="option">
-        <RoleEditItem rowEditData={props.rowEditData} count = {props.count}/>
+        <RoleEditItem
+          rowEditData={props.rowEditData}
+          masterData={props.masterData}
+        />
       </div>
     </BorderedContainer>
   );

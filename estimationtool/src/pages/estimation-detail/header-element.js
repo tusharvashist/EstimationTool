@@ -4,7 +4,6 @@ import Header from "../../shared/layout/Header/Header";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 export const EstimationHeader = (props) => {
-  console.log(props.data);
   return (
     <>
       <Grid container justify="flex-start" alignItems="center">
