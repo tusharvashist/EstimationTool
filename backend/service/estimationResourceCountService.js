@@ -167,7 +167,7 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     {
       $lookup: {
         from: "estresourceplannings",
-        localField: "attributes._id",
+        localField: "estAttributeId",
         foreignField: "estAttributeId",
         as: "resourcelist",
       },
