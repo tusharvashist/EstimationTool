@@ -17,7 +17,7 @@ import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 import EstimationDetail from "../../pages/estimation-detail/estimation-detail";
 import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
-import ResourceMix from "../../pages/ResourceMix/ResourceMix";
+import ResourceMix from "../../pages/resourcemix/ResourceMix";
 
 const EsContainer = withStyles((props) => {
   return {

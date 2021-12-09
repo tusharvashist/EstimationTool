@@ -59,6 +59,7 @@ const AddCalAttributeDialog = (props) => {
   // Set Edit Data
 
   const setEditData = () => {
+    getAllRequirementTags()
     if (props.id) {
       console.log("props", props)
 
@@ -70,7 +71,8 @@ const AddCalAttributeDialog = (props) => {
       setSelectTagValue(obj.tag.id)
       let objNew = { ...props.details };
       let filterArray = [];
-      let arry = objNew.formulaTags.flat().map(item => {
+      if (objNew.formulaTags) {
+      let arry =  objNew.formulaTags.map(item => {
         let ob = {
           id: item._id,
           name: item.name
@@ -79,6 +81,9 @@ const AddCalAttributeDialog = (props) => {
       });
 
       setMultiSelectTag(filterArray)
+      } else {
+        setMultiSelectTag([])
+      }
     }
   }
 
