@@ -241,8 +241,13 @@ const EstimationCreation = (props) => {
   };
 
   const getCalcAttributeRequestPayload = () => {
+    let arr = calcAttributeSave.data.map(item => {
+      return ({
+        ...item, tag: { _id: item.tag._id }
+      })
+    })
     return {
-      estattcalclist: calcAttributeSave.data,
+      estattcalclist: arr
     };
   };
 
@@ -440,7 +445,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
-                  // ref={secondChildRef}
+                // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (

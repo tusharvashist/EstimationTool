@@ -87,7 +87,8 @@ const ThirdStep = (props) => {
           description,
           formulaTags,
           tag,
-          calcType,
+          calcType
+
         })
       );
     dispatch(setCalcAttributeData(newList));
@@ -113,7 +114,7 @@ const ThirdStep = (props) => {
             calAttriValues[ob.calcAttributeName] = ob.selected;
             return {
               ...ob,
-              formulaTags: multiSelectFormatter(ob.formulaTags),
+              formulaTags: ob.formulaTags,
               name: ob.calcAttributeName,
               label: ob.calcAttributeName,
             };
@@ -167,6 +168,7 @@ const ThirdStep = (props) => {
         ...data,
         formulaTags: data.formulaTags.map((el) => el.id),
         tag: data.tag ? data.tag._id : "",
+
       };
       newObject.estTypeId = props.estimationTypeId;
       createCalcAttribute(newObject);
