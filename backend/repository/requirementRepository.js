@@ -488,7 +488,8 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency){
     var summaryCalculatedAttArray = [];
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
     var contingency = estimations.contingency;
-    
+    var unit = estimations.effortUnit;
+   
     estimationCalAtt.forEach((calAtt, i) => {
       if (calAtt.calcType === "percentage") {
 
@@ -515,7 +516,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency){
         if (isNaN(totalContingency)) {
           totalContingency = 0;
         }
-        
+        totalContingency =  unitWiseHours(unit, totalContingency);
         var summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
@@ -533,7 +534,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency){
           totalContingency = 0;
         }
         
-
+        totalContingency =  unitWiseHours(unit, totalContingency);
         var summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
@@ -701,6 +702,19 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
   console.log("ResourceCount :", resourceCount);
   return resourceCount;
 };
+
+ function unitWiseHours(unit, value) {
+  var total = value;
+  if (unit == "Day") {
+          total = value * 8;
+        }
+
+        if (unit == "Month") {
+          total = value * 8 * 30;
+        }
+  
+  return total;
+} 
 
 module.exports.getTagSummary = async (estHeaderId) => {
   return requirementDataForEstHeader(estHeaderId);
