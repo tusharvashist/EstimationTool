@@ -116,7 +116,7 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({
       let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({
         estHeaderId: ObjectId(estheaderid),
       })
-        //.populate("tag")
+        .populate("tag")
         .populate({
           path: "formulaTags",
         });
