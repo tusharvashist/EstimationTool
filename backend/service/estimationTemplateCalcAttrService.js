@@ -80,30 +80,30 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
     try {
         let estAttCalc = await EstimationCalcAttr.aggregate([
             {
-              $match: {
-                estTypeId:  ObjectId(esttype)
-              }
+                $match: {
+                    estTypeId: ObjectId(esttype)
+                }
             }, {
-              $lookup: {
-                from: 'requirementtags', 
-                localField: 'tag', 
-                foreignField: '_id', 
-                as: 'tag'
-              }
+                $lookup: {
+                    from: 'requirementtags',
+                    localField: 'tag',
+                    foreignField: '_id',
+                    as: 'tag'
+                }
             }, {
-              $unwind: {
-                path: '$tag', 
-                preserveNullAndEmptyArrays: true
-              }
+                $unwind: {
+                    path: '$tag',
+                    preserveNullAndEmptyArrays: true
+                }
             }, {
-              $lookup: {
-                from: 'requirementtags', 
-                localField: 'formulaTags', 
-                foreignField: '_id', 
-                as: 'formulaTags'
-              }
+                $lookup: {
+                    from: 'requirementtags',
+                    localField: 'formulaTags',
+                    foreignField: '_id',
+                    as: 'formulaTags'
+                }
             }
-          ]).addFields({ selected: false, value: "" });
+        ]).addFields({ selected: false, value: "" });
         if (estheaderid) {
             // //TODO formulaTags and tag is to be populated in estAttCalc in find
 
@@ -111,10 +111,12 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
                 path: 'formulaTags'
             });
 
+
+
             var index = 0;
             estAttCalc.forEach(element => {
                 estSelAtt.forEach(estSelAttElement => {
-                    if (String(estSelAttElement.calcAttributeName) == String(element.calcAttributeName)) {
+                    if (String(estSelAttElement.estCalcId) == String(element._id)) {
                         element.selected = true;
                         element.isFormula = estSelAttElement.isFormula;
                         element.formula = estSelAttElement.formula;
@@ -124,7 +126,9 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({ esttype, estheaderid 
                         element.operator = estSelAttElement.operator;
                         element.unit = estSelAttElement.unit;
                         element.description = estSelAttElement.description;
-                        element.value == estSelAttElement.value;
+                        element.value = estSelAttElement.value;
+                        element.calcAttributeName = estSelAttElement.calcAttributeName;
+
                     }
 
                 });
