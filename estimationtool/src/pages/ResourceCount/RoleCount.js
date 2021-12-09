@@ -9,7 +9,7 @@ const RoleCount = ({ data: { rolecount = [] } = {} }) => {
       <div className="role">
         {rolecount.reduce((acc, value) => {
           console.log("acc, value", acc, value);
-          return acc + value.count + " " + (value.role || "Lead") + "/ ";
+          return acc + value.count + " " + (value.role || "") + ", ";
         }, "")}
       </div>
     </React.Fragment>

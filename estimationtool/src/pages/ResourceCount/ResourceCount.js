@@ -76,7 +76,7 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceMasterRole()
       .then((res) => {
         console.log("Resource Master Role Data", res.data.body);
-        // setRoleData(res.data.body);
+        setRoleData(res.data.body);
       })
       .catch((err) => {});
   };
@@ -97,24 +97,26 @@ const ResourceCountMatrix = (props) => {
       headerName: "Skills(Effort & summary Attribute)",
       field: "skill",
       width: 200,
-      valueFormatter: (params) => {
-        const { row } = params,
-          { estAttributeId, estCalcId } = row || {},
-          { calcAttributeName = "" } = estCalcId || {},
-          { attributeName = "" } = estAttributeId || {};
-        return attributeName || calcAttributeName;
+      renderCell: (rowData) => {
+        console.log("Skills params", rowData)
+        const { row } = rowData,
+        { calcAttributeName = "" } = row || {},
+        { attributeName = "" } = row || {};
+      return attributeName || calcAttributeName;
       },
+     
     },
     {
       headerName: "Technologies",
       field: "techskills",
       width: 200,
       renderCell: (rowdata) => {
+        console.log("rowdata technology",rowdata)
         return (
           <Select
             style={{ width: "100%" }}
             onChange={(e) => onChangeSelect(e, rowdata)}
-            value={rowdata.id.skillsId}
+            value={rowdata.row.skillsId}
             //   label={technologySkills.skill
           >
             {technologySkills.map((item) => (
@@ -149,7 +151,7 @@ const ResourceCountMatrix = (props) => {
 
   function renderRole(params) {
     console.log("renmderROle", params)
-     return <RoleCount data={params.row}  />;
+     return <RoleCount data={params.row} masterData={roleData} />;
   }
 
   function handleCellClick(param) {
@@ -200,7 +202,7 @@ const ResourceCountMatrix = (props) => {
     let req = {
       _id: row._id,
       techSkill: techId,
-      estAttributeId: row.estAttributeId,
+      estAttributeId: row.estAttributeId || null,
 estCalcId : row.estCalcId ||null,
 estHeaderId: rowData.estHeaderId,
     };
