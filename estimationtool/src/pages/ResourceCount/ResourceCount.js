@@ -76,7 +76,7 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceMasterRole()
       .then((res) => {
         console.log("Resource Master Role Data", res.data.body);
-        // setRoleData(res.data.body);
+        setRoleData(res.data.body);
       })
       .catch((err) => {});
   };
@@ -151,7 +151,7 @@ const ResourceCountMatrix = (props) => {
 
   function renderRole(params) {
     console.log("renmderROle", params)
-     return <RoleCount data={params.row}  />;
+     return <RoleCount data={params.row} masterData={roleData} />;
   }
 
   function handleCellClick(param) {
