@@ -22,19 +22,33 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       await RequirementRepository.getAttributesCalAttributesTotal(estheaderid);
 
     //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
-    // let rescountList = await EstResourceCount.find({
-    //   estHeaderId: estheaderid,
-    // });
-    // let ids = "";
-    // rescountList.forEach(async (element) => {
-    //   ids = ids + "," + element.estAttributeId;
-    // });
-    // if (ids) {
-    //   let deleteall = await EstResourceCount.remove({
-    //     estAttributeId: { $nin: [ids], estHeaderId: estheaderid },
-    //   });
-    // }
-    console.log(estHeaderRequirement);
+    let rescountList = await EstResourceCount.find({
+      estHeaderId: estheaderid,
+    });
+
+    rescountList.forEach(async (element) => {
+      let checkattrexists = estHeaderRequirement.EstimationAttributes.filter(
+        (x) => x._id == element.estAttributeId
+      );
+      let checkcalcexists = estHeaderRequirement.EstimationAttributes.filter(
+        (x) => x._id == element.estCalcId
+      );
+
+      if (checkattrexists.length == 0) {
+        let resultdelete = await EstResourceCount.deleteOne({
+          estHeaderId: estheaderid,
+          estAttributeId: element.estAttributeId,
+        });
+      }
+
+      if (checkcalcexists.length == 0) {
+        let resultdelete = await EstResourceCount.deleteOne({
+          estHeaderId: estheaderid,
+          estCalcId: element.estCalcId,
+        });
+      }
+    });
+
     let estimation = await EstimationHeader.findById(estheaderid);
 
     estHeaderRequirement.EstimationAttributes.forEach(async (element) => {

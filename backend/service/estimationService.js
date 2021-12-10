@@ -347,7 +347,6 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
                 operator: element.operator,
                 unit: element.unit,
                 description: element.description,
-                value: element.value,
                 calcAttributeName: element.calcAttributeName,
               },
             },
