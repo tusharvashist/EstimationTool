@@ -11,6 +11,7 @@ const RoleEditCount = (props) => {
         <RoleEditItem
           rowEditData={props.rowEditData}
           masterData={props.masterData}
+          handleEditChange={props.handleEditChange}
         />
       </div>
     </BorderedContainer>

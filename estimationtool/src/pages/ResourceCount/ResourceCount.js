@@ -17,24 +17,27 @@ const ResourceCountMatrix = (props) => {
   const [tableOpen, setTableOpen] = useState(false);
 
   const popupCount = () => {};
-  const [technologySkills, setTechnolnogySkills] = useState();
+  const [technologyList, setTechnolnogySkills] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
   const [resouceCountData, setResouceCountData] = useState([]);
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
-  const [count, setCount] = useState({});
+  const [runCount, setRunCount] = useState(false);
 
   useEffect(() => {
     // getTechnologySkill();
     // getResourceCountData(estimationHeaderId);
-  }, []);
+    getTechnologySkill();
+    getResourceCountData(estimationHeaderId);
+  }, [runCount]);
 
   // Get All Technology Skills
 
   const getTechnologySkill = () => {
     ReourceCountService.getAllTechnologies()
       .then((res) => {
+        console.log("tech", res);
         setTechnolnogySkills(res.data.body);
       })
       .catch((err) => {});
@@ -73,7 +76,6 @@ const ResourceCountMatrix = (props) => {
             _id: el._id,
           };
         });
-        setCount(objArr);
       })
       .catch((err) => {});
   };
@@ -89,23 +91,20 @@ const ResourceCountMatrix = (props) => {
             return { ..._id, rolecount: [...rolecount] };
           })
         );
-        res.data.body.map((el) => {
-          if (el.rolecount) {
-            //to be added after we get id from api
-          }
-        });
         // setRoleData(res.data.body)
         // setTechnolnogySkills(res.data.body);
+        setRunCount(false);
       })
       .catch((err) => {});
   };
 
   console.log("resouceCountData", resouceCountData);
-  const getColumns = ({ onChangeSelect, technologySkills }) => [
+  const getColumns = ({ onChangeSelect }) => [
     {
       headerName: "Resource Count",
       field: "resourceCount",
       width: 180,
+      sorting: false,
       valueFormatter: (params) => {
         // console.log("resource count params",params)
         const { id } = params,
@@ -117,6 +116,7 @@ const ResourceCountMatrix = (props) => {
       headerName: "Skills(Effort & summary Attribute)",
       field: "skill",
       width: 200,
+      sorting: false,
       renderCell: (rowData) => {
         console.log("Skills params", rowData);
         const { row } = rowData,
@@ -129,6 +129,7 @@ const ResourceCountMatrix = (props) => {
       headerName: "Technologies",
       field: "techskills",
       width: 200,
+      sorting: false,
       renderCell: (rowdata) => {
         console.log("rowdata technology", rowdata);
         return (
@@ -138,7 +139,7 @@ const ResourceCountMatrix = (props) => {
             value={rowdata.row.skillsId}
             //   label={technologySkills.skill
           >
-            {technologySkills.map((item) => (
+            {technologyList.map((item) => (
               <MenuItem key={item.skill} value={item.id}>
                 {item.skill}
               </MenuItem>
@@ -150,6 +151,7 @@ const ResourceCountMatrix = (props) => {
     {
       headerName: "Role",
       field: "role",
+      sorting: false,
       width: 300,
       renderCell: renderRole,
     },
@@ -157,7 +159,13 @@ const ResourceCountMatrix = (props) => {
 
   function renderRole(params) {
     console.log("renmderROle", params);
-    return <RoleCount data={params.row} masterData={roleData} />;
+    return (
+      <RoleCount
+        data={params.row}
+        rowData={rowEditData}
+        masterData={roleData}
+      />
+    );
   }
 
   function handleCellClick(param) {
@@ -171,6 +179,10 @@ const ResourceCountMatrix = (props) => {
       setOpenEditCount(false);
     }
   }
+
+  const handleEditChange = () => {
+    setRunCount(true);
+  };
 
   //Mock data resource count
   const rowData = [
@@ -233,14 +245,18 @@ const ResourceCountMatrix = (props) => {
         <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
             {openEditCount && (
-              <RoleEditCount rowEditData={rowEditData} masterData={roleData} />
+              <RoleEditCount
+                rowEditData={rowEditData}
+                masterData={roleData}
+                handleEditChange={handleEditChange}
+              />
             )}
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
                 <DataGrid
                   rows={resouceCountData}
                   // rows={[]}
-                  columns={getColumns({ onChangeSelect, technologySkills })}
+                  columns={getColumns({ onChangeSelect })}
                   pageSize={5}
                   onCellClick={handleCellClick}
                   getRowId={({ _id }) => _id}

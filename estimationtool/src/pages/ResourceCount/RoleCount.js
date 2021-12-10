@@ -2,7 +2,7 @@ import React from "react";
 import "./RoleCount.css";
 
 const RoleCount = (props) => {
-  console.log("props", props);
+  console.log("cs", props);
   // data:
   // calcattributeName: []
   // estHeaderId: "619e3ddb8c705cf78e273c02"

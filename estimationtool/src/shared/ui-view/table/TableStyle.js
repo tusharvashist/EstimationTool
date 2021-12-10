@@ -11,6 +11,9 @@ export function useTableStyle() {
         "& .MuiDataGrid-columnHeaderWrapper": {
           backgroundColor: "rgb(229, 235, 247)",
         },
+        "& .MuiDataGrid-cell--editable": {
+          backgroundColor: "#fff",
+        },
       },
       dataGrid: {
         width: "100%",
