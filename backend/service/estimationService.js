@@ -317,19 +317,15 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
           });
         }
       });
-      // let resultdelete = await EstimationHeaderAtrributeCalc.deleteMany({
-      //   estHeaderId: serviceData[0].estHeaderId,
-      // });
-      // let result = await EstimationHeaderAtrributeCalc.insertMany(serviceData);
 
       //check data based on est header id and calc id , if found- then update , else insert
 
       var bulk =
         EstimationHeaderAtrributeCalc.collection.initializeUnorderedBulkOp();
       serviceData.forEach(async (element) => {
-        // let estRequirementData = new EstimationHeaderAtrributeCalc({
-        //   ...element,
-        // });
+        let estcalcdata = new EstimationHeaderAtrributeCalc({
+          ...element,
+        });
         let result = bulk
           .find({
             estHeaderId: mongoose.Types.ObjectId(serviceData[0].estHeaderId),
@@ -339,15 +335,15 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
           .updateOne(
             {
               $set: {
-                isFormula: element.isFormula,
-                formula: element.formula,
-                tag: element.tag,
-                calcType: element.calcType,
-                formulaTags: element.formulaTags,
-                operator: element.operator,
-                unit: element.unit,
-                description: element.description,
-                calcAttributeName: element.calcAttributeName,
+                isFormula: estcalcdata.isFormula,
+                formula: estcalcdata.formula,
+                tag: estcalcdata.tag,
+                calcType: estcalcdata.calcType,
+                formulaTags: estcalcdata.formulaTags,
+                operator: estcalcdata.operator,
+                unit: estcalcdata.unit,
+                description: estcalcdata.description,
+                calcAttributeName: estcalcdata.calcAttributeName,
               },
             },
             { upsert: true, new: true }
