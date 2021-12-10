@@ -241,9 +241,11 @@ const EstimationCreation = (props) => {
   };
 
   const getCalcAttributeRequestPayload = () => {
+    console.log("calcAttributeSave", calcAttributeSave)
     let arr = calcAttributeSave.data.map(item => {
+  
       return ({
-        ...item, tag: item.tag._id
+        ...item, tag: item.tag._id, formulaTags: item.formulaTags.map(x => x._id).slice()
       })
     })
     return {

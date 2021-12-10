@@ -103,9 +103,9 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({
         estTypeId: esttype,
       })
         .populate("tag")
-        // .populate({
-        //   path: "formulaTags",
-        // });
+        .populate({
+          path: "formulaTags",
+        });
 
       var index = 0;
       estAttCalc.forEach((element) => {

@@ -115,7 +115,7 @@ const ThirdStep = (props) => {
             calAttriValues[ob.calcAttributeName] = ob.selected;
             return {
               ...ob,
-              formulaTags: ob.formulaTags,
+              formulaTags: ob.formulaTags || [],
               name: ob.calcAttributeName,
               label: ob.calcAttributeName,
             };
