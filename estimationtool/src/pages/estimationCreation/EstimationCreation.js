@@ -245,7 +245,7 @@ const EstimationCreation = (props) => {
     let arr = calcAttributeSave.data.map(item => {
   
       return ({
-        ...item, tag: item.tag._id, formulaTags: item.formulaTags.map(x => x._id).slice()
+        ...item, tag: item.tag._id, formulaTags: item.formulaTags ? item.formulaTags.map(x => x._id).slice() : []
       })
     })
     return {
