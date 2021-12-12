@@ -86,11 +86,13 @@ export default function ClientDetails(props) {
 
   useEffect(() => {
     getProjectById();
-  }, []);
+  }, [projectId]);
 
   const getProjectById = () => {
+    console.log("that", projectId);
     ProjectSer.getProjectById(projectId)
       .then((res) => {
+        console.log("this", res, projectId);
         let dataResponse = res.data.body;
         setProjectDetails({ ...dataResponse });
         setClientDetails({ ...dataResponse.client });
