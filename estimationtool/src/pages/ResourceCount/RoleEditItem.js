@@ -48,6 +48,7 @@ const RoleEditItem = (props) => {
       }
       return prevEl;
     }, []);
+    console.log("newCount", newCount);
     return newCount;
   };
 

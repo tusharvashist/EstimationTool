@@ -28,18 +28,19 @@ const RequirementMix = () => {
 
   useEffect(() => {
     getAllResourceMixData(estimationId);
-  }, [estimationId, resourceMixList, totalMargin]);
+  }, [estimationId]);
 
   const getAllResourceMixData = (estimationId) => {
-    ResourceMixService.getResourceMixData("619e3ddb8c705cf78e273c02")
+    ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
       .then((res) => {
-        console.log(res);
+        console.log("mixdata", res);
         let objArr = res.data.body.resourceMixData.map((el, i) => {
           return {
             id: i + 1,
             allocationPercent: el.resourceMix.allocationPercent,
             resourceRole: el.resourceMix.role.resourceRole,
-            attributeName: el.attributeSkill.attributeName,
+            attributeName: el.attributeSkill.attributeName || null,
+            // estCalId: el.attributeSkill.attributeName || null,
             cost: el.costcal,
             price: el.pricecal,
           };

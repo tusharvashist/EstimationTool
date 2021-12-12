@@ -23,14 +23,12 @@ const ResourceCountMatrix = (props) => {
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
-  const [runCount, setRunCount] = useState(false);
 
   useEffect(() => {
     // getTechnologySkill();
     // getResourceCountData(estimationHeaderId);
     getTechnologySkill();
-    getResourceCountData(estimationHeaderId);
-  }, [runCount]);
+  }, []);
 
   // Get All Technology Skills
 
@@ -69,13 +67,6 @@ const ResourceCountMatrix = (props) => {
         // techSkill: "frontend"
         // _id: "61ae02114fdff5af9831741e
         setRoleData(res.data.body);
-        let objArr = res.data.body.map((el) => {
-          return {
-            count: el.count,
-            resourceRole: el.resourceRole,
-            _id: el._id,
-          };
-        });
       })
       .catch((err) => {});
   };
@@ -93,7 +84,6 @@ const ResourceCountMatrix = (props) => {
         );
         // setRoleData(res.data.body)
         // setTechnolnogySkills(res.data.body);
-        setRunCount(false);
       })
       .catch((err) => {});
   };
@@ -171,7 +161,7 @@ const ResourceCountMatrix = (props) => {
   function handleCellClick(param) {
     console.log("param", param);
     if (param.field === "role" && !openEditCount) {
-      console.log("roweditdata", param.value);
+      console.log("roweditdata", param.row);
 
       setRowEditData(param.row);
       setOpenEditCount(true);
@@ -180,42 +170,17 @@ const ResourceCountMatrix = (props) => {
     }
   }
 
-  const handleEditChange = () => {
-    setRunCount(true);
-  };
-
-  //Mock data resource count
-  const rowData = [
-    {
-      id: 1,
-      resourceCount: 2,
-      skill: "Frontend",
-      techskill: "React/Angular",
-      role: [1, 0, 0],
-    },
-    {
-      id: 2,
-      resourceCount: 2,
-      skill: "Frontend",
-      techskill: "React/Angular",
-      role: [2, 0, 0],
-    },
-    {
-      id: 3,
-      resourceCount: 2,
-      skill: "Frontend",
-      techskill: "React/Angular",
-      role: [3, 0, 0],
-    },
-  ];
+  const handleEditChange = () => {};
 
   const handleCountTable = () => {
     if (estimationHeaderId) {
-      getTechnologySkill();
       getResourceCountData(estimationHeaderId);
     }
     if (!tableOpen) setTableOpen(true);
-    if (tableOpen) setTableOpen(false);
+    if (tableOpen) {
+      setTableOpen(false);
+      setOpenEditCount(false);
+    }
   };
 
   const onChangeSelect = (e, rowData) => {
@@ -237,8 +202,6 @@ const ResourceCountMatrix = (props) => {
       })
       .catch((err) => {});
   };
-
-  console.log("resouceCountData", resouceCountData);
   return (
     <div className="estimation-detail-cover">
       {tableOpen && (

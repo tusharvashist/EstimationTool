@@ -2,7 +2,7 @@ import React from "react";
 import "./RoleCount.css";
 
 const RoleCount = (props) => {
-  console.log("cs", props);
+  console.log("roleCount props", props);
   // data:
   // calcattributeName: []
   // estHeaderId: "619e3ddb8c705cf78e273c02"
@@ -31,12 +31,21 @@ const RoleCount = (props) => {
   // resourceRole: "Sr Lead"
   // techSkill: "frontend"
   // _id: "61ae02114fdff5af9831741e"
+  const countProvider = (id) => {};
   return (
     <React.Fragment>
       <div className="role">
         {props.masterData.map((el) => (
           <span key={el._id}>
-            {el.count} {el.resourceRole},{" "}
+            {props.data.rolecount.map((item) => {
+              if (el._id === item.roleId) {
+                console.log(el, item, "el2");
+                return item.count;
+              } else {
+                return 0;
+              }
+            })}{" "}
+            {el.resourceRole},
           </span>
         ))}
       </div>
