@@ -8,6 +8,10 @@ const estResourcePlanning = new mongoose.Schema(
       type: Schema.Types.ObjectId,
       ref: "EstResourceCount",
     },
+    estHeaderId: {
+      type: Schema.Types.ObjectId,
+      ref: "EstHeader",
+    },
     resourceRoleID: {
       type: Schema.Types.ObjectId,
       ref: "ResourceRoleMaster",

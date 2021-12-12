@@ -3,15 +3,25 @@ const { ObjectId } = require("mongodb");
 const EstResourceCount = require("../database/models/estResourceCount");
 const mongoose = require("mongoose");
 
-module.exports.getEstResourceCountByAttrId = async (estAttributeId) => {
+module.exports.getEstResourceCountByAttrId = async (
+  estAttributeId,
+  estheaderid
+) => {
+  console.log(estAttributeId, estheaderid);
   return EstResourceCount.findOne({
     estAttributeId: estAttributeId,
+    estHeaderId: estheaderid,
   });
 };
 
-module.exports.getEstResourceCountByCalcAttrId = async (estcalcAttributeId) => {
+module.exports.getEstResourceCountByCalcAttrId = async (
+  estcalcAttributeId,
+  estheaderid
+) => {
+  console.log(estcalcAttributeId, estheaderid);
   return EstResourceCount.findOne({
     estCalcId: estcalcAttributeId,
+    estHeaderId: estheaderid,
   });
 };
 

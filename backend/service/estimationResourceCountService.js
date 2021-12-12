@@ -23,27 +23,32 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
 
     //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
     let rescountList = await EstResourceCount.find({
-      estHeaderId: estheaderid,
+      estHeaderId: ObjectId(estheaderid),
     });
 
     rescountList.forEach(async (element) => {
       let checkattrexists = estHeaderRequirement.EstimationAttributes.filter(
-        (x) => x._id == element.estAttributeId
+        (x) => String(x._id) == String(element.estAttributeId)
       );
-      let checkcalcexists = estHeaderRequirement.EstimationAttributes.filter(
-        (x) => x._id == element.estCalcId
-      );
+      let checkcalcexists =
+        estHeaderRequirement.EstimationCalcAttributes.filter(
+          (x) => String(x._id) == String(element.estCalcId)
+        );
 
-      if (checkattrexists.length == 0) {
+      if (element.estAttributeId != undefined && checkattrexists.length == 0) {
+        console.log(element.estAttributeId);
+        console.log(checkattrexists.length == 0);
         let resultdelete = await EstResourceCount.deleteOne({
-          estHeaderId: estheaderid,
+          estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
         });
       }
 
-      if (checkcalcexists.length == 0) {
+      if (element.estCalcId != undefined && checkcalcexists.length == 0) {
+        console.log(element.estCalcId);
+        console.log(heckcalcexists.length);
         let resultdelete = await EstResourceCount.deleteOne({
-          estHeaderId: estheaderid,
+          estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
         });
       }
@@ -51,88 +56,63 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
 
     let estimation = await EstimationHeader.findById(estheaderid);
 
+    //console.log(estimation);
+    var bulk = EstResourceCount.collection.initializeUnorderedBulkOp();
     estHeaderRequirement.EstimationAttributes.forEach(async (element) => {
       if (element.Total == 0) {
         return;
       }
-      let estResourceCount =
-        await ResourceCountRepository.getEstResourceCountByAttrId(
-          mongoose.Types.ObjectId(element._id)
-        );
+      let resourceCount = (
+        element.Total /
+        (global.ResourceWeekHours * estimation.estTentativeTimeline)
+      ).toFixed(2);
 
-      if (estResourceCount) {
-        let resourceCount = (
-          element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline)
-        ).toFixed(2);
-
-        const filter = { _id: mongoose.Types.ObjectId(estResourceCount._id) };
-        const update = {
-          resourceCount: resourceCount,
-          attributeName: element.attributeName,
-        };
-
-        let updateresource = await EstResourceCount.findOneAndUpdate(
-          filter,
-          update,
+      let result = bulk
+        .find({
+          estHeaderId: ObjectId(estheaderid),
+          estAttributeId: element._id,
+        })
+        .upsert()
+        .updateOne(
           {
-            new: true,
-          }
+            $set: {
+              resourceCount: resourceCount,
+              attributeName: element.attributeName,
+            },
+          },
+          { upsert: false, new: false }
         );
-      } else {
-        let estResourceCount = new EstResourceCount();
-        estResourceCount.estAttributeId = element._id;
-        estResourceCount.estHeaderId = estheaderid;
-        estResourceCount.attributeName = element.attributeName;
-        estResourceCount.resourceCount = (
-          element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline)
-        ).toFixed(2);
-        await estResourceCount.save();
-      }
     });
+    //console.log(bulk);
 
     estHeaderRequirement.EstimationCalcAttributes.forEach(async (element) => {
       if (element.Total == 0) {
         return;
       }
-      let estResourceCount =
-        await ResourceCountRepository.getEstResourceCountByCalcAttrId(
-          mongoose.Types.ObjectId(element._id)
-        );
+      let resourceCount = (
+        element.Total /
+        (global.ResourceWeekHours * estimation.estTentativeTimeline)
+      ).toFixed(2);
 
-      if (estResourceCount) {
-        let resourceCount = (
-          element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline)
-        ).toFixed(2);
-
-        const filter = { _id: mongoose.Types.ObjectId(estResourceCount._id) };
-        const update = {
-          resourceCount: resourceCount,
-          attributeName: element.calcAttributeName,
-        };
-
-        let updateresource = await EstResourceCount.findOneAndUpdate(
-          filter,
-          update,
+      let result = bulk
+        .find({
+          estHeaderId: ObjectId(estheaderid),
+          estCalcId: element._id,
+        })
+        .upsert()
+        .updateOne(
           {
-            new: true,
-          }
+            $set: {
+              resourceCount: resourceCount,
+              attributeName: element.calcAttributeName,
+            },
+          },
+          { upsert: false, new: false }
         );
-        console.log(updateresource);
-      } else {
-        let estResourceCount = new EstResourceCount();
-        estResourceCount.estCalcId = element._id;
-        estResourceCount.estHeaderId = estheaderid;
-        estResourceCount.attributeName = element.calcAttributeName;
-        estResourceCount.resourceCount = (
-          element.Total /
-          (global.ResourceWeekHours * estimation.estTentativeTimeline)
-        ).toFixed(2);
-        await estResourceCount.save();
-      }
     });
+    //console.log(bulk);
+
+    await bulk.execute();
 
     return estHeaderRequirement;
   } catch (err) {
@@ -275,10 +255,12 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
     if (updatedInfo.estAttributeId) {
       filter = {
         estAttributeId: mongoose.Types.ObjectId(updatedInfo.estAttributeId),
+        estHeaderId: mongoose.Types.ObjectId(updatedInfo.estHeaderId),
       };
     } else {
       filter = {
         estCalcId: mongoose.Types.ObjectId(updatedInfo.estCalcId),
+        estHeaderId: mongoose.Types.ObjectId(updatedInfo.estHeaderId),
       };
     }
 
@@ -306,11 +288,13 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
     if (updatedInfo.estAttributeId) {
       filter = {
         estAttributeId: mongoose.Types.ObjectId(updatedInfo.estAttributeId),
+        estHeaderId: mongoose.Types.ObjectId(updatedInfo.estHeaderId),
       };
       groupby = "$estAttributeId";
     } else {
       filter = {
         estCalcId: mongoose.Types.ObjectId(updatedInfo.estCalcId),
+        estHeaderId: mongoose.Types.ObjectId(updatedInfo.estHeaderId),
       };
       groupby = "$estCalcId";
     }
@@ -352,6 +336,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
       estResourcePlanning.estAttributeId = updatedInfo.estAttributeId;
       estResourcePlanning.estCalcId = updatedInfo.estCalcId;
+      estResourcePlanning.estHeaderId = updatedInfo.estHeaderId;
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
       switch (true) {
