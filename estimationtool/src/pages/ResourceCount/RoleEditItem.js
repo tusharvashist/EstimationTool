@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ResourceCountService from "./resourcecount.service";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const RoleEditItem = (props) => {
+  const [isOpen, setOpen] = React.useState({});
+  const [disabledState, setDisabledState] = useState(false);
   console.log("edit props", props);
   const handleIncrementCount = (e) => {
     // {
@@ -21,8 +24,30 @@ const RoleEditItem = (props) => {
       resourceRoleID: e.target.id,
       qty: 1,
     };
-    ResourceCountService.updateResourceRole(obj);
+    ResourceCountService.updateResourceRole(obj)
+      .then((res) => {
+        console.log(res);
+
+        setOpen({ open: true, severity: "success", message: res.data.message });
+      })
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
+        console.log(">>>>>>.hi>>>>>>>>", err);
+        setDisabledState(true);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.message,
+        });
+      });
+
     props.handleEditChange();
+  };
+  const handleClose = () => {
+    setOpen({});
   };
 
   const handleDecrementCount = (e) => {
@@ -35,9 +60,27 @@ const RoleEditItem = (props) => {
       resourceRoleID: e.target.id,
       qty: -1,
     };
-    console.log("obj", obj);
-    ResourceCountService.updateResourceRole(obj);
     props.handleEditChange();
+    ResourceCountService.updateResourceRole(obj)
+      .then((res) => {
+        console.log(res);
+
+        setOpen({ open: true, severity: "success", message: res.data.message });
+      })
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
+        console.log(">>>>>>.hi>>>>>>>>", err);
+
+        setDisabledState(true);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.message,
+        });
+      });
   };
 
   const countProvider = (id, roleArr) => {
@@ -55,13 +98,14 @@ const RoleEditItem = (props) => {
     }
   };
 
+  const { message, severity, open } = isOpen || {};
   return (
     <div className="roleitem">
       {props.masterData.map((item) => (
         <div className="roleitem_list">
           <p>{item.resourceRole}</p>
           <div className="optionbtn">
-            <button id={item._id} onClick={handleIncrementCount}>
+            <button disabled={disabledState} onClick={handleIncrementCount}>
               +
             </button>
             <p id={item._id}>
@@ -73,6 +117,15 @@ const RoleEditItem = (props) => {
           </div>
         </div>
       ))}
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </div>
   );
 };

@@ -243,7 +243,7 @@ const AddCalAttributeDialog = (props) => {
             <InputLabel> Calculation Type</InputLabel>
             <Select onChange={handleCalcType} error={showError && !calcType} value={calcType}>
               <MenuItem value="manual">Manual</MenuItem>
-              <MenuItem value="percentage">Percentage</MenuItem>
+              <MenuItem value="percentage">Formula</MenuItem>
             </Select>
           </FormControl>
 
