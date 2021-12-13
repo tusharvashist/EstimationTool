@@ -11,6 +11,7 @@ const { ObjectId } = require("mongodb");
 const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
 const EstimationAttr = require("../database/models/estimationAttributesModel");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
+const { string } = require("joi");
 
 module.exports.generateResourceCount = async ({ estheaderid }) => {
   try {
@@ -128,22 +129,6 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
         estHeaderId: mongoose.Types.ObjectId(estheaderid),
       },
     },
-    // {
-    //   $lookup: {
-    //     from: "estimationattributes",
-    //     localField: "estAttributeId",
-    //     foreignField: "_id",
-    //     as: "attributes",
-    //   },
-    // },
-    // {
-    //   $lookup: {
-    //     from: "estimationcalcattrs",
-    //     localField: "estCalcId",
-    //     foreignField: "_id",
-    //     as: "calcattributes",
-    //   },
-    // },
     {
       $lookup: {
         from: "techskillmasters",
@@ -152,18 +137,6 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
         as: "skills",
       },
     },
-    // {
-    //   $unwind: {
-    //     path: "$attributes",
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
-    // {
-    //   $unwind: {
-    //     path: "$attributesCalc",
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
     {
       $unwind: {
         path: "$skills",
@@ -171,80 +144,45 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
       },
     },
     {
-      $lookup: {
-        from: "estresourceplannings",
-        localField: "estAttributeId",
-        foreignField: "estAttributeId",
-        as: "resourcelist",
+      $project: {
+        _id: "$_id",
+        resourceCount: "$resourceCount",
+        estAttributeId: "$estAttributeId",
+        estHeaderId: "$estHeaderId",
+        estCalcId: "$estCalcId",
+        attributeName: "$attributeName",
+        skills: "$skills.skill",
+        skillsId: "$skills._id",
       },
     },
     {
-      $lookup: {
-        from: "estresourceplannings",
-        localField: "estCalcId",
-        foreignField: "estCalcId",
-        as: "resourcelist",
-      },
-    },
-    {
-      $unwind: {
-        path: "$resourcelist",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    {
-      $lookup: {
-        from: "resourcerolemasters",
-        localField: "resourcelist.resourceRoleID",
-        foreignField: "_id",
-        as: "resourcelist.detail",
-      },
-    },
-    {
-      $unwind: {
-        path: "$resourcelist.detail",
-        preserveNullAndEmptyArrays: true,
-      },
-    },
-    // {
-    //   $project: {
-    //     estHeaderId: 1,
-    //     estAttributeId: 1,
-    //     estCalcId: 1,
-    //     resourceCount: 1,
-    //     attributes: 1,
-    //     calcattributes: 1,
-    //     resourcelist: 1,
-    //     skills: 1,
-    //   },
-    // },
-    {
-      $group: {
-        _id: {
-          _id: "$_id",
-          resourceCount: "$resourceCount",
-          estAttributeId: "$estAttributeId",
-          estHeaderId: "$estHeaderId",
-          estCalcId: "$estCalcId",
-          attributeName: "$attributeName",
-          skills: "$skills.skill",
-          skillsId: "$skills._id",
-        },
-        rolecount: {
-          $push: {
-            roleId: "$resourcelist.detail._id",
-            role: "$resourcelist.detail.resourceRole",
-            count: { $sum: 1 },
-          },
-        },
+      $addFields: {
+        rolecount: [],
       },
     },
   ]);
+
   // let result = await EstResourceCount.find({
   //   estHeaderId: mongoose.Types.ObjectId(estheaderid),
-  // })
-  //   .populate("estAttributeId")
-  //   .populate("estCalcId");
+  // }).populate("techSkill");
+
+  let data = await ResourceCountRepository.getResourceMixData(estheaderid);
+
+  data.forEach(async (element) => {
+    let exists = {};
+    if (element.estAttributeId) {
+      exists = result.filter(
+        (x) => String(x.estAttributeId) == String(element.estAttributeId)
+      );
+      if (exists.length > 0) exists[0]["rolecount"].push(element);
+    } else if (element.estCalcId) {
+      exists = result.filter(
+        (x) => String(x.estCalcId) == String(element.estCalcId)
+      );
+      if (exists.length > 0) exists[0]["rolecount"].push(element);
+    }
+  });
+
   console.log(result);
   return result;
 };

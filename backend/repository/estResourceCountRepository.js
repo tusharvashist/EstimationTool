@@ -2,6 +2,7 @@ const constant = require("../constant");
 const { ObjectId } = require("mongodb");
 const EstResourceCount = require("../database/models/estResourceCount");
 const mongoose = require("mongoose");
+const EstResourcePlanning = require("../database/models/estResourcePlanning");
 
 module.exports.getEstResourceCountByAttrId = async (
   estAttributeId,
@@ -100,4 +101,58 @@ module.exports.updateCalcAttResourceCount = (
       await this.createResourceCount(element, estimation, "calc");
     }
   });
+};
+
+module.exports.getResourceMixData = async (estheaderid) => {
+  let data = await EstResourcePlanning.aggregate([
+    {
+      $match: {
+        estHeaderId: ObjectId(estheaderid),
+      },
+    },
+    {
+      $lookup: {
+        from: "resourcerolemasters",
+        localField: "resourceRoleID",
+        foreignField: "_id",
+        as: "resourcelist",
+      },
+    },
+    {
+      $unwind: {
+        path: "$resourcelist",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $set: {
+        resourceRole: "$resourcelist.resourceRole",
+      },
+    },
+    {
+      $group: {
+        _id: {
+          estAttributeId: "$estAttributeId",
+          estCalcId: "$estCalcId",
+          resourceRoleID: "$resourceRoleID",
+          resourceRole: "$resourceRole",
+        },
+        count: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $project: {
+        estAttributeId: "$_id.estAttributeId",
+        estCalcId: "$_id.estCalcId",
+        resourceRoleID: "$_id.resourceRoleID",
+        resourceRole: "$_id.resourceRole",
+        count: "$count",
+        _id: 0,
+      },
+    },
+  ]);
+
+  return data;
 };
