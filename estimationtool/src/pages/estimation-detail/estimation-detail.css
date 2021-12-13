@@ -123,5 +123,5 @@
   height: 100%;
   position: absolute;
   /* background: #000; */
-  z-index: 100;
+  z-index: 1;
 }

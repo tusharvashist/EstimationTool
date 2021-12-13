@@ -157,7 +157,6 @@ const ResourceCountMatrix = (props) => {
   }
 
   function handleCellClick(param) {
-    console.log("param", param);
     if (param.field === "role" && !openEditCount) {
       console.log("roweditdata", param.row);
 
@@ -212,13 +211,17 @@ const ResourceCountMatrix = (props) => {
         <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
             {openEditCount && (
-              <div className="editrole_cover" onClick={closeEditHandler}>
+              <>
+                <div
+                  className="editrole_cover"
+                  onClick={closeEditHandler}
+                ></div>
                 <RoleEditCount
                   rowEditData={rowEditData}
                   masterData={roleData}
                   handleEditChange={handleEditChange}
                 />
-              </div>
+              </>
             )}
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
