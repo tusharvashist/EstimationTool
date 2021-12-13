@@ -105,13 +105,13 @@ const RequirementMix = () => {
     },
     {
       field: "cost",
-      headerName: "Cost",
+      headerName: "Cost ($)",
       sortable: false,
       width: 160,
     },
     {
       field: "price",
-      headerName: "Price",
+      headerName: "Price ($)",
       sortable: false,
       width: 160,
     },

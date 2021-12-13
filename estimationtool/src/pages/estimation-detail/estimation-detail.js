@@ -680,26 +680,10 @@ const EstimationDetail = () => {
           </Link>
         </Grid>
         <Grid item>
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                clientDetails.clientName +
-                "/" +
-                projectDetails.projectName +
-                "/createEstimate",
-              state: {
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
-                estimationHeaderId: estimationId,
-              },
-            }}
-          >
             <Button variant="outlined" className="estimation-detail-button">
               {" "}
-              <EditOutlined /> Edit Configuration
+              <EditOutlined /> Generate Timeline Plan
             </Button>
-          </Link>
         </Grid>
       </Grid>
     </div>
