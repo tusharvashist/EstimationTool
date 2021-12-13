@@ -18,7 +18,7 @@ const RoleEditItem = (props) => {
       estResourceCountID: props.rowEditData._id,
       estAttributeId: props.rowEditData.estAttributeId || null,
       estCalcId: props.rowEditData.estCalcId || null,
-      resourceRoleID: e.target.nextSibling.id,
+      resourceRoleID: e.target.id,
       qty: 1,
     };
     ResourceCountService.updateResourceRole(obj);
@@ -26,16 +26,16 @@ const RoleEditItem = (props) => {
   };
 
   const handleDecrementCount = (e) => {
-    console.log("edata", e);
     let obj = {
       defaultAdjusted: false,
       estHeaderId: props.rowEditData.estHeaderId,
       estResourceCountID: props.rowEditData._id,
       estAttributeId: props.rowEditData.estAttributeId || null,
       estCalcId: props.rowEditData.estCalcId || null,
-      resourceRoleID: e.target.previousSibling.id,
+      resourceRoleID: e.target.id,
       qty: -1,
     };
+    console.log("obj", obj);
     ResourceCountService.updateResourceRole(obj);
     props.handleEditChange();
   };
@@ -61,11 +61,15 @@ const RoleEditItem = (props) => {
         <div className="roleitem_list">
           <p>{item.resourceRole}</p>
           <div className="optionbtn">
-            <button onClick={handleIncrementCount}>+</button>
+            <button id={item._id} onClick={handleIncrementCount}>
+              +
+            </button>
             <p id={item._id}>
               {countProvider(item._id, props.rowEditData.rolecount)}
             </p>
-            <button onClick={handleDecrementCount}>-</button>
+            <button id={item._id} onClick={handleDecrementCount}>
+              -
+            </button>
           </div>
         </div>
       ))}
