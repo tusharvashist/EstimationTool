@@ -39,7 +39,7 @@ const RequirementMix = () => {
             id: i + 1,
             allocationPercent: el.resourceMix.allocationPercent,
             resourceRole: el.resourceMix.role.resourceRole,
-            attributeName: el.attributeSkill.attributeName || null,
+            attributeName: el.attributeName || null,
             // estCalId: el.attributeSkill.attributeName || null,
             cost: el.costcal,
             price: el.pricecal,

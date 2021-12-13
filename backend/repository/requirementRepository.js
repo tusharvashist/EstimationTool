@@ -505,7 +505,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
               if (
                 summaryTag.total !== undefined &&
                 summaryTag.total !== null &&
-                isNaN(summaryTag.total)
+                !isNaN(summaryTag.total)
               ) {
                 totalValue = totalValue + summaryTag.total;
               }
