@@ -236,10 +236,9 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       };
       groupby = "$estCalcId";
     }
-
+    let rescount = await EstResourceCount.findOne(filter);
     if (updatedInfo.qty > 0) {
       //Logic for Resource Count Data check
-      let rescount = await EstResourceCount.findOne(filter);
 
       //Get Total Resource Mix
       let mixsum = await EstResourcePlanning.aggregate([
@@ -265,7 +264,8 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       if (totalresource >= maxcount) {
         //Not To any Add Resource and throw exception
         throw new Error(
-          "Resource Planning already done for this resource count data."
+          "Resource Planning already done for this resource count " +
+            rescount?.resourceCount
         );
       }
 
@@ -296,6 +296,13 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
         filter,
         resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
       });
+      if (!deleted) {
+        //Not To any Remove Resource and throw exception
+        throw new Error(
+          "All Resource removed for this resource count data " +
+            rescount?.resourceCount
+        );
+      }
       return deleted;
     }
   } catch (err) {
