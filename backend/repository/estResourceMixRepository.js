@@ -71,7 +71,7 @@ const getResourceMixPlanningQuery = async (estId) => {
       },
     },
     {
-      $set: {
+      $addFields: {
         costcal: {
           $multiply: [
             "$estimationHeader.estTentativeTimeline",
