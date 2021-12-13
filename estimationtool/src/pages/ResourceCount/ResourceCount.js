@@ -28,7 +28,7 @@ const ResourceCountMatrix = (props) => {
   useEffect(() => {
     // getTechnologySkill();
     getTechnologySkill();
-    getResourceCountData(estimationHeaderId);
+    // getResourceCountData(estimationHeaderId);
   }, [reload]);
 
   // Get All Technology Skills

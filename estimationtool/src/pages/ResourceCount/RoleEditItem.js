@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ResourceCountService from "./resourcecount.service";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-import { render } from "react-dom";
 
 const RoleEditItem = (props) => {
   // useEffect(() => {

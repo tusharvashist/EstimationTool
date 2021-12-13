@@ -18,5 +18,5 @@ const techSkillMaster = new mongoose.Schema(
     },
   }
 );
-
+techSkillMaster.index({ updatedAt: "-1", skill: "1" });
 module.exports = mongoose.model("TechSkillMaster", techSkillMaster);

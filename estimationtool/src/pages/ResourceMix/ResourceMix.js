@@ -133,7 +133,7 @@ const RequirementMix = () => {
     <div className="estimation-detail-cover">
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
-          <Link
+          {/* <Link
             to={{
               pathname:
                 "/All-Clients/" +
@@ -152,7 +152,7 @@ const RequirementMix = () => {
               {" "}
               <> Edit Estimation Configuration</>
             </Button>
-          </Link>
+          </Link> */}
         </Box>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
