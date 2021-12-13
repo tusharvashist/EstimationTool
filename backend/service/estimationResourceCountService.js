@@ -37,8 +37,8 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         );
 
       if (element.estAttributeId != undefined && checkattrexists.length == 0) {
-        console.log(element.estAttributeId);
-        console.log(checkattrexists.length == 0);
+        //console.log(element.estAttributeId);
+        //console.log(checkattrexists.length == 0);
         let resultdelete = await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
@@ -46,8 +46,8 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       }
 
       if (element.estCalcId != undefined && checkcalcexists.length == 0) {
-        console.log(element.estCalcId);
-        console.log(heckcalcexists.length);
+        //console.log(element.estCalcId);
+        //console.log(checkcalcexists.length);
         let resultdelete = await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
@@ -58,62 +58,80 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     let estimation = await EstimationHeader.findById(estheaderid);
 
     //console.log(estimation);
-    var bulk = EstResourceCount.collection.initializeUnorderedBulkOp();
+
     estHeaderRequirement.EstimationAttributes.forEach(async (element) => {
       if (element.Total == 0) {
         return;
       }
-      let resourceCount = (
+      let filter = {
+        estAttributeId: element._id,
+        estHeaderId: ObjectId(estheaderid),
+      };
+      let estResourceCount = await EstResourceCount.findOne(filter);
+      let resourceCountdata = (
         element.Total /
         (global.ResourceWeekHours * estimation.estTentativeTimeline)
       ).toFixed(2);
 
-      let result = bulk
-        .find({
-          estHeaderId: ObjectId(estheaderid),
-          estAttributeId: element._id,
-        })
-        .upsert()
-        .updateOne(
+      if (estResourceCount) {
+        const update = {
+          resourceCount: resourceCountdata,
+          attributeName: element.attributeName,
+        };
+
+        let updateresource = await EstResourceCount.findOneAndUpdate(
+          filter,
+          update,
           {
-            $set: {
-              resourceCount: resourceCount,
-              attributeName: element.attributeName,
-            },
-          },
-          { upsert: false, new: false }
+            new: true,
+          }
         );
+      } else {
+        let estResourceCount = new EstResourceCount();
+        estResourceCount.estAttributeId = element._id;
+        estResourceCount.estHeaderId = estheaderid;
+        estResourceCount.attributeName = element.attributeName;
+        estResourceCount.resourceCount = resourceCountdata;
+        await estResourceCount.save();
+      }
     });
-    //console.log(bulk);
 
     estHeaderRequirement.EstimationCalcAttributes.forEach(async (element) => {
       if (element.Total == 0) {
         return;
       }
-      let resourceCount = (
+      let filter = {
+        estCalcId: element._id,
+        estHeaderId: ObjectId(estheaderid),
+      };
+      let estResourceCount = await EstResourceCount.findOne(filter);
+      let resourceCountdata = (
         element.Total /
         (global.ResourceWeekHours * estimation.estTentativeTimeline)
       ).toFixed(2);
 
-      let result = bulk
-        .find({
-          estHeaderId: ObjectId(estheaderid),
-          estCalcId: element._id,
-        })
-        .upsert()
-        .updateOne(
-          {
-            $set: {
-              resourceCount: resourceCount,
-              attributeName: element.calcAttributeName,
-            },
-          },
-          { upsert: false, new: false }
-        );
-    });
-    //console.log(bulk);
+      if (estResourceCount) {
+        const update = {
+          resourceCount: resourceCountdata,
+          attributeName: element.calcAttributeName,
+        };
 
-    await bulk.execute();
+        let updateresource = await EstResourceCount.findOneAndUpdate(
+          filter,
+          update,
+          {
+            new: true,
+          }
+        );
+      } else {
+        let estResourceCount = new EstResourceCount();
+        estResourceCount.estCalcId = element._id;
+        estResourceCount.estHeaderId = estheaderid;
+        estResourceCount.attributeName = element.calcAttributeName;
+        estResourceCount.resourceCount = resourceCountdata;
+        await estResourceCount.save();
+      }
+    });
 
     return estHeaderRequirement;
   } catch (err) {
