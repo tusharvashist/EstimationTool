@@ -2,6 +2,7 @@ import React from "react";
 import ResourceCountService from "./resourcecount.service";
 
 const RoleEditItem = (props) => {
+  console.log("edit props", props);
   const handleIncrementCount = (e) => {
     // {
     //   "defaultAdjusted": false,
@@ -13,6 +14,7 @@ const RoleEditItem = (props) => {
     //   }
     let obj = {
       defaultAdjusted: false,
+      estHeaderId: props.rowEditData.estHeaderId,
       estResourceCountID: props.rowEditData._id,
       estAttributeId: props.rowEditData.estAttributeId || null,
       estCalcId: props.rowEditData.estCalcId || null,
@@ -27,6 +29,7 @@ const RoleEditItem = (props) => {
     console.log("edata", e);
     let obj = {
       defaultAdjusted: false,
+      estHeaderId: props.rowEditData.estHeaderId,
       estResourceCountID: props.rowEditData._id,
       estAttributeId: props.rowEditData.estAttributeId || null,
       estCalcId: props.rowEditData.estCalcId || null,
@@ -37,35 +40,18 @@ const RoleEditItem = (props) => {
     props.handleEditChange();
   };
 
-  const sumOfRoleCounts = (array) => {
-    const newCount = array.reduce((prevEl, el) => {
-      const found = prevEl.find((item) => item.roleId === el.roleId);
-
-      if (!found) {
-        prevEl.push(el);
-      } else {
-        found.count += 1;
-      }
-      return prevEl;
-    }, []);
-    console.log("newCount", newCount);
-    return newCount;
-  };
-
   const countProvider = (id, roleArr) => {
-    if (roleArr[0].roleId === undefined) {
+    if (roleArr.length === 0) {
       return 0;
     } else {
-      let allSumArr = sumOfRoleCounts(roleArr);
-      console.log("allSumArr", allSumArr);
-      const count = allSumArr.map((el) => {
-        if (el.roleId === id) {
-          return el.count;
+      let countVal = roleArr.find((el) => {
+        if (el.resourceRoleID === id) {
+          return el;
+        } else {
+          return;
         }
-        return 0;
       });
-      console.log("count", count[0]);
-      return count[0];
+      return countVal === undefined ? 0 : countVal.count;
     }
   };
 
