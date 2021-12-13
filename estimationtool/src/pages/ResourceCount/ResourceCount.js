@@ -23,12 +23,13 @@ const ResourceCountMatrix = (props) => {
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     // getTechnologySkill();
-    // getResourceCountData(estimationHeaderId);
     getTechnologySkill();
-  }, []);
+    getResourceCountData(estimationHeaderId);
+  }, [reload]);
 
   // Get All Technology Skills
 
@@ -57,6 +58,7 @@ const ResourceCountMatrix = (props) => {
   const getResourceMasterRoleData = () => {
     ReourceCountService.getResourceMasterRole()
       .then((res) => {
+        console.log("2res", res);
         //Array:
         // cost: 20
         // count: 0
@@ -77,11 +79,7 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
         console.log("all Data getResourceCountAllData", res.data.body);
-        setResouceCountData(
-          res.data.body.map(({ rolecount, _id }) => {
-            return { ..._id, rolecount: [...rolecount] };
-          })
-        );
+        setResouceCountData(res.data.body);
         // setRoleData(res.data.body)
         // setTechnolnogySkills(res.data.body);
       })
@@ -170,7 +168,9 @@ const ResourceCountMatrix = (props) => {
     }
   }
 
-  const handleEditChange = () => {};
+  const handleEditChange = () => {
+    setReload(!reload);
+  };
 
   const handleCountTable = () => {
     if (estimationHeaderId) {
@@ -192,7 +192,7 @@ const ResourceCountMatrix = (props) => {
       techSkill: techId,
       estAttributeId: row.estAttributeId || null,
       estCalcId: row.estCalcId || null,
-      estHeaderId: rowData.estHeaderId,
+      estHeaderId: estimationHeaderId,
     };
 
     ReourceCountService.updateTechnology(req)

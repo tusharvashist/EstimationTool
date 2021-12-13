@@ -31,21 +31,28 @@ const RoleCount = (props) => {
   // resourceRole: "Sr Lead"
   // techSkill: "frontend"
   // _id: "61ae02114fdff5af9831741e"
-  const countProvider = (id) => {};
+
+  const countProvider = (id, roleArr) => {
+    if (roleArr.length === 0) {
+      return 0;
+    } else {
+      let countVal = roleArr.find((el) => {
+        if (el.resourceRoleID === id) {
+          return el;
+        } else {
+          return;
+        }
+      });
+      return countVal === undefined ? 0 : countVal.count;
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="role">
         {props.masterData.map((el) => (
           <span key={el._id}>
-            {props.data.rolecount.map((item) => {
-              if (el._id === item.roleId) {
-                console.log(el, item, "el2");
-                return item.count;
-              } else {
-                return 0;
-              }
-            })}{" "}
-            {el.resourceRole},
+            {countProvider(el._id, props.data.rolecount)} {el.resourceRole},
           </span>
         ))}
       </div>
