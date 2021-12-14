@@ -30,6 +30,9 @@ import Deletedailog from "./delete-dailog";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
+import { styled } from "@mui/material/styles";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -464,6 +467,20 @@ const EstimationDetail = () => {
     setCountError(flag);
   };
 
+  // css for tooltip
+
+  const HtmlTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} placement="top" />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: "#f5f5f9",
+      color: "rgba(0, 0, 0, 0.87)",
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: "1px solid #dadde9",
+    },
+  }));
+
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
@@ -715,33 +732,35 @@ const EstimationDetail = () => {
               },
             }}
           > */}
-          <div title={countError? "Please assign proper role allocation for attributes in resource count table" : ""}>
-          <Button
-            disabled={countError}
-            variant="outlined"
-            className="estimation-detail-button"
-            onClick={() =>
-              history.push({
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/Estimation-Detail" +
-                  "/ResourceMix",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: estimationId,
-                  headerData: headerData,
-                },
-              })
-            }
-          >
-            {" "}
-            <EditOutlined /> Generate Resource Mix
-          </Button>
-          </div>
+         <div class="tooltip">
+  
+            <Button
+              disabled={countError}
+              variant="outlined"
+              className="estimation-detail-button"
+              onClick={() =>
+                history.push({
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/Estimation-Detail" +
+                    "/ResourceMix",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: estimationId,
+                    headerData: headerData,
+                  },
+                })
+              }
+            >
+              {" "}
+              <EditOutlined /> Generate Resource Mix
+            </Button>
+         {countError? <span class="tooltiptext">Please assign proper role allocation for attributes in resource count table</span> : ''}   
+</div>
           {/* </Link> */}
         </Grid>
         <Grid item>
