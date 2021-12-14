@@ -5,7 +5,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { EditOutlined, Add } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./estimation-detail.css";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useHistory } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
@@ -13,7 +13,7 @@ import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import RoleCount from "../ResourceCount/RoleCount";
 import ResourceCountMatrix from "../ResourceCount/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
-import {setResourceMixData} from "../../Redux/resourcemixRedux";
+import { setResourceMixData } from "../../Redux/resourcemixRedux";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
 import {
@@ -33,6 +33,7 @@ import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
+  const history = useHistory();
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
@@ -193,13 +194,14 @@ const EstimationDetail = () => {
         setRequirementTypeArray([...res.data.body.requirementType]);
         setLoader(false);
         if (location.state !== undefined) {
-        let obj = {
-          client: res.data.body.basicDetails.projectId.client,
-          project: res.data.body.basicDetails.projectId,
-          estHeadId: estimationId,
-          data: res.data.body.basicDetails
+          let obj = {
+            client: res.data.body.basicDetails.projectId.client,
+            project: res.data.body.basicDetails.projectId,
+            estHeadId: estimationId,
+            data: res.data.body.basicDetails,
+          };
+          dispatch(setResourceMixData(obj));
         }
-        dispatch(setResourceMixData(obj)) }
         calback();
       })
       .catch((err) => {
@@ -432,15 +434,17 @@ const EstimationDetail = () => {
     }
   };
 
+  // Redux for Resource Mix Screen
 
-// Redux for Resource Mix Screen
-
-const getResourceMixReduxData =() =>{
-
-  console.log("clientDetails,projectDetails,estimationId",clientDetails,projectDetails,estimationId)
-  const {clientDetails,projectDetails,estimationId} = {};
-}
-
+  const getResourceMixReduxData = () => {
+    console.log(
+      "clientDetails,projectDetails,estimationId",
+      clientDetails,
+      projectDetails,
+      estimationId
+    );
+    const { clientDetails, projectDetails, estimationId } = {};
+  };
 
   ///============== JS- Resource Count Pop up and table - END ==============///
 
@@ -456,10 +460,17 @@ const getResourceMixReduxData =() =>{
     event.defaultMuiPrevented = true;
   };
 
+  const handleCountError = (flag) => {
+    setCountError(flag);
+  };
+
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
-      <ResourceCountMatrix data={estimationId} />
+      <ResourceCountMatrix
+        data={estimationId}
+        errorFunction={handleCountError}
+      />
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
@@ -686,7 +697,8 @@ const getResourceMixReduxData =() =>{
       </BorderedContainer>
       <Grid container justifyContent="flex-end" alignItems="center">
         <Grid item style={{ marginRight: "10px" }}>
-          <Link
+          {/* <Link
+            disabled
             to={{
               pathname:
                 "/All-Clients/" +
@@ -699,15 +711,36 @@ const getResourceMixReduxData =() =>{
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
                 estimationHeaderId: estimationId,
-                headerData: headerData
+                headerData: headerData,
               },
             }}
+          > */}
+          <Button
+            disabled={countError}
+            variant="outlined"
+            className="estimation-detail-button"
+            onClick={() =>
+              history.push({
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/Estimation-Detail" +
+                  "/ResourceMix",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: estimationId,
+                  headerData: headerData,
+                },
+              })
+            }
           >
-            <Button variant="outlined" className="estimation-detail-button">
-              {" "}
-              <EditOutlined /> Generate Resource Mix
-            </Button>
-          </Link>
+            {" "}
+            <EditOutlined /> Generate Resource Mix
+          </Button>
+          {/* </Link> */}
         </Grid>
         <Grid item>
           <Button variant="outlined" className="estimation-detail-button">

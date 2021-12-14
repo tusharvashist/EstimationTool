@@ -42,10 +42,10 @@ const ResourceCountMatrix = (props) => {
   // Get All Technology Skills
 
   const getTechnologySkill = () => {
-    setLoader(true)
+    setLoader(true);
     ReourceCountService.getAllTechnologies()
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
         console.log("tech", res);
         setTechnolnogySkills(res.data.body);
       })
@@ -86,14 +86,17 @@ const ResourceCountMatrix = (props) => {
   // Get All Resource Count Data
 
   const getResourceCountAllData = (estimationHeaderId) => {
-    setLoader(true)
+    setLoader(true);
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
-        setLoader(false)
+        setLoader(false);
         console.log("all Data getResourceCountAllData", res.data.body);
         setResouceCountData(res.data.body);
         // setRoleData(res.data.body)
         // setTechnolnogySkills(res.data.body);
+        props.errorFunction(
+          res.data.body.some((el) => el.validationerror === true)
+        );
       })
       .catch((err) => {});
   };
@@ -210,13 +213,13 @@ const ResourceCountMatrix = (props) => {
       estCalcId: row.estCalcId || null,
       estHeaderId: estimationHeaderId,
     };
-    setLoader(true)
+    setLoader(true);
 
     ReourceCountService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
         getResourceCountData(estimationHeaderId);
-        setLoader(false)
+        setLoader(false);
       })
       .catch((err) => {});
   };
@@ -239,44 +242,43 @@ const ResourceCountMatrix = (props) => {
               </>
             )}
             <div style={{ height: 300, width: "100%" }}>
-            {loaderComponent ? (
-            loaderComponent
-          ) : (
-              resouceCountData.length && (
-                <DataGrid
-                  sx={{
-                    "& .MuiDataGrid-cell:hover": {
-                      background: "none",
-                    },
-                    "& .error--true .MuiDataGrid-row:hover": {
-                      background: "rgba(255, 0, 0, 0.2)",
-                    },
-                    "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
-                      {
-                        backgroundColor: "none",
-                      },
-                    "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover": {
-                      backgroundColor: "none",
-                    },
-                  }}
-                  rows={resouceCountData}
-                  // rows={[]}
-                  columns={getColumns({ onChangeSelect })}
-                  pageSize={5}
-                  onCellClick={handleCellClick}
-                  getRowId={({ _id }) => _id}
-                  key="_id"
-                  sortModel={sortModel}
-                  onSortModelChange={(model) => setSortModel(model)}
-                  components={{
-                    NoRowsOverlay: NoRowOverlay,
-                  }}
-                  getRowClassName={(params) =>
-                    `error--${params.row.validationerror}`
-                  }
-                />
-              )
-              )}
+              {loaderComponent
+                ? loaderComponent
+                : resouceCountData.length && (
+                    <DataGrid
+                      sx={{
+                        "& .MuiDataGrid-cell:hover": {
+                          background: "none",
+                        },
+                        "& .error--true .MuiDataGrid-row:hover": {
+                          background: "rgba(255, 0, 0, 0.2)",
+                        },
+                        "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
+                          {
+                            backgroundColor: "none",
+                          },
+                        "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover":
+                          {
+                            backgroundColor: "none",
+                          },
+                      }}
+                      rows={resouceCountData}
+                      // rows={[]}
+                      columns={getColumns({ onChangeSelect })}
+                      pageSize={5}
+                      onCellClick={handleCellClick}
+                      getRowId={({ _id }) => _id}
+                      key="_id"
+                      sortModel={sortModel}
+                      onSortModelChange={(model) => setSortModel(model)}
+                      components={{
+                        NoRowsOverlay: NoRowOverlay,
+                      }}
+                      getRowClassName={(params) =>
+                        `error--${params.row.validationerror}`
+                      }
+                    />
+                  )}
             </div>
 
             {/* <div className="resource-cont-costing">
