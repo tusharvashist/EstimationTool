@@ -43,7 +43,7 @@ const RoleEditItem = (props) => {
         setOpen({
           open: true,
           severity: "error",
-          message: err.message,
+          message: err.response.data.message,
         });
       });
 
