@@ -303,8 +303,12 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       return estResourcePlanning.save();
     } else {
       let deleted = await EstResourcePlanning.findOneAndDelete({
-        filter,
-        resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
+        $and: [
+          filter,
+          {
+            resourceRoleID: mongoose.Types.ObjectId(updatedInfo.resourceRoleID),
+          },
+        ],
       });
       if (!deleted) {
         //Not To any Remove Resource and throw exception
