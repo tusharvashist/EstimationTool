@@ -35,6 +35,7 @@ import estimationServices from "../allestimation/allestimation.service";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
 import { width } from "@material-ui/system";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const FirstStep = forwardRef((props, ref) => {
   const history = useHistory();
@@ -59,6 +60,10 @@ const FirstStep = forwardRef((props, ref) => {
   const [isContingencyInvalid, setContingencyInvalid] = useState(false);
 
   const [loaderComponent, setLoader] = useLoader();
+  const [isOpen, setOpen] = React.useState({});
+
+  // Destructing of snackbar
+  const { message, severity, open } = isOpen || {};
 
   useEffect(() => {
     setClientName(props.clientName);
@@ -150,6 +155,7 @@ const FirstStep = forwardRef((props, ref) => {
     dispatch(setEstimationTypeId(etId));
     setIsEstimationTypeInvalid(false);
     generateEstimationName(etId);
+
   };
   //update the remaining character count limit
   const remainingCharCount = (charString) => {
@@ -189,6 +195,9 @@ const FirstStep = forwardRef((props, ref) => {
     dispatch(setEstimationContingency(selectedEstimationObj.contingency));
     setEstimationNameInvalid(estName == "");
     setContingencyInvalid(!validateContingency(selectedEstimationObj.contingency));
+    setOpen({ open: true, severity: "success",
+     message: "Default Contingency for Estimation Type : " + selectedEstimationObj.estType+ " applied to " + selectedEstimationObj.contingency + " %"});
+
   };
 
   // get the Effort Unit value from selected dropdown
@@ -199,8 +208,13 @@ const FirstStep = forwardRef((props, ref) => {
     setIsEffortUnitInvalid(effortUnit === "");
   };
 
+  const handleClose = () => {
+    setOpen({});
+  };
+
   return (
     <React.Fragment>
+      
       {loaderComponent ? (
         loaderComponent
       ) : (
@@ -320,6 +334,15 @@ const FirstStep = forwardRef((props, ref) => {
             </div>
           </Grid>
         </BorderedContainer>
+      )}
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
       )}
     </React.Fragment>
   );

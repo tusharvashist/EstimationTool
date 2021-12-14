@@ -24,18 +24,28 @@ const ResourceCountMatrix = (props) => {
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
   const [reload, setReload] = useState(false);
+  const [loaderComponent, setLoader] = useLoader();
+
+  const [sortModel, setSortModel] = React.useState([
+    {
+      field: "resourceCount",
+      sort: "asc",
+    },
+  ]);
 
   useEffect(() => {
     // getTechnologySkill();
     getTechnologySkill();
-    // getResourceCountData(estimationHeaderId);
+    getResourceCountData(estimationHeaderId);
   }, [reload]);
 
   // Get All Technology Skills
 
   const getTechnologySkill = () => {
+    setLoader(true);
     ReourceCountService.getAllTechnologies()
       .then((res) => {
+        setLoader(false);
         console.log("tech", res);
         setTechnolnogySkills(res.data.body);
       })
@@ -47,8 +57,8 @@ const ResourceCountMatrix = (props) => {
   const getResourceCountData = (estimationHeaderId) => {
     ReourceCountService.getResourceCount(estimationHeaderId)
       .then((res) => {
-        getResourceMasterRoleData();
         getResourceCountAllData(estimationHeaderId);
+        getResourceMasterRoleData();
       })
       .catch((err) => {});
   };
@@ -76,17 +86,23 @@ const ResourceCountMatrix = (props) => {
   // Get All Resource Count Data
 
   const getResourceCountAllData = (estimationHeaderId) => {
+    setLoader(true);
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
+        setLoader(false);
         console.log("all Data getResourceCountAllData", res.data.body);
         setResouceCountData(res.data.body);
         // setRoleData(res.data.body)
         // setTechnolnogySkills(res.data.body);
+        props.errorFunction(
+          res.data.body.some((el) => el.validationerror === true)
+        );
       })
       .catch((err) => {});
   };
 
   console.log("resouceCountData", resouceCountData);
+
   const getColumns = ({ onChangeSelect }) => [
     {
       headerName: "Resource Count",
@@ -197,10 +213,13 @@ const ResourceCountMatrix = (props) => {
       estCalcId: row.estCalcId || null,
       estHeaderId: estimationHeaderId,
     };
+    setLoader(true);
 
     ReourceCountService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
+        setLoader(false);
+
         getResourceCountData(estimationHeaderId);
       })
       .catch((err) => {});
@@ -224,20 +243,41 @@ const ResourceCountMatrix = (props) => {
               </>
             )}
             <div style={{ height: 300, width: "100%" }}>
-              {resouceCountData.length && (
-                <DataGrid
-                  rows={resouceCountData}
-                  // rows={[]}
-                  columns={getColumns({ onChangeSelect })}
-                  pageSize={5}
-                  onCellClick={handleCellClick}
-                  getRowId={({ _id }) => _id}
-                  key="_id"
-                  components={{
-                    NoRowsOverlay: NoRowOverlay,
-                  }}
-                />
-              )}
+           { resouceCountData.length && (
+                    <DataGrid
+                      sx={{
+                        "& .MuiDataGrid-cell:hover": {
+                          background: "none",
+                        },
+                        "& .error--true .MuiDataGrid-row:hover": {
+                          background: "rgba(255, 0, 0, 0.2)",
+                        },
+                        "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
+                          {
+                            backgroundColor: "none",
+                          },
+                        "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover":
+                          {
+                            backgroundColor: "none",
+                          },
+                      }}
+                      rows={resouceCountData}
+                      // rows={[]}
+                      columns={getColumns({ onChangeSelect })}
+                      pageSize={5}
+                      onCellClick={handleCellClick}
+                      getRowId={({ _id }) => _id}
+                      key="_id"
+                      sortModel={sortModel}
+                      onSortModelChange={(model) => setSortModel(model)}
+                      components={{
+                        NoRowsOverlay: NoRowOverlay,
+                      }}
+                      getRowClassName={(params) =>
+                        `error--${params.row.validationerror}`
+                      }
+                    />
+                  )}
             </div>
 
             {/* <div className="resource-cont-costing">
@@ -251,7 +291,7 @@ const ResourceCountMatrix = (props) => {
       <div className="estimation-detail-button-container">
         <button
           onClick={handleCountTable}
-          className="estimation-detail-count-button"
+          className={`estimation-detail-count-button error-${props.countError}`}
         >
           <MdOutlineManageAccounts
             style={{ fontSize: "32px", color: "#1e7e1e" }}

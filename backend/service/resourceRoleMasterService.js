@@ -33,7 +33,7 @@ module.exports.createEstResourcePlanning = async (serviceData) => {
   }
 };
 
-module.exports.getAllResources = async (resourceCountId) => {
+module.exports.getAllResources = async ({ resourceCountId }) => {
   try {
     let planResource = await estResourcePlanningModel.aggregate([
       {

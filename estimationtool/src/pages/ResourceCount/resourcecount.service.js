@@ -22,7 +22,7 @@ const ResourceCountService = {
     return axios.put(url, req);
   },
 
-  getResourceMasterRole: function () {
+  getResourceMasterRole: function (resourceCountId) {
     let url = Url.getResourceRoleMaster;
     return axios.get(url);
   },

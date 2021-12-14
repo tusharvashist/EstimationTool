@@ -5,7 +5,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { EditOutlined, Add } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import "./estimation-detail.css";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useHistory } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
@@ -13,7 +13,7 @@ import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import RoleCount from "../ResourceCount/RoleCount";
 import ResourceCountMatrix from "../ResourceCount/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
-import requirementFooter from "./requirementFooter";
+import { setResourceMixData } from "../../Redux/resourcemixRedux";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
 import {
@@ -30,13 +30,17 @@ import Deletedailog from "./delete-dailog";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
+import { styled } from "@mui/material/styles";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
+  const history = useHistory();
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
-
+  console.log("location", location);
   let estimationId;
   if (location.state !== undefined) {
     estimationId = location.state.estId;
@@ -85,6 +89,7 @@ const EstimationDetail = () => {
   const [tagHeaderArray, setTagHeaderArray] = useState([]);
   const [tagDataArray, setTagDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
+  const [countError, setCountError] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -191,6 +196,15 @@ const EstimationDetail = () => {
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
         setLoader(false);
+        if (location.state !== undefined) {
+          let obj = {
+            client: res.data.body.basicDetails.projectId.client,
+            project: res.data.body.basicDetails.projectId,
+            estHeadId: estimationId,
+            data: res.data.body.basicDetails,
+          };
+          dispatch(setResourceMixData(obj));
+        }
         calback();
       })
       .catch((err) => {
@@ -423,6 +437,18 @@ const EstimationDetail = () => {
     }
   };
 
+  // Redux for Resource Mix Screen
+
+  const getResourceMixReduxData = () => {
+    console.log(
+      "clientDetails,projectDetails,estimationId",
+      clientDetails,
+      projectDetails,
+      estimationId
+    );
+    const { clientDetails, projectDetails, estimationId } = {};
+  };
+
   ///============== JS- Resource Count Pop up and table - END ==============///
 
   const handleRowEditStart = (params, event) => {
@@ -437,10 +463,32 @@ const EstimationDetail = () => {
     event.defaultMuiPrevented = true;
   };
 
+  const handleCountError = (flag) => {
+    setCountError(flag);
+  };
+
+  // css for tooltip
+
+  const HtmlTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} placement="top" />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: "#f5f5f9",
+      color: "rgba(0, 0, 0, 0.87)",
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: "1px solid #dadde9",
+    },
+  }));
+
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
-      <ResourceCountMatrix data={estimationId} />
+      <ResourceCountMatrix
+        data={estimationId}
+        errorFunction={handleCountError}
+        countError={countError}
+      />
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
@@ -667,7 +715,8 @@ const EstimationDetail = () => {
       </BorderedContainer>
       <Grid container justifyContent="flex-end" alignItems="center">
         <Grid item style={{ marginRight: "10px" }}>
-          <Link
+          {/* <Link
+            disabled
             to={{
               pathname:
                 "/All-Clients/" +
@@ -683,12 +732,37 @@ const EstimationDetail = () => {
                 headerData: headerData,
               },
             }}
-          >
-            <Button variant="outlined" className="estimation-detail-button">
+          > */}
+         <div class="tooltip">
+  
+            <Button
+              disabled={countError}
+              variant="outlined"
+              className="estimation-detail-button"
+              onClick={() =>
+                history.push({
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/Estimation-Detail" +
+                    "/ResourceMix",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: estimationId,
+                    headerData: headerData,
+                  },
+                })
+              }
+            >
               {" "}
               <EditOutlined /> Generate Resource Mix
             </Button>
-          </Link>
+         {countError? <span class="tooltiptext">Please assign proper role allocation for attributes in resource count table</span> : ''}   
+</div>
+          {/* </Link> */}
         </Grid>
         <Grid item>
           <Button variant="outlined" className="estimation-detail-button">
