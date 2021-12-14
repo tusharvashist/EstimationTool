@@ -715,6 +715,7 @@ const EstimationDetail = () => {
               },
             }}
           > */}
+          <div title={countError? "Please assign proper role allocation for attributes in resource count table" : ""}>
           <Button
             disabled={countError}
             variant="outlined"
@@ -740,6 +741,7 @@ const EstimationDetail = () => {
             {" "}
             <EditOutlined /> Generate Resource Mix
           </Button>
+          </div>
           {/* </Link> */}
         </Grid>
         <Grid item>

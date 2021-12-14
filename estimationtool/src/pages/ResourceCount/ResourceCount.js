@@ -218,8 +218,9 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
-        getResourceCountData(estimationHeaderId);
         setLoader(false);
+
+        getResourceCountData(estimationHeaderId);
       })
       .catch((err) => {});
   };
