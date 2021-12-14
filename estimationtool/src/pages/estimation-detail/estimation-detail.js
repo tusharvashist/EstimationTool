@@ -13,7 +13,7 @@ import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import RoleCount from "../ResourceCount/RoleCount";
 import ResourceCountMatrix from "../ResourceCount/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
-import requirementFooter from "./requirementFooter";
+import {setResourceMixData} from "../../Redux/resourcemixRedux";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
 import {
@@ -192,6 +192,14 @@ const EstimationDetail = () => {
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
         setLoader(false);
+        if (location.state !== undefined) {
+        let obj = {
+          client: res.data.body.basicDetails.projectId.client,
+          project: res.data.body.basicDetails.projectId,
+          estHeadId: estimationId,
+          data: res.data.body.basicDetails
+        }
+        dispatch(setResourceMixData(obj)) }
         calback();
       })
       .catch((err) => {
@@ -423,6 +431,16 @@ const EstimationDetail = () => {
       setLoader(false);
     }
   };
+
+
+// Redux for Resource Mix Screen
+
+const getResourceMixReduxData =() =>{
+
+  console.log("clientDetails,projectDetails,estimationId",clientDetails,projectDetails,estimationId)
+  const {clientDetails,projectDetails,estimationId} = {};
+}
+
 
   ///============== JS- Resource Count Pop up and table - END ==============///
 
@@ -681,7 +699,7 @@ const EstimationDetail = () => {
                 clientInfo: clientDetails,
                 projectInfo: projectDetails,
                 estimationHeaderId: estimationId,
-                headerData: headerData,
+                headerData: headerData
               },
             }}
           >

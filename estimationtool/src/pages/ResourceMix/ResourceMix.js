@@ -13,21 +13,22 @@ import ResourceMixService from "./ResourceMix.service";
 import styleClasses from "./resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import ResourceCountService from "../ResourceCount/resourcecount.service";
+import { useSelector, useDispatch } from "react-redux";
 
 const RequirementMix = () => {
+  const resMixData = useSelector((state) => state.resourceMixData);
+
   const classes = useTableStyle();
   const location = useLocation();
-  const estimationId = location.state.estimationHeaderId;
-  const clientDetails = location.state.clientInfo;
-  const projectDetails = location.state.projectInfo;
-  const headerData = location.state.headerData;
+  const estimationId = location.state !== undefined ?   location.state.estimationHeaderId : resMixData.data.estHeadId;
+  const clientDetails = location.state !== undefined ? location.state.clientInfo : resMixData.data;
+  const projectDetails = location.state !== undefined ? location.state.projectInfo : resMixData.data;
+  const headerData = location.state !== undefined ? location.state.headerData : resMixData.data;
 
   const [loaderComponent, setLoader] = useLoader();
 
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
-
-  console.log("estimationId", estimationId);
 
   useEffect(() => {
     getResourceCountData(estimationId);
@@ -42,9 +43,11 @@ const RequirementMix = () => {
   };
 
   const getAllResourceMixData = (estimationId) => {
+    setLoader(true)
     ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
       .then((res) => {
         console.log("mixdata", res);
+        setLoader(false)
         let objArr = res.data.body.resourceMixData.map((el, i) => {
           return {
             id: i + 1,

@@ -24,6 +24,7 @@ const ResourceCountMatrix = (props) => {
   const [rowEditData, setRowEditData] = useState([]);
   const [roleData, setRoleData] = useState();
   const [reload, setReload] = useState(false);
+  const [loaderComponent, setLoader] = useLoader();
 
   const [sortModel, setSortModel] = React.useState([
     {
@@ -41,8 +42,10 @@ const ResourceCountMatrix = (props) => {
   // Get All Technology Skills
 
   const getTechnologySkill = () => {
+    setLoader(true)
     ReourceCountService.getAllTechnologies()
       .then((res) => {
+        setLoader(false)
         console.log("tech", res);
         setTechnolnogySkills(res.data.body);
       })
@@ -83,8 +86,10 @@ const ResourceCountMatrix = (props) => {
   // Get All Resource Count Data
 
   const getResourceCountAllData = (estimationHeaderId) => {
+    setLoader(true)
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
+        setLoader(false)
         console.log("all Data getResourceCountAllData", res.data.body);
         setResouceCountData(res.data.body);
         // setRoleData(res.data.body)
@@ -205,11 +210,13 @@ const ResourceCountMatrix = (props) => {
       estCalcId: row.estCalcId || null,
       estHeaderId: estimationHeaderId,
     };
+    setLoader(true)
 
     ReourceCountService.updateTechnology(req)
       .then((res) => {
         console.log("update technology", res.data.body);
         getResourceCountData(estimationHeaderId);
+        setLoader(false)
       })
       .catch((err) => {});
   };
@@ -232,7 +239,10 @@ const ResourceCountMatrix = (props) => {
               </>
             )}
             <div style={{ height: 300, width: "100%" }}>
-              {resouceCountData.length && (
+            {loaderComponent ? (
+            loaderComponent
+          ) : (
+              resouceCountData.length && (
                 <DataGrid
                   sx={{
                     "& .MuiDataGrid-cell:hover": {
@@ -265,6 +275,7 @@ const ResourceCountMatrix = (props) => {
                     `error--${params.row.validationerror}`
                   }
                 />
+              )
               )}
             </div>
 
