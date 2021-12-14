@@ -212,11 +212,12 @@ export default function ClientDetails(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
+
             <Grid
               item
-              style={{ textAlign: "right" }}
-              xs={3}
+              xs={6}
               justifyContent="flex-end"
+              style={{ textAlign: "right" }}
             >
               <Link
                 to={{
@@ -233,19 +234,16 @@ export default function ClientDetails(props) {
                   },
                 }}
               >
-                <Button onClick={createEstimationHandle} variant="outlined">
+                <Button
+                  style={{ marginRight: "15px" }}
+                  onClick={createEstimationHandle}
+                  variant="outlined"
+                >
                   {" "}
                   <AddIcon />
-                  Create Requirements
+                  Create New Requirements
                 </Button>
               </Link>
-            </Grid>
-            <Grid
-              item
-              xs={3}
-              justifyContent="flex-end"
-              style={{ textAlign: "right" }}
-            >
               <Link
                 to={{
                   pathname:
