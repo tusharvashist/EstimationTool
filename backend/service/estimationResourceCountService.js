@@ -243,7 +243,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
         estHeaderId: mongoose.Types.ObjectId(updatedInfo.estHeaderId),
       };
       groupby = "$estAttributeId";
-    } else {
+    } else if (updatedInfo.estCalcId) {
       filter = {
         estCalcId: mongoose.Types.ObjectId(updatedInfo.estCalcId),
         estHeaderId: mongoose.Types.ObjectId(updatedInfo.estHeaderId),

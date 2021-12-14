@@ -33,6 +33,7 @@ import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 import { styled } from "@mui/material/styles";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import { IoWarningOutline } from "react-icons/io5";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -733,8 +734,7 @@ const EstimationDetail = () => {
               },
             }}
           > */}
-         <div class="tooltip">
-  
+          <div class="tooltip">
             <Button
               disabled={countError}
               variant="outlined"
@@ -760,8 +760,18 @@ const EstimationDetail = () => {
               {" "}
               <EditOutlined /> Generate Resource Mix
             </Button>
-         {countError? <span class="tooltiptext">Please assign proper role allocation for attributes in resource count table</span> : ''}   
-</div>
+            {countError ? (
+              <span class="tooltiptext">
+                <div className="icon-cover">
+                  <IoWarningOutline className="icon-warning" />
+                </div>
+                Please assign proper role allocation for attributes in resource
+                count table to Genrate Resource Mix
+              </span>
+            ) : (
+              ""
+            )}
+          </div>
           {/* </Link> */}
         </Grid>
         <Grid item>
