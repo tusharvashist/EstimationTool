@@ -487,6 +487,7 @@ const EstimationDetail = () => {
       <ResourceCountMatrix
         data={estimationId}
         errorFunction={handleCountError}
+        countError={countError}
       />
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (

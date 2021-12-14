@@ -291,7 +291,7 @@ const ResourceCountMatrix = (props) => {
       <div className="estimation-detail-button-container">
         <button
           onClick={handleCountTable}
-          className="estimation-detail-count-button"
+          className={`estimation-detail-count-button error-${props.countError}`}
         >
           <MdOutlineManageAccounts
             style={{ fontSize: "32px", color: "#1e7e1e" }}
