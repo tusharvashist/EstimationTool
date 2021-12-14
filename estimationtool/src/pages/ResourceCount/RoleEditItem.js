@@ -36,6 +36,20 @@ const RoleEditItem = (props) => {
             resourceRoleID: e.target.id,
           },
         ];
+      } else if (
+        rowRoleData.rolecount.length == 1 &&
+        rowRoleData.rolecount[0].resourceRoleID !== e.target.id
+      ) {
+        let newEl = [
+          {
+            count: 1,
+            estAttributeId: props.rowEditData.estAttributeId || null,
+            estCalcId: props.rowEditData.estCalcId || null,
+            resourceRole: e.target.parentElement.previousSibling.innerText,
+            resourceRoleID: e.target.id,
+          },
+        ];
+        return [...rowRoleData.rolecount, ...newEl];
       } else {
         let roleCountArr = rowRoleData.rolecount.map((el) => {
           if (el.resourceRoleID === e.target.id) {
@@ -65,11 +79,12 @@ const RoleEditItem = (props) => {
         //   let url = "/login";
         //   history1.push(url);
         // }
+        console.log("error", err);
         setDisabledState(true);
         setOpen({
           open: true,
           severity: "error",
-          message: err.response.data.message,
+          message: err.response.message,
         });
       });
   };
