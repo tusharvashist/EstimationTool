@@ -470,6 +470,7 @@ const EstimationDetail = () => {
       <ResourceCountMatrix
         data={estimationId}
         errorFunction={handleCountError}
+        countError={countError}
       />
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
@@ -715,32 +716,38 @@ const EstimationDetail = () => {
               },
             }}
           > */}
-          <div title={countError? "Please assign proper role allocation for attributes in resource count table" : ""}>
-          <Button
-            disabled={countError}
-            variant="outlined"
-            className="estimation-detail-button"
-            onClick={() =>
-              history.push({
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/Estimation-Detail" +
-                  "/ResourceMix",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: estimationId,
-                  headerData: headerData,
-                },
-              })
+          <div
+            title={
+              countError
+                ? "Please assign proper role allocation for attributes in resource count table"
+                : ""
             }
           >
-            {" "}
-            <EditOutlined /> Generate Resource Mix
-          </Button>
+            <Button
+              disabled={countError}
+              variant="outlined"
+              className="estimation-detail-button"
+              onClick={() =>
+                history.push({
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/Estimation-Detail" +
+                    "/ResourceMix",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: estimationId,
+                    headerData: headerData,
+                  },
+                })
+              }
+            >
+              {" "}
+              <EditOutlined /> Generate Resource Mix
+            </Button>
           </div>
           {/* </Link> */}
         </Grid>
