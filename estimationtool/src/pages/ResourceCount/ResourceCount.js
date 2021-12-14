@@ -243,9 +243,7 @@ const ResourceCountMatrix = (props) => {
               </>
             )}
             <div style={{ height: 300, width: "100%" }}>
-              {loaderComponent
-                ? loaderComponent
-                : resouceCountData.length && (
+           { resouceCountData.length && (
                     <DataGrid
                       sx={{
                         "& .MuiDataGrid-cell:hover": {
