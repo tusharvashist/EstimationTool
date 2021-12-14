@@ -154,6 +154,7 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     {
       $addFields: {
         rolecount: [],
+        validationerror: false,
       },
     },
   ]);
@@ -170,12 +171,16 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
       exists = result.filter(
         (x) => String(x.estAttributeId) == String(element.estAttributeId)
       );
-      if (exists.length > 0) exists[0]["rolecount"].push(element);
+      if (exists.length > 0) {
+        exists[0]["rolecount"].push(element);
+      }
     } else if (element.estCalcId) {
       exists = result.filter(
         (x) => String(x.estCalcId) == String(element.estCalcId)
       );
-      if (exists.length > 0) exists[0]["rolecount"].push(element);
+      if (exists.length > 0) {
+        exists[0]["rolecount"].push(element);
+      }
     }
   });
 
