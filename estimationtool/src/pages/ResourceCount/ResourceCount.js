@@ -28,7 +28,7 @@ const ResourceCountMatrix = (props) => {
   useEffect(() => {
     // getTechnologySkill();
     getTechnologySkill();
-    getResourceCountData(estimationHeaderId);
+    // getResourceCountData(estimationHeaderId);
   }, [reload]);
 
   // Get All Technology Skills
@@ -157,7 +157,6 @@ const ResourceCountMatrix = (props) => {
   }
 
   function handleCellClick(param) {
-    console.log("param", param);
     if (param.field === "role" && !openEditCount) {
       console.log("roweditdata", param.row);
 
@@ -167,6 +166,10 @@ const ResourceCountMatrix = (props) => {
       setOpenEditCount(false);
     }
   }
+
+  const closeEditHandler = () => {
+    setOpenEditCount(false);
+  };
 
   const handleEditChange = () => {
     setReload(!reload);
@@ -208,11 +211,17 @@ const ResourceCountMatrix = (props) => {
         <div className="estimation-detail-count-table">
           <BorderedContainer className="count-box-shadow roleCountInputParent">
             {openEditCount && (
-              <RoleEditCount
-                rowEditData={rowEditData}
-                masterData={roleData}
-                handleEditChange={handleEditChange}
-              />
+              <>
+                <div
+                  className="editrole_cover"
+                  onClick={closeEditHandler}
+                ></div>
+                <RoleEditCount
+                  rowEditData={rowEditData}
+                  masterData={roleData}
+                  handleEditChange={handleEditChange}
+                />
+              </>
             )}
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
@@ -231,11 +240,11 @@ const ResourceCountMatrix = (props) => {
               )}
             </div>
 
-            <div className="resource-cont-costing">
+            {/* <div className="resource-cont-costing">
               <h4 className="inline-cost">Costing: $1000</h4>
               <h4 className="inline-cost">Expected Timeline: $1000</h4>
               <h4 className="inline-cost">Actual Timeline: $1000</h4>
-            </div>
+            </div> */}
           </BorderedContainer>
         </div>
       )}

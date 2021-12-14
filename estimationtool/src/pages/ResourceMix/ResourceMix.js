@@ -12,6 +12,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import ResourceMixService from "./ResourceMix.service";
 import styleClasses from "./resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
+import ResourceCountService from "../ResourceCount/resourcecount.service";
 
 const RequirementMix = () => {
   const classes = useTableStyle();
@@ -26,9 +27,19 @@ const RequirementMix = () => {
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
 
+  console.log("estimationId", estimationId);
+
   useEffect(() => {
-    getAllResourceMixData(estimationId);
+    getResourceCountData(estimationId);
   }, [estimationId]);
+
+  const getResourceCountData = (estimationHeaderId) => {
+    ResourceCountService.getResourceCount(estimationHeaderId)
+      .then((res) => {
+        getAllResourceMixData(estimationId);
+      })
+      .catch((err) => {});
+  };
 
   const getAllResourceMixData = (estimationId) => {
     ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
@@ -122,7 +133,7 @@ const RequirementMix = () => {
     <div className="estimation-detail-cover">
       <Container>
         <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
-          <Link
+          {/* <Link
             to={{
               pathname:
                 "/All-Clients/" +
@@ -141,7 +152,7 @@ const RequirementMix = () => {
               {" "}
               <> Edit Estimation Configuration</>
             </Button>
-          </Link>
+          </Link> */}
         </Box>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
@@ -164,15 +175,17 @@ const RequirementMix = () => {
               />
             </div>
             <div className={styleClasses.totalcontainer}>
-              <div className={styleClasses.total_item}>
-                <h4>
-                  Total Cost: <span>{totalMargin.cost}</span>
-                </h4>
-              </div>
-              <div className={styleClasses.total_item}>
-                <h4>
-                  Total Price: <span>{totalMargin.cost}</span>
-                </h4>
+              <div className={styleClasses.totalRow}>
+                <div className={styleClasses.total_item}>
+                  <h4>
+                    Total Cost: <span>{totalMargin.cost}</span>
+                  </h4>
+                </div>
+                <div className={styleClasses.total_item}>
+                  <h4>
+                    Total Price: <span>{totalMargin.price}</span>
+                  </h4>
+                </div>
               </div>
               <div className={styleClasses.total_item}>
                 <h4>
@@ -181,7 +194,7 @@ const RequirementMix = () => {
               </div>
               <div className={styleClasses.total_item}>
                 <h4>
-                  Margin %: <span>{totalMargin.marginPercent}</span>
+                  Margin: <span>{totalMargin.marginPercent}</span>
                 </h4>
               </div>
             </div>

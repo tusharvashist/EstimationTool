@@ -4,3 +4,17 @@
   justify-content: flex-end;
   align-items: flex-end;
 }
+
+.totalRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.total_item {
+  margin: 5px 10px;
+}
+
+.total_item span {
+  color: #3f3f3f;
+  font-weight: 500;
+}

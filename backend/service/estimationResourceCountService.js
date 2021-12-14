@@ -37,8 +37,6 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         );
 
       if (element.estAttributeId != undefined && checkattrexists.length == 0) {
-        console.log(element.estAttributeId);
-        console.log(checkattrexists.length == 0);
         let resultdelete = await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
@@ -46,8 +44,6 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       }
 
       if (element.estCalcId != undefined && checkcalcexists.length == 0) {
-        console.log(element.estCalcId);
-        console.log(heckcalcexists.length);
         let resultdelete = await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,

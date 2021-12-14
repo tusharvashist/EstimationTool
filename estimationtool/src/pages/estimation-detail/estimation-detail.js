@@ -28,11 +28,23 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import Deletedailog from "./delete-dailog";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
+import { useSelector, useDispatch } from "react-redux";
+import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
   const location = useLocation();
-  const estimationId = location.state.estId;
+  const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
+  const dispatch = useDispatch();
+
+  let estimationId;
+  if (location.state !== undefined) {
+    estimationId = location.state.estId;
+    dispatch(setEstHeaderId(location.state.estId));
+  } else {
+    estimationId = estimationHeaderId.estHeaderId;
+  }
+
   const [clientDetails, setClientDetails] = useState({
     _id: "",
     clientName: "",
@@ -662,8 +674,7 @@ const EstimationDetail = () => {
                 clientDetails.clientName +
                 "/" +
                 projectDetails.projectName +
-                "/" +
-                headerData.estName +
+                "/Estimation-Detail" +
                 "/ResourceMix",
               state: {
                 clientInfo: clientDetails,
@@ -680,10 +691,10 @@ const EstimationDetail = () => {
           </Link>
         </Grid>
         <Grid item>
-            <Button variant="outlined" className="estimation-detail-button">
-              {" "}
-              <EditOutlined /> Generate Timeline Plan
-            </Button>
+          <Button variant="outlined" className="estimation-detail-button">
+            {" "}
+            <EditOutlined /> Generate Timeline Plan
+          </Button>
         </Grid>
       </Grid>
     </div>

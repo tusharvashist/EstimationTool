@@ -125,7 +125,7 @@ module.exports.getResourceMixData = async (estheaderid) => {
       },
     },
     {
-      $set: {
+      $addFields: {
         resourceRole: "$resourcelist.resourceRole",
       },
     },

@@ -105,7 +105,7 @@ export default class Layout extends Component {
                   </Route>
                   <Route
                     exact
-                    path="/All-Clients/:clientName/:projectid/:estimationname/ResourceMix"
+                    path="/All-Clients/:clientName/:projectid/Estimation-Detail/ResourceMix"
                   >
                     <ResourceMix />
                   </Route>

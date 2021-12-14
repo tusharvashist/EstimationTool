@@ -2,100 +2,125 @@ import React, { useState, useEffect } from "react";
 import ResourceCountService from "./resourcecount.service";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
-
 const RoleEditItem = (props) => {
+  // useEffect(() => {
+  //   setRerender(!render);
+  // }, [props.rowEditData]);
+
   const [isOpen, setOpen] = React.useState({});
   const [disabledState, setDisabledState] = useState(false);
+
+  const [rowRoleData, setRowRoleData] = useState(props.rowEditData);
   console.log("edit props", props);
+
   const handleIncrementCount = (e) => {
-    // {
-    //   "defaultAdjusted": false,
-    //   "estResourceCountID":"61b06be54cf7ced54feba2fb", rowid
-    //   "estAttributeId" :"61adad02beb92cc10fd2e68b",
-    //   "estCalcId": null,
-    //   "resourceRoleID" : "61ae02114fdff5af9831741e", sr. lead id
-    //   "qty": -1
-    //   }
     let obj = {
       defaultAdjusted: false,
       estHeaderId: props.rowEditData.estHeaderId,
       estResourceCountID: props.rowEditData._id,
       estAttributeId: props.rowEditData.estAttributeId || null,
       estCalcId: props.rowEditData.estCalcId || null,
-      resourceRoleID: e.target.nextSibling.id,
+      resourceRoleID: e.target.id,
       qty: 1,
     };
-    ResourceCountService.updateResourceRole(obj).then((res) => {
-      console.log(res)
 
+    const setIncrementUpdateCount = () => {
+      let roleCountArr = rowRoleData.rolecount.map((el) => {
+        if (el.resourceRoleID === e.target.id) {
+          let newCount = (el.count += 1);
+          return { ...el, count: newCount };
+        } else {
+          return { ...el };
+        }
+      });
+      return roleCountArr;
+    };
 
-      setOpen({ open: true, severity: "success", message: res.data.message });
+    ResourceCountService.updateResourceRole(obj)
+      .then((res) => {
+        console.log(res);
 
-
-    })
+        setRowRoleData({
+          ...rowRoleData,
+          rolecount: setIncrementUpdateCount(),
+        });
+        setOpen({ open: true, severity: "success", message: res.data.message });
+        props.handleEditChange();
+      })
       .catch((err) => {
         // if ((err.response.data = 401) || (err.response.data = 404)) {
         //   let url = "/login";
         //   history1.push(url);
         // }
-        console.log(">>>>>>.hi>>>>>>>>", err)
-        setDisabledState(true)
+        console.log(">>>>>>.hi>>>>>>>>", err);
+        setDisabledState(true);
         setOpen({
           open: true,
           severity: "error",
           message: err.response.data.message,
         });
       });
-
-    props.handleEditChange();
   };
+
+  console.log("rowRoleData", rowRoleData);
+
   const handleClose = () => {
     setOpen({});
   };
 
   const handleDecrementCount = (e) => {
-    console.log("edata", e);
     let obj = {
       defaultAdjusted: false,
       estHeaderId: props.rowEditData.estHeaderId,
       estResourceCountID: props.rowEditData._id,
       estAttributeId: props.rowEditData.estAttributeId || null,
       estCalcId: props.rowEditData.estCalcId || null,
-      resourceRoleID: e.target.previousSibling.id,
+      resourceRoleID: e.target.id,
       qty: -1,
     };
-    props.handleEditChange();
-    ResourceCountService.updateResourceRole(obj).then((res) => {
-      console.log(res)
-
-
-      setOpen({ open: true, severity: "success", message: res.data.message });
-
-
-    })
+    const setDecrementUpdateCount = () => {
+      let roleCountArr = rowRoleData.rolecount.map((el) => {
+        if (el.resourceRoleID === e.target.id) {
+          let newCount = (el.count -= 1);
+          return { ...el, count: newCount };
+        } else {
+          return { ...el };
+        }
+      });
+      return roleCountArr;
+    };
+    ResourceCountService.updateResourceRole(obj)
+      .then((res) => {
+        console.log(res);
+        setDisabledState(false);
+        setRowRoleData({
+          ...rowRoleData,
+          rolecount: setDecrementUpdateCount(),
+        });
+        setOpen({ open: true, severity: "success", message: res.data.message });
+        props.handleEditChange();
+      })
       .catch((err) => {
         // if ((err.response.data = 401) || (err.response.data = 404)) {
         //   let url = "/login";
         //   history1.push(url);
         // }
-        console.log(">>>>>>.hi>>>>>>>>", err)
+        console.log(">>>>>>.hi>>>>>>>>", err);
 
-        setDisabledState(true)
+        setDisabledState(true);
         setOpen({
           open: true,
           severity: "error",
           message: err.message,
         });
       });
-
-
   };
 
   const countProvider = (id, roleArr) => {
     if (roleArr.length === 0) {
       return 0;
     } else {
-      let countVal = roleArr.find((el) => {
+      let countVal = rowRoleData.rolecount.find((el) => {
         if (el.resourceRoleID === id) {
           return el;
         } else {
@@ -113,11 +138,19 @@ const RoleEditItem = (props) => {
         <div className="roleitem_list">
           <p>{item.resourceRole}</p>
           <div className="optionbtn">
-            <button disabled={disabledState} onClick={handleIncrementCount}>+</button>
+            <button
+              id={item._id}
+              disabled={disabledState}
+              onClick={handleIncrementCount}
+            >
+              +
+            </button>
             <p id={item._id}>
               {countProvider(item._id, props.rowEditData.rolecount)}
             </p>
-            <button onClick={handleDecrementCount}>-</button>
+            <button id={item._id} onClick={handleDecrementCount}>
+              -
+            </button>
           </div>
         </div>
       ))}
