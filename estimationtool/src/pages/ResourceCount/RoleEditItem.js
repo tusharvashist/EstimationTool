@@ -11,6 +11,7 @@ const RoleEditItem = (props) => {
   const [disabledState, setDisabledState] = useState(false);
 
   const [rowRoleData, setRowRoleData] = useState(props.rowEditData);
+
   console.log("edit props", props);
 
   const handleIncrementCount = (e) => {
@@ -25,15 +26,27 @@ const RoleEditItem = (props) => {
     };
 
     const setIncrementUpdateCount = () => {
-      let roleCountArr = rowRoleData.rolecount.map((el) => {
-        if (el.resourceRoleID === e.target.id) {
-          let newCount = (el.count += 1);
-          return { ...el, count: newCount };
-        } else {
-          return { ...el };
-        }
-      });
-      return roleCountArr;
+      if (rowRoleData.rolecount.length == 0) {
+        return [
+          {
+            count: 1,
+            estAttributeId: props.rowEditData.estAttributeId || null,
+            estCalcId: props.rowEditData.estCalcId || null,
+            resourceRole: e.target.parentElement.previousSibling.innerText,
+            resourceRoleID: e.target.id,
+          },
+        ];
+      } else {
+        let roleCountArr = rowRoleData.rolecount.map((el) => {
+          if (el.resourceRoleID === e.target.id) {
+            let newCount = (el.count += 1);
+            return { ...el, count: newCount };
+          } else {
+            return { ...el };
+          }
+        });
+        return roleCountArr;
+      }
     };
 
     ResourceCountService.updateResourceRole(obj)
@@ -52,7 +65,6 @@ const RoleEditItem = (props) => {
         //   let url = "/login";
         //   history1.push(url);
         // }
-        console.log(">>>>>>.hi>>>>>>>>", err);
         setDisabledState(true);
         setOpen({
           open: true,
@@ -61,8 +73,6 @@ const RoleEditItem = (props) => {
         });
       });
   };
-
-  console.log("rowRoleData", rowRoleData);
 
   const handleClose = () => {
     setOpen({});
@@ -105,7 +115,6 @@ const RoleEditItem = (props) => {
         //   let url = "/login";
         //   history1.push(url);
         // }
-        console.log(">>>>>>.hi>>>>>>>>", err);
 
         setDisabledState(true);
         setOpen({
@@ -132,24 +141,27 @@ const RoleEditItem = (props) => {
   };
 
   const { message, severity, open } = isOpen || {};
+
+  console.log("rowRoleData", rowRoleData);
+
   return (
     <div className="roleitem">
       {props.masterData.map((item) => (
         <div className="roleitem_list">
           <p>{item.resourceRole}</p>
           <div className="optionbtn">
+            <button id={item._id} onClick={handleDecrementCount}>
+              -
+            </button>
+            <p id={item._id}>
+              {countProvider(item._id, rowRoleData.rolecount)}
+            </p>
             <button
               id={item._id}
               disabled={disabledState}
               onClick={handleIncrementCount}
             >
               +
-            </button>
-            <p id={item._id}>
-              {countProvider(item._id, props.rowEditData.rolecount)}
-            </p>
-            <button id={item._id} onClick={handleDecrementCount}>
-              -
             </button>
           </div>
         </div>

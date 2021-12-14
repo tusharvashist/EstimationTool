@@ -1,5 +1,6 @@
 const resourceRoleMasterSer = require("../service/resourceRoleMasterService");
 const constant = require("../constant");
+
 module.exports.getAllResourceRoleMaster = async (req, res) => {
   let responce = { ...constant.defaultResponce };
   try {

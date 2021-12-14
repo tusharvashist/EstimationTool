@@ -185,11 +185,15 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
   });
 
   result.forEach(async (element) => {
-    var count = element.rolecount
-      .map((resplan) => resplan.count)
-      .reduce((acc, resplan) => resplan + acc);
-    let maxcount = Math.ceil(element?.resourceCount);
-    if (maxcount != count) {
+    if (element.rolecount.length > 0) {
+      var count = element.rolecount
+        .map((resplan) => resplan.count)
+        .reduce((acc, resplan) => resplan + acc);
+      let maxcount = Math.ceil(element?.resourceCount);
+      if (maxcount != count) {
+        element.validationerror = true;
+      }
+    } else {
       element.validationerror = true;
     }
   });

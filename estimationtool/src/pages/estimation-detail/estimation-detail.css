@@ -125,3 +125,9 @@
   /* background: #000; */
   z-index: 1;
 }
+.error--true {
+  background: rgba(255, 0, 0, 0.15) !important;
+}
+.error--true:hover {
+  background: rgba(255, 0, 0, 0.15) !important;
+}

@@ -36,7 +36,7 @@ const EstimationDetail = () => {
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
-
+  console.log("location", location);
   let estimationId;
   if (location.state !== undefined) {
     estimationId = location.state.estId;
@@ -85,6 +85,7 @@ const EstimationDetail = () => {
   const [tagHeaderArray, setTagHeaderArray] = useState([]);
   const [tagDataArray, setTagDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
+  const [countError, setCountError] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);

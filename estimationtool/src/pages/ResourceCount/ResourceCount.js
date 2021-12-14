@@ -25,10 +25,17 @@ const ResourceCountMatrix = (props) => {
   const [roleData, setRoleData] = useState();
   const [reload, setReload] = useState(false);
 
+  const [sortModel, setSortModel] = React.useState([
+    {
+      field: "resourceCount",
+      sort: "asc",
+    },
+  ]);
+
   useEffect(() => {
     // getTechnologySkill();
     getTechnologySkill();
-    // getResourceCountData(estimationHeaderId);
+    getResourceCountData(estimationHeaderId);
   }, [reload]);
 
   // Get All Technology Skills
@@ -47,8 +54,8 @@ const ResourceCountMatrix = (props) => {
   const getResourceCountData = (estimationHeaderId) => {
     ReourceCountService.getResourceCount(estimationHeaderId)
       .then((res) => {
-        getResourceMasterRoleData();
         getResourceCountAllData(estimationHeaderId);
+        getResourceMasterRoleData();
       })
       .catch((err) => {});
   };
@@ -87,6 +94,7 @@ const ResourceCountMatrix = (props) => {
   };
 
   console.log("resouceCountData", resouceCountData);
+
   const getColumns = ({ onChangeSelect }) => [
     {
       headerName: "Resource Count",
@@ -226,6 +234,21 @@ const ResourceCountMatrix = (props) => {
             <div style={{ height: 300, width: "100%" }}>
               {resouceCountData.length && (
                 <DataGrid
+                  sx={{
+                    "& .MuiDataGrid-cell:hover": {
+                      background: "none",
+                    },
+                    "& .error--true .MuiDataGrid-row:hover": {
+                      background: "rgba(255, 0, 0, 0.2)",
+                    },
+                    "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
+                      {
+                        backgroundColor: "none",
+                      },
+                    "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover": {
+                      backgroundColor: "none",
+                    },
+                  }}
                   rows={resouceCountData}
                   // rows={[]}
                   columns={getColumns({ onChangeSelect })}
@@ -233,9 +256,14 @@ const ResourceCountMatrix = (props) => {
                   onCellClick={handleCellClick}
                   getRowId={({ _id }) => _id}
                   key="_id"
+                  sortModel={sortModel}
+                  onSortModelChange={(model) => setSortModel(model)}
                   components={{
                     NoRowsOverlay: NoRowOverlay,
                   }}
+                  getRowClassName={(params) =>
+                    `error--${params.row.validationerror}`
+                  }
                 />
               )}
             </div>
