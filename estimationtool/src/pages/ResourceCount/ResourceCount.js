@@ -138,7 +138,7 @@ const ResourceCountMatrix = (props) => {
       field: "role",
       sorting: false,
       width: 300,
-      renderCell: (params) => <RoleCount {...params} />,
+      renderCell: (params) => <RoleCount {...params} reload={reload} />,
     },
   ];
 
@@ -192,6 +192,7 @@ const ResourceCountMatrix = (props) => {
       })
       .catch((err) => {});
   };
+
   return (
     <div className="estimation-detail-cover">
       {tableOpen && (
@@ -203,7 +204,10 @@ const ResourceCountMatrix = (props) => {
                   className="editrole_cover"
                   onClick={closeEditHandler}
                 ></div>
-                <RoleEditCount rowEditData={rowEditData} />
+                <RoleEditCount
+                  rowEditData={rowEditData}
+                  handleEditChange={handleEditChange}
+                />
               </>
             )}
             <div style={{ height: 300, width: "100%" }}>
