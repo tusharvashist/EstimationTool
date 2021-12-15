@@ -126,6 +126,8 @@ const FirstStep = forwardRef((props, ref) => {
           )
         );
         dispatch(setEstimationContingency(dataResponce.basicDetails.contingency))
+        //set remaining char count 
+        remainingCharCount(dataResponce.basicDetails.estDescription)
       })
       .catch((err) => {
         console.log("get estimation header detail error : ", err);
@@ -294,6 +296,7 @@ const FirstStep = forwardRef((props, ref) => {
               type={"number"}
               InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
               error={isTentativeTimelineInvalid}
+              helperText={isTentativeTimelineInvalid ? "Please Enter Tentative timeline value" : ""}
               value={basicDetailRedux.estimationTentativeTimeline}
               onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
             />
@@ -310,6 +313,7 @@ const FirstStep = forwardRef((props, ref) => {
                 }
                 pattern="^[1-9][0-9]?$|^100$"
               error={isContingencyInvalid}
+              helperText={isContingencyInvalid ? "Please Enter Contingency % between 1-100" : ""}
               value={basicDetailRedux.estimationContingency}
               onChange={(e) => handleContingencyInputValueChange(e.target.value)}
             />
