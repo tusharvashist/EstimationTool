@@ -8,9 +8,9 @@ const tokenValidation = require("../middleware/tokenValidationJwt");
 router.get(
   "/",
   tokenValidation.validateToken,
-  joiSchemaValidation.validateQueryParams(
-    joiResourceRoleMaster.getResourceRoleMasterSchema
-  ),
+  // joiSchemaValidation.validateQueryParams(
+  //   joiResourceRoleMaster.getResourceRoleMasterSchema
+  // ),
   resourceRoleMasterController.getAllResourceRoleMaster
 );
 router.post(

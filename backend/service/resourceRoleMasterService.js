@@ -2,6 +2,8 @@ const constant = require("../constant");
 const resourceRoleMasterModel = require("../database/models/resourceRoleMaster");
 const estResourcePlanningModel = require("../database/models/estResourcePlanning");
 const { formatMongoData } = require("../helper/dbhelper");
+const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 
 module.exports.createResourceRoleMaster = async (serviceData) => {
   try {
@@ -38,7 +40,7 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
     let planResource = await estResourcePlanningModel.aggregate([
       {
         $match: {
-          estResourceCountID: resourceCountId,
+          estResourceCountID: mongoose.Types.ObjectId(resourceCountId),
         },
       },
       {
@@ -49,22 +51,21 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
           },
         },
       },
-      {
-        $lookup: {
-          from: "resourceRoleMasters",
-          localField: "_id",
-          foreignField: "_id",
-          as: "resourceMasters",
-        },
-      },
-      {
-        $unwind: {
-          path: "$resourceMasters",
-        },
-      },
+      // {
+      //   $lookup: {
+      //     from: "resourceRoleMasters",
+      //     localField: "_id",
+      //     foreignField: "_id",
+      //     as: "resourceMasters",
+      //   },
+      // },
+      // {
+      //   $unwind: {
+      //     path: "$resourceMasters",
+      //   },
+      // },
     ]);
     //let planResource1 = await estResourcePlanningModel.find({})
-    console.log(planResource);
 
     let masterResource = await resourceRoleMasterModel
       .aggregate()
@@ -72,16 +73,14 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
 
     masterResource.forEach((element) => {
       planResource.forEach((estSelAttElement) => {
-        if (estSelAttElement._id == element._id) {
+        if (String(estSelAttElement._id) == String(element._id)) {
           if (estSelAttElement.count > 0)
             element.count = estSelAttElement.count;
-          element.defaultAdjusted =
-            estSelAttElement.resourceRoleMasters.defaultAdjusted;
+          // element.defaultAdjusted = estSelAttElement.resourceRoleMasters.defaultAdjusted;
         }
       });
     });
-    console.log(masterResource);
-    console.log(planResource);
+
     return masterResource;
   } catch (err) {
     console.log(
