@@ -22,7 +22,6 @@ const ResourceCountMatrix = (props) => {
   const [resouceCountData, setResouceCountData] = useState([]);
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
-  const [roleData, setRoleData] = useState();
   const [reload, setReload] = useState(false);
   const [loaderComponent, setLoader] = useLoader();
 
@@ -58,30 +57,12 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceCount(estimationHeaderId)
       .then((res) => {
         getResourceCountAllData(estimationHeaderId);
-        getResourceMasterRoleData();
+        // getResourceMasterRoleData();
       })
       .catch((err) => {});
   };
 
   // Get Resource Master Role Data
-
-  const getResourceMasterRoleData = () => {
-    ReourceCountService.getResourceMasterRole()
-      .then((res) => {
-        console.log("2res", res);
-        //Array:
-        // cost: 20
-        // count: 0
-        // isDeleted: false
-        // location: "india"
-        // price: 30
-        // resourceRole: "Sr Lead"
-        // techSkill: "frontend"
-        // _id: "61ae02114fdff5af9831741e
-        setRoleData(res.data.body);
-      })
-      .catch((err) => {});
-  };
 
   // Get All Resource Count Data
 
@@ -157,25 +138,12 @@ const ResourceCountMatrix = (props) => {
       field: "role",
       sorting: false,
       width: 300,
-      renderCell: renderRole,
+      renderCell: (params) => <RoleCount {...params} />,
     },
   ];
 
-  function renderRole(params) {
-    console.log("renmderROle", params);
-    return (
-      <RoleCount
-        data={params.row}
-        rowData={rowEditData}
-        masterData={roleData}
-      />
-    );
-  }
-
   function handleCellClick(param) {
     if (param.field === "role" && !openEditCount) {
-      console.log("roweditdata", param.row);
-
       setRowEditData(param.row);
       setOpenEditCount(true);
     } else if (param.field === "role" && openEditCount) {
@@ -235,49 +203,44 @@ const ResourceCountMatrix = (props) => {
                   className="editrole_cover"
                   onClick={closeEditHandler}
                 ></div>
-                <RoleEditCount
-                  rowEditData={rowEditData}
-                  masterData={roleData}
-                  handleEditChange={handleEditChange}
-                />
+                <RoleEditCount rowEditData={rowEditData} />
               </>
             )}
             <div style={{ height: 300, width: "100%" }}>
-           { resouceCountData.length && (
-                    <DataGrid
-                      sx={{
-                        "& .MuiDataGrid-cell:hover": {
-                          background: "none",
-                        },
-                        "& .error--true .MuiDataGrid-row:hover": {
-                          background: "rgba(255, 0, 0, 0.2)",
-                        },
-                        "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
-                          {
-                            backgroundColor: "none",
-                          },
-                        "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover":
-                          {
-                            backgroundColor: "none",
-                          },
-                      }}
-                      rows={resouceCountData}
-                      // rows={[]}
-                      columns={getColumns({ onChangeSelect })}
-                      pageSize={5}
-                      onCellClick={handleCellClick}
-                      getRowId={({ _id }) => _id}
-                      key="_id"
-                      sortModel={sortModel}
-                      onSortModelChange={(model) => setSortModel(model)}
-                      components={{
-                        NoRowsOverlay: NoRowOverlay,
-                      }}
-                      getRowClassName={(params) =>
-                        `error--${params.row.validationerror}`
-                      }
-                    />
-                  )}
+              {resouceCountData.length && (
+                <DataGrid
+                  sx={{
+                    "& .MuiDataGrid-cell:hover": {
+                      background: "none",
+                    },
+                    "& .error--true .MuiDataGrid-row:hover": {
+                      background: "rgba(255, 0, 0, 0.2)",
+                    },
+                    "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
+                      {
+                        backgroundColor: "none",
+                      },
+                    "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover": {
+                      backgroundColor: "none",
+                    },
+                  }}
+                  rows={resouceCountData}
+                  // rows={[]}
+                  columns={getColumns({ onChangeSelect })}
+                  pageSize={5}
+                  onCellClick={handleCellClick}
+                  getRowId={({ _id }) => _id}
+                  key="_id"
+                  sortModel={sortModel}
+                  onSortModelChange={(model) => setSortModel(model)}
+                  components={{
+                    NoRowsOverlay: NoRowOverlay,
+                  }}
+                  getRowClassName={(params) =>
+                    `error--${params.row.validationerror}`
+                  }
+                />
+              )}
             </div>
 
             {/* <div className="resource-cont-costing">

@@ -130,8 +130,7 @@ const RoleEditItem = (props) => {
         //   let url = "/login";
         //   history1.push(url);
         // }
-        if (!err.response.data.message)
-          console.log(err);
+        if (!err.response.data.message) console.log(err);
         else {
           setDisabledState(true);
           setOpen({
@@ -164,7 +163,7 @@ const RoleEditItem = (props) => {
 
   return (
     <div className="roleitem">
-      {props.masterData.map((item) => (
+      {props.rowEditData.rolecount.map((item) => (
         <div className="roleitem_list">
           <p>{item.resourceRole}</p>
           <div className="optionbtn">
