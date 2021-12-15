@@ -208,7 +208,7 @@ const AddCalAttributeDialog = (props) => {
             className="full-width"
             disabled={props.id}
             onChange={handelCalAttributeName}
-            variant="filled"
+            variant="outlined"
             value={calcAttributeName}
           />
         </Grid>
@@ -265,7 +265,7 @@ const AddCalAttributeDialog = (props) => {
               <TextField
                 required
                 error={showError && !unit}
-                helperText={showError ? <span style={{ color: "red" }}>  Enter b/w 1-100</span> : ""}
+                helperText={showError ? "Enter b/w 1-100" : ""}
                 id="standard-basic"
                 value={unit}
                 label="Value"
@@ -302,7 +302,7 @@ const AddCalAttributeDialog = (props) => {
                     placeholder="Tags..."
                     required
                     error={showError && !formulaTags}
-                    helperText={showError ? <span style={{ color: "red" }}> Select one tag atleast! </span> : ""}
+                    helperText={showError ? "Select one tag atleast!" : ""}
 
                   />
                 )}
