@@ -130,13 +130,16 @@ const RoleEditItem = (props) => {
         //   let url = "/login";
         //   history1.push(url);
         // }
-
-        setDisabledState(true);
-        setOpen({
-          open: true,
-          severity: "error",
-          message: err.response.data.message,
-        });
+        if (!err.response.data.message)
+          console.log(err);
+        else {
+          setDisabledState(true);
+          setOpen({
+            open: true,
+            severity: "error",
+            message: err.response.data.message,
+          });
+        }
       });
   };
 
