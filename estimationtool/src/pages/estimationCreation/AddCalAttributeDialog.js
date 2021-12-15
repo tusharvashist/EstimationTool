@@ -72,15 +72,15 @@ const AddCalAttributeDialog = (props) => {
       let objNew = { ...props.details };
       let filterArray = [];
       if (objNew.formulaTags) {
-      let arry =  objNew.formulaTags.map(item => {
-        let ob = {
-          id: item._id,
-          name: item.name
-        }
-        filterArray.push(ob)
-      });
+        let arry = objNew.formulaTags.map(item => {
+          let ob = {
+            id: item._id,
+            name: item.name
+          }
+          filterArray.push(ob)
+        });
 
-      setMultiSelectTag(filterArray)
+        setMultiSelectTag(filterArray)
       } else {
         setMultiSelectTag([])
       }
@@ -99,27 +99,37 @@ const AddCalAttributeDialog = (props) => {
   // selecting value percentage
 
   const getValuePercentage = () => {
-    if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length > 0) {
-      console.log("formData in save func", formData)
-      props.saveFun({ ...formData });
+    if (formData.tag.name !== '' && formData.formulaTags[0] !== '') {
+      if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length > 0) {
+        console.log("formData in save func", formData)
+        props.saveFun({ ...formData });
+      } else {
+        setShowError(true);
+      }
     } else {
-      setShowError(true);
+      setShowError(true)
     }
   }
 
   //  selecting value manual
 
   const getValueManual = () => {
-    if (formData.calcAttributeName && formData.tag && formData.calcType) {
-      let newObject = { ...formData };
-      newObject.unit = 0;
-      newObject.formulaTags = [];
-      setFormData({ ...newObject });
-      props.saveFun({ ...newObject });
+    if (formData.tag.name !== '' && formData.tag._id !== '') {
+      if (formData.calcAttributeName && formData.tag && formData.calcType) {
+        let newObject = { ...formData };
+        newObject.unit = 0;
+        newObject.formulaTags = [];
+        setFormData({ ...newObject });
+        props.saveFun({ ...newObject });
+      } else {
+        setShowError(true)
+      }
     } else {
       setShowError(true)
     }
+
   }
+
 
   //  Handle Validation
   const handelFormula = (e) => {
@@ -228,7 +238,7 @@ const AddCalAttributeDialog = (props) => {
               value={formData.tag._id}
               label={formData.tag.name}
               error={showError && !formData.tag._id}
-              helperText={showError ? "Select one tag atleast" : ""}
+
             >
               {requirementTagArray.map((item) => (
                 <MenuItem key={item.name} value={item.id} >
@@ -255,7 +265,7 @@ const AddCalAttributeDialog = (props) => {
               <TextField
                 required
                 error={showError && !unit}
-                helperText={showError ? "Enter b/w 1-100" : ""}
+                helperText={showError ? <span style={{ color: "red" }}>  Enter b/w 1-100</span> : ""}
                 id="standard-basic"
                 value={unit}
                 label="Value"
@@ -292,7 +302,7 @@ const AddCalAttributeDialog = (props) => {
                     placeholder="Tags..."
                     required
                     error={showError && !formulaTags}
-                    helperText={showError ? "Select one tag atleast" : ""}
+                    helperText={showError ? <span style={{ color: "red" }}> Select one tag atleast! </span> : ""}
 
                   />
                 )}
