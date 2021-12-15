@@ -6,7 +6,7 @@ import AuthSer from "../shared/service/auth";
 const checkRequests = (Wrapped) => {
   function CheckRequests(props) {
     console.log(props);
-    useEffect(() => {
+    //useEffect(() => {
       axios.interceptors.response.use(
         function (response) {
           // Do something with response data
@@ -50,7 +50,7 @@ const checkRequests = (Wrapped) => {
           return Promise.reject(error);
         }
       );
-    });
+   // },);
 
     return <Wrapped {...props} />;
   }

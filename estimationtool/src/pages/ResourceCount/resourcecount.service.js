@@ -24,7 +24,11 @@ const ResourceCountService = {
 
   getResourceMasterRole: function (resourceCountId) {
     let url = Url.getResourceRoleMaster;
-    return axios.get(url);
+    if (resourceCountId === undefined) {
+      return axios.get(url);
+    } else {
+      return axios.get(url + `?resourceCountId=` + resourceCountId);
+    }
   },
 
   updateResourceRole: function (req) {
