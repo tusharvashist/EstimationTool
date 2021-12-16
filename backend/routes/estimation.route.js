@@ -49,7 +49,7 @@ router.get("/",
 
 router.get("/:id",
     tokenValidation.validateToken,
-    estimationController.getById
+    estimationRequirementController.getById
 );
 
 
@@ -65,19 +65,6 @@ router.put("/:id",
     joiSchemaValidation.validateBody(joiEstimationSchema.UpdateEstimationHeaderSchema),
     estimationController.updateEstimationHeader
 );
-
-
-//------Requirment ------
-
-//----- Create -----------
-router.post("/requirement/",
-    tokenValidation.validateToken,
-    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeSchema.createEstimationHeaderAtrributeSchema),
-    estimationRequirementController.create
-);
-
-
-
 
 
 //=====================================estimationHeaderAtrribute=====================
@@ -117,7 +104,7 @@ router.delete("/atrribute/:id",
 //----- Create -----------
 router.post("/atrributeCalc/",
     tokenValidation.validateToken,
-    // joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
+    //joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
     estimationController.createEstimationHeaderAtrributeCalc
 );
 
@@ -129,7 +116,7 @@ router.get("/atrributeCalc/:id",
 //----- Update -----------
 router.put("/atrributeCalc/:id",
     tokenValidation.validateToken,
-    joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
+    // joiSchemaValidation.validateBody(joiEstimationHeaderAtrributeCalcSchema.estimationHeaderAtrributeCalcUpdateSchema),
     estimationController.estimationHeaderAtrributeCalcUpdate);
 
 

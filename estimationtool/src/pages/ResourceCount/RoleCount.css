@@ -1,0 +1,52 @@
+.close-role {
+  display: none !important;
+}
+.open-role {
+  display: flex;
+}
+.parentrole {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 243px;
+  right: 190px;
+  z-index: 4510;
+}
+.option {
+  width: 100%;
+  font-size: 14px;
+}
+.optionbtn {
+  display: flex;
+}
+.optionbtn > p {
+  margin: 0 20px;
+}
+.optionbtn > button {
+  padding: 8px;
+  border-radius: 50%;
+  /* width: 20px; */
+  height: 23px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0px;
+  background: rgb(229, 235, 247);
+  cursor: pointer;
+}
+.roleitem {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.roleitem_list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+.error-true {
+  box-shadow: rgb(133, 4, 4) 0px 5px 15px;
+}

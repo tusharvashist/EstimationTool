@@ -14,16 +14,21 @@ import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
+import "./EstimationCreation.css";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { useHistory } from "react-router-dom";
+import useLoader from "../../shared/layout/hooks/useLoader";
+import { setEstimationHeaderId } from "../../Redux/basicDetailRedux";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = (props) => {
-  console.log(props);
   const basicDetailRedux = useSelector((state) => state.basicDetail);
   const dispatch = useDispatch();
+  const history = useHistory();
   const effortAttributeSave = useSelector((state) => state.effortAttribute);
   const calcAttributeSave = useSelector((state) => state.calcAttribute);
 
@@ -33,9 +38,43 @@ const EstimationCreation = (props) => {
   const [skipped, setSkipped] = React.useState(new Set());
   const clientInfo = { ...location1.state.clientInfo };
   const projecttInfo = { ...location1.state.projectInfo };
-  const [estimationHeaderId, setEstimationHeaderId] = React.useState();
 
+  let estionHeaderId;
+
+  if (location1.state.estimationHeaderId) {
+    estionHeaderId = location1.state.estimationHeaderId;
+  } else {
+    estionHeaderId = basicDetailRedux.estimationHeaderId;
+  }
+
+  const [estimationHeaderId, setNewEstimationHeaderId] =
+    React.useState(estionHeaderId);
+  const [estimationIdFinish, setEstimationIdFinish] = React.useState();
+  const [isOpen, setOpen] = React.useState({});
+  const [loaderComponent, setLoader] = useLoader();
+
+  const getHeaderIdChild = (p) => {
+    setEstimationIdFinish(p);
+    setNewEstimationHeaderId(p);
+  };
+
+  const finishLocation = {
+    pathname:
+      "/All-Clients/" +
+      clientInfo.clientName +
+      "/" +
+      projecttInfo.projectName +
+      "/Estimation-Detail",
+    state: {
+      estId: estimationIdFinish,
+    },
+  };
+
+  const handleClose = () => {
+    setOpen({});
+  };
   const childRef = useRef();
+  // const secondChildRef = useRef();
 
   const isStepOptional = (step) => {
     return step === null;
@@ -45,128 +84,174 @@ const EstimationCreation = (props) => {
     return skipped.has(step);
   };
 
+  // useEffect(() => {
+  //   setLocation(location);
+  //   //setEstimationHeaderId(estionHeaderId)
+  //   //console.log("prop est id:"+location1.state.estimationHeaderId )
+  //   //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
+  // }, [clientInfo]);
+
   useEffect(() => {
     setLocation(location);
-  }, [clientInfo]);
+    setNewEstimationHeaderId(estionHeaderId);
+
+    if (location1.state.step !== undefined && location1.state.step === "2") {
+      setActiveStep(2);
+    } else if (
+      location1.state.step !== undefined &&
+      location1.state.step === "1"
+    ) {
+      setActiveStep(1);
+    }
+
+    //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
+  }, location1.state.estimationHeaderId);
 
   // save Estimation Basic detail data to post request to generating estimation header APi
   const createEstimationBasicDetail = (reqData) => {
+    setLoader(true);
     estimationServices
       .saveEstimationBasicDetail(reqData)
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
-        console.log(
-          "Save Basic Details APi response:" + JSON.stringify(dataResponce)
-        );
-        setEstimationHeaderId(dataResponce._id);
-        // dispatch(setEstimationHeaderId(dataResponce._id))
+        setNewEstimationHeaderId(dataResponce._id);
+        dispatch(setEstimationHeaderId(dataResponce._id));
+        localStorage.setItem("estimationHeaderId", dataResponce._id);
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
         console.log("save estimation header detail error : ", err);
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         childRef.current.showError(err);
       });
   };
 
   // update estimation basic detals Api call
   const updateEstimationBasicDetail = (reqData) => {
+    console.log("this is running");
+    setLoader(true);
+
     estimationServices
       .updateEstimationBasicDetail(estimationHeaderId, reqData)
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
-        // dispatch(setEstimationHeaderId(dataResponce._id))
-        console.log(
-          "Update Basic Details APi response:" + JSON.stringify(dataResponce)
-        );
-        setEstimationHeaderId(dataResponce._id);
+
+        setNewEstimationHeaderId(dataResponce._id);
+        dispatch(setEstimationHeaderId(dataResponce._id));
+        localStorage.setItem("estimationHeaderId", dataResponce._id);
+
         //TODO:// show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
         console.log("Update estimation header detail error : ", err);
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
         childRef.current.showError(err);
       });
   };
 
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
+  const handleSaveCalcAttribute = () => {
+    if (calcAttributeSave.data.length !== 0) {
+      createSaveCalctAttribute(getCalcAttributeRequestPayload());
+    } else {
+      setOpen({
+        open: true,
+        severity: "error",
+        message: "Select Atleast One checkbox",
+      });
     }
-    //TODO: handle edit basic detail API & error
-    if (activeStep == 0) {
-      handleBasicDetailSaveUpdate();
-    } else if (activeStep == 1) {
-      handleSaveEffortAttribute();
-     } else if (activeStep == 2) {
-      handleSaveCalcAttribute();
-     }
-     else {
-      //setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
-
-    if (activeStep > 0) setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
   };
 
-const handleSaveCalcAttribute = () => {
-  if (calcAttributeSave.data) {
-    createSaveCalctAttribute(getCalcAttributeRequestPayload()) 
-   }
-}
-
   const handleSaveEffortAttribute = () => {
-    if (effortAttributeSave.data) {
-     createSaveEffortAttribute(getEffortAttributeRequestPayload()) 
-    }
-  }
+    if (effortAttributeSave.data.length !== 0) {
+      createSaveEffortAttribute(getEffortAttributeRequestPayload());
+    } else {
+      // childRef.current.showError("Please fill all mandatory fields");
 
+      setOpen({
+        open: true,
+        severity: "error",
+        message: "Please select atleast one checkbox",
+      });
+    }
+  };
 
   // Save calc attribute data
 
   const createSaveCalctAttribute = (reqData) => {
-  
-    estimationServices.saveCalculativeAttribute(reqData)
+    setLoader(true);
+
+    estimationServices
+      .saveCalculativeAttribute(reqData)
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
-       //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        history.push(finishLocation);
       })
       .catch((err) => {
+        //   if ((err.response.data = 401) || (err.response.data = 404)) {
+        //     let url = "/login";
+        //     history.push(url);
+        //   }
         // console.log("save estimation header detail error : ", err);
         // childRef.current.showError(err);
       });
+  };
+  // save effort Attribute data
+  const createSaveEffortAttribute = (reqData) => {
+    setLoader(true);
+
+    estimationServices
+      .saveEffortAttribute(reqData)
+      .then((res) => {
+        setLoader(false);
+
+        let dataResponce = res.data.body;
+        setNewEstimationHeaderId(dataResponce._id);
+        //TODO:// show response and move next step
+        setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      })
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
+        // console.log("save estimation header detail error : ", err);
+        // childRef.current.showError(err);
+      });
+  };
+
+  const getEffortAttributeRequestPayload = () => {
+    return {
+      estattlist: effortAttributeSave.data,
     };
-  // save effort Attribute data 
-const createSaveEffortAttribute = (reqData) => {
+  };
+
+  const getCalcAttributeRequestPayload = () => {
+    console.log("calcAttributeSave", calcAttributeSave)
+    let arr = calcAttributeSave.data.map(item => {
   
-  estimationServices.saveEffortAttribute(reqData)
-    .then((res) => {
-      let dataResponce = res.data.body;
-      setEstimationHeaderId(dataResponce._id);
-     //TODO:// show response and move next step
+      return ({
+        ...item, tag: item.tag._id, formulaTags: item.formulaTags ? item.formulaTags.map(x => x._id).slice() : []
+      })
     })
-    .catch((err) => {
-      // console.log("save estimation header detail error : ", err);
-      // childRef.current.showError(err);
-    });
-};
-
-
-const getEffortAttributeRequestPayload = () =>{
-  return {
-    estattlist : effortAttributeSave.data
-  }
-}
-
-
-const getCalcAttributeRequestPayload = () =>{
-  return {
-    estattcalclist : calcAttributeSave.data
-  }
-}
-
+    return {
+      estattcalclist: arr
+    };
+  };
 
   const handleBasicDetailSaveUpdate = () => {
     if (
@@ -174,7 +259,9 @@ const getCalcAttributeRequestPayload = () =>{
       basicDetailRedux.estimationName &&
       basicDetailRedux.estimationTypeId &&
       basicDetailRedux.esttimationDesc &&
-      basicDetailRedux.efforUnit
+      basicDetailRedux.efforUnit &&
+      Number(basicDetailRedux.estimationTentativeTimeline) > 0 &&
+      Number(basicDetailRedux.estimationContingency) > 0 && Number(basicDetailRedux.estimationContingency) <=100
     ) {
       estimationHeaderId
         ? updateEstimationBasicDetail(getRequestPayload())
@@ -194,8 +281,9 @@ const getCalcAttributeRequestPayload = () =>{
       estTypeId: basicDetailRedux.estimationTypeId,
       estDescription: basicDetailRedux.esttimationDesc,
       effortUnit: basicDetailRedux.efforUnit,
+      estTentativeTimeline: basicDetailRedux.estimationTentativeTimeline,
       manCount: 0,
-      contigency: "25",
+      contingency: basicDetailRedux.estimationContingency,
       totalCost: 0,
       estCalcColumns: "NA",
       estColumns: "NA",
@@ -205,6 +293,26 @@ const getCalcAttributeRequestPayload = () =>{
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+    //TODO: handle edit basic detail API & error
+    if (activeStep == 0) {
+      handleBasicDetailSaveUpdate();
+    } else if (activeStep == 1) {
+      handleSaveEffortAttribute();
+    }
+    // else if (activeStep == 2) {
+    // } else {
+    //   //setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // }
+    // setSkipped(newSkipped);
+    return;
   };
 
   const handleSkip = () => {
@@ -225,6 +333,13 @@ const getCalcAttributeRequestPayload = () =>{
   const handleReset = () => {
     setActiveStep(0);
   };
+
+  const handleFinish = () => {
+    handleSaveCalcAttribute();
+  };
+
+  console.log(estimationHeaderId, estimationIdFinish);
+  const { message, severity, open } = isOpen || {};
 
   return (
     <BorderedContainer>
@@ -261,7 +376,7 @@ const getCalcAttributeRequestPayload = () =>{
             <Grid item xs={6}>
               <ListItem>
                 Client Website:&nbsp;
-                <a target="_blank" href={clientInfo.website}>
+                <a target="_blank" href={`//${clientInfo.website}`}>
                   {clientInfo.website}
                 </a>
               </ListItem>
@@ -324,18 +439,21 @@ const getCalcAttributeRequestPayload = () =>{
                 <FirstStep
                   clientName={clientInfo.clientName}
                   projectName={projecttInfo.projectName}
+                  estimationHeaderId={estimationHeaderId}
                   ref={childRef}
                 />
               )}
               {activeStep == 1 && (
                 <SecondStep
-                  estimatioHeaderId={estimationHeaderId}
+                  estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
+                // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (
                 <ThirdStep
-                  estimatioHeaderId={estimationHeaderId}
+                  getHeaderId={getHeaderIdChild}
+                  estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
                 />
               )}
@@ -356,14 +474,25 @@ const getCalcAttributeRequestPayload = () =>{
                   </Button>
                 )}
 
-                <Button onClick={handleNext}>
-                  {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                </Button>
+                {activeStep === steps.length - 1 ? (
+                  <Button onClick={handleFinish}> Finish</Button>
+                ) : (
+                  <Button onClick={handleNext}>Next</Button>
+                )}
               </Box>
             </React.Fragment>
           </>
         )}
       </Box>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </BorderedContainer>
   );
 };

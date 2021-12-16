@@ -8,10 +8,10 @@ const ObjectId = require('mongodb').ObjectId;
 
 module.exports.createEstimationAttribute = async (serviceData) => {
     try {
-        let attribute = new EstimationAttribute({ ...serviceData })        
-        const exists = await EstimationAttribute.find({attributeName :  attribute.attributeName });
-        if(exists.length != 0){
-             throw new Error(constant.EstimationAttributeMessage.ATTRIBUTE_DUPLICATE);
+        let attribute = new EstimationAttribute({ ...serviceData })
+        const exists = await EstimationAttribute.find({ attributeName: attribute.attributeName });
+        if (exists.length != 0) {
+            throw new Error(constant.EstimationAttributeMessage.ATTRIBUTE_DUPLICATE);
         }
         let result = await attribute.save();
         return formatMongoData(result)
@@ -36,7 +36,7 @@ module.exports.createEstimationTempplateAttribute = async (serviceData) => {
 //To do 
 module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => {
     try {
-        let estAtt = await EstimationAttribute.aggregate().addFields({ selected: false });
+        let estAtt = await EstimationAttribute.aggregate().addFields({ selected: false }).sort({attributeName :'asc'});
         if (estheaderid) {
             let estSelAtt = await EstimationHeaderAttributes.find({ estHeaderId: estheaderid });
             var index = 0;
@@ -63,11 +63,6 @@ module.exports.getAllEstimationAttributes = async ({ esttype, estheaderid }) => 
             });
         }
         return (estAtt);
-        // var est = ObjectID(esttype);      
-        // console.log(est); 
-        // let estSelAtt = await EstimationTemplateAttribute.find({estTypeId : est});
-        // console.log(estSelAtt);
-
     } catch (err) {
         console.log("something went wrong: service > Get All Estimation Attribute Service ", err);
         throw new Error(err)

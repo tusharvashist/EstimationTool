@@ -91,7 +91,8 @@ module.exports.login = async (req) => {
       .split(":");
     const email = emailNpass[0].trim();
     const pass = emailNpass[1].trim();
-    const users = await userModel.aggregate()
+    const users = await userModel
+      .aggregate()
       .match({ email: email })
       .lookup({
         from: "rolemasters",
@@ -100,21 +101,20 @@ module.exports.login = async (req) => {
         as: "roles",
       })
       .unwind("roles")
-      .lookup({
-        from: "permissions",
-        localField: "roleId._id",
-        foreignField: "roleId",
-        as: "tokenPermission",
-      })
-      .unwind("tokenPermission")
+      // .lookup({
+      //   from: "permissions",
+      //   localField: "roleId._id",
+      //   foreignField: "typeId",
+      //   as: "tokenPermission",
+      // })
+      // .unwind("tokenPermission")
       .lookup({
         from: "moduletokens",
         localField: "moduletokens._id",
         foreignField: "tokenPermission.tokenID",
-        as: "RolePermission"
+        as: "RolePermission",
       })
       .addFields({ token: "" });
-
 
     // const users = await userModel
     //   .aggregate([
@@ -150,6 +150,8 @@ module.exports.login = async (req) => {
     //     //{$unwind : "$tokenPermission"}
     //   ])
     //   .addFields({ token: "" });
+
+    //const user = await userModel.findOne({ email });
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);

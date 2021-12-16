@@ -17,6 +17,8 @@ import "./client-details.css";
 import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useParams, useHistory } from "react-router-dom";
 import ProjectServ from "../project/project.service";
+import useLoader from "../../shared/layout/hooks/useLoader";
+import Header from "../../shared/layout/Header/Header";
 
 export default function ClientDetails(props) {
   const location = useLocation();
@@ -25,8 +27,8 @@ export default function ClientDetails(props) {
     { title: "All", value: true },
     { title: "Active", value: false },
     { title: "In-Active", value: true },
-
   ]);
+  const [loaderComponent, setLoader] = useLoader();
 
   const params = useParams(),
     { clientName } = params;
@@ -41,15 +43,22 @@ export default function ClientDetails(props) {
   const [clientUrlName, setClientUrlName] = useState(clientName);
   const [clientId, setClientId] = useState();
 
+  const [projectData, setProjectData] = useState([]);
+
   useEffect(() => {
     getAllClient();
     getClientById();
   }, [clientId]);
 
   const getAllClient = () => {
+    setLoader(true);
+
     ClientSer.getAllClient()
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
+        console.log(dataResponce);
         setClients(dataResponce.filter((op) => op.isDeleted === false));
         setClientId(
           dataResponce.find((x) => x.clientName === clientUrlName).id
@@ -57,19 +66,32 @@ export default function ClientDetails(props) {
       })
       .catch((err) => {
         console.log("get Client by id error", err);
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 
   const getClientById = () => {
     // const clientId = location.pathname.split("/")[2];
+    setLoader(true);
 
     ClientSer.getClientById(clientId)
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
+        //console.log("%%%%"+ JSON.stringify(dataResponce));
         setClientDetails({ ...dataResponce });
+        setProjectData(dataResponce.projects);
       })
       .catch((err) => {
         console.log("get Client by id error", err);
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 
@@ -93,107 +115,68 @@ export default function ClientDetails(props) {
     // history.replace({ pathname: cId });
   };
 
-  // console.log("clients", clients);
+  console.log("clients", clients);
   // console.log("clientID", clientId);
 
   return (
     <div className="client-deatils-wrp">
-
-
-
-
-
       <Box>
-
         <Grid container alignItems="center">
-          <Grid container justify="space-between" alignItems="center">
-            {/* <Grid item xs={5} sm={1}>
-              <p>
-                <span className="title-stl"> Client Name : </span>
-              </p>
-            </Grid> */}
-            <Grid item xs={5} sm={5}>
-              {/* <Box mb={3}>
-                <Grid container justify="space-between" alignItems="center">
-                  <Dropdown
-                    defaultValue={{ title: "Active", value: "active" }}
-                    title="client status"
-                    list={clientStatus}
-                    getVal={getDropDownvalue}
-                  />
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <>
+              <Grid container>
+                <Grid item xs={5} sm={5}>
+                  <Box sx={{ maxWidth: 200 }}>
+                    <FormControl width="300px">
+                      <InputLabel id="client-simple-select">
+                        Client Name{" "}
+                      </InputLabel>
 
+                      <Select
+                        labelId="client-simple-select"
+                        id="client-simple-select"
+                        value={clientUrlName}
+                        label={clientUrlName}
+                        onChange={getDropDownvalue}
+                      >
+                        {clients.map((item) => (
+                          <MenuItem
+                            key={item.clientName}
+                            value={item.clientName}
+                          >
+                            {item.clientName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Box>
                 </Grid>
-              </Box> */}
-              <Box sx={{ maxWidth: 200 }}>
-                <FormControl width="300px">
-                  <InputLabel id="client-simple-select">
-                    Client Status{" "}
-                  </InputLabel>
-
-                  <Select
-                    labelId="client-simple-select"
-                    id="client-simple-select"
-                    value={clientStatus.title}
-                    label={clientStatus.title}
-                    defaultValue={false}
-                    onChange={getDropDownvalue}
-                  >
-                    {clientStatus.map((item) => (
-                      <MenuItem key={item.title} value={item.value}>
-                        {item.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box sx={{ maxWidth: 200 }}>
-                <FormControl width="300px">
-                  <InputLabel id="client-simple-select">
-                    Client Name{" "}
-                  </InputLabel>
-
-                  <Select
-                    labelId="client-simple-select"
-                    id="client-simple-select"
-                    value={clientUrlName}
-                    label={clientUrlName}
-                    onChange={getDropDownvalue}
-                  >
-                    {clients.map((item) => (
-                      <MenuItem key={item.clientName} value={item.clientName}>
-                        {item.clientName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            </Grid>
-            <Grid item xs={10} sm={6}>
-              <p>
-                <span className="title-stl"> Client Website :</span>{" "}
-                <a target="_blank" href={clientDetails.website}>
-                  {clientDetails.website}
-                </a>{" "}
-              </p>
-            </Grid>
-            <Grid
-              container
-              justify="space-between"
-              alignItems="center"
-              className="block-section"
-            >
-              <p>
-                <span className="section-title"></span>
-              </p>
-            </Grid>
-          </Grid>
+              </Grid>
+              <Grid container justify="space-between" alignItems="center">
+                <Grid item xs={12} sm={12}>
+                  <Header
+                    iconname="client"
+                    title="Client Details"
+                    details={[
+                      { name: clientUrlName },
+                      { website: clientDetails.website },
+                    ]}
+                  />
+                </Grid>
+              </Grid>
+            </>
+          )}
         </Grid>
       </Box>
       <Box>
         <ProjectView
           data={clientId}
+          listData={projectData}
           clientName={clientUrlName}
           clients={clients}
+          thisClient={clientDetails}
         />
       </Box>
     </div>

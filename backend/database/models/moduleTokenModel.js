@@ -23,4 +23,5 @@ const moduleTokenSchema = new mongoose.Schema({
         }
     }
 })
+moduleTokenSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ModuleToken", moduleTokenSchema)

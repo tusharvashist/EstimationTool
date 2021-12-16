@@ -4,9 +4,7 @@
 .MuiFormControl-root {
   width: 100% !important;
 }
-.MuiFormControlLabel-root {
-  min-width: 24% !important;
-}
+
 .label-to-row {
   flex-direction: row !important;
 }
@@ -21,13 +19,30 @@
 }
 .text-box {
   order: 3;
-  width: 100px !important;
-  margin: 0 30px !important;
+  margin: 0 20px !important;
 }
 .comment-box {
   order: 4;
   width: 60% !important;
 }
-.MuiFormControlLabel-label {
+label.MuiFormControlLabel-root {
   flex-grow: 1;
+  flex-basis: 200px;
 }
+.MuiFormGroup-root {
+  width: 100%;
+}
+.cal-attribute div {
+  display: flex;
+  justify-content: center;
+  margin: 5px 0;
+}
+.css-1kpdewa-MuiAutocomplete-root .MuiAutocomplete-inputRoot {
+  justify-content: flex-start;
+}
+@media (max-width:864px) {
+  .gridgap {
+    gap: 0 !important;
+  }
+}
+

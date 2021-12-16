@@ -27,4 +27,5 @@ const permissionSchema = new mongoose.Schema({
         }
     }
 })
+permissionSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("Permissions", permissionSchema)

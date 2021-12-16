@@ -4,7 +4,8 @@ const { Schema } = require('mongoose');
 
 const estimationTemplateSchema = new mongoose.Schema({
     estType: String,
-    description: String
+    description: String,
+    contingency: Number,
 }, {
     timestamps: true,
     toObject: {
@@ -16,4 +17,5 @@ const estimationTemplateSchema = new mongoose.Schema({
         }
     }
 })
+estimationTemplateSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("EstimationTemplate", estimationTemplateSchema)

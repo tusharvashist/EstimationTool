@@ -9,7 +9,12 @@ const estHeaderRequirement = new mongoose.Schema({
     estHeader: {
         type: Schema.Types.ObjectId,
         ref: 'EstHeader'
-    }
+    },
+    // estRequirementData: [{
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'estRequirementData'
+    // }],
+    isDeleted: Boolean,
 }, {
     timestamps: true,
     toObject: {
@@ -21,4 +26,5 @@ const estHeaderRequirement = new mongoose.Schema({
         }
     }
 })
+estHeaderRequirement.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ESTHeaderRequirement", estHeaderRequirement)

@@ -20,13 +20,15 @@ module.exports.UpdateEstimationHeaderSchema = Joi.object({
     estDescription: Joi.string().required(),
     effortUnit: Joi.string().required(),
     manCount: Joi.number(),
-    contigency: Joi.string(),
+    contingency: Joi.number().required(),
     totalCost: Joi.number(),
     estCalcColumns: Joi.string(),
     estColumns: Joi.string(),
     isDeleted: Joi.boolean(),
     createdBy: Joi.string(),
-    updatedBy: Joi.string()
+    updatedBy: Joi.string(),
+    estStep : Joi.string(),
+    estTentativeTimeline: Joi.number().required(),
 })
 
 
@@ -40,11 +42,13 @@ module.exports.createEstimationHeaderSchema = Joi.object({
     estDescription: Joi.string(),
     effortUnit: Joi.string(),
     manCount: Joi.number(),
-    contigency: Joi.string(),
+    contingency: Joi.number().required(),
     totalCost: Joi.number(),
     estCalcColumns: Joi.string(),
     estColumns: Joi.string(),
     isDeleted: Joi.boolean(),
     createdBy: Joi.string(),
-    updatedBy: Joi.string()
+    updatedBy: Joi.string(),
+    estStep : Joi.string(),
+    estTentativeTimeline: Joi.number().required()
 })

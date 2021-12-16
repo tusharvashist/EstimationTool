@@ -3,37 +3,47 @@ import { createSlice } from '@reduxjs/toolkit'
 export const basicDetailSlice = createSlice({
   name: 'basicDetail',
   initialState: {
-      estimationName: '',
-      estimationType: '',
-      estimationTypeId: '',
-      efforUnit: '',
-      esttimationDesc: '',
-      estimationHeaderId: '',
+    estimationName: '',
+    estimationType: '',
+    estimationTypeId: '',
+    efforUnit: '',
+    esttimationDesc: '',
+    estimationHeaderId: '',
+    estimationTentativeTimeline: '',
+    estimationContingency: '',
   },
   reducers: {
     setEstimationName: (state, estimationName) => {
       state.estimationName = estimationName.payload;
-      },
+    },
     setEstimationType: (state, estimationType) => {
-        state.estimationType = estimationType.payload;
-        },
+      state.estimationType = estimationType.payload;
+    },
     setEstimationTypeId: (state, estimationTypeId) => {
-       state.estimationTypeId = estimationTypeId.payload;
-            },
+      state.estimationTypeId = estimationTypeId.payload;
+    },
     setEfforUnit: (state, efforUnit) => {
       state.efforUnit = efforUnit.payload;
-                },
-     setEsttimationDesc: (state, esttimationDesc) => {
-                    state.esttimationDesc = esttimationDesc.payload;
-                    },
-                    setEstimationHeaderId: (state, estimationHeaderId) => {
-                      state.estimationHeaderId = estimationHeaderId.payload;
-                      },   
-   
+    },
+    setEsttimationDesc: (state, esttimationDesc) => {
+      state.esttimationDesc = esttimationDesc.payload;
+    },
+    setEstimationHeaderId: (state, estimationHeaderId) => {
+      state.estimationHeaderId = estimationHeaderId.payload;
+      //localStorage.setItem('estimationHeaderId', estimationHeaderId.payload);
+    },
+    setEstimationTentativeTimeline: (state, estimationTentativeTimeline) => {
+      state.estimationTentativeTimeline = estimationTentativeTimeline.payload;
+    },
+
+    setEstimationContingency: (state, estimationContingency) => {
+      state.estimationContingency = estimationContingency.payload;
+    }
+
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setEstimationName,setEstimationType, setEstimationTypeId,setEfforUnit,setEsttimationDesc} = basicDetailSlice.actions
+export const { setEstimationName, setEstimationType, setEstimationTypeId, setEfforUnit, setEsttimationDesc,setEstimationHeaderId,setEstimationTentativeTimeline,setEstimationContingency  } = basicDetailSlice.actions
 
 export default basicDetailSlice.reducer

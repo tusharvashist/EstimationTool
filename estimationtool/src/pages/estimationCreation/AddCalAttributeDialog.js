@@ -1,51 +1,191 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from "@material-ui/core/TextField";
+
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  makeStyles,
+} from "@material-ui/core";
 import { Grid } from "@material-ui/core";
+import EstimationService from "../estimation-detail/estimation.service";
+import SecondStepServ from "../estimationCreation/SecStepService.service";
+import Autocomplete from "@mui/material/Autocomplete";
+
 
 const AddCalAttributeDialog = (props) => {
+  const useStyles = makeStyles((theme) => ({
+    formControl: { maxWidth: 400 },
+  }));
+  const classes = useStyles();
+  const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
+  const [showError, setShowError] = useState(false);
+  const [requirementTagArray, setRequirementTagArray] = useState([]);
+  const [multiselectOptions, setmultiselectOptions] = useState([]);
+  const [selectTagValue, setSelectTagValue] = useState();
+  const [multiTagValue, setMultiSelectTag] = useState();
+
   const [formData, setFormData] = React.useState({
     estTypeId: null,
-
-    calcAttribute: "345fghf",
-
+    calcAttribute: " ",
     calcAttributeName: "",
-
     isFormula: true,
-
     formula: "%",
-
     operator: "abcd",
-
-    unit: null,
-
-    description: "abcd",
+    unit: 1,
+    description: " ",
+    formulaTags: [""],
+    calcType: "",
+    tag: { _id: "", name: "" },
   });
 
-  const [showError, setShowError] = useState(false);
+  useEffect(() => {
+    getAllRequirementTags();
+    setEditData()
+  }, []);
 
-  const handelCalAttributeName = (e) => {
-    let newObject = { ...formData };
-    newObject.calcAttributeName = e.target.value;
-    setFormData({ ...newObject });
+  // API Calling
+  const getAllRequirementTags = () => {
+    SecondStepServ.getAllRequirementTag()
+      .then((res) => {
+        setRequirementTagArray(res.data.body);
+        setmultiselectOptions(res.data.body);
+      })
+      .catch((err) => { });
   };
 
+  // Set Edit Data
+
+  const setEditData = () => {
+    getAllRequirementTags()
+    if (props.id) {
+      console.log("props", props)
+
+      setFormData({ ...formData, ...props.details })
+      let obj = { ...props.details };
+      const tagInfo = props.details.tag || {};
+      obj.tag = { id: tagInfo._id, name: tagInfo.name }
+
+      setSelectTagValue(obj.tag.id)
+      let objNew = { ...props.details };
+      let filterArray = [];
+      if (objNew.formulaTags) {
+        let arry = objNew.formulaTags.map(item => {
+          let ob = {
+            id: item._id,
+            name: item.name
+          }
+          filterArray.push(ob)
+        });
+
+        setMultiSelectTag(filterArray)
+      } else {
+        setMultiSelectTag([])
+      }
+    }
+  }
+
+  // Submit form
   const onSubmitForm = (e) => {
-    if (formData.calcAttributeName && formData.formula) {
-      setShowError(false);
-      props.saveFun({ ...formData });
+    if (calcType == "percentage") {
+      getValuePercentage()
     } else {
-      setShowError(true);
+      getValueManual()
     }
   };
 
+  // selecting value percentage
+
+  const getValuePercentage = () => {
+    if (formData.tag.name !== '' && formData.formulaTags[0] !== '') {
+      if (formData.calcAttributeName && formData.unit && formData.tag && formData.calcType && formData.formulaTags.length > 0) {
+        console.log("formData in save func", formData)
+        props.saveFun({ ...formData });
+      } else {
+        setShowError(true);
+      }
+    } else {
+      setShowError(true)
+    }
+  }
+
+  //  selecting value manual
+
+  const getValueManual = () => {
+    if (formData.tag.name !== '' && formData.tag._id !== '') {
+      if (formData.calcAttributeName && formData.tag && formData.calcType) {
+        let newObject = { ...formData };
+        newObject.unit = 0;
+        newObject.formulaTags = [];
+        setFormData({ ...newObject });
+        props.saveFun({ ...newObject });
+      } else {
+        setShowError(true)
+      }
+    } else {
+      setShowError(true)
+    }
+
+  }
+
+
+  //  Handle Validation
   const handelFormula = (e) => {
-    let newObject = { ...formData };
-    newObject.unit = e.target.value;
-    setFormData({ ...newObject });
+    if (e.target.value > 99 || e.target.value < 0) {
+      setShowError(true);
+    } else {
+      setShowError(false);
+      let newObject = { ...formData };
+      newObject.unit = e.target.value;
+      setFormData({ ...newObject });
+    }
   };
 
-  const { calcAttributeName, unit } = formData;
+  const handleMultiSelect = (e, value) => {
+
+    if (value.length > 0) {
+      console.log("value in mult", value)
+      setMultiSelectTag(value)
+      setFormData({ ...formData, formulaTags: [...value] });
+    } else {
+      setFormData({ ...formData, formulaTags: [] });
+
+      setShowError(true)
+    }
+  };
+
+  const handelCalAttributeName = (e) => {
+    if (e.target.value !== '') {
+      let newObject = { ...formData };
+      newObject.calcAttributeName = e.target.value;
+      setFormData({ ...newObject });
+    } else {
+      setShowError(true)
+    }
+  };
+
+  const handleCalcType = (e) => {
+    if (e.target.value !== '') {
+      let newObject = { ...formData };
+      newObject.calcType = e.target.value;
+      setFormData({ ...newObject, unit: 0 });
+    } else {
+      setShowError(true)
+    }
+  };
+
+  const handleTag = (e) => {
+    if (e.target.value !== '') {
+      const _id = e.target.value;
+      const name = e.target.label;
+      setFormData({ ...formData, tag: { _id, name } });
+    } else {
+      setShowError(true)
+    }
+  };
+  const { calcAttributeName, unit, calcType, formulaTags, tag } = formData;
 
   return (
     <CustomizedDialogs
@@ -63,43 +203,126 @@ const AddCalAttributeDialog = (props) => {
             required
             error={showError && !calcAttributeName}
             autoFocus
-            id="standard-basic"
+            id="filled-basic"
             label="Calculated Attribute Name"
             className="full-width"
+            disabled={props.id}
             onChange={handelCalAttributeName}
             variant="outlined"
+            value={calcAttributeName}
           />
+        </Grid>
+        {/*  <Grid item md={12}>
+
+            <TextField
+              required
+              error={showError && !calcAttributeName}
+              autoFocus
+              id="standard-basic"
+              label="Calculated Attribute Name"
+              className="full-width"
+              onChange={handelCalAttributeName}
+              variant="outlined"
+              disabled={!props.id}
+              value={calcAttributeName}
+            />
+          </Grid> */}
+
+        <Grid item xs={12}>
+          {/* <InputLabel htmlFor="Calculation Type">Calculation Type</InputLabel> */}
+          <FormControl className={classes.formControl}>
+            <InputLabel> Tag</InputLabel>
+            <Select
+              required
+              onChange={handleTag}
+              value={formData.tag._id}
+              label={formData.tag.name}
+              error={showError && !formData.tag._id}
+
+            >
+              {requirementTagArray.map((item) => (
+                <MenuItem key={item.name} value={item.id} >
+                  {item.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Grid>
         <Grid item xs={12}>
-          {/* <Dropdown
-            title="Calculation Unit"
-            value="percentage"
-          /> */}
-          <TextField
-            id="standard-basic"
-            label="Calculation Unit"
-            className="full-width"
-            variant="outlined"
-            value="percentage"
-            disabled
-          />
+          <FormControl className={classes.formControl}>
+            <InputLabel> Calculation Type</InputLabel>
+            <Select onChange={handleCalcType} error={showError && !calcType} value={calcType}>
+              <MenuItem value="manual">Manual</MenuItem>
+              <MenuItem value="percentage">Formula</MenuItem>
+            </Select>
+          </FormControl>
+
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            error={showError && !unit}
-            id="standard-basic"
-            label="Formula"
-            className="full-width"
-            onChange={handelFormula}
-            variant="outlined"
-            type={"number"}
-            max={2}
-          />
-        </Grid>
+
+        {calcType == "percentage" ? (<>
+          <Grid container direction="row" alignItems="center">
+            <Grid item xs={3}>
+              <TextField
+                required
+                error={showError && !unit}
+                helperText={showError ? "Enter b/w 1-100" : ""}
+                id="standard-basic"
+                value={unit}
+                label="Value"
+                className="full-width"
+                onChange={handelFormula}
+                variant="outlined"
+                type="number"
+                max={2}
+                onKeyDown={(evt) =>
+                  symbolsArr.includes(evt.key) && evt.preventDefault()
+                }
+                pattern="^[1-9][0-9]?$|^100$"
+              />
+            </Grid>
+            <Grid item xs={2}>
+              {" "}
+              <label style={{ marginLeft: "30px" }}>% of</label>
+            </Grid>
+            <Grid item xs={7}>
+              <Autocomplete
+                multiple
+                id="tags-standard"
+                options={multiselectOptions}
+                getOptionLabel={(option) => option.name}
+                onChange={(e, value) => handleMultiSelect(e, value)}
+                defaultValue={multiTagValue}
+                error={showError && !formulaTags}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    value={params.id}
+                    label="Tags"
+                    placeholder="Tags..."
+                    required
+                    error={showError && !formulaTags}
+                    helperText={showError ? "Select one tag atleast!" : ""}
+
+                  />
+                )}
+              />
+            </Grid>
+            <p style={{ color: "green", fontSize: "12px" }}>
+              Percentage will be applied on the sum of selected tag efforts{" "}
+            </p>
+          </Grid></>
+        ) : (
+          <p style={{ color: "green", fontSize: "12px" }}>
+            Please use Estimation Detail page to enter value manually{" "}
+          </p>
+        )}
       </Grid>
     </CustomizedDialogs>
   );
 };
 
 export default AddCalAttributeDialog;
+
+
+

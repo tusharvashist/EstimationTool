@@ -3,6 +3,7 @@ import { Breadcrumbs, Link, Typography } from "@material-ui/core";
 import "./breadcrum.css";
 import { withRouter } from "react-router";
 
+
 function handleClick(event) {
   event.preventDefault();
   console.info("You clicked a breadcrumb.");
@@ -19,14 +20,16 @@ const BasicBreadcrumbs = (props) => {
   return (
     <div role="presentation" onClick={handleClick} className="breadcrumb-wrp">
       <Breadcrumbs aria-label="breadcrumb">
-        <Link onClick={() => history.push("/estimation")}>Dashboard</Link>
+        <Link onClick={() => history.push("/Recent-Estimations")}>
+          Dashboard
+        </Link>
         {pathnames.map((name, index) => {
           //console.log(name);
           const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
           const isLast = index === pathnames.length - 1;
           //console.log(routeTo, isLast);
           return isLast ? (
-            <Typography>{name}</Typography>
+            <Typography style={{ color: "black" }}>{name}</Typography>
           ) : (
             <Link onClick={() => history.push(routeTo)}>{name}</Link>
           );

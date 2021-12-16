@@ -14,6 +14,16 @@ const estimationCalcAttrSchema = new mongoose.Schema({
     operator: String,
     unit: Number,
     description: String,
+    calcType: String,
+    tag: {
+        type: Schema.Types.ObjectId,
+        ref: 'requirementTag'
+    },
+    formulaTags: [{
+        type: Schema.Types.ObjectId,
+        ref: 'requirementTag'
+    }]
+
 
 }, {
     timestamps: true,
@@ -26,4 +36,5 @@ const estimationCalcAttrSchema = new mongoose.Schema({
         }
     }
 })
+estimationCalcAttrSchema.index({ updatedAt: '-1' });
 module.exports = mongoose.model("estimationCalcAttr", estimationCalcAttrSchema)

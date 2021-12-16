@@ -30,7 +30,7 @@ const estimationHeaderSchema = new mongoose.Schema({
         required: 'Effort Unit is required!'
     },
     manCount: Number,
-    contigency: String,
+    contingency: Number,
     totalCost: Number,
     estCalcColumns: String,
     estColumns: String,
@@ -46,7 +46,8 @@ const estimationHeaderSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'user'
     },
-
+    estStep: String,
+    estTentativeTimeline: Number,
 }, {
     timestamps: true,
     toObject: {
@@ -58,4 +59,5 @@ const estimationHeaderSchema = new mongoose.Schema({
         }
     }
 })
+estimationHeaderSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("EstHeader", estimationHeaderSchema)

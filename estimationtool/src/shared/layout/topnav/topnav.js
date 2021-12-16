@@ -6,6 +6,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
 import AuthSer from "../../service/auth";
+import { styled } from "@mui/material/styles";
 // import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import {
   PersonAdd,
@@ -16,14 +17,27 @@ import {
   Mail,
   AddCircle,
 } from "@material-ui/icons";
-import { Box, Divider } from "@material-ui/core";
+import { Badge, Box, Divider } from "@material-ui/core";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import logo from "../../../login/img/logo.png";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setAdmin,
+  setContributor,
+  setSuperAdmin,
+} from "../../../Redux/roleRedux";
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    border: `3px solid ${theme.palette.background.paper}`,
+    padding: "1px 6px",
+    fontSize: "9px",
+  },
+}));
 
 function stringToColor(string) {
   let hash = 0;
@@ -58,6 +72,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function Topnav(props) {
+  const roleState = useSelector((state) => state.role);
+  const dispatch = useDispatch();
   const loginRedux = useSelector((state) => state.login);
   let history = useHistory();
   const classes = useStyles();
@@ -71,6 +87,9 @@ export default function Topnav(props) {
   };
 
   const handleLogout = () => {
+    dispatch(setAdmin(false));
+    dispatch(setContributor(false));
+    dispatch(setSuperAdmin(false));
     AuthSer.logout();
     redirectLogin();
   };
@@ -103,6 +122,16 @@ export default function Topnav(props) {
 
       children: `${firstChar}${secondChar}`,
     };
+  }
+
+  function roleName() {
+    if (roleState.isContributor) {
+      return "Contributor";
+    } else if (roleState.isAdmin) {
+      return "Admin";
+    } else {
+      return "Super Admin";
+    }
   }
 
   return (
@@ -162,9 +191,18 @@ export default function Topnav(props) {
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
               <MenuItem>
-                <Avatar /> {loginRedux.fullName == "undefined"
-                  ? ""
-                  : loginRedux.fullName}
+                <StyledBadge
+                  badgeContent={
+                    (roleState.isContributor && "Contributor") ||
+                    (roleState.isSuperAdmin && "Super Admin") ||
+                    (roleState.isAdmin && "Admin")
+                  }
+                  color="secondary"
+                  anchorOrigin={{ vertical: "top", horizontal: "left" }}
+                >
+                  <Avatar />
+                </StyledBadge>{" "}
+                {loginRedux.fullName == "undefined" ? "" : loginRedux.fullName}
               </MenuItem>
               <MenuItem>
                 <MailOutlineRounded />

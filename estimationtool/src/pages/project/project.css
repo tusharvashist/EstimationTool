@@ -10,3 +10,7 @@
 .all-project-wrap .MTableToolbar-root-13 {
   display: none;
 }
+
+.select-label-width {
+  width: 300px !important;
+}

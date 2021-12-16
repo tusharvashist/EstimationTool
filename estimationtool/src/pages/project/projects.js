@@ -1,19 +1,36 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
-import { Box, Grid, Paper } from "@material-ui/core";
+import ClientSer from "../client-details/client-details.service";
+
+import {
+  Box,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
 import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from "@material-ui/icons/Add";
+import { useHistory } from "react-router-dom";
 // import Link from "@material-ui/core/Link";
 import { useParams, Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./project.css";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
+import topNav from "../../shared/layout/topnav/topnav";
 
 function Projects(props) {
-  // const { clientid } = useParams();
+  const roleState = useSelector((state) => state.role);
+  let history = useHistory();
+
   const clientid = props.data;
   const [tableData, setTableData] = useState([]);
   const [clientDeatils, setClientDeatils] = useState({});
@@ -26,24 +43,32 @@ function Projects(props) {
 
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [projectStatus, setProjectStatus] = useState([
-    { title: "Active" },
-    { title: "In-Active" },
+    { title: "All", value: "All" },
+    { title: "Active", value: false },
+    { title: "In-Active", value: true },
   ]);
+  const [isOpen, setOpen] = React.useState({});
+
+  const [projectByClient, setProjectByClient] = useState(props.listData);
+  const [secondProjectByClient, setSecondProjectByClient] = useState();
+  const [allProjectByClient, setAllProjectByClient] = useState();
+  const [loaderComponent, setLoader] = useLoader();
+
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
-    getClientById();
-  }, []);
-  useEffect(() => {
-    getClientById();
-  }, [clientid]);
-  const projectDetailsUrl =
-    "/projectdetails/" + props.data + "/" + "614fefd74d9da71851f36df4";
+    // getClientById();
+    getAllProjects(clientid);
+  }, [clientid, reload]);
+
   const columns = [
     {
       title: "Project Name",
       field: "projectName",
       render: (rowData) => {
-        return (
+        return rowData.isDeleted ? (
+          <>{rowData.projectName} </>
+        ) : (
           <Link
             to={{
               pathname:
@@ -68,8 +93,17 @@ function Projects(props) {
   const closeFun = () => {
     setIsOpenDailog(false);
   };
-  const getDropDownvalue = (val) => {
-    console.log("this is an download vlaue", val);
+
+  const getDropDownvalue = (event) => {
+    console.log("this is an download vlaue", event.target.value);
+    if (event.target.value == "All") {
+      setProjectByClient(allProjectByClient);
+    } else {
+      const dropdownEl = secondProjectByClient.filter(
+        (el) => el.isDeleted == event.target.value
+      );
+      setProjectByClient(dropdownEl);
+    }
   };
 
   const openCreateDailog = () => {
@@ -93,6 +127,10 @@ function Projects(props) {
     setDeleteProjectDailog(true);
   };
 
+  const handleClose = () => {
+    setOpen({});
+  };
+
   // const getAllProject = () => {
   //   ProjectSer.getAllProject()
   //     .then((res) => {
@@ -103,42 +141,156 @@ function Projects(props) {
   //     });
   // };
 
-  const getClientById = () => {
-    ProjectSer.getClientById(clientid)
+  //For Rowdata background color according to active state
+  const rowBackgroundColor = {
+    true: "#eef5e9",
+    false: "#fff",
+  };
+
+  // const getClientById = () => {
+  //   setLoader(true);
+  //   ProjectSer.getClientById(clientid)
+  //     .then((res) => {
+  //       setLoader(false);
+  //       let dataResponce = res.data.body.projects;
+  //       setTableData([...dataResponce]);
+  //       getAllProjects(clientid);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Project error", err);
+  //     });
+  // };
+
+  const getAllProjects = () => {
+    // const clientId = location.pathname.split("/")[2];
+    setLoader(true);
+
+    ClientSer.getClientById(clientid)
       .then((res) => {
-        let dataResponce = res.data.body.projects;
-        setTableData([...dataResponce.filter((op) => op.isDeleted === false)]);
+        setLoader(false);
+
+        let dataResponce = res.data.body;
+        console.log("%%%%"+ JSON.stringify(dataResponce));
+        setLoader(false);
+        setProjectByClient(dataResponce.projects);
+        //const filteredData = dataResponce.projects.filter((el) => el.client == clientid);
+        const activeEl = dataResponce.projects.filter((el) => el.isDeleted == false);
+        setProjectByClient(activeEl);
+        setSecondProjectByClient([...dataResponce.projects]);
+        setAllProjectByClient([...dataResponce.projects]);
+       // setClientDetails({ ...dataResponce });
+       // setProjectData(dataResponce.projects);
       })
       .catch((err) => {
-        console.log("Project error", err);
+        console.log("get Client by id error", err);
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
       });
   };
 
+
+  // const getAllProjects = (clientid) => {
+  //   setLoader(true);
+  //   ProjectSer.getAllProject()
+  //     .then((res) => {
+  //       let dataResponce = res.data.body;
+  //       setLoader(false);
+  //       const filteredData = dataResponce.filter((el) => el.client == clientid);
+  //       const activeEl = filteredData.filter((el) => el.isDeleted == false);
+  //       setProjectByClient(activeEl);
+  //       setSecondProjectByClient([...filteredData]);
+  //       setAllProjectByClient([...filteredData]);
+  //     })
+  //     .catch((err) => {
+  //       // if ((err.response.data = 401) || (err.response.data = 404)) {
+  //       //   let url = "/login";
+  //       //   history.push(url);
+  //       // }
+  //       setOpen({
+  //         open: true,
+  //         severity: "error",
+  //         message: err.response.data.message,
+  //       });
+  //     });
+  // };
+
   const createProject = (projectData) => {
+    setLoader(true);
+
     ProjectSer.createProject(projectData)
       .then((res) => {
-        getClientById();
+        setLoader(false);
+
+        // getClientById();
+        setReload(!reload);
+        setOpen({ open: true, severity: "success", message: res.data.message });
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const updateProject = (projectData) => {
+    setLoader(true);
+
     ProjectSer.updateProject(actionId, projectData)
       .then((res) => {
-        getClientById();
+        setLoader(false);
+
+        // getClientById();
+        setReload(!reload);
+        setOpen({ open: true, severity: "success", message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const deleteProject = () => {
+    setLoader(true);
+
     ProjectSer.deleteProject(actionId)
       .then((res) => {
-        getClientById();
+        setLoader(false);
+
+        // getClientById();
+        setReload(!reload);
+        setOpen({ open: true, severity: "success", message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const saveCreateProjectFun = (data) => {
@@ -156,7 +308,9 @@ function Projects(props) {
     deleteProject();
   };
 
-  // console.log(props.clients);
+  //console.log(projectByClient);
+
+  const { message, severity, open } = isOpen || {};
 
   return (
     <div className="all-project-wrap">
@@ -201,60 +355,115 @@ function Projects(props) {
         />
       ) : null}
       <Box>
-        <Grid container justify="flex-end">
-          {/* <Dropdown title="Project name" list={projectStatus} getVal={getDropDownvalue}/> */}
-          <Button variant="outlined" onClick={openCreateDailog}>
-            {" "}
-            <AddIcon />
-            Create Project
-          </Button>
+        <Grid container justify="space-between">
+          <Grid item>
+            <FormControl>
+              <InputLabel
+                id="client-simple-select"
+                className="select-label-width"
+              >
+                Project Status{" "}
+              </InputLabel>
+
+              <Select
+                labelId="client-simple-select"
+                className="select-label-width"
+                id="client-simple-select"
+                value={projectStatus.title}
+                label={projectStatus.title}
+                defaultValue={false}
+                onChange={getDropDownvalue}
+              >
+                {projectStatus.map((item) => (
+                  <MenuItem key={item.title} value={item.value}>
+                    {item.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openCreateDailog}>
+                {" "}
+                <AddIcon />
+                Create Project
+              </Button>
+            )}
+          </Grid>
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        <MaterialTable
-          columns={columns}
-          components={{
-            Container: (props) => <Paper {...props} elevation={0} />,
-          }}
-          actions={[
-            {
-              icon: "edit",
-              tooltip: "Edit project",
-              onClick: (event, rowData) => {
-                setEditRow({ ...rowData });
-                setActionId(rowData._id);
-                openUpdateDailog();
+        {loaderComponent ? (
+          loaderComponent
+        ) : (
+          <MaterialTable
+            columns={columns}
+            components={{
+              Container: (props) => <Paper {...props} elevation={0} />,
+            }}
+            actions={
+              !roleState.isContributor
+                ? [
+                    (rowData) => ({
+                      icon: "edit",
+                      tooltip: "Edit project",
+                      onClick: (event, rowData) => {
+                        setEditRow({ ...rowData });
+                        setActionId(rowData._id);
+                        openUpdateDailog();
+                      },
+                      disabled: rowData.isDeleted,
+                    }),
+                    (rowData) => ({
+                      icon: "delete",
+                      tooltip: "Delete project",
+                      onClick: (event, rowData) => {
+                        setEditRow({ ...rowData });
+                        setActionId(rowData._id);
+                        setDeleteRecordName(rowData.projectName);
+                        openDeleteDailog();
+                      },
+                      disabled: rowData.isDeleted,
+                    }),
+                  ]
+                : false
+            }
+            options={{
+              actionsColumnIndex: -1,
+              sorting: true,
+              search: false,
+              filtering: false,
+              pageSize: 5,
+              paging: false,
+              headerStyle: {
+                backgroundColor: "#e5ebf7",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                color: "#113c91",
               },
-            },
-            {
-              icon: "delete",
-              tooltip: "Delete project",
-              onClick: (event, rowData) => {
-                setEditRow({ ...rowData });
-                setActionId(rowData._id);
-                setDeleteRecordName(rowData.projectName);
-                openDeleteDailog();
+              rowStyle: (rowData) => {
+                return {
+                  backgroundColor:
+                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                };
               },
-            },
-          ]}
-          options={{
-            actionsColumnIndex: -1,
-            sorting: true,
-            search: false,
-            filtering: false,
-            pageSize: 5,
-            paging: false,
-            headerStyle: {
-              backgroundColor: "#e5ebf7",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-              color: "#113c91",
-            },
-          }}
-          data={tableData}
-          title={`Project${tableData.length > 1 ? "s" : ""}`}
-        />
+            }}
+            data={projectByClient}
+            title={`Project${props.clients.length > 1 ? "s" : ""}`}
+          />
+        )}
       </BorderedContainer>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </div>
   );
 }

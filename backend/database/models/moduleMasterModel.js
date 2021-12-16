@@ -21,4 +21,5 @@ const moduleMasterSchema = new mongoose.Schema({
         }
     }
 })
+moduleMasterSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("ModuleMaster", moduleMasterSchema)

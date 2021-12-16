@@ -37,9 +37,10 @@
   margin: 2px 0;
 }
 
-.link-item {
+.listitem {
   color: #000;
   text-decoration: none;
+  margin: 5px 0 !important;
 }
 .listitem:hover > span {
   color: #fff;
@@ -52,13 +53,22 @@
 }
 .MuiListItem-button:hover {
   background-color: #1d1660 !important;
+  color: white;
   border-radius: 7px;
-  transition: 1s all ease;
+  transition: 0.5s all ease;
 }
 .MuiListItemIcon-root {
   min-width: 0px !important;
+  color: #1d1660;
 }
 .MuiListItem-button:hover .link-icon,
 .MuiListItem-button:hover .link-item {
   color: white;
 }
+.active {
+  background-color: #d2cdff !important;
+  transition: 0.5s all ease;
+}
+/* .active * {
+  color: white;
+} */

@@ -7,7 +7,11 @@ module.exports.estimationHeaderAtrributeCalcSchema = Joi.object({
     formula: Joi.string().required(),
     operator: Joi.string().required(),
     unit: Joi.number().required(),
-    description: Joi.string()
+    description: Joi.string(),
+    tag: Joi.string().required(),
+    formulaTags: Joi.array(),
+    calcType: Joi.string(),
+    estCalcId: Joi.string()
 })
 module.exports.getEstimationHeaderAtrributeCalcById = Joi.object({
     id: Joi.string().required()
@@ -24,5 +28,8 @@ module.exports.estimationHeaderAtrributeCalcUpdateSchema = Joi.object({
     formula: Joi.string().required(),
     operator: Joi.string().required(),
     unit: Joi.number().required(),
-    description: Joi.string()
+    description: Joi.string(),
+    tag: Joi.string().required,
+    formulaTags: Joi.array(),
+    calcType: Joi.string()
 })

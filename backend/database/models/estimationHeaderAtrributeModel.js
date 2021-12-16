@@ -9,8 +9,8 @@ const estimationHeaderAtrributeSchema = new mongoose.Schema({
     estAttributeId: {
         type: String,
         ref: 'EstimationAttributes'
-    }
-
+    },
+  //  totalValue: String,//sum of all requirement attribute values
 }, {
     timestamps: true,
     toObject: {
@@ -22,5 +22,6 @@ const estimationHeaderAtrributeSchema = new mongoose.Schema({
         }
     }
 })
+estimationHeaderAtrributeSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("estimationHeaderAtrribute", estimationHeaderAtrributeSchema)
 

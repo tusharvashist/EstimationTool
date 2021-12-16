@@ -15,7 +15,9 @@ import { Switch, Route } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
-import EstimationDetail from "../../pages/estimationDetail/EstimationDetail";
+import EstimationDetail from "../../pages/estimation-detail/estimation-detail";
+import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
+import ResourceMix from "../../pages/ResourceMix/ResourceMix";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -49,7 +51,7 @@ export default class Layout extends Component {
               <Grid item className="h-100" xs={10}>
                 <Breadcrum />
                 <Switch>
-                  <Route exact path="/estimation">
+                  <Route exact path="/Recent-Estimations">
                     <Allestimation />
                   </Route>
                   <Route
@@ -66,6 +68,13 @@ export default class Layout extends Component {
                     exact
                     path="/All-Clients/:clientName/:projectid/createEstimate"
                     render={(props) => <EstimationCreation {...props} />}
+                  >
+                    {/* <EstimationCreation /> */}
+                  </Route>
+                  <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/createRequirements"
+                    render={(props) => <CreateRequirements {...props} />}
                   >
                     {/* <EstimationCreation /> */}
                   </Route>
@@ -93,6 +102,12 @@ export default class Layout extends Component {
                     path="/All-Clients/:clientName/:projectid/Estimation-Detail"
                   >
                     <EstimationDetail />
+                  </Route>
+                  <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/Estimation-Detail/ResourceMix"
+                  >
+                    <ResourceMix />
                   </Route>
                 </Switch>
               </Grid>

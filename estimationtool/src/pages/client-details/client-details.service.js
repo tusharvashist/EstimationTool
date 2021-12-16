@@ -4,55 +4,24 @@ const ClientService = {
     
     getClientById:  function(clientid){
         let url = Url.allClient;
-        let clientId= "/"+clientid;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.get(url+clientId,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-           })
+        let clientId= "/"+clientid;       
+        return axios.get(url+clientId)
     },
     getAllClient:  function(){
-        let url = Url.allClient;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.get(url+"?skip=0&limit=10",{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-           })
+        let url = Url.allClient;       
+        return axios.get(url+"?skip=0&limit=10")
     },
     createClient:  function(clientData){
-        let url = Url.createClient;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.post(url,clientData,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-           })
+        let url = Url.createClient;       
+        return axios.post(url,clientData)
     },
     updateClient:  function(actionId,clientData){
-        let url = Url.createClient+"/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.put(url,clientData,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            }
-        })
+        let url = Url.createClient+"/"+actionId;        
+        return axios.put(url,clientData)
     },
     deleteClient:  function(actionId){
-        let url = Url.deleteClient+"/"+actionId;
-        const getToken = localStorage.getItem("auth")
-        const token = JSON.parse(getToken).token;
-        return axios.delete(url,{
-            headers:{
-                'Authorization': `Bearer ${token}` 
-            },
-            data:{}
-        })
+        let url = Url.deleteClient+"/"+actionId;        
+        return axios.delete(url)
     }
 }
 export default ClientService;

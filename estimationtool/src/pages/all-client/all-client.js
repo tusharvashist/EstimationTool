@@ -17,16 +17,20 @@ import UpdateClientdailog from "./update-client.dailog";
 import DeleteClientdailog from "./delete-client.dailog";
 import AddIcon from "@material-ui/icons/Add";
 import "./all-client.css";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 import Link from "@material-ui/core/Link";
 import { withRouter } from "react-router";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { grid } from "@material-ui/system";
+// import { rolePermission } from "../../shared/commonUtility/rolePermission";
+import { useSelector } from "react-redux";
+import useLoader from "../../shared/layout/hooks/useLoader";
+//import { useHistory } from "react-router-dom";
 
 function AllClient(props) {
   const { history } = props;
   // console.log(props);
-
+  const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -36,24 +40,39 @@ function AllClient(props) {
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
   const [clientStatus, setClientStatus] = useState([
+    { title: "All", value: "All" },
     { title: "Active", value: false },
     { title: "In-Active", value: true },
   ]);
+  const [isOpen, setOpen] = React.useState({});
+  const [selectedOption, setSelectedOption] = useState({
+    title: "Active",
+    value: false,
+  });
+  const [loaderComponent, setLoader] = useLoader();
 
   useEffect(() => {
     getAllClient();
   }, []);
+  // const history1 = useHistory();
 
   const getAllClient = () => {
+    setLoader(true);
     ClientSer.getAllClient()
       .then((res) => {
+        setLoader(false);
+
         let dataResponce = res.data.body;
-        // console.log(dataResponce);
+        console.log(dataResponce + ">>>>>>>>>>>>>>.");
         setTableData([...dataResponce]);
         setFilteredData(dataResponce.filter((op) => op.isDeleted === false));
       })
       .catch((err) => {
         console.log("estimation error", err);
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        //  }
       });
   };
   const columns = [
@@ -61,7 +80,9 @@ function AllClient(props) {
       title: "Client Name",
       field: "clientName",
       render: (rowData) => {
-        return (
+        return rowData.isDeleted ? (
+          <>{rowData.clientName} </>
+        ) : (
           <Link
             onClick={() => history.push(`/All-Clients/${rowData.clientName}`)}
           >
@@ -69,7 +90,7 @@ function AllClient(props) {
           </Link>
         );
       },
-      sorting: false,
+      sorting: true,
     },
     { title: "Client Description", field: "description" },
     {
@@ -77,7 +98,8 @@ function AllClient(props) {
       field: "website",
       render: (dataRow) => {
         return (
-          <a target="blank" href={dataRow.website}>
+          <a target="blank" href={`//${dataRow.website}`}>
+            {/* <Link target="_blank" to={dataRow.website}>{dataRow.website}</Link> */}
             {dataRow.website}
           </a>
         );
@@ -94,12 +116,15 @@ function AllClient(props) {
   };
   const getDropDownvalue = (event) => {
     console.log("get dropdown value", event.target.value);
-    let dataResponce = tableData.filter(
-      (op) => op.isDeleted === event.target.value
-    );
-    setFilteredData([...dataResponce]);
+    if (event.target.value === "All") {
+      setFilteredData([...tableData]);
+    } else {
+      let dataResponce = tableData.filter(
+        (op) => op.isDeleted === event.target.value
+      );
+      setFilteredData([...dataResponce]);
+    }
   };
-  console.log("table data", tableData);
 
   const openCreateDailog = () => {
     openFun();
@@ -123,31 +148,83 @@ function AllClient(props) {
     setDeleteClinetDailog(true);
   };
 
+  const handleClose = () => {
+    setOpen({});
+  };
+
   const createClient = (clientData) => {
+    setLoader(true);
+
     ClientSer.createClient(clientData)
       .then((res) => {
+        setLoader(false);
+
         getAllClient();
+        setOpen({ open: true, severity: "success", message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const updateClient = (clientData) => {
+    setLoader(true);
+
     ClientSer.updateClient(actionId, clientData)
       .then((res) => {
+        setLoader(false);
+
         getAllClient();
+        setOpen({ open: true, severity: "success", message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const deleteClient = () => {
+    setLoader(true);
+
     ClientSer.deleteClient(actionId)
       .then((res) => {
+        setLoader(false);
+
         getAllClient();
+        setOpen({ open: true, severity: "success", message: res.data.message });
+
         closeFun();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        // if ((err.response.data = 401) || (err.response.data = 404)) {
+        //   let url = "/login";
+        //   history1.push(url);
+        // }
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
   };
 
   const saveCreateClientFun = (data) => {
@@ -161,15 +238,56 @@ function AllClient(props) {
     deleteClient();
   };
 
+  const actions = [
+
+    (rowData) => ({
+      icon: "edit",
+      tooltip: "edit client",
+      onClick: (event, rowData) => {
+        setEditRow({ ...rowData });
+        setActionId(rowData.id);
+        openUpdateDailog();
+      },
+      disabled: rowData.isDeleted,
+    }),
+    (rowData) => ({
+      icon: "delete",
+      tooltip: "delete client",
+      onClick: (event, rowData) => {
+        setEditRow({ ...rowData });
+        setActionId(rowData.id);
+        openDeleteDailog();
+      },
+      disabled: rowData.isDeleted,
+    }),
+  ];
+  // console.log("selectedOption.label", selectedOption.title)
+  if (selectedOption.value === true) {
+    actions.push();
+  }
+
+  const { message, severity, open } = isOpen || {};
+
+  const rowBackgroundColor = {
+    true: "#eef5e9",
+    false: "#fff",
+  };
+
   return (
     <>
-      <div className="all-client-wrap">
+      <div
+        className="all-client-wrap"
+        data-backdrop="static"
+        data-keyboard="false"
+      >
         {createClinetDailog === true && isOpenDailog === true ? (
           <CreateClientDailog
+            data-backdrop="static"
+            data-keyboard="false"
             isOpen={isOpenDailog}
             openF={openFun}
             closeF={closeFun}
-            title="Create client"
+            title="Create Client"
             oktitle="Save"
             saveFun={saveCreateClientFun}
             cancelTitle="Cancel"
@@ -182,7 +300,7 @@ function AllClient(props) {
             openF={openFun}
             closeF={closeFun}
             editRowObj={editRow}
-            title="Edit Estimation"
+            title="Edit Client"
             oktitle="Save"
             saveFun={saveUpdateClientFun}
             cancelTitle="Cancel"
@@ -233,59 +351,61 @@ function AllClient(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
-            <Button variant="outlined" onClick={openCreateDailog}>
-              {" "}
-              <AddIcon />
-              create client
-            </Button>
+            {!roleState.isContributor && (
+              <Button variant="outlined" onClick={openCreateDailog}>
+                {" "}
+                <AddIcon />
+                create client
+              </Button>
+            )}
           </Grid>
         </Box>
       </div>
       <Grid container>
         <BorderedContainer className="full-width">
-          <MaterialTable
-            columns={columns}
-            components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-            }}
-            actions={[
-              {
-                icon: "edit",
-                tooltip: "edit client",
-                onClick: (event, rowData) => {
-                  setEditRow({ ...rowData });
-                  setActionId(rowData.id);
-                  openUpdateDailog();
+          {loaderComponent ? (
+            loaderComponent
+          ) : (
+            <MaterialTable
+              columns={columns}
+              components={{
+                Container: (props) => <Paper {...props} elevation={0} />,
+              }}
+              actions={!roleState.isContributor ? actions : false}
+              options={{
+                actionsColumnIndex: -1,
+                sorting: true,
+                search: false,
+                filtering: false,
+                pageSize: 5,
+                paging: false,
+                headerStyle: {
+                  backgroundColor: "#e5ebf7",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  color: "#113c91",
                 },
-              },
-              {
-                icon: "delete",
-                tooltip: "delete client",
-                onClick: (event, rowData) => {
-                  setEditRow({ ...rowData });
-                  setActionId(rowData.id);
-                  openDeleteDailog();
+                rowStyle: (rowData) => {
+                  return {
+                    backgroundColor:
+                      rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                  };
                 },
-              },
-            ]}
-            options={{
-              actionsColumnIndex: -1,
-              sorting: true,
-              search: false,
-              filtering: false,
-              pageSize: 5,
-              paging: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-            }}
-            data={filteredData}
-            title={`Client${tableData.length > 1 ? "s" : ""}`}
-          />
+              }}
+              data={filteredData}
+              title={`Client${tableData.length > 1 ? "s" : ""}`}
+            />
+          )}
         </BorderedContainer>
+        {open && (
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        )}
       </Grid>
     </>
   );
