@@ -26,6 +26,7 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import topNav from "../../shared/layout/topnav/topnav";
+import {getMMDDYYYYFormat} from '../../common/dateTools';
 
 function Projects(props) {
   const roleState = useSelector((state) => state.role);
@@ -84,6 +85,15 @@ function Projects(props) {
     },
     { title: "Project Description", field: "projectDescription" },
     { title: "Business Domain", field: "domain" },
+    {title: "Last Modified By",
+    field: "lastmodify",
+    type: "date",
+    render: (dataRow) =>{
+      const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
+
+      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt) 
+    }
+    }
   ];
 
   const openFun = () => {
