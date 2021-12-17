@@ -124,10 +124,10 @@ function ProjectEstimations(props) {
     field: "lastmodify",
     type: "date",
     render: (dataRow) =>{
+      console.log("estimation row",dataRow)
       const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
 
-      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt) 
-    }
+      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt || '')     }
     }
   ];
 
