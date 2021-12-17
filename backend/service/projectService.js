@@ -57,9 +57,9 @@ module.exports.getProjectById = async ({ id }) => {
       .populate("client")
       .populate({
         path: "estimates",
-        populate: { path: "estTypeId" }
+        populate: { path: "estTypeId createdBy updatedBy" },
         //TODO: Please do not remove below liine , will implement this when implement token based permission things
-        //match: { $or: [{createdBy: global.loginId}, {updatedBy: global.loginId}]} 
+        //match: { $or: [{createdBy: global.loginId}, {updatedBy: global.loginId}]}
       });
     if (!project) {
       throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
