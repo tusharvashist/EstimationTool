@@ -261,7 +261,7 @@ const EstimationCreation = (props) => {
       basicDetailRedux.esttimationDesc &&
       basicDetailRedux.efforUnit &&
       Number(basicDetailRedux.estimationTentativeTimeline) > 0 &&
-      Number(basicDetailRedux.estimationContingency) > 0
+      Number(basicDetailRedux.estimationContingency) > 0 && Number(basicDetailRedux.estimationContingency) <=100
     ) {
       estimationHeaderId
         ? updateEstimationBasicDetail(getRequestPayload())

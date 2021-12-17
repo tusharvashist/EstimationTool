@@ -10,7 +10,6 @@ const RoleEditCount = (props) => {
       <div className="option">
         <RoleEditItem
           rowEditData={props.rowEditData}
-          masterData={props.masterData}
           handleEditChange={props.handleEditChange}
         />
       </div>

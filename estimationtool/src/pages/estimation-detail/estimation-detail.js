@@ -271,9 +271,7 @@ const EstimationDetail = () => {
             field: "action",
             type: "actions",
             headerName: "Actions",
-
-            width: 120,
-            maxWidth: 60,
+            minWidth: 80,
             getActions: (params) => [
               <>
                 <GridActionsCellItem
@@ -296,7 +294,7 @@ const EstimationDetail = () => {
             //id: 1,
             //editable: false,
             flex: 1,
-            width: 170,
+            minWidth: 170,
           },
           {
             headerName: "Tag",
@@ -304,7 +302,7 @@ const EstimationDetail = () => {
             flex: 1,
             //editable: false,
             // id: 2,
-            width: 170,
+            minWidth: 170,
           },
           {
             headerName: "Description",
@@ -312,7 +310,7 @@ const EstimationDetail = () => {
             flex: 1,
             //editable: false,
             //id: 3,
-            width: 170,
+            minWidth: 170,
           },
         ];
         estHeaderAttribute.push(...dataResponse.estHeaderAttribute);

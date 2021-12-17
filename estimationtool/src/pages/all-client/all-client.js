@@ -26,6 +26,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 //import { useHistory } from "react-router-dom";
+import {getMMDDYYYYFormat} from '../../common/dateTools';
 
 function AllClient(props) {
   const { history } = props;
@@ -105,6 +106,15 @@ function AllClient(props) {
         );
       },
     },
+    {title: "Last Modified By",
+    field: "lastmodify",
+    type: "date",
+    render: (dataRow) =>{
+      const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
+
+      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt) 
+    }
+    }
   ];
 
   const openFun = () => {
