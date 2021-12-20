@@ -26,7 +26,8 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import topNav from "../../shared/layout/topnav/topnav";
-import {getMMDDYYYYFormat} from '../../common/dateTools';
+import { getMMDDYYYYFormat } from "../../common/dateTools";
+import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 
 function Projects(props) {
   const roleState = useSelector((state) => state.role);
@@ -85,15 +86,25 @@ function Projects(props) {
     },
     { title: "Project Description", field: "projectDescription" },
     { title: "Business Domain", field: "domain" },
-    {title: "Last Modified By",
-    field: "lastmodify",
-    type: "date",
-    render: (dataRow) =>{
-      const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
-
-      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt) 
-    }
-    }
+    {
+      title: "Last Modified By",
+      field: "lastmodify",
+      type: "date",
+      render: (dataRow) =>
+        dataRow.updatedBy ? (
+          <UpdatedBy
+            firstName={dataRow.updatedBy.firstName}
+            lastName={dataRow.updatedBy.lastName}
+            updatedAt={dataRow.updatedBy.updatedAt}
+          />
+        ) : (
+          <UpdatedBy
+            firstName="Daniel"
+            lastName="Neblet"
+            updatedAt={dataRow.createdAt}
+          />
+        ),
+    },
   ];
 
   const openFun = () => {
@@ -180,16 +191,18 @@ function Projects(props) {
         setLoader(false);
 
         let dataResponce = res.data.body;
-        console.log("%%%%"+ JSON.stringify(dataResponce));
+        console.log("%%%%" + JSON.stringify(dataResponce));
         setLoader(false);
         setProjectByClient(dataResponce.projects);
         //const filteredData = dataResponce.projects.filter((el) => el.client == clientid);
-        const activeEl = dataResponce.projects.filter((el) => el.isDeleted == false);
+        const activeEl = dataResponce.projects.filter(
+          (el) => el.isDeleted == false
+        );
         setProjectByClient(activeEl);
         setSecondProjectByClient([...dataResponce.projects]);
         setAllProjectByClient([...dataResponce.projects]);
-       // setClientDetails({ ...dataResponce });
-       // setProjectData(dataResponce.projects);
+        // setClientDetails({ ...dataResponce });
+        // setProjectData(dataResponce.projects);
       })
       .catch((err) => {
         console.log("get Client by id error", err);
@@ -199,7 +212,6 @@ function Projects(props) {
         // }
       });
   };
-
 
   // const getAllProjects = (clientid) => {
   //   setLoader(true);

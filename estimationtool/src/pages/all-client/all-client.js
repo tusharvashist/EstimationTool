@@ -26,7 +26,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 //import { useHistory } from "react-router-dom";
-import {getMMDDYYYYFormat} from '../../common/dateTools';
+import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 
 function AllClient(props) {
   const { history } = props;
@@ -106,15 +106,31 @@ function AllClient(props) {
         );
       },
     },
-    {title: "Last Modified By",
-    field: "lastmodify",
-    type: "date",
-    render: (dataRow) =>{
-      const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
+    {
+      title: "Last Modified By",
+      field: "lastmodify",
+      type: "date",
+      render: (dataRow) =>
+        dataRow.updatedBy ? (
+          <UpdatedBy
+            firstName={dataRow.updatedBy.firstName}
+            lastName={dataRow.updatedBy.lastName}
+            updatedAt={dataRow.updatedBy.updatedAt}
+          />
+        ) : (
+          <UpdatedBy
+            firstName="Daniel"
+            lastName="Neblet"
+            updatedAt={dataRow.createdAt}
+          />
+        ),
 
-      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt) 
-    }
-    }
+      // {
+      //   const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
+
+      //   return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt)
+      // }
+    },
   ];
 
   const openFun = () => {
@@ -249,7 +265,6 @@ function AllClient(props) {
   };
 
   const actions = [
-
     (rowData) => ({
       icon: "edit",
       tooltip: "edit client",

@@ -13,7 +13,7 @@ import DeleteProjectdailog from "./delete-project.dailog";
 import { useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useSelector } from "react-redux";
-import {getMMDDYYYYFormat} from '../../common/dateTools';
+import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 
 function ProjectEstimations(props) {
   const roleState = useSelector((state) => state.role);
@@ -119,16 +119,26 @@ function ProjectEstimations(props) {
     { title: "Estimation Description", field: "estDescription" },
     { title: "Total Cost($)", field: "totalCost" },
     { title: "No of Persons", field: "manCount" },
-    
-    {title: "Last Modified By",
-    field: "lastmodify",
-    type: "date",
-    render: (dataRow) =>{
-      const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
 
-      return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt) 
-    }
-    }
+    {
+      title: "Last Modified By",
+      field: "lastmodify",
+      type: "date",
+      render: (dataRow) =>
+        dataRow.updatedBy ? (
+          <UpdatedBy
+            firstName={dataRow.updatedBy.firstName}
+            lastName={dataRow.updatedBy.lastName}
+            updatedAt={dataRow.updatedBy.updatedAt}
+          />
+        ) : (
+          <UpdatedBy
+            firstName="Daniel"
+            lastName="Neblet"
+            updatedAt={dataRow.createdAt}
+          />
+        ),
+    },
   ];
 
   const openFun = (name) => {
