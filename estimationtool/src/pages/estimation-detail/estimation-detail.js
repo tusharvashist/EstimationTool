@@ -41,7 +41,7 @@ const EstimationDetail = () => {
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
-  console.log("location", location);
+
   let estimationId;
   if (location.state !== undefined) {
     estimationId = location.state.estId;
