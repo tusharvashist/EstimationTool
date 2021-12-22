@@ -51,34 +51,17 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
           },
         },
       },
-      // {
-      //   $lookup: {
-      //     from: "resourceRoleMasters",
-      //     localField: "_id",
-      //     foreignField: "_id",
-      //     as: "resourceMasters",
-      //   },
-      // },
-      // {
-      //   $unwind: {
-      //     path: "$resourceMasters",
-      //   },
-      // },
     ]);
-    //let planResource1 = await estResourcePlanningModel.find({})
 
     let masterResource = await resourceRoleMasterModel
       .aggregate()
       .addFields({ count: 0 });
 
     masterResource.forEach((element) => {
-      planResource.forEach((estSelAttElement) => {
-        if (String(estSelAttElement._id) == String(element._id)) {
-          if (estSelAttElement.count > 0)
-            element.count = estSelAttElement.count;
-          // element.defaultAdjusted = estSelAttElement.resourceRoleMasters.defaultAdjusted;
-        }
-      });
+      let exists = planResource.filter(
+        (x) => String(x._id) == String(element._id)
+      );
+      if (exists.length > 0) element.count = exists[0].count;
     });
 
     return masterResource;

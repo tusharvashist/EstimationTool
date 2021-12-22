@@ -14,6 +14,7 @@ const EstimationHeaderAttributeModel = require("../database/models/estimationHea
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
 const EstimationAttributes = require("../database/models/estimationAttributesModel");
 const mongoose = require("mongoose");
+const estimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
 module.exports.createRequirement = async (serviceData) => {
   let projectRequirement = new ProjectRequirement({ ...serviceData });
   let requirementId = "";
@@ -636,11 +637,21 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
       },
     },
   ]);
+  console.log(estHeaderRequirement);
+  //Get All Attributes List for EstHeader
+  let attributeList = await estimationHeaderAtrributeModel.find({
+    estHeaderId: estHeaderId,
+  });
 
   var EstimationAttributes = [];
   estHeaderRequirement.forEach((attribute, i) => {
     if (attribute._id !== undefined && attribute._id !== null) {
       var resourceCount = attribute._id;
+
+      let exists = attributeList.filter(
+        (x) => String(x.estAttributeId) == String(resourceCount._id)
+      );
+      if (exists.length == 0) return;
       if (contingency > 0) {
         resourceCount["Total"] = calculateContingency(
           attribute.data,

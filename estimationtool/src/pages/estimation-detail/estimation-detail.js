@@ -708,6 +708,9 @@ const EstimationDetail = () => {
                   (params.colDef.field === "Contingency" && "darkbg")
                 );
               }}
+                getRowClassName={(params) =>
+                params.row.calculative === "Estimation Total" && "darkbg"
+              }
             />
           )}
         </div>
