@@ -662,7 +662,7 @@ const EstimationDetail = () => {
                 Toolbar: CustomToolbar,
               }}
               getRowClassName={(params) =>
-                params.row.tag === "Total" && "darkbg"
+                params.row.tag === "Grand Total" && "darkbg"
               }
               getCellClassName={(params) => {
                 return (

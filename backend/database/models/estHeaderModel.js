@@ -1,6 +1,7 @@
 const { number } = require("joi");
 const mongoose = require("mongoose");
 const { Schema } = require('mongoose');
+//const uniqueValidator = require('mongoose-unique-validator')
 
 const estimationHeaderSchema = new mongoose.Schema({
     estheaderParentid: {
@@ -18,6 +19,7 @@ const estimationHeaderSchema = new mongoose.Schema({
     },
     estName: {
         type: String,
+        //unique: true,
         required: 'Estimation Name is required!'
     },
     estTypeId: {
@@ -59,5 +61,6 @@ const estimationHeaderSchema = new mongoose.Schema({
         }
     }
 })
+//estimationHeaderSchema.plugin(uniqueValidator)
 estimationHeaderSchema.index({ updatedAt: '-1'});
 module.exports = mongoose.model("EstHeader", estimationHeaderSchema)

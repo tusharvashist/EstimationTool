@@ -137,7 +137,11 @@ module.exports.createEstimationHeader = async (serviceData) => {
       "something went wrong: service > createEstimation Header ",
       err
     );
+    if(err.message.includes("unique") && err.message.includes("estName")){
+      throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE)
+    }else{
     throw new Error(err);
+    }
   }
 };
 
@@ -160,7 +164,11 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       "something went wrong: service > Update Estimation Header ",
       err
     );
+    if(err.message.includes("unique") && err.message.includes("estName")){
+      throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE)
+    }else{
     throw new Error(err);
+    }
   }
 };
 

@@ -367,9 +367,10 @@ module.exports.getRequirementData = async ({ id }) => {
       }
     });
 
-    response.summaryCalData.push(projectTotal); 
-
     
+    projectTotal.Effort = roundToTwo(projectTotal.Effort);
+    projectTotal.Contingency = roundToTwo( projectTotal.Contingency);
+    response.summaryCalData.push(projectTotal);     
 
     var calculativeHeader = [
       {
@@ -578,4 +579,9 @@ async function getEstHeaderAttribute( estHeaderId ) {
       });
     }
   return estHeaderAttribute;
+}
+
+
+function roundToTwo(value) {
+  return Number(Number(value).toFixed(2));
 }
