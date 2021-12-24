@@ -63,6 +63,8 @@ const RequirementMix = () => {
             // estCalId: el.attributeSkill.attributeName || null,
             cost: el.costcal,
             price: el.pricecal,
+            costrate: el.resourceMix.role.cost,
+            pricerate: el.resourceMix.role.price
           };
           // if (!el.attributeSkill.calcAttributeName) {
           //   return {
@@ -122,6 +124,18 @@ const RequirementMix = () => {
       headerName: "Skills(Effort & Summary Attributes)",
       sortable: false,
       width: 280,
+    },
+    {
+      field: "costrate",
+      headerName: "Cost/Hr ($)",
+      sortable: false,
+      width: 160,
+    },
+    {
+      field: "pricerate",
+      headerName: "Price/Hr ($)",
+      sortable: false,
+      width: 160,
     },
     {
       field: "cost",
