@@ -483,6 +483,7 @@ const EstimationDetail = () => {
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
+
       <ResourceCountMatrix
         data={estimationId}
         errorFunction={handleCountError}

@@ -180,9 +180,6 @@ const RequirementMix = () => {
                 pageSize={5}
                 rowsPerPageOptions={[5]}
                 disableSelectionOnClick
-                // components={{
-                //   NoRowsOverlay: NNoRowOverlay,
-                // }}
               />
             </div>
             <div className={styleClasses.totalcontainer}>
