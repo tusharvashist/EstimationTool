@@ -123,6 +123,10 @@ module.exports.createEstimationHeader = async (serviceData) => {
     let estimation = new EstimationHeader({ ...serviceData });
     estimation.estStep = "1";
     estimation.createdBy = global.loginId;
+    const findRecord = await EstimationHeader.find({ estName: estimation.estName });
+    if (findRecord.length != 0) {
+      throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE);
+    }
     let result = await estimation.save();
 
     const projectModel = await ProjectModel.findById({
@@ -137,11 +141,7 @@ module.exports.createEstimationHeader = async (serviceData) => {
       "something went wrong: service > createEstimation Header ",
       err
     );
-    if(err.message.includes("unique") && err.message.includes("estName")){
-      throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE)
-    }else{
     throw new Error(err);
-    }
   }
 };
 
@@ -164,11 +164,8 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       "something went wrong: service > Update Estimation Header ",
       err
     );
-    if(err.message.includes("unique") && err.message.includes("estName")){
-      throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE)
-    }else{
+   
     throw new Error(err);
-    }
   }
 };
 

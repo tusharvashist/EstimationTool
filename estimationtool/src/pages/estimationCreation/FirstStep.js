@@ -75,7 +75,7 @@ const FirstStep = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     showError(error) {
       handleFieldsError();
-      //alert(error.message);
+      //alert(error);
     },
   }));
 
@@ -171,6 +171,12 @@ const FirstStep = forwardRef((props, ref) => {
   const tentaiveTimelineInputValue = (timelineInput) => {
     dispatch(setEstimationTentativeTimeline(timelineInput));
     setTentativeTimelineInvalid(validateTimeline(timelineInput));
+  };
+
+  //Estimation Name value
+  const estimationNameInputValue = (estName) => {
+    dispatch(setEstimationName(estName));
+    setEstimationNameInvalid(estName == "");
   };
 
   //Contingency value input handling
@@ -279,6 +285,7 @@ const FirstStep = forwardRef((props, ref) => {
                 variant="outlined"
                 value={basicDetailRedux.estimationName}
                 error={isEstimationNameInvalid}
+                onChange={(e) => estimationNameInputValue(e.target.value)}
               />
             </Grid>
           </Grid>

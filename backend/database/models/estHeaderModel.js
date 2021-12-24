@@ -19,8 +19,7 @@ const estimationHeaderSchema = new mongoose.Schema({
     },
     estName: {
         type: String,
-        //unique: true,
-        required: 'Estimation Name is required!'
+        required: 'Estimation Name is required!',
     },
     estTypeId: {
         type: Schema.Types.ObjectId,
