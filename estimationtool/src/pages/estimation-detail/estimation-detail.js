@@ -686,6 +686,7 @@ const EstimationDetail = () => {
             loaderComponent
           ) : (
             <DataGrid
+              disableColumnMenu
               className={`${classes.root} ${classes.dataGrid}`}
               autoHeight={true}
               hideFooter={true}
@@ -708,7 +709,7 @@ const EstimationDetail = () => {
                   (params.colDef.field === "Contingency" && "darkbg")
                 );
               }}
-                getRowClassName={(params) =>
+              getRowClassName={(params) =>
                 params.row.calculative === "Estimation Total" && "darkbg"
               }
             />
