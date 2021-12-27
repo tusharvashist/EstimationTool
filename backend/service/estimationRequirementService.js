@@ -341,9 +341,37 @@ module.exports.getRequirementData = async ({ id }) => {
    
     response.tagSummaryHeader = await getTagSummaryHeader(id);
     response.tagSummaryData = await RequirementRepository.tagWiseRequirementList(id, contingency, contingencySuffix);
-   
+    var tagTotal = response.tagSummaryData[response.tagSummaryData.length -1 ]; 
+    console.log("tagTotal: ",tagTotal);
     response.summaryCalData = await RequirementRepository.getCalculativeAttributes(id, contingency, contingencySuffix);
-   
+      console.log("summaryCalData: ",response.summaryCalData);
+  
+    var projectTotal = {
+      id: 1,
+      calcType: 'percentage',
+      calculative: 'Estimation Total',
+      Effort: 0,
+      Contingency: 0
+    };
+
+
+    if (tagTotal.total !== undefined && tagTotal.total_Contingency !== undefined) {
+      projectTotal.Effort = tagTotal.total;
+        projectTotal.Contingency = tagTotal.total_Contingency;
+    }
+
+    response.summaryCalData.forEach((item, i) => { 
+      if (item.Effort  !== undefined && !isNaN(item.Contingency)) {
+        projectTotal.Effort = item.Effort + projectTotal.Effort;//undifine
+        projectTotal.Contingency = item.Contingency + projectTotal.Contingency;//nan
+      }
+    });
+
+    
+    projectTotal.Effort = roundToTwo(projectTotal.Effort);
+    projectTotal.Contingency = roundToTwo( projectTotal.Contingency);
+    response.summaryCalData.push(projectTotal);     
+
     var calculativeHeader = [
       {
         headerName: "Calculative",
@@ -352,7 +380,13 @@ module.exports.getRequirementData = async ({ id }) => {
         flex: 2,
         width: 500,
       },
-      { headerName: "Total", field: "Effort",flex: 1, editable: true, width: 200 },
+      {
+        headerName: "Total",
+        field: "Effort",
+        flex: 1,
+        editable: true,
+        width: 200
+      },
     ];
       if (contingency > 0) { 
           calculativeHeader.push({
@@ -545,4 +579,9 @@ async function getEstHeaderAttribute( estHeaderId ) {
       });
     }
   return estHeaderAttribute;
+}
+
+
+function roundToTwo(value) {
+  return Number(Number(value).toFixed(2));
 }

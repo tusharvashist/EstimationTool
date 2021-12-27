@@ -49,3 +49,14 @@ a:visited,
 a:hover {
   text-decoration: none !important;
 }
+
+.multi-button-grid {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.multi-button-grid Button {
+  margin: 10px 10px;
+}

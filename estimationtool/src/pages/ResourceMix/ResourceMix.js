@@ -20,10 +20,16 @@ const RequirementMix = () => {
 
   const classes = useTableStyle();
   const location = useLocation();
-  const estimationId = location.state !== undefined ?   location.state.estimationHeaderId : resMixData.data.estHeadId;
-  const clientDetails = location.state !== undefined ? location.state.clientInfo : resMixData.data;
-  const projectDetails = location.state !== undefined ? location.state.projectInfo : resMixData.data;
-  const headerData = location.state !== undefined ? location.state.headerData : resMixData.data;
+  const estimationId =
+    location.state !== undefined
+      ? location.state.estimationHeaderId
+      : resMixData.data.estHeadId;
+  const clientDetails =
+    location.state !== undefined ? location.state.clientInfo : resMixData.data;
+  const projectDetails =
+    location.state !== undefined ? location.state.projectInfo : resMixData.data;
+  const headerData =
+    location.state !== undefined ? location.state.headerData : resMixData.data;
 
   const [loaderComponent, setLoader] = useLoader();
 
@@ -43,11 +49,11 @@ const RequirementMix = () => {
   };
 
   const getAllResourceMixData = (estimationId) => {
-    setLoader(true)
+    setLoader(true);
     ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
       .then((res) => {
         console.log("mixdata", res);
-        setLoader(false)
+        setLoader(false);
         let objArr = res.data.body.resourceMixData.map((el, i) => {
           return {
             id: i + 1,
@@ -57,6 +63,8 @@ const RequirementMix = () => {
             // estCalId: el.attributeSkill.attributeName || null,
             cost: el.costcal,
             price: el.pricecal,
+            costrate: el.resourceMix.role.cost,
+            pricerate: el.resourceMix.role.price
           };
           // if (!el.attributeSkill.calcAttributeName) {
           //   return {
@@ -118,6 +126,18 @@ const RequirementMix = () => {
       width: 280,
     },
     {
+      field: "costrate",
+      headerName: "Cost/Hr ($)",
+      sortable: false,
+      width: 160,
+    },
+    {
+      field: "pricerate",
+      headerName: "Price/Hr ($)",
+      sortable: false,
+      width: 160,
+    },
+    {
       field: "cost",
       headerName: "Cost ($)",
       sortable: false,
@@ -167,14 +187,13 @@ const RequirementMix = () => {
           <>
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
+                disableColumnMenu
+                className={`${classes.root} ${classes.dataGrid}`}
                 rows={resourceMixList}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
                 disableSelectionOnClick
-                // components={{
-                //   NoRowsOverlay: NNoRowOverlay,
-                // }}
               />
             </div>
             <div className={styleClasses.totalcontainer}>

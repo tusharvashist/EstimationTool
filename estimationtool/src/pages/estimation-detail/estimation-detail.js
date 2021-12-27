@@ -3,14 +3,12 @@ import { Box, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { EditOutlined, Add } from "@material-ui/icons";
-import MaterialTable from "material-table";
 import "./estimation-detail.css";
 import { useLocation, Link, useHistory } from "react-router-dom";
 import EstimationService from "./estimation.service";
 import AddRequirements from "./add-requirements-popup";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { EstimationHeader, ClientProjectHeader } from "./header-element";
-import RoleCount from "../ResourceCount/RoleCount";
 import ResourceCountMatrix from "../ResourceCount/ResourceCount";
 import RequirementService from "../CreateRequirements/requirement.service";
 import { setResourceMixData } from "../../Redux/resourcemixRedux";
@@ -22,7 +20,6 @@ import {
   GridToolbarColumnsButton,
   GridToolbarContainer,
   GridToolbarDensitySelector,
-  GridToolbarExport,
 } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import EditIcon from "@mui/icons-material/Edit";
@@ -30,10 +27,11 @@ import Deletedailog from "./delete-dailog";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
-import { styled } from "@mui/material/styles";
-import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import { IoWarningOutline } from "react-icons/io5";
+import { MdOutlineDocumentScanner } from "react-icons/md";
+import { MdOutlineTimeline } from "react-icons/md";
+import { BiExport } from "react-icons/bi";
+import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -41,7 +39,7 @@ const EstimationDetail = () => {
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
-  console.log("location", location);
+
   let estimationId;
   if (location.state !== undefined) {
     estimationId = location.state.estId;
@@ -92,6 +90,8 @@ const EstimationDetail = () => {
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
   const [countError, setCountError] = useState(false);
 
+  const [openExport, setOpenExport] = useState(false);
+
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
   }, []);
@@ -99,8 +99,6 @@ const EstimationDetail = () => {
   const handleEditManualCallAttChange = React.useCallback((model) => {
     setEditManualCallAtt(model);
   }, []);
-
-  // console.log("editRowsModel: ",editRowsModel);
 
   useEffect(() => {
     getById();
@@ -231,10 +229,6 @@ const EstimationDetail = () => {
         );
         setDeleteMSG(msg);
         setIsOpenDailog(true);
-        // var seletedRow = requirementDataArray.filter((data) => data.action === id);
-        //console.log(seletedRow);
-
-        // setRows((prevRows) => prevRows.filter((row) => row.id !== id));
       });
     },
     []
@@ -243,12 +237,6 @@ const EstimationDetail = () => {
   const closeDeletePopup = () => {
     setIsOpenDailog(false);
   };
-  // const openEditRequirement = ( rowData) => {
-  //    console.log(rowData);
-  //     //const updatedRows = [requirementDataArray[rowData.tableData.id]];
-  //    //setEditData([rowData]);
-  //     openFun();
-  //   };
 
   const openEditRequirement = React.useCallback(
     (id) => () => {
@@ -436,19 +424,19 @@ const EstimationDetail = () => {
     }
   };
 
-  // Redux for Resource Mix Screen
+  ///============== JS- Resource Count Pop up and table - END ==============///
 
-  const getResourceMixReduxData = () => {
-    console.log(
-      "clientDetails,projectDetails,estimationId",
-      clientDetails,
-      projectDetails,
-      estimationId
-    );
-    const { clientDetails, projectDetails, estimationId } = {};
+  ///============== JS- Export Estimation Pop up - START ==============///
+  const openExportEstimation = () => {
+    setOpenExport(true);
   };
 
-  ///============== JS- Resource Count Pop up and table - END ==============///
+  const closeExportEstimation = () => {
+    setOpenExport(false);
+  };
+
+  const exportFun = () => {};
+  ///============== JS- Export Estimation Pop up - END ==============///
 
   const handleRowEditStart = (params, event) => {
     event.defaultMuiPrevented = true;
@@ -466,22 +454,20 @@ const EstimationDetail = () => {
     setCountError(flag);
   };
 
-  // css for tooltip
-
-  const HtmlTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} placement="top" />
-  ))(({ theme }) => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-      backgroundColor: "#f5f5f9",
-      color: "rgba(0, 0, 0, 0.87)",
-      maxWidth: 220,
-      fontSize: theme.typography.pxToRem(12),
-      border: "1px solid #dadde9",
-    },
-  }));
-
   return (
     <div className="estimation-detail-cover">
+      {/*========= JSX- Export Estimation in Report - START ========= */}
+      <ExportEstimationPopup
+        openExport={openExport}
+        openExportEstimation={openExportEstimation}
+        closeExportEstimation={closeExportEstimation}
+        title="Export Estimation Report"
+        oktitle="Genrate"
+        cancelTitle="Cancle"
+        exportFun={exportFun}
+      />
+      {/*========= JSX- Export Estimation in Report - END ========= */}
+      {/* ----------------- */}
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
       <ResourceCountMatrix
         data={estimationId}
@@ -551,51 +537,60 @@ const EstimationDetail = () => {
       ) : null}
 
       <Container>
-        <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                clientDetails.clientName +
-                "/" +
-                projectDetails.projectName +
-                "/createEstimate",
-              state: {
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
-                estimationHeaderId: estimationId,
-              },
-            }}
-          >
-            <Button variant="outlined" className="estimation-detail-button">
-              {" "}
-              <EditOutlined /> Edit Configuration
+        <Grid container>
+          <Grid item className="multi-button-grid">
+            <Button variant="outlined" onClick={openExportEstimation}>
+              <BiExport style={{ fontSize: "18px" }} />
+              &nbsp;Export Estimation Report
             </Button>
-          </Link>
-        </Box>
+            <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/createEstimate",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: estimationId,
+                },
+              }}
+            >
+              <Button variant="outlined" className="estimation-detail-button">
+                <EditOutlined style={{ fontSize: "18px" }} />
+                &nbsp;Edit Configuration
+              </Button>
+            </Link>
+          </Grid>
+        </Grid>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <EstimationHeader data={headerData} />
       <Container>
-        <Box sx={{ width: "100%" }} className="estimation-detail-box">
-          <Button
-            variant="outlined"
-            className="estimation-detail-button"
-            onClick={openAddAvailableRequirement}
-          >
-            {" "}
-            <Add /> Include Project Requirements
-          </Button>
-          <Box sx={{ width: "20px" }} className="estimation-detail-box" />
-          <Button
-            variant="outlined"
-            className="estimation-detail-button"
-            onClick={openAddRequirement}
-          >
-            {" "}
-            <Add /> Create New Requirements
-          </Button>
-        </Box>
+        <Grid container>
+          <Grid item class="multi-button-grid">
+            <Button
+              variant="outlined"
+              className="estimation-detail-button"
+              onClick={openAddAvailableRequirement}
+            >
+              {" "}
+              <Add style={{ fontSize: "18px" }} />
+              &nbsp;Include Project Requirements
+            </Button>
+            <Button
+              variant="outlined"
+              className="estimation-detail-button"
+              onClick={openAddRequirement}
+            >
+              {" "}
+              <Add style={{ fontSize: "18px" }} />
+              &nbsp;Create New Requirements
+            </Button>
+          </Grid>
+        </Grid>
       </Container>
       <BorderedContainer>
         {loaderComponent ? (
@@ -662,7 +657,7 @@ const EstimationDetail = () => {
                 Toolbar: CustomToolbar,
               }}
               getRowClassName={(params) =>
-                params.row.tag === "Total" && "darkbg"
+                params.row.tag === "Grand Total" && "darkbg"
               }
               getCellClassName={(params) => {
                 return (
@@ -686,6 +681,7 @@ const EstimationDetail = () => {
             loaderComponent
           ) : (
             <DataGrid
+              disableColumnMenu
               className={`${classes.root} ${classes.dataGrid}`}
               autoHeight={true}
               hideFooter={true}
@@ -708,6 +704,9 @@ const EstimationDetail = () => {
                   (params.colDef.field === "Contingency" && "darkbg")
                 );
               }}
+              getRowClassName={(params) =>
+                params.row.calculative === "Estimation Total" && "darkbg"
+              }
             />
           )}
         </div>
@@ -736,7 +735,6 @@ const EstimationDetail = () => {
             <Button
               disabled={countError}
               variant="outlined"
-              className="estimation-detail-button"
               onClick={() =>
                 history.push({
                   pathname:
@@ -755,8 +753,8 @@ const EstimationDetail = () => {
                 })
               }
             >
-              {" "}
-              <EditOutlined /> Generate Resource Mix
+              <MdOutlineDocumentScanner style={{ fontSize: "18px" }} />
+              &nbsp;Generate Resource Mix
             </Button>
             {countError ? (
               <span class="tooltiptext">
@@ -773,9 +771,9 @@ const EstimationDetail = () => {
           {/* </Link> */}
         </Grid>
         <Grid item>
-          <Button variant="outlined" className="estimation-detail-button">
-            {" "}
-            <EditOutlined /> Generate Timeline Plan
+          <Button variant="outlined">
+            <MdOutlineTimeline style={{ fontSize: "18px" }} />
+            &nbsp;Generate Timeline Plan
           </Button>
         </Grid>
       </Grid>

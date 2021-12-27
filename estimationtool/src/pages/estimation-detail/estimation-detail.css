@@ -1,11 +1,3 @@
-.estimation-detail-button {
-  margin: 15px 0;
-}
-.estimation-detail-box {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .estimation-detail-cover {
   position: relative;
 }
@@ -31,7 +23,7 @@
 }
 
 .estimation-detail-count-table {
-  z-index: 100;
+  z-index: 110;
   position: fixed;
   /* bottom: 130px;
   right: 50px; */
@@ -123,7 +115,7 @@
   height: 100%;
   position: absolute;
   /* background: #000; */
-  z-index: 1;
+  z-index: 117;
 }
 .error--true {
   background: rgba(255, 0, 0, 0.15) !important;
@@ -175,4 +167,12 @@
 .icon-warning {
   font-size: 20px;
   color: #cc3300;
+}
+
+.resource-pop-cover {
+  z-index: 50;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }

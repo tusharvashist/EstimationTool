@@ -173,6 +173,12 @@ const FirstStep = forwardRef((props, ref) => {
     setTentativeTimelineInvalid(validateTimeline(timelineInput));
   };
 
+  //Estimation Name value
+  const estimationNameInputValue = (estName) => {
+    dispatch(setEstimationName(estName));
+    setEstimationNameInvalid(estName == "");
+  };
+
   //Contingency value input handling
   const handleContingencyInputValueChange = (contingencyVal) => {
     dispatch(setEstimationContingency(contingencyVal));
@@ -279,6 +285,7 @@ const FirstStep = forwardRef((props, ref) => {
                 variant="outlined"
                 value={basicDetailRedux.estimationName}
                 error={isEstimationNameInvalid}
+                onChange={(e) => estimationNameInputValue(e.target.value)}
               />
             </Grid>
           </Grid>
