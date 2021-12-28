@@ -56,7 +56,8 @@ const FirstStep = forwardRef((props, ref) => {
   const [isEffortUnitInvalid, setIsEffortUnitInvalid] = useState(false);
   const [isEstimationNameInvalid, setEstimationNameInvalid] = useState(false);
   const [isDescriptionInvalid, setDescriptionInvalid] = useState(false);
-  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] = useState(false);
+  const [isTentativeTimelineInvalid, setTentativeTimelineInvalid] =
+    useState(false);
   const [isContingencyInvalid, setContingencyInvalid] = useState(false);
 
   const [loaderComponent, setLoader] = useLoader();
@@ -125,9 +126,11 @@ const FirstStep = forwardRef((props, ref) => {
             dataResponce.basicDetails.estTentativeTimeline
           )
         );
-        dispatch(setEstimationContingency(dataResponce.basicDetails.contingency))
-        //set remaining char count 
-        remainingCharCount(dataResponce.basicDetails.estDescription)
+        dispatch(
+          setEstimationContingency(dataResponce.basicDetails.contingency)
+        );
+        //set remaining char count
+        remainingCharCount(dataResponce.basicDetails.estDescription);
       })
       .catch((err) => {
         console.log("get estimation header detail error : ", err);
@@ -157,7 +160,6 @@ const FirstStep = forwardRef((props, ref) => {
     dispatch(setEstimationTypeId(etId));
     setIsEstimationTypeInvalid(false);
     generateEstimationName(etId);
-
   };
   //update the remaining character count limit
   const remainingCharCount = (charString) => {
@@ -189,8 +191,8 @@ const FirstStep = forwardRef((props, ref) => {
     return Number(timelineValue) <= 0;
   }
 
-  function validateContingency(value){
-    return Number(value) > 0 && Number(value) <=100;
+  function validateContingency(value) {
+    return Number(value) > 0 && Number(value) <= 100;
   }
 
   //generate estimation Name
@@ -202,10 +204,19 @@ const FirstStep = forwardRef((props, ref) => {
     dispatch(setEstimationName(estName.replace(/ /g, "_")));
     dispatch(setEstimationContingency(selectedEstimationObj.contingency));
     setEstimationNameInvalid(estName == "");
-    setContingencyInvalid(!validateContingency(selectedEstimationObj.contingency));
-    setOpen({ open: true, severity: "success",
-     message: "Default Contingency for Estimation Type : " + selectedEstimationObj.estType+ " applied to " + selectedEstimationObj.contingency + " %"});
-
+    setContingencyInvalid(
+      !validateContingency(selectedEstimationObj.contingency)
+    );
+    setOpen({
+      open: true,
+      severity: "success",
+      message:
+        "Default Contingency for Estimation Type : " +
+        selectedEstimationObj.estType +
+        " applied to " +
+        selectedEstimationObj.contingency +
+        " %",
+    });
   };
 
   // get the Effort Unit value from selected dropdown
@@ -222,7 +233,6 @@ const FirstStep = forwardRef((props, ref) => {
 
   return (
     <React.Fragment>
-      
       {loaderComponent ? (
         loaderComponent
       ) : (
@@ -232,7 +242,7 @@ const FirstStep = forwardRef((props, ref) => {
             rowSpacing={7}
             columnSpacing={{ xs: 1, sm: 2, md: 3 }}
           >
-            <Grid item xs={6}>
+            <Grid item xs={6} style={{ margin: "8px 0px" }}>
               <div className="field-width">
                 <FormControl fullWidth>
                   <InputLabel variant="standard" htmlFor="uncontrolled-native">
@@ -278,7 +288,7 @@ const FirstStep = forwardRef((props, ref) => {
                 </FormControl>
               </div>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} style={{ margin: "8px 0px" }}>
               <TextField
                 id="standard-basic"
                 label="Estimation Name*"
@@ -289,44 +299,49 @@ const FirstStep = forwardRef((props, ref) => {
               />
             </Grid>
           </Grid>
-          <Grid
-            container
-            style={{gap: 200}}
-            className="gridgap"
-
-          >
-          <Grid item xs={4}>
-            <TextField
-              id="standard-basic"
-              label="Tentative Timeline (Weeks)*"
-              variant="outlined"
-              type={"number"}
-              InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
-              error={isTentativeTimelineInvalid}
-              helperText={isTentativeTimelineInvalid ? "Please Enter Tentative timeline value" : ""}
-              value={basicDetailRedux.estimationTentativeTimeline}
-              onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={4} >
-            <TextField
-              id="standard-basic"
-              label="Contengency(%)*"
-              variant="outlined"
-              type="number"
-              max={2}
+          <Grid container style={{ gap: 200 }} className="gridgap">
+            <Grid item xs={4} style={{ margin: "8px 0px" }}>
+              <TextField
+                id="standard-basic"
+                label="Tentative Timeline (Weeks)*"
+                variant="outlined"
+                type={"number"}
+                InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
+                error={isTentativeTimelineInvalid}
+                helperText={
+                  isTentativeTimelineInvalid
+                    ? "Please Enter Tentative timeline value"
+                    : ""
+                }
+                value={basicDetailRedux.estimationTentativeTimeline}
+                onChange={(e) => tentaiveTimelineInputValue(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={4} style={{ margin: "8px 0px" }}>
+              <TextField
+                id="standard-basic"
+                label="Contengency(%)*"
+                variant="outlined"
+                type="number"
+                max={2}
                 onKeyDown={(evt) =>
                   symbolsArr.includes(evt.key) && evt.preventDefault()
                 }
                 pattern="^[1-9][0-9]?$|^100$"
-              error={isContingencyInvalid}
-              helperText={isContingencyInvalid ? "Please Enter Contingency % between 1-100" : ""}
-              value={basicDetailRedux.estimationContingency}
-              onChange={(e) => handleContingencyInputValueChange(e.target.value)}
-            />
+                error={isContingencyInvalid}
+                helperText={
+                  isContingencyInvalid
+                    ? "Please Enter Contingency % between 1-100"
+                    : ""
+                }
+                value={basicDetailRedux.estimationContingency}
+                onChange={(e) =>
+                  handleContingencyInputValueChange(e.target.value)
+                }
+              />
+            </Grid>
           </Grid>
-          </Grid>
-          <Grid item xs={8} spacing={1}>
+          <Grid item xs={8} spacing={1} style={{ margin: "8px 0px" }}>
             <TextField
               id="standard-basic"
               label="Description*"

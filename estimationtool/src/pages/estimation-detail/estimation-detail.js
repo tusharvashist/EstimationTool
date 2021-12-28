@@ -461,7 +461,7 @@ const EstimationDetail = () => {
         openExport={openExport}
         openExportEstimation={openExportEstimation}
         closeExportEstimation={closeExportEstimation}
-        title="Export Estimation Report"
+        title="Export Estimation"
         oktitle="Genrate"
         cancelTitle="Cancle"
         exportFun={exportFun}
@@ -541,7 +541,7 @@ const EstimationDetail = () => {
           <Grid item className="multi-button-grid">
             <Button variant="outlined" onClick={openExportEstimation}>
               <BiExport style={{ fontSize: "18px" }} />
-              &nbsp;Export Estimation Report
+              &nbsp;Export in Excel
             </Button>
             <Link
               to={{
