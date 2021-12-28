@@ -23,6 +23,7 @@ import {
   setLastName,
   setFullName,
   setRole,
+  setPermissions
 } from "../Redux/loginRedux";
 import { setAdmin, setContributor, setSuperAdmin } from "../Redux/roleRedux";
 
@@ -76,6 +77,7 @@ export default function Login(props) {
         dispatch(setFirstName(result.data.body.firstName));
         dispatch(setLastName(result.data.body.lastName));
         dispatch(setRole(result.data.body.roles.roleName));
+        dispatch(setPermissions(result.data.body.RolePermission));
         dispatch(
           setFullName(
             result.data.body.firstName + " " + result.data.body.lastName
