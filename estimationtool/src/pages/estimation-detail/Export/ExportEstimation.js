@@ -16,7 +16,7 @@ export const ExportEstimationPopup = (props) => {
 
   const [estimationDetail, setEstimationDetail] = useState(true);
   const [estimationSummary, setEstimationSummary] = useState(false);
-  const [resourceMix, setResourceMix] = useState(false);
+  const [resourceCount, setResourceCount] = useState(false);
   const [resourcePlanning, setResourcePlanning] = useState(false);
   const [resourceTimeline, setResourceTimeline] = useState(false);
 
@@ -27,32 +27,31 @@ export const ExportEstimationPopup = (props) => {
   };
 
   const callAPI = () => {
-    const payload = [
-      {
-        key: "estimationHeader",
-        value: estimationHeaderId.estHeaderId,
-      },
-      {
-        key: "estimationDetail",
-        value: estimationDetail,
-      },
-      {
-        key: "estimationSummary",
-        value: estimationSummary,
-      },
-      {
-        key: "resourceMix",
-        value: resourceMix,
-      },
-      {
-        key: "resourcePlanning",
-        value: resourcePlanning,
-      },
-      {
-        key: "resourceTimeline",
-        value: resourceTimeline,
-      },
-    ];
+    const payload = {
+      estimationHeaderId: estimationHeaderId.estHeaderId,
+      reports: [
+        {
+          key: "estimationDetail",
+          value: estimationDetail,
+        },
+        {
+          key: "estimationSummary",
+          value: estimationSummary,
+        },
+        {
+          key: "resourceCount",
+          value: resourceCount,
+        },
+        {
+          key: "resourcePlanning",
+          value: resourcePlanning,
+        },
+        {
+          key: "resourceTimeline",
+          value: resourceTimeline,
+        },
+      ],
+    };
 
     EstimationService.getAllExportData(payload)
       .then((res) => {
@@ -104,8 +103,8 @@ export const ExportEstimationPopup = (props) => {
               />
               <FormControlLabel
                 control={<Checkbox />}
-                label="Resource Mix"
-                onChange={(e) => setResourceMix(e.target.checked)}
+                label="Resource Count"
+                onChange={(e) => setResourceCount(e.target.checked)}
               />
               <FormControlLabel
                 control={<Checkbox />}
