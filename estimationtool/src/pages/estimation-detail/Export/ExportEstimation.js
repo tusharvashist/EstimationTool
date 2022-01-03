@@ -10,6 +10,7 @@ import {
 import React, { useState } from "react";
 import CustomizedDialogs from "../../../shared/ui-view/dailog/dailog";
 import EstimationService from "../estimation.service";
+import Snackbar from "../../../shared/layout/snackbar/Snackbar";
 
 export const ExportEstimationPopup = (props) => {
   const [mixCheck, setMixCheck] = useState(false);
@@ -22,6 +23,8 @@ export const ExportEstimationPopup = (props) => {
   const [resourcePlanning, setResourcePlanning] = useState(false);
   const [resourceTimeline, setResourceTimeline] = useState(false);
 
+  const [isOpen, setOpen] = useState({});
+
   const checkResourceMix = (e) => {
     setMixCheck(e.target.checked);
   };
@@ -31,20 +34,47 @@ export const ExportEstimationPopup = (props) => {
   };
 
   const callAPI = () => {
-    EstimationService.getAllExportData({
-      estimationDetail,
-      estimationSummary,
-      resourceTimeline,
-      resourceMix,
-      resourcePlanning,
-    })
+    const payload = [
+      {
+        key: "estimationDetail",
+        value: estimationDetail,
+      },
+      {
+        key: "estimationSummary",
+        value: estimationSummary,
+      },
+      {
+        key: "resourceMix",
+        value: resourceMix,
+      },
+      {
+        key: "resourcePlanning",
+        value: resourcePlanning,
+      },
+      {
+        key: "resourceTimeline",
+        value: resourceTimeline,
+      },
+    ];
+
+    EstimationService.getAllExportData(payload)
       .then((res) => {
         props.closeExportEstimation();
       })
       .catch((err) => {
-        console.error(err.message);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
       });
   };
+
+  const handleClose = () => {
+    setOpen({});
+  };
+
+  const { message, severity, open } = isOpen || {};
 
   return (
     <>
@@ -140,6 +170,15 @@ export const ExportEstimationPopup = (props) => {
           </FormControl>
         </form>
       </CustomizedDialogs>
+      {open && (
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </>
   );
 };

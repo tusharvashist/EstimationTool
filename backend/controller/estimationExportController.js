@@ -12,7 +12,7 @@ module.exports.getAllData = async (req, res) => {
     responce = responceExportSer;
     return res.status(200).json(responce);
   } catch (err) {
-    console.error(err.message);
+    console.log(err);
     res.status(500).send("Server Error");
   }
 };
