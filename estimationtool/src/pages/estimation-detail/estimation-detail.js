@@ -160,7 +160,7 @@ const EstimationDetail = () => {
   const getById = () => {
     getBasicDetailById(() => {
       getRequirementDataById(() => {
-        getRequirementWithQuery(() => { });
+        getRequirementWithQuery(() => {});
       });
     });
   };
@@ -333,12 +333,12 @@ const EstimationDetail = () => {
     EstimationService.updateManualCallAttribute(id, body)
       .then((res) => {
         setLoader(false);
-        getRequirementDataById(() => { });
+        getRequirementDataById(() => {});
       })
       .catch((err) => {
         setLoader(false);
         console.log("get deleteRequirement by id error", err);
-        getRequirementDataById(() => { });
+        getRequirementDataById(() => {});
       });
     console.log("updateManualCallAttributeValue End....", editManualCallAtt);
   };
@@ -369,12 +369,12 @@ const EstimationDetail = () => {
         .then((res) => {
           setLoader(false);
 
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         })
         .catch((err) => {
           setLoader(false);
           console.log("get deleteRequirement by id error", err);
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         });
     } else {
       setLoader(false);
@@ -412,12 +412,12 @@ const EstimationDetail = () => {
       )
         .then((res) => {
           setLoader(false);
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         })
         .catch((err) => {
           setLoader(false);
           console.log("get deleteRequirement by id error", err);
-          getRequirementDataById(() => { });
+          getRequirementDataById(() => {});
         });
     } else {
       setLoader(false);
@@ -435,7 +435,9 @@ const EstimationDetail = () => {
     setOpenExport(false);
   };
 
-  const exportFun = () => { };
+  const exportFun = (a) => {
+    console.log(a);
+  };
   ///============== JS- Export Estimation Pop up - END ==============///
 
   const handleRowEditStart = (params, event) => {
@@ -463,7 +465,7 @@ const EstimationDetail = () => {
         closeExportEstimation={closeExportEstimation}
         title="Export Estimation"
         oktitle="Genrate"
-        cancelTitle="Cancle"
+        cancelTitle="Cancel"
         exportFun={exportFun}
       />
       {/*========= JSX- Export Estimation in Report - END ========= */}
@@ -771,23 +773,26 @@ const EstimationDetail = () => {
           {/* </Link> */}
         </Grid>
         <Grid item>
-          <Button variant="outlined" onClick={() =>
-            history.push({
-              pathname:
-                "/All-Clients/" +
-                clientDetails.clientName +
-                "/" +
-                projectDetails.projectName +
-                "/Estimation-Detail" +
-                "/TimelinePlanning",
-              state: {
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
-                estimationHeaderId: estimationId,
-                headerData: headerData,
-              },
-            })
-          }>
+          <Button
+            variant="outlined"
+            onClick={() =>
+              history.push({
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/Estimation-Detail" +
+                  "/TimelinePlanning",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: estimationId,
+                  headerData: headerData,
+                },
+              })
+            }
+          >
             <MdOutlineTimeline style={{ fontSize: "18px" }} />
             &nbsp;Generate Timeline Plan
           </Button>
