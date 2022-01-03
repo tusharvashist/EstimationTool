@@ -4,30 +4,23 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
-  Radio,
-  RadioGroup,
 } from "@mui/material";
 import React, { useState } from "react";
 import CustomizedDialogs from "../../../shared/ui-view/dailog/dailog";
 import EstimationService from "../estimation.service";
 import Snackbar from "../../../shared/layout/snackbar/Snackbar";
+import { useSelector } from "react-redux";
 
 export const ExportEstimationPopup = (props) => {
-  const [mixCheck, setMixCheck] = useState(false);
+  const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
 
-  const [withContingency, setWithContingency] = useState(true);
   const [estimationDetail, setEstimationDetail] = useState(true);
   const [estimationSummary, setEstimationSummary] = useState(false);
   const [resourceMix, setResourceMix] = useState(false);
-  const [resourceMixWithCost, setResourceMixWithCost] = useState(true);
   const [resourcePlanning, setResourcePlanning] = useState(false);
   const [resourceTimeline, setResourceTimeline] = useState(false);
 
   const [isOpen, setOpen] = useState({});
-
-  const checkResourceMix = (e) => {
-    setMixCheck(e.target.checked);
-  };
 
   const popSubmitHandler = () => {
     callAPI();
@@ -35,6 +28,10 @@ export const ExportEstimationPopup = (props) => {
 
   const callAPI = () => {
     const payload = [
+      {
+        key: "estimationHeader",
+        value: estimationHeaderId.estHeaderId,
+      },
       {
         key: "estimationDetail",
         value: estimationDetail,
@@ -91,27 +88,6 @@ export const ExportEstimationPopup = (props) => {
       >
         <form>
           <FormControl component="fieldset" className="form-export">
-            {/* <FormLabel component="legend">
-              Would you like to take estimation value:
-            </FormLabel>
-            <RadioGroup
-              row
-              aria-label="gender"
-              name="row-radio-buttons-group"
-              defaultValue="with Contingency"
-              onChange={() => setWithContingency(!withContingency)}
-            >
-              <FormControlLabel
-                value="with Contingency"
-                control={<Radio />}
-                label="with Contingency"
-              />
-              <FormControlLabel
-                value="without Contingency"
-                control={<Radio />}
-                label="without Contingency"
-              />
-            </RadioGroup> */}
             <FormLabel component="legend">
               Please select from below options to export:
             </FormLabel>
@@ -127,35 +103,10 @@ export const ExportEstimationPopup = (props) => {
                 onChange={(e) => setEstimationSummary(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox onChange={checkResourceMix} />}
+                control={<Checkbox />}
                 label="Resource Mix"
                 onChange={(e) => setResourceMix(e.target.checked)}
               />
-              {/* <RadioGroup
-                style={{ padding: "0 20px" }}
-                row
-                aria-label="gender"
-                name="row-radio-buttons-group"
-                defaultValue="with Cost"
-                onChange={(e) => {
-                  e.target.defaultValue == "with Cost"
-                    ? setResourceMixWithCost(true)
-                    : setResourceMixWithCost(false);
-                }}
-              >
-                <FormControlLabel
-                  disabled={!mixCheck}
-                  value="with Cost"
-                  control={<Radio />}
-                  label="with Cost"
-                />
-                <FormControlLabel
-                  disabled={!mixCheck}
-                  value="without Cost"
-                  control={<Radio />}
-                  label="without Cost"
-                />
-              </RadioGroup> */}
               <FormControlLabel
                 control={<Checkbox />}
                 label="Resource Planning"

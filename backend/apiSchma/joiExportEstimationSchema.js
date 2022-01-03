@@ -3,7 +3,7 @@ module.exports.getAllExportData = Joi.array()
   .items(
     Joi.object({
       key: Joi.string().required(),
-      value: Joi.boolean().required(),
+      value: Joi.alternatives().try(Joi.boolean(), Joi.string()),
     })
   )
   .has(
