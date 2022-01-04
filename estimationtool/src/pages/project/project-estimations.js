@@ -14,6 +14,7 @@ import { useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useSelector } from "react-redux";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 function ProjectEstimations(props) {
   const roleState = useSelector((state) => state.role);
@@ -26,6 +27,7 @@ function ProjectEstimations(props) {
   const [actionId, setActionId] = useState("");
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
+  const {estimationView, estimationCreate, estimationUpdate, estimationListing, estimationDelete} = usePermission();
 
   useEffect(() => {
     setTableData([...props.tableData1]);
@@ -98,7 +100,7 @@ function ProjectEstimations(props) {
       title: "Estimation Name",
       field: "estName",
       render: (rowData) => {
-        return checkStep(rowData);
+        return estimationView ? checkStep(rowData) : rowData.estName;
         // <Link
         //   to={{
         //     pathname:
@@ -200,7 +202,8 @@ function ProjectEstimations(props) {
         />
       ) : null}
       <BorderedContainer className="no-rl-margin">
-        <MaterialTable
+        { estimationListing ?
+        (<MaterialTable
           columns={columns}
           components={{
             Container: (props) => <Paper {...props} elevation={0} />,
@@ -220,6 +223,7 @@ function ProjectEstimations(props) {
                 // openUpdateDailog();
               },
               disabled: rowData.isDeleted,
+              hidden: !estimationUpdate
             }),
             (rowData) => ({
               icon: "delete",
@@ -232,6 +236,7 @@ function ProjectEstimations(props) {
                 openDeleteDailog();
               },
               disabled: rowData.isDeleted,
+              hidden: !estimationDelete
             }),
           ]}
           options={{
@@ -255,7 +260,9 @@ function ProjectEstimations(props) {
           }}
           data={tableData}
           title="Estimations:"
-        />
+        />)
+        : ''
+}
       </BorderedContainer>
     </div>
   );

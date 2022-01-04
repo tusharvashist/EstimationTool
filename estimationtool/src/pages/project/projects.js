@@ -28,6 +28,7 @@ import useLoader from "../../shared/layout/hooks/useLoader";
 import topNav from "../../shared/layout/topnav/topnav";
 import { getMMDDYYYYFormat } from "../../common/dateTools";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 function Projects(props) {
   const roleState = useSelector((state) => state.role);
@@ -55,6 +56,7 @@ function Projects(props) {
   const [secondProjectByClient, setSecondProjectByClient] = useState();
   const [allProjectByClient, setAllProjectByClient] = useState();
   const [loaderComponent, setLoader] = useLoader();
+  const {projectView, projectCreate, projectUpdate, projectListing, projectDelete} = usePermission();
 
   const [reload, setReload] = useState(false);
 
@@ -68,7 +70,7 @@ function Projects(props) {
       title: "Project Name",
       field: "projectName",
       render: (rowData) => {
-        return rowData.isDeleted ? (
+        return projectView ? rowData.isDeleted ? (
           <>{rowData.projectName} </>
         ) : (
           <Link
@@ -81,7 +83,9 @@ function Projects(props) {
             {" "}
             {rowData.projectName}
           </Link>
-        );
+        )
+        :
+      <>  {rowData.projectName}</>
       },
     },
     { title: "Project Description", field: "projectDescription" },
@@ -406,7 +410,8 @@ function Projects(props) {
           </Grid>
 
           <Grid item>
-            {!roleState.isContributor && (
+            {projectCreate && (
+              
               <Button variant="outlined" onClick={openCreateDailog}>
                 {" "}
                 <AddIcon />
@@ -417,7 +422,7 @@ function Projects(props) {
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        {loaderComponent ? (
+        {projectListing ? (loaderComponent) ? (
           loaderComponent
         ) : (
           <MaterialTable
@@ -437,6 +442,7 @@ function Projects(props) {
                         openUpdateDailog();
                       },
                       disabled: rowData.isDeleted,
+                      hidden: !projectUpdate
                     }),
                     (rowData) => ({
                       icon: "delete",
@@ -448,6 +454,7 @@ function Projects(props) {
                         openDeleteDailog();
                       },
                       disabled: rowData.isDeleted,
+                      hidden: !projectDelete
                     }),
                   ]
                 : false
@@ -475,7 +482,7 @@ function Projects(props) {
             data={projectByClient}
             title={`Project${props.clients.length > 1 ? "s" : ""}`}
           />
-        )}
+        ) : ''}
       </BorderedContainer>
       {open && (
         <Snackbar

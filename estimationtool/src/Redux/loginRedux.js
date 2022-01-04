@@ -35,7 +35,7 @@ export const loginSlice = createSlice({
       state.role = role.payload;
       // localStorage.setItem("role", role.payload);
     },
-    setPermissions: (state, permissions) => {
+    setRolePermission: (state, permissions) => {
       state.permissions = permissions.payload;
       // localStorage.setItem("role", role.payload);
     },
@@ -43,7 +43,7 @@ export const loginSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setEmail, setFirstName, setLastName, setFullName, setRole, setPermissions } =
+export const { setEmail, setFirstName, setLastName, setFullName, setRole, setRolePermission } =
   loginSlice.actions;
 
 export default loginSlice.reducer;

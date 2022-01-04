@@ -29,11 +29,14 @@ import {
 } from "../../Redux/basicDetailRedux";
 import { setProjectId } from "../../Redux/projectRedux";
 import Header from "../../shared/layout/Header/Header";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 export default function ClientDetails(props) {
   const history = useHistory();
   const roleState = useSelector((state) => state.role);
   const projectState = useSelector((state) => state.project);
+  const {estimationCreate} = usePermission();
+
   const dispatch = useDispatch();
 
   const location = useLocation();
@@ -259,11 +262,12 @@ export default function ClientDetails(props) {
                   },
                 }}
               >
-                <Button onClick={createEstimationHandle} variant="outlined">
+               { estimationCreate && ( <Button onClick={createEstimationHandle} variant="outlined">
                   {" "}
                   <AddIcon />
                   Create Estimation
-                </Button>
+                </Button>)
+                }
               </Link>
             </Grid>
           </Grid>
