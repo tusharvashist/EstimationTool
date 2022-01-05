@@ -56,13 +56,18 @@ export const ExportEstimationPopup = (props) => {
     EstimationService.getAllExportData(payload)
       .then((res) => {
         props.closeExportEstimation();
+
+        if (res.status === 200) {
+          EstimationService.getReport();
+        }
       })
       .catch((err) => {
-        setOpen({
-          open: true,
-          severity: "error",
-          message: err.response.data.message,
-        });
+        console.log(err);
+        // setOpen({
+        //   open: true,
+        //   severity: "error",
+        //   message: err.response.data.message,
+        // });
       });
   };
 

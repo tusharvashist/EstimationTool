@@ -1,5 +1,7 @@
 import axios from "axios";
 import Url from "../../shared/service/urls.service";
+import FileDownload from "js-file-download";
+
 const EstimationService = {
   getById: function (actionId) {
     let url = Url.allestimation + "/" + actionId;
@@ -49,7 +51,19 @@ const EstimationService = {
 
   getAllExportData: function (estimationOptions) {
     let url = Url.getAllExportData + "/";
-    return axios.post(url, estimationOptions);
+    // return axios.post(url, estimationOptions);
+    return axios({
+      url,
+      method: "POST",
+      data: estimationOptions,
+    });
+  },
+
+  getReport: function () {
+    let url = Url.getReport + "/";
+    return axios({ url, responseType: "blob", method: "GET" }).then((res) => {
+      FileDownload(res.data, "Estimation.xlsx");
+    });
   },
 };
 export default EstimationService;

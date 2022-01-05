@@ -20,6 +20,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
+    "js-file-download": "^0.4.12",
     "material-table": "^1.69.3",
     "multiselect-react-dropdown": "^2.0.7",
     "react": "^17.0.2",

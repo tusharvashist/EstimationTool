@@ -30,5 +30,6 @@ const Url = {
   getResourceRoleMaster: `${process.env.REACT_APP_URL}resourceRoleMaster`,
   getResourceMixData: `${process.env.REACT_APP_URL}resource/mix`,
   getAllExportData: `${process.env.REACT_APP_URL}export`,
+  getReport: `${process.env.REACT_APP_URL}report`,
 };
 export default Url;
