@@ -12,4 +12,10 @@ router.post(
   estimationExportController.getAllData
 );
 
+router.get(
+  "/",
+  tokenValidation.validateToken,
+  estimationExportController.getReport
+);
+
 module.exports = router;

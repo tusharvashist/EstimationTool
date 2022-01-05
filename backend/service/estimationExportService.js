@@ -1,19 +1,12 @@
 const estimationRequirementService = require("./estimationRequirementService");
 const ExcelJS = require("exceljs");
+const constant = require("../constant/index");
 
-function generateSpreadsheet(colHeader, row) {
-  const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Estimation";
-  workbook.created = new Date();
-
-  const worksheet = workbook.addWorksheet("Estimation Detail");
-
+const generateSpreadsheet = async (colHeader, row, sheetName, workbook) => {
+  const worksheet = workbook.addWorksheet(sheetName);
   worksheet.columns = colHeader;
-
   worksheet.addRows(row);
-
-  workbook.xlsx.writeFile("./report/Estimation.xlsx");
-}
+};
 
 module.exports.requiredData = async (conditions) => {
   //estimationDetail
@@ -51,11 +44,18 @@ module.exports.requiredData = async (conditions) => {
     })
   );
 
-  console.log("estHeaderAttribute", estHeaderAttribute);
-
   const requirementDataArrayList = requirementData.requirementList;
 
-  console.log("requirementDataArrayList", requirementDataArrayList);
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "Estimation";
+  workbook.created = new Date();
 
-  generateSpreadsheet(estHeaderAttribute, requirementDataArrayList);
+  await generateSpreadsheet(
+    estHeaderAttribute,
+    requirementDataArrayList,
+    constant.excelSheetName.ESTIMATION_DETAIL,
+    workbook
+  );
+
+  workbook.xlsx.writeFile("./report/Estimation.xlsx");
 };

@@ -15,7 +15,7 @@ module.exports = {
     summaryCalData: [],
     estHeaderAttribute: [],
     tagSummaryHeader: [],
-    tagSummaryData:[],
+    tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
   },
   estimationAttribute: {
@@ -24,12 +24,12 @@ module.exports = {
     description: "",
   },
 
-  resourceMixPlanningResponse:{
+  resourceMixPlanningResponse: {
     resourceMixData: [],
     total: {},
     margin: "",
-    marginPercent: ""
-    },
+    marginPercent: "",
+  },
 
   userMessage: {
     SIGNUP_SUCCESS: "Signup successfully",
@@ -47,7 +47,7 @@ module.exports = {
     INVALID_ID: "Invalid id",
     ESTIMATION_UPDATE: "Estimation update successfully",
     ESTIMATION_DELETE: "Estimation delete successfully",
-    ESTIMATION_NAME_UNIQUE: "Estimation name should be unique"
+    ESTIMATION_NAME_UNIQUE: "Estimation name should be unique",
   },
   requirementTagMessage: {
     REQUIREMENTTAG_FETCH: "All requirement tag fetch successfully",
@@ -263,6 +263,11 @@ module.exports = {
   },
   resourceMixMessage: {
     RESOURMIX_ERROR: "Resource mix master fetch fail",
+    RESOURMIX_FETCH: "Resource mix detail fetch successfully",
+    INVALID_ID: "Invalid id",
+  },
+  excelSheetName: {
+    ESTIMATION_DETAIL: "Estimation Detail",
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
   },
