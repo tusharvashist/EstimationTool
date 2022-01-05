@@ -5,7 +5,7 @@ const estimationExportService = require("../service/estimationExportService");
 //@desc     To get all the data for excel
 module.exports.getAllData = async (req, res) => {
   try {
-    await estimationExportService.requiredData(req.body);
+    await estimationExportService.generateExcelReport(req.body);
 
     res.status(200).send("Report Gentrated");
   } catch (err) {
