@@ -270,5 +270,6 @@ module.exports = {
     ESTIMATION_DETAIL: "Estimation Detail",
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
+    ESTIMATION_SUMMARY: "Estimation Summary",
   },
 };

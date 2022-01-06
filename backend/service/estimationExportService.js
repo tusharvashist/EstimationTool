@@ -4,64 +4,6 @@ const resourceCountMixService = require("./resourceMixService");
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
 
-const generateSpreadsheet = async (colHeader, row, sheetName, workbook) => {
-  const worksheet = workbook.addWorksheet(sheetName);
-  worksheet.columns = colHeader;
-  worksheet.addRows(row);
-};
-
-// module.exports.requiredData = async (conditions) => {
-//   //estimationDetail
-//   const payload = { id: conditions.estimationHeaderId };
-//   const requirementData = await estimationRequirementService.getRequirementData(
-//     payload
-//   );
-//   console.log(
-//     "requirementData",
-//     requirementData.estHeaderAttribute,
-//     requirementData.requirementList
-//   );
-
-//   var estHeaderAttribute = [
-//     {
-//       header: "Requirement",
-//       key: "Requirement",
-//       width: 20,
-//     },
-//     {
-//       header: "Tag",
-//       key: "Tag",
-//       width: 20,
-//     },
-//     {
-//       header: "Description",
-//       key: "Description",
-//       width: 40,
-//     },
-//   ];
-
-//   estHeaderAttribute = estHeaderAttribute.concat(
-//     requirementData.estHeaderAttribute.map((el) => {
-//       return { header: el.headerName, key: el.id };
-//     })
-//   );
-
-//   const requirementDataArrayList = requirementData.requirementList;
-
-//   const workbook = new ExcelJS.Workbook();
-//   workbook.creator = "Estimation";
-//   workbook.created = new Date();
-
-//   await generateSpreadsheet(
-//     estHeaderAttribute,
-//     requirementDataArrayList,
-//     constant.excelSheetName.ESTIMATION_DETAIL,
-//     workbook
-//   );
-
-//   workbook.xlsx.writeFile("./report/Estimation.xlsx");
-// };
-
 module.exports.generateExcelReport = async (reportPayload) => {
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Estimation";
@@ -80,7 +22,9 @@ module.exports.generateExcelReport = async (reportPayload) => {
 
 async function generateRequiredSpreadsheet(workbook, reportPayload) {
   if (getReportFlagValue("estimationDetail", reportPayload)) {
-    const worksheet = workbook.addWorksheet("Estimation Detail");
+    const worksheet = workbook.addWorksheet(
+      constant.excelSheetName.ESTIMATION_DETAIL
+    );
     worksheet.columns = (
       await getEstimationRequirementData(reportPayload)
     ).estRequirementColumns;
@@ -93,6 +37,48 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   }
 
   if (getReportFlagValue("estimationSummary", reportPayload)) {
+    const worksheet = workbook.addWorksheet(
+      constant.excelSheetName.ESTIMATION_SUMMARY
+    );
+
+    let colTagData = (await getEstimationRequirementData(reportPayload))
+      .estTagColumns;
+
+    let colSummaryData = (await getEstimationRequirementData(reportPayload))
+      .estCalColumns;
+
+    worksheet.addTable({
+      name: "MyTable",
+      ref: "A1",
+      style: {
+        theme: "TableStyleMedium6",
+        showRowStripes: true,
+      },
+      columns: colTagData,
+      rows: (await getEstimationRequirementData(reportPayload)).estTagRowData,
+    });
+
+    worksheet.addTable({
+      name: "MyTable2",
+      ref: "A20",
+      headerRow: true,
+      style: {
+        theme: "TableStyleMedium6",
+        showRowStripes: true,
+      },
+      columns: colSummaryData,
+      rows: (await getEstimationRequirementData(reportPayload)).estCalRowData,
+    });
+
+    // worksheet.columns = (
+    //   await getEstimationRequirementData(reportPayload)
+    // ).estTagColumns;
+    // worksheet.addRows(
+    //   (await getEstimationRequirementData(reportPayload)).estTagRowData
+    // );
+    // worksheet.getRow(1).eachCell((cell) => {
+    //   cell.font = { bold: true };
+    // });
   }
 
   if (getReportFlagValue("resourceCount", reportPayload)) {
@@ -130,7 +116,6 @@ function getResourcePlanningColumns() {
 async function getResourcePlanningRowData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
   const resData = await resourceCountMixService.getResourceMixPlanning(payload);
-  console.log("Resoure Planning data", resData);
   var resPlanningColumnData = resData.resourceMixData.map((e, i) => {
     return {
       s_no: i + 1,
@@ -166,7 +151,12 @@ function getReportFlagValue(key, reportPayload) {
 }
 
 async function getEstimationRequirementData(conditions) {
-  let estRequirementColumns, estRequirementRowData;
+  let estRequirementColumns,
+    estRequirementRowData,
+    estTagColumns,
+    estTagRowData,
+    estCalColumns,
+    estCalRowData;
 
   const payload = { id: conditions.estimationHeaderId };
   const requirementData = await estimationRequirementService.getRequirementData(
@@ -196,12 +186,51 @@ async function getEstimationRequirementData(conditions) {
       return { header: el.headerName, key: el.id };
     })
   );
-
   estRequirementRowData = requirementData.requirementList;
+
+  estTagColumns = requirementData.tagSummaryHeader.map((el) => {
+    return {
+      name: el.headerName === "" ? "Tag" : el.headerName,
+      key: el.id === 1 ? "tag" : el.id,
+    };
+  });
+  estTagRowData = requirementData.tagSummaryData.map((el) => {
+    let rowDataArr = [];
+    estTagColumns.map((item) => {
+      return rowDataArr.push(el[item.key]);
+    });
+    return rowDataArr;
+  });
+
+  estCalColumns = requirementData.summaryCallHeader.map((el) => {
+    return {
+      name: el.headerName,
+      key: el.field,
+    };
+  });
+  estCalRowData = requirementData.summaryCalData.map((el) => {
+    let rowDataArr = [];
+    estCalColumns.map((item) => {
+      return rowDataArr.push(el[item.key]);
+    });
+    return rowDataArr;
+  });
+
+  // console.log(
+  //   "estCalColumns",
+  //   estCalColumns,
+  //   "estCalRowData",
+  //   requirementData.summaryCalData,
+  //   estCalRowData
+  // );
 
   // return values
   return {
     estRequirementColumns,
     estRequirementRowData,
+    estTagColumns,
+    estTagRowData,
+    estCalColumns,
+    estCalRowData,
   };
 }
