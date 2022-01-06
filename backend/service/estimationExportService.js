@@ -9,12 +9,11 @@ module.exports.generateExcelReport = async (reportPayload) => {
   workbook.creator = "Estimation";
   workbook.created = new Date();
 
-  await generateRequiredSpreadsheet(workbook, reportPayload);
-
+  
   try {
-    workbook.xlsx.writeFile("./report/Estimation.xlsx").then(() => {
-      return true;
-    });
+    await generateRequiredSpreadsheet(workbook,reportPayload);
+      const Promise1 = workbook.xlsx.writeFile("./report/Estimation.xlsx");
+      Promise1.then(()=> {return true})
   } catch (err) {
     console.log("Workbok Error + err" + err);
   }
@@ -87,12 +86,28 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   if (getReportFlagValue("resourcePlanning", reportPayload)) {
     const worksheet = workbook.addWorksheet("Resource Planning");
     worksheet.columns = getResourcePlanningColumns();
-    worksheet.addRows(
-      await getResourcePlanningRowData(reportPayload.estimationHeaderId)
-    );
+    var rowData = await getResourcePlanningRowData(reportPayload.estimationHeaderId);
+    worksheet.addRows(rowData.resPlanningColumnData);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     });
+     // Insert a row by sparse Array 
+    var rowValuesTotalCost = [];
+    rowValuesTotalCost[6] = "Total";
+    rowValuesTotalCost[7] = rowData.totalCost;
+    rowValuesTotalCost[8] = rowData.totalPrice;
+    worksheet.insertRow(worksheet.rowCount+1, rowValuesTotalCost);
+   
+    var rowValuesMargin = [];
+    rowValuesMargin[6] = "Margin";
+    rowValuesMargin[7] = rowData.margin;
+    worksheet.insertRow(worksheet.rowCount+1, rowValuesMargin);
+   
+    var rowValuesMarginPercent = [];
+    rowValuesMarginPercent[6] = "Margin %";
+    rowValuesMarginPercent[7] = rowData.marginPercent;
+    worksheet.insertRow(worksheet.rowCount+1, rowValuesMarginPercent);
+  
   }
 
   if (getReportFlagValue("resourceTimeline", reportPayload)) {
@@ -115,21 +130,28 @@ function getResourcePlanningColumns() {
 
 async function getResourcePlanningRowData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
-  const resData = await resourceCountMixService.getResourceMixPlanning(payload);
-  var resPlanningColumnData = resData.resourceMixData.map((e, i) => {
-    return {
-      s_no: i + 1,
-      allocation: e.resourceMix.allocationPercent,
-      role: e.resourceMix.role.resourceRole,
-      skill: e.attributeName,
-      cost: e.resourceMix.role.cost,
-      price: e.resourceMix.role.price,
-      cost_cal: e.costcal,
-      price_cal: e.pricecal,
-    };
-  });
+  const resData =  await resourceCountMixService.getResourceMixPlanning(payload);
+  console.log(
+    "Resoure Planning data",
+    resData
+  );
+  var totalCost = resData.total.cost;
+  var totalPrice = resData.total.price;
+  var margin = resData.margin;
+  var marginPercent = resData.marginPercent;
 
-  return resPlanningColumnData;
+  var resPlanningColumnData = resData.resourceMixData.map((e,i) => {
+    return {s_no: i+1,
+            allocation: e.resourceMix.allocationPercent,
+            role: e.resourceMix.role.resourceRole,
+            skill: e.attributeName,
+            cost: e.resourceMix.role.cost,
+            price: e.resourceMix.role.price,
+            cost_cal: e.costcal,
+            price_cal: e.pricecal   }
+  })
+  
+  return {resPlanningColumnData,totalCost,totalPrice,margin,marginPercent};
 }
 
 function getResourceCountMixColumns() {
