@@ -128,6 +128,8 @@ module.exports = {
       "estimationHeaderAtrributeCalc delete successfully",
     DUPLICATE_estimationHeaderAtrributeCalc:
       "estimationHeaderAtrributeCalc already exist with given name.",
+    estimationHeaderAtrributeCalcCyclic_ERROR:
+      "Calc Attribute formula having circular references,Please check formula tags.",
   },
 
   techSkillMasterMessage: {

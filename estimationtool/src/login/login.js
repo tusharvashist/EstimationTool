@@ -74,10 +74,11 @@ export default function Login(props) {
       permissionObj[perm.token] = true;
     }
     for (let userP in USER_PERMISSIONS) {
-      finalPermissions[USER_PERMISSIONS[userP]] = !!permissionObj[userP];
+      //finalPermissions[USER_PERMISSIONS[userP]] = !!permissionObj[userP];
+      finalPermissions[USER_PERMISSIONS[userP]] = true;
     }
 
-    return {...finalPermissions};
+    return { ...finalPermissions };
   };
 
   const handleLogin = function (e) {
