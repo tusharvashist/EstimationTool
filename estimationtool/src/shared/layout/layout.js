@@ -17,6 +17,7 @@ import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 import EstimationDetail from "../../pages/estimation-detail/estimation-detail";
 import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
+import ImportExcelRequirements from "../../pages/ImportExcelRequirements/ImportExcelRequirements";
 import ResourceMix from "../../pages/ResourceMix/ResourceMix";
 import TimeLinePlanning from '../../pages/timelinePlanning/timelinePlanning'
 
@@ -76,6 +77,13 @@ export default class Layout extends Component {
                     exact
                     path="/All-Clients/:clientName/:projectid/createRequirements"
                     render={(props) => <CreateRequirements {...props} />}
+                  >
+                    {/* <EstimationCreation /> */}
+                  </Route>
+                    <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/ImportExcelRequirements"
+                    render={(props) => <ImportExcelRequirements {...props} />}
                   >
                     {/* <EstimationCreation /> */}
                   </Route>

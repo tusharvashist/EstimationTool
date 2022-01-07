@@ -3,6 +3,7 @@ const Url = {
   user: `${process.env.REACT_APP_URL}user`,
   allestimation: `${process.env.REACT_APP_URL}estimation`,
   estimationDetail: `${process.env.REACT_APP_URL}estimationDetail`,
+  uploadExcel: `${process.env.REACT_APP_URL}uploadExcel`,
   masterEstimationTypes: `${process.env.REACT_APP_URL}estimationTemplate`,
 
   createClient: `${process.env.REACT_APP_URL}client`,
