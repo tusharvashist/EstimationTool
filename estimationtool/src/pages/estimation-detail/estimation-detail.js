@@ -638,12 +638,18 @@ const EstimationDetail = () => {
             <div className="addReqTableHeader">
               <h3>Estimation (in {headerData.effortUnit}s)</h3>
               {!isRequirementValid.isValid && (
-                <p className="generalWarning">
-                  Please include{" "}
-                  <span className="generalWarning_item">{printErr()}</span>
-                  &nbsp; since estimation type is{" "}
-                  <b>{headerData.estTypeId.estType}</b>
-                </p>
+                <div className="warningDiv">
+                  <IoWarningOutline
+                    className="generalWarning"
+                    style={{ fontSize: "12px" }}
+                  />{" "}
+                  <p className="generalWarning">
+                    WARNING: Please include{" "}
+                    <span className="generalWarning_item">{printErr()}</span> in
+                    below requirements, since estimation type is{" "}
+                    <b>{headerData.estTypeId.estType}</b>
+                  </p>
+                </div>
               )}
             </div>
             <div style={{ height: 400, width: "100%" }}>
