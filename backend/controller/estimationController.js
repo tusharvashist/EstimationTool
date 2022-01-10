@@ -316,3 +316,25 @@ module.exports.estimationHeaderAtrributeCalcDelete = async (req, res) => {
     }
     return res.status(responce.status).send(responce);
 };
+
+
+// ------------- Estimation Release
+
+//-----------------  Delete
+module.exports.releaseEstimation= async (req, res) => {
+    let responce = { ...constant.defaultResponce };
+    try {
+        const responceFromEstimationHeaderAtrributeCalcSer =
+            await estimationHeaderAtrributeSer.ReleaseEstimation(
+                req.body.estHeaderId
+            );
+        responce.status = 200;
+        responce.message =
+            constant.publishMessage.PUBLISH_CREATE;
+        responce.body = '';
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+};
+

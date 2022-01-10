@@ -13,7 +13,8 @@ const { estimationHeaderAtrributeMessage } = require("../constant");
 const RequirementType = require("../database/models/requirementType");
 const RequirementTag = require("../database/models/requirementTag");
 const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
-
+const RequirementRepository = require("../repository/requirementRepository");
+const EstRequirementServ = require("../service/estimationRequirementService");
 // module.exports.createEstimation = async(serviceData)=>{
 //   try{
 //     let estimation = new Estimation({...serviceData})
@@ -123,7 +124,9 @@ module.exports.createEstimationHeader = async (serviceData) => {
     let estimation = new EstimationHeader({ ...serviceData });
     estimation.estStep = "1";
     estimation.createdBy = global.loginId;
-    const findRecord = await EstimationHeader.find({ estName: estimation.estName });
+    const findRecord = await EstimationHeader.find({
+      estName: estimation.estName,
+    });
     if (findRecord.length != 0) {
       throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE);
     }
@@ -152,13 +155,19 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       throw new Error(constant.estimationMessage.INVALID_ID);
     }
 
-    const findRecord = await EstimationHeader.find({ estName: updatedInfo.estName });
+    const findRecord = await EstimationHeader.find({
+      estName: updatedInfo.estName,
+    });
     updatedInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
       if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
-        let estimation = await EstimationHeader.findOneAndUpdate({ _id: id }, updatedInfo, {
-          new: true,
-        });
+        let estimation = await EstimationHeader.findOneAndUpdate(
+          { _id: id },
+          updatedInfo,
+          {
+            new: true,
+          }
+        );
         if (!estimation) {
           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
         }
@@ -182,7 +191,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       "something went wrong: service > Update Estimation Header ",
       err
     );
-   
+
     throw new Error(err);
   }
 };
@@ -479,5 +488,52 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
   } catch (err) {
     console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
+  }
+};
+
+// var error = {
+//   "estDetail": [],
+//   "ResourceMix": [],
+//   "Timelineplanning": [],
+//   "Resource Count": [],
+//   }
+//
+//
+//
+//   estDetail = {
+//   "Requirment": "Not found"
+//   "detil":
+//   "tag":
+//   "Type":
+//   "Attribut" : [
+//   "frondtEnd": "found nill"
+//   ]
+//   }
+
+
+
+// Release estimation
+
+module.exports.ReleaseEstimation = async (estheaderId) => {
+  let response = { ...constant.publishMessage };
+
+  try {
+    let estimation = await EstimationHeader.findById(estheaderId);
+    // console.log('estimation',estimation)
+
+    var contingency = await RequirementRepository.getContingency(estheaderId);
+    var contingencySuffix = " Contingency";
+    var estHeaderRequirement =
+      await RequirementRepository.getEstHeaderRequirementWithContingency(
+        estheaderId
+      );
+    const validatedArray = validateESTDetails(estHeaderRequirement);
+    console.log("validatedArray", JSON.stringify(validatedArray));
+
+    if (estHeaderRequirement.length != 0) {
+      // response.featureList = estHeaderRequirement;
+    }
+  } catch (err) {
+    console.log("err", err);
   }
 };

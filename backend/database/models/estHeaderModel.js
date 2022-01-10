@@ -49,6 +49,7 @@ const estimationHeaderSchema = new mongoose.Schema({
     },
     estStep: String,
     estTentativeTimeline: Number,
+    publishDate: Date,
 }, {
     timestamps: true,
     toObject: {

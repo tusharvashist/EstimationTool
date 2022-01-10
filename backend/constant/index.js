@@ -271,4 +271,8 @@ module.exports = {
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
   },
+  publishMessage: {
+    PUBLISH_VALIDATION: "Validation failed",
+    PUBLISH_CREATE: "Estimation published successfully",
+  },
 };
