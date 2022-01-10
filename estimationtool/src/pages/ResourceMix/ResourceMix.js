@@ -1,5 +1,5 @@
 import { Button, Container } from "@material-ui/core";
-import { Box } from "@material-ui/core";
+import { Box , Grid} from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useLocation, Link } from "react-router-dom";
@@ -14,21 +14,30 @@ import styleClasses from "./resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import ResourceCountService from "../ResourceCount/resourcecount.service";
 import { useSelector, useDispatch } from "react-redux";
+import { BiExport } from "react-icons/bi";
+import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
 
 const RequirementMix = () => {
   const resMixData = useSelector((state) => state.resourceMixData);
 
   const classes = useTableStyle();
   const location = useLocation();
-  const estimationId = location.state !== undefined ?   location.state.estimationHeaderId : resMixData.data.estHeadId;
-  const clientDetails = location.state !== undefined ? location.state.clientInfo : resMixData.data;
-  const projectDetails = location.state !== undefined ? location.state.projectInfo : resMixData.data;
-  const headerData = location.state !== undefined ? location.state.headerData : resMixData.data;
+  const estimationId =
+    location.state !== undefined
+      ? location.state.estimationHeaderId
+      : resMixData.data.estHeadId;
+  const clientDetails =
+    location.state !== undefined ? location.state.clientInfo : resMixData.data;
+  const projectDetails =
+    location.state !== undefined ? location.state.projectInfo : resMixData.data;
+  const headerData =
+    location.state !== undefined ? location.state.headerData : resMixData.data;
 
   const [loaderComponent, setLoader] = useLoader();
 
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
+  const [openExport, setOpenExport] = useState(false);
 
   useEffect(() => {
     getResourceCountData(estimationId);
@@ -43,11 +52,11 @@ const RequirementMix = () => {
   };
 
   const getAllResourceMixData = (estimationId) => {
-    setLoader(true)
+    setLoader(true);
     ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
       .then((res) => {
         console.log("mixdata", res);
-        setLoader(false)
+        setLoader(false);
         let objArr = res.data.body.resourceMixData.map((el, i) => {
           return {
             id: i + 1,
@@ -57,6 +66,8 @@ const RequirementMix = () => {
             // estCalId: el.attributeSkill.attributeName || null,
             cost: el.costcal,
             price: el.pricecal,
+            costrate: el.resourceMix.role.cost,
+            pricerate: el.resourceMix.role.price
           };
           // if (!el.attributeSkill.calcAttributeName) {
           //   return {
@@ -92,6 +103,19 @@ const RequirementMix = () => {
       });
   };
 
+  ///============== JS- Export Estimation Pop up - START ==============///
+  const openExportEstimation = () => {
+    setOpenExport(true);
+  };
+
+  const closeExportEstimation = () => {
+    setOpenExport(false);
+  };
+
+  const exportFun = (a) => {
+    console.log(a);
+  };
+  ///============== JS- Export Estimation Pop up - END ==============///
   const columns = [
     {
       field: "id",
@@ -118,6 +142,18 @@ const RequirementMix = () => {
       width: 280,
     },
     {
+      field: "costrate",
+      headerName: "Cost/Hr ($)",
+      sortable: false,
+      width: 160,
+    },
+    {
+      field: "pricerate",
+      headerName: "Price/Hr ($)",
+      sortable: false,
+      width: 160,
+    },
+    {
       field: "cost",
       headerName: "Cost ($)",
       sortable: false,
@@ -134,8 +170,24 @@ const RequirementMix = () => {
 
   return (
     <div className="estimation-detail-cover">
+      {/*========= JSX- Export Estimation in Report - START ========= */}
+      <ExportEstimationPopup
+        openExport={openExport}
+        openExportEstimation={openExportEstimation}
+        closeExportEstimation={closeExportEstimation}
+        title="Export Estimation"
+        oktitle="Genrate"
+        cancelTitle="Cancel"
+        exportFun={exportFun}
+      />
+      {/*========= JSX- Export Estimation in Report - END ========= */}
       <Container>
-        <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
+      <Grid container>
+          <Grid item className="multi-button-grid">
+        <Button variant="outlined" onClick={openExportEstimation}>
+              <BiExport style={{ fontSize: "18px" }} />
+              &nbsp;Export in Excel
+            </Button>
           {/* <Link
             to={{
               pathname:
@@ -156,7 +208,8 @@ const RequirementMix = () => {
               <> Edit Estimation Configuration</>
             </Button>
           </Link> */}
-        </Box>
+         </Grid>
+        </Grid>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <EstimationHeader data={headerData} />
@@ -167,14 +220,13 @@ const RequirementMix = () => {
           <>
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
+                disableColumnMenu
+                className={`${classes.root} ${classes.dataGrid}`}
                 rows={resourceMixList}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
                 disableSelectionOnClick
-                // components={{
-                //   NoRowsOverlay: NNoRowOverlay,
-                // }}
               />
             </div>
             <div className={styleClasses.totalcontainer}>

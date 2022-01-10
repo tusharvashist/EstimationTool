@@ -11,12 +11,12 @@
 .add-attribute-btn {
   padding: 0 10px;
 }
-.MuiFormControlLabel-root {
+/* .MuiFormControlLabel-root {
   margin: 8px 0;
-}
-.MuiFormControl-root {
+} */
+/* .MuiFormControl-root {
   margin: 8px 0 !important;
-}
+} */
 .text-box {
   order: 3;
   margin: 0 20px !important;
@@ -27,7 +27,7 @@
 }
 label.MuiFormControlLabel-root {
   flex-grow: 1;
-  flex-basis: 200px;
+  /* flex-basis: 200px; */
 }
 .MuiFormGroup-root {
   width: 100%;
@@ -40,9 +40,8 @@ label.MuiFormControlLabel-root {
 .css-1kpdewa-MuiAutocomplete-root .MuiAutocomplete-inputRoot {
   justify-content: flex-start;
 }
-@media (max-width:864px) {
+@media (max-width: 864px) {
   .gridgap {
     gap: 0 !important;
   }
 }
-

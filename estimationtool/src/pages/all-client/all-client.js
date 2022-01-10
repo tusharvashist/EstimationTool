@@ -26,11 +26,15 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
 //import { useHistory } from "react-router-dom";
+import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 function AllClient(props) {
   const { history } = props;
   // console.log(props);
-  const roleState = useSelector((state) => state.role);
+  const roleState = useSelector((state) => state);
+  console.log("rolePermission",roleState)
+
   const [tableData, setTableData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -39,6 +43,7 @@ function AllClient(props) {
   const [deleteClinetDailog, setDeleteClinetDailog] = useState(false);
   const [editRow, setEditRow] = useState({});
   const [actionId, setActionId] = useState("");
+  const {clientView, clientUpdate, clientListing, clientDelete, clientCreate} = usePermission();
   const [clientStatus, setClientStatus] = useState([
     { title: "All", value: "All" },
     { title: "Active", value: false },
@@ -50,7 +55,6 @@ function AllClient(props) {
     value: false,
   });
   const [loaderComponent, setLoader] = useLoader();
-
   useEffect(() => {
     getAllClient();
   }, []);
@@ -63,7 +67,7 @@ function AllClient(props) {
         setLoader(false);
 
         let dataResponce = res.data.body;
-        console.log(dataResponce + ">>>>>>>>>>>>>>.");
+ 
         setTableData([...dataResponce]);
         setFilteredData(dataResponce.filter((op) => op.isDeleted === false));
       })
@@ -80,7 +84,7 @@ function AllClient(props) {
       title: "Client Name",
       field: "clientName",
       render: (rowData) => {
-        return rowData.isDeleted ? (
+        return clientView ? rowData.isDeleted ? (
           <>{rowData.clientName} </>
         ) : (
           <Link
@@ -88,7 +92,9 @@ function AllClient(props) {
           >
             {rowData.clientName}
           </Link>
-        );
+        )
+        :
+        <>{rowData.clientName}</>
       },
       sorting: true,
     },
@@ -104,6 +110,31 @@ function AllClient(props) {
           </a>
         );
       },
+    },
+    {
+      title: "Last Modified By",
+      field: "lastmodify",
+      type: "date",
+      render: (dataRow) =>
+        dataRow.updatedBy ? (
+          <UpdatedBy
+            firstName={dataRow.updatedBy.firstName}
+            lastName={dataRow.updatedBy.lastName}
+            updatedAt={dataRow.updatedBy.updatedAt}
+          />
+        ) : (
+          <UpdatedBy
+            firstName="Daniel"
+            lastName="Neblet"
+            updatedAt={dataRow.createdAt}
+          />
+        ),
+
+      // {
+      //   const {updatedBy : {updatedAt = '',firstName = '' ,lastName = ''} = {}} = dataRow;
+
+      //   return (updatedAt && firstName && lastName) && (getMMDDYYYYFormat(updatedAt) +" | "+ firstName + ' '+ lastName) || getMMDDYYYYFormat(dataRow.updatedAt)
+      // }
     },
   ];
 
@@ -239,8 +270,8 @@ function AllClient(props) {
   };
 
   const actions = [
-
-    (rowData) => ({
+    (rowData) => 
+    ({
       icon: "edit",
       tooltip: "edit client",
       onClick: (event, rowData) => {
@@ -248,9 +279,13 @@ function AllClient(props) {
         setActionId(rowData.id);
         openUpdateDailog();
       },
+      
       disabled: rowData.isDeleted,
-    }),
-    (rowData) => ({
+      hidden: !clientUpdate
+    })
+  ,
+    (rowData) => 
+    ({
       icon: "delete",
       tooltip: "delete client",
       onClick: (event, rowData) => {
@@ -259,7 +294,8 @@ function AllClient(props) {
         openDeleteDailog();
       },
       disabled: rowData.isDeleted,
-    }),
+      hidden: !clientDelete
+    })  
   ];
   // console.log("selectedOption.label", selectedOption.title)
   if (selectedOption.value === true) {
@@ -351,7 +387,7 @@ function AllClient(props) {
               list={clientStatus}
               getVal={getDropDownvalue}
             /> */}
-            {!roleState.isContributor && (
+            {clientCreate && (
               <Button variant="outlined" onClick={openCreateDailog}>
                 {" "}
                 <AddIcon />
@@ -363,7 +399,8 @@ function AllClient(props) {
       </div>
       <Grid container>
         <BorderedContainer className="full-width">
-          {loaderComponent ? (
+          {clientListing ? (loaderComponent)
+           ? (
             loaderComponent
           ) : (
             <MaterialTable
@@ -371,7 +408,7 @@ function AllClient(props) {
               components={{
                 Container: (props) => <Paper {...props} elevation={0} />,
               }}
-              actions={!roleState.isContributor ? actions : false}
+              actions={ actions}
               options={{
                 actionsColumnIndex: -1,
                 sorting: true,
@@ -395,7 +432,7 @@ function AllClient(props) {
               data={filteredData}
               title={`Client${tableData.length > 1 ? "s" : ""}`}
             />
-          )}
+          ): ''}
         </BorderedContainer>
         {open && (
           <Snackbar

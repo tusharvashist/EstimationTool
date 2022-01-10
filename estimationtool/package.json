@@ -22,6 +22,7 @@
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",
+    "js-file-download": "^0.4.12",
     "material-table": "^1.69.3",
     "multiselect-react-dropdown": "^2.0.7",
     "react": "^17.0.2",
@@ -64,6 +65,7 @@
   "devDependencies": {
     "@testing-library/react": "^11.2.7",
     "jest-dom": "^4.0.0",
+    "karma-jasmine": "^4.0.1",
     "react-test-renderer": "^17.0.2"
   }
 }

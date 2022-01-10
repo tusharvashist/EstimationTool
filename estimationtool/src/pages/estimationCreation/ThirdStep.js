@@ -169,7 +169,6 @@ const ThirdStep = (props) => {
         ...data,
         formulaTags: data.formulaTags.map((el) => el.id),
         tag: data.tag ? data.tag._id : "",
-
       };
       newObject.estTypeId = props.estimationTypeId;
       createCalcAttribute(newObject);
@@ -259,28 +258,28 @@ const ThirdStep = (props) => {
   // while editing the comment box and unit box
   const onChangeField =
     ({ data }) =>
-      ({ target }) => {
-        setAttributes(
-          attributes.map((obj) => {
-            if (obj._id === data._id) {
-              const newobj = { ...obj, [target.name]: target.value };
-              return newobj;
-            } else {
-              return obj;
-            }
-          })
-        );
-        const newData = attributes.map((obj) => {
+    ({ target }) => {
+      setAttributes(
+        attributes.map((obj) => {
           if (obj._id === data._id) {
             const newobj = { ...obj, [target.name]: target.value };
             return newobj;
           } else {
             return obj;
           }
-        });
-        setAttributes(newData);
-        updateStore(newData);
-      };
+        })
+      );
+      const newData = attributes.map((obj) => {
+        if (obj._id === data._id) {
+          const newobj = { ...obj, [target.name]: target.value };
+          return newobj;
+        } else {
+          return obj;
+        }
+      });
+      setAttributes(newData);
+      updateStore(newData);
+    };
 
   // while check or uncheck checkbox
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
@@ -406,7 +405,7 @@ const ThirdStep = (props) => {
                                   symbolsArr.includes(evt.key) &&
                                   evt.preventDefault()
                                 }
-                              // pattern="\b([0-9]|[1-9][0-9])\b"
+                                // pattern="\b([0-9]|[1-9][0-9])\b"
                               />
 
                               <p className={classes.pof}>% of</p>

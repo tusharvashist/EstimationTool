@@ -36,7 +36,13 @@ const ResourceCountMatrix = (props) => {
     // getTechnologySkill();
     getTechnologySkill();
     getResourceCountData(estimationHeaderId);
-  }, [reload]);
+
+    if (tableOpen == true) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "scroll";
+    }
+  }, [reload, tableOpen]);
 
   // Get All Technology Skills
 
@@ -194,66 +200,69 @@ const ResourceCountMatrix = (props) => {
   };
 
   return (
-    <div className="estimation-detail-cover">
+    <div className="resource-count-cover">
       {tableOpen && (
-        <div className="estimation-detail-count-table">
-          <BorderedContainer className="count-box-shadow roleCountInputParent">
-            {openEditCount && (
-              <>
-                <div
-                  className="editrole_cover"
-                  onClick={closeEditHandler}
-                ></div>
-                <RoleEditCount
-                  rowEditData={rowEditData}
-                  handleEditChange={handleEditChange}
-                />
-              </>
-            )}
-            <div style={{ height: 300, width: "100%" }}>
-              {resouceCountData.length && (
-                <DataGrid
-                  sx={{
-                    "& .MuiDataGrid-cell:hover": {
-                      background: "none",
-                    },
-                    "& .error--true .MuiDataGrid-row:hover": {
-                      background: "rgba(255, 0, 0, 0.2)",
-                    },
-                    "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
-                      {
+        <>
+          <div className="resource-pop-cover" onClick={handleCountTable}></div>
+          <div className="estimation-detail-count-table">
+            <BorderedContainer className="count-box-shadow roleCountInputParent">
+              {openEditCount && (
+                <>
+                  <div
+                    className="editrole_cover"
+                    onClick={closeEditHandler}
+                  ></div>
+                  <RoleEditCount
+                    rowEditData={rowEditData}
+                    handleEditChange={handleEditChange}
+                  />
+                </>
+              )}
+              <div style={{ height: 300, width: "100%" }}>
+                {resouceCountData.length && (
+                  <DataGrid
+                    sx={{
+                      "& .MuiDataGrid-cell:hover": {
+                        background: "none",
+                      },
+                      "& .error--true .MuiDataGrid-row:hover": {
+                        background: "rgba(255, 0, 0, 0.2)",
+                      },
+                      "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
+                        {
+                          backgroundColor: "none",
+                        },
+                      "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover": {
                         backgroundColor: "none",
                       },
-                    "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover": {
-                      backgroundColor: "none",
-                    },
-                  }}
-                  rows={resouceCountData}
-                  // rows={[]}
-                  columns={getColumns({ onChangeSelect })}
-                  pageSize={5}
-                  onCellClick={handleCellClick}
-                  getRowId={({ _id }) => _id}
-                  key="_id"
-                  sortModel={sortModel}
-                  onSortModelChange={(model) => setSortModel(model)}
-                  components={{
-                    NoRowsOverlay: NoRowOverlay,
-                  }}
-                  getRowClassName={(params) =>
-                    `error--${params.row.validationerror}`
-                  }
-                />
-              )}
-            </div>
+                    }}
+                    rows={resouceCountData}
+                    // rows={[]}
+                    columns={getColumns({ onChangeSelect })}
+                    pageSize={5}
+                    onCellClick={handleCellClick}
+                    getRowId={({ _id }) => _id}
+                    key="_id"
+                    sortModel={sortModel}
+                    onSortModelChange={(model) => setSortModel(model)}
+                    components={{
+                      NoRowsOverlay: NoRowOverlay,
+                    }}
+                    getRowClassName={(params) =>
+                      `error--${params.row.validationerror}`
+                    }
+                  />
+                )}
+              </div>
 
-            {/* <div className="resource-cont-costing">
+              {/* <div className="resource-cont-costing">
               <h4 className="inline-cost">Costing: $1000</h4>
               <h4 className="inline-cost">Expected Timeline: $1000</h4>
               <h4 className="inline-cost">Actual Timeline: $1000</h4>
             </div> */}
-          </BorderedContainer>
-        </div>
+            </BorderedContainer>
+          </div>
+        </>
       )}
       <div className="estimation-detail-button-container">
         <button

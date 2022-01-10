@@ -17,7 +17,9 @@ import "./layout.css";
 import EstimationCreation from "../../pages/estimationCreation/EstimationCreation";
 import EstimationDetail from "../../pages/estimation-detail/estimation-detail";
 import CreateRequirements from "../../pages/CreateRequirements/CreateRequirements";
+import ImportExcelRequirements from "../../pages/ImportExcelRequirements/ImportExcelRequirements";
 import ResourceMix from "../../pages/ResourceMix/ResourceMix";
+import TimeLinePlanning from '../../pages/timelinePlanning/timelinePlanning'
 
 const EsContainer = withStyles((props) => {
   return {
@@ -78,6 +80,13 @@ export default class Layout extends Component {
                   >
                     {/* <EstimationCreation /> */}
                   </Route>
+                    <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/ImportExcelRequirements"
+                    render={(props) => <ImportExcelRequirements {...props} />}
+                  >
+                    {/* <EstimationCreation /> */}
+                  </Route>
                   <Route
                     exact
                     path="/All-Clients/:clientName"
@@ -108,6 +117,12 @@ export default class Layout extends Component {
                     path="/All-Clients/:clientName/:projectid/Estimation-Detail/ResourceMix"
                   >
                     <ResourceMix />
+                  </Route>
+                  <Route
+                    exact
+                    path="/All-Clients/:clientName/:projectid/Estimation-Detail/TimelinePlanning"
+                  >
+                    <TimeLinePlanning />
                   </Route>
                 </Switch>
               </Grid>

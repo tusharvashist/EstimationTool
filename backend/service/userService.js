@@ -91,67 +91,55 @@ module.exports.login = async (req) => {
       .split(":");
     const email = emailNpass[0].trim();
     const pass = emailNpass[1].trim();
-    const users = await userModel
-      .aggregate()
-      .match({ email: email })
-      .lookup({
-        from: "rolemasters",
-        localField: "roleId",
-        foreignField: "_id",
-        as: "roles",
-      })
-      .unwind("roles")
-      // .lookup({
-      //   from: "permissions",
-      //   localField: "roleId._id",
-      //   foreignField: "typeId",
-      //   as: "tokenPermission",
-      // })
-      // .unwind("tokenPermission")
-      .lookup({
-        from: "moduletokens",
-        localField: "moduletokens._id",
-        foreignField: "tokenPermission.tokenID",
-        as: "RolePermission",
-      })
-      .addFields({ token: "" });
 
-    // const users = await userModel
-    //   .aggregate([
-    //     {
-    //       $match: { email: email },
-    //     },
-    //     {
-    //       $lookup: {
-    //         from: "rolemasters",
-    //         localField: "roleId",
-    //         foreignField: "_id",
-    //         as: "roles",
-    //       },
-    //     },
-    //     { $unwind: "$roles" },
-    //     {
-    //       $lookup: {
-    //         from: "permissions",
-    //         localField: "roleId._id",
-    //         foreignField: "roleId",
-    //         as: "tokenPermission",
-    //       },
-    //     },
-    //     { $unwind: "$tokenPermission" },
-    //     {
-    //       $lookup: {
-    //         from: "moduletokens",
-    //         localField: "moduletokens._id",
-    //         foreignField: "tokenPermission.tokenID",
-    //         as: "RolePermission",
-    //       },
-    //     },
-    //     //{$unwind : "$tokenPermission"}
-    //   ])
-    //   .addFields({ token: "" });
+    const users = await userModel.aggregate([
+      {
+        $match: {
+          email: email,
+        },
+      },
+      {
+        $lookup: {
+          from: "rolemasters",
+          localField: "roleId",
+          foreignField: "_id",
+          as: "roles",
+        },
+      },
+      {
+        $unwind: {
+          path: "$roles",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "permissions",
+          localField: "roles._id",
+          foreignField: "typeId",
+          as: "tokenPermission",
+        },
+      },
+      {
+        $lookup: {
+          from: "moduletokens",
+          localField: "tokenPermission.tokenID",
+          foreignField: "_id",
+          as: "RolePermission",
+        },
+      },
+      {
+        $project: {
+          tokenPermission: 0,
+        },
+      },
+      {
+        $addFields: {
+          token: "",
+        },
+      },
+    ]);
 
-    //const user = await userModel.findOne({ email });
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);

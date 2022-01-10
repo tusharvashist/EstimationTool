@@ -5,6 +5,16 @@ module.exports = {
     body: {},
   },
 
+  requirementExcelHeader: {
+    Requirement: "Requirement",
+    Description: "Description",
+    Tag: "Tag",
+    Type: "Type",
+    Query: "Query",
+    Assumption: "Assumption",
+    Reply: "Reply",
+  },
+
   requirementResponse: {
     basicDetails: {},
     featureList: [],
@@ -15,21 +25,29 @@ module.exports = {
     summaryCalData: [],
     estHeaderAttribute: [],
     tagSummaryHeader: [],
-    tagSummaryData:[],
+    tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
   },
+
+  requirementListResponse: {
+    showDeleteAllRequirement: false,
+    noOfEstimation: 0, 
+    featureList: [],
+    requirementSummary:[],
+  },
+
   estimationAttribute: {
     _id: "",
     attributeCode: "",
     description: "",
   },
 
-  resourceMixPlanningResponse:{
+  resourceMixPlanningResponse: {
     resourceMixData: [],
     total: {},
     margin: "",
-    marginPercent: ""
-    },
+    marginPercent: "",
+  },
 
   userMessage: {
     SIGNUP_SUCCESS: "Signup successfully",
@@ -47,6 +65,7 @@ module.exports = {
     INVALID_ID: "Invalid id",
     ESTIMATION_UPDATE: "Estimation update successfully",
     ESTIMATION_DELETE: "Estimation delete successfully",
+    ESTIMATION_NAME_UNIQUE: "Estimation name should be unique",
   },
   requirementTagMessage: {
     REQUIREMENTTAG_FETCH: "All requirement tag fetch successfully",
@@ -64,7 +83,20 @@ module.exports = {
     REQUIREMENT_DATA_UPDATE: "Requirement data update successfully",
     REQUIREMENT_DELETE: "Requirement delete successfully",
     DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
+    DELETE_ALL_REQUIREMENT_ERROR: "ALL requirement can't be deleted because estimation in this project already exist.",
   },
+
+  excelUploadMessage: {
+    REQUIREMENT_RECEIVED: "Excel file received.",
+    REQUIREMENT_FILE_NOT_RECEIVED: "Excel file not received.",
+    REQUIREMENT_NOTFOUND_REQUIREMENT: "Requirement not found!",
+    REQUIREMENT_NOTFOUND_Description: "Description not found!",
+    
+    REQUIREMENT_ALREADY_AVAILABLE: "Requirement already available!",
+    
+    REQUIREMENT_DUPLICATE : "Duplicate requirement!",
+  },
+
   estimationTemplateCalcAttrMessage: {
     ESTIMATIONTEMPLATECALCATTR_CREATED:
       "Estimation Template Calc Attr created successfully",
@@ -264,5 +296,11 @@ module.exports = {
     RESOURMIX_ERROR: "Resource mix master fetch fail",
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
+  },
+  excelSheetName: {
+    ESTIMATION_DETAIL: "Estimation Detail",
+    RESOURMIX_FETCH: "Resource mix detail fetch successfully",
+    INVALID_ID: "Invalid id",
+    ESTIMATION_SUMMARY: "Estimation Summary",
   },
 };

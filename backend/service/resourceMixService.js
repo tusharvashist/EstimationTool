@@ -23,51 +23,12 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       costTotal = getSumFromObjects(queryResult,"costcal");
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);
-      marginPercent = calculateMarginPercentage(margin,costTotal);
+      marginPercent = calculateMarginPercentage(margin,priceTotal);
 
       response.total = {'cost': '$'+ costTotal, 'price': '$'+ priceTotal};
       response.margin = '$' + margin;
       response.marginPercent = marginPercent+'%';
-    //   let result = {
-    //         ResourceMixList: [
-    //           {
-    //             _id: "2325254324568734523",
-    //             allocation: "100.00",
-    //             role: {
-    //               id: "",
-    //               name: "Lead",
-                  
-    //             },
-    //             skills: "Frontend",
-    //             cost: "100:00",
-    //             price: "200:00"
-    //           },
-    //           {
-    //             _id: "2325254324568734523",
-    //             allocation: "100.00",
-    //             role: {
-    //               id: "",
-    //               name: "Lead",
-                  
-    //             },
-    //             skills: "Frontend",
-    //             cost: "100:00",
-    //             price: "200:00"
-    //           }
-    //         ],
-    //         ResourceMixTotal: {
-    //           total: {
-    //             cost: "1000",
-    //             Price: "2000",
-                
-    //           },
-    //           Margin: "10000",
-    //           MarginPercentage: "50"
-    //         }
-    //       }
-      
-       // return result;
-       return response;
+      return response;
     } catch (err) {
       throw new Error(err);
     }
@@ -81,6 +42,6 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       return priceTotal - costTotal
   }
 
-  function calculateMarginPercentage(margin,costTotal){
-      return (margin/costTotal)*100;
+  function calculateMarginPercentage(margin,priceTotal){
+      return ((margin/priceTotal)*100).toFixed(2);
   }

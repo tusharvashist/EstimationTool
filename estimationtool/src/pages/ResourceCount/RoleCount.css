@@ -25,10 +25,10 @@
   margin: 0 20px;
 }
 .optionbtn > button {
-  padding: 8px;
+  padding: 8px 9px;
   border-radius: 50%;
   /* width: 20px; */
-  height: 23px;
+  height: 22px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -49,4 +49,12 @@
 }
 .error-true {
   box-shadow: rgb(133, 4, 4) 0px 5px 15px;
+}
+.rolelist {
+  z-index: 120;
+  background-color: #1d1761;
+  color: white;
+}
+.role {
+  z-index: 115;
 }

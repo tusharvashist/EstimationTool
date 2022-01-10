@@ -15,6 +15,9 @@ global.ResourceWeekHours = 40;
 //do connection
 dbconnection();
 
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
+
 //cors
 app.use(cors());
 
@@ -43,9 +46,13 @@ app.use("/api/v1/project", require("./routes/project.route"));
 //----------- Role Route
 app.use("/api/v1/role", require("./routes/roleMaster.route"));
 
+app.use("/api/v1/uploadExcel", require("./routes/excelUpload.route"));
 
 //----------- Role Route
-app.use("/api/v1/resourceRoleMaster", require("./routes/resourceRoleMaster.route"));
+app.use(
+  "/api/v1/resourceRoleMaster",
+  require("./routes/resourceRoleMaster.route")
+);
 
 //-----------  Estimation Type Template ie: ROM/SWAG/FIXBID
 app.use(
@@ -82,6 +89,10 @@ app.use("/api/v1/permission", require("./routes/permission.route"));
 
 //----------- Resource Planning
 app.use("/api/v1/resource", require("./routes/resourcePlanning.route"));
+
+//----------- Estimation Export
+app.use("/api/v1/export", require("./routes/estimationExport.route"));
+app.use("/api/v1/report", require("./routes/estimationExport.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {

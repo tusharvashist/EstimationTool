@@ -123,6 +123,10 @@ module.exports.createEstimationHeader = async (serviceData) => {
     let estimation = new EstimationHeader({ ...serviceData });
     estimation.estStep = "1";
     estimation.createdBy = global.loginId;
+    const findRecord = await EstimationHeader.find({ estName: estimation.estName });
+    if (findRecord.length != 0) {
+      throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE);
+    }
     let result = await estimation.save();
 
     const projectModel = await ProjectModel.findById({
@@ -144,7 +148,25 @@ module.exports.createEstimationHeader = async (serviceData) => {
 // Update estimation header basic info
 module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
   try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.estimationMessage.INVALID_ID);
+    }
+
+    const findRecord = await EstimationHeader.find({ estName: updatedInfo.estName });
     updatedInfo.updatedBy = global.loginId;
+    if (findRecord.length != 0) {
+      if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
+        let estimation = await EstimationHeader.findOneAndUpdate({ _id: id }, updatedInfo, {
+          new: true,
+        });
+        if (!estimation) {
+          throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
+        }
+        return formatMongoData(estimation);
+      } else {
+        throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE);
+      }
+    }
     let estimation = await EstimationHeader.findOneAndUpdate(
       { _id: id },
       updatedInfo,
@@ -160,6 +182,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       "something went wrong: service > Update Estimation Header ",
       err
     );
+   
     throw new Error(err);
   }
 };

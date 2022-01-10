@@ -15,6 +15,7 @@ import "./login.css";
 import AuthSer from "../shared/service/auth";
 import BorderedContainer from "../shared/ui-view/borderedContainer/BorderedContainer";
 
+import { USER_PERMISSIONS } from "../shared/ui-view/constant/enum";
 import logo from "./img/logo.png";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -23,6 +24,7 @@ import {
   setLastName,
   setFullName,
   setRole,
+  setRolePermission,
 } from "../Redux/loginRedux";
 import { setAdmin, setContributor, setSuperAdmin } from "../Redux/roleRedux";
 
@@ -65,6 +67,20 @@ export default function Login(props) {
     }, 900);
   };
 
+  const mapPermissions = (permissionArray) => {
+    const permissionObj = {};
+    const finalPermissions = {};
+    for (let perm of permissionArray) {
+      permissionObj[perm.token] = true;
+    }
+    for (let userP in USER_PERMISSIONS) {
+      // finalPermissions[USER_PERMISSIONS[userP]] = !!permissionObj[userP];
+      finalPermissions[USER_PERMISSIONS[userP]] = true;
+    }
+
+    return { ...finalPermissions };
+  };
+
   const handleLogin = function (e) {
     e.preventDefault();
     isShowSpinner ? setIsShowSpinner(false) : setIsShowSpinner(true);
@@ -76,6 +92,9 @@ export default function Login(props) {
         dispatch(setFirstName(result.data.body.firstName));
         dispatch(setLastName(result.data.body.lastName));
         dispatch(setRole(result.data.body.roles.roleName));
+        const permissions = mapPermissions(result.data.body.RolePermission);
+        console.log("permissions", permissions);
+        dispatch(setRolePermission(permissions));
         dispatch(
           setFullName(
             result.data.body.firstName + " " + result.data.body.lastName

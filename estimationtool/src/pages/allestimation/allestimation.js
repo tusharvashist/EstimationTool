@@ -8,10 +8,12 @@ import { createMuiTheme, Paper } from "@material-ui/core";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 function Home() {
   const [tableData, setTableData] = useState([]);
   const [editRow, setEditRow] = useState({});
   const [loaderComponent, setLoader] = useLoader();
+  const {clientView, projectView, estimationView} = usePermission();
   let history = useHistory();
 
   useEffect(() => {
@@ -176,7 +178,8 @@ function Home() {
       sorting: false,
       render: (rowData) => {
         // console.log(rowData);
-        return checkStep(rowData);
+        return (estimationView ? checkStep(rowData) : rowData.estName);
+        
         // <Link
         //   to={{
         //     pathname:
@@ -197,7 +200,7 @@ function Home() {
       title: "Estimation Description",
       field: "estDescription",
       render: (rowData) => {
-        return checkStepDes(rowData);
+        return (estimationView ? checkStepDes(rowData) : rowData.estDescription);
         // <Link
         //   to={{
         //     pathname:
@@ -220,9 +223,8 @@ function Home() {
       title: "Client Name",
       field: "projectId.client.clientName",
       render: (rowData) => {
-        //console.log(rowData);
         return (
-          <Link
+        clientView ? ( <Link
             to={{
               pathname:
                 "/All-Clients" + "/" + rowData.projectId.client.clientName,
@@ -230,7 +232,7 @@ function Home() {
           >
             {" "}
             {rowData.projectId.client.clientName}
-          </Link>
+          </Link> ) : rowData.projectId.client.clientName
         );
       },
     },
@@ -238,9 +240,8 @@ function Home() {
       title: "Project Name",
       field: "projectId.projectName",
       render: (rowData) => {
-        console.log(rowData);
         return (
-          <Link
+         projectView ? (<Link
             to={{
               pathname:
                 "/All-Clients/" +
@@ -252,7 +253,7 @@ function Home() {
           >
             {" "}
             {rowData.projectId.projectName}
-          </Link>
+          </Link> ) : rowData.projectId.projectName
         );
       },
     },

@@ -88,7 +88,12 @@ export default function CustomizedDialogs(props) {
       </DialogTitle>
       <DialogContent dividers>{props.children}</DialogContent>
       <DialogActions>
-        <Button size="small" color="primary" onClick={okFun}>
+        <Button
+          size="small"
+          color="primary"
+          onClick={okFun}
+          type={props.buttonType ? props.buttonType : "button"}
+        >
           {props.oktitle}
         </Button>
 
