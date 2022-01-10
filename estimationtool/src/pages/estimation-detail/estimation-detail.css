@@ -176,3 +176,12 @@
   width: 100%;
   overflow: hidden;
 }
+.generalWarning {
+  color: green;
+  font-size: 12px;
+}
+.generalWarning_item {
+  background-color: rgba(0, 128, 0, 0.15);
+  padding: 0 5px;
+  border-radius: 5px;
+}

@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const RequirementRepository = require("../repository/requirementRepository");
 
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
+const { defaultResponce } = require("../constant");
 
 module.exports.create = async (serviceData) => {
   try {
@@ -361,12 +362,20 @@ module.exports.getById = async ({ id }) => {
 };
 
 const checkValidation = (validationList, requirementList) => {
-  const err = [];
+  const error = [];
   validationList.map((validationItem) => {
-    let foundReq = requirementList.some((req) => req === validationItem);
-    if (!foundReq) err.push(validationItem.name);
+    let foundReq = requirementList.some(
+      (req) => req.Type._id.toString() === validationItem.id.toString()
+    );
+
+    if (!foundReq) {
+      error.push(validationItem.name);
+    }
   });
-  return err;
+
+  return error.length > 0
+    ? { err: error, isValid: false }
+    : { err: error, isValid: true };
 };
 
 module.exports.getRequirementData = async ({ id }) => {
@@ -478,16 +487,12 @@ module.exports.getRequirementData = async ({ id }) => {
     let estimations = await getEstBasicDetail(id);
     response.basicDetails = estimations;
 
-    console.log("requirementData", response.basicDetails);
-
     //check validation for req type
     //6
-    const validationReturn = checkValidation(
+    response.isReqValid = checkValidation(
       estimations.estTypeId.reqTypeValidation,
       response.requirementList
     );
-
-    console.log("validationReturn", validationReturn);
 
     return formatMongoData(response);
   } catch (err) {

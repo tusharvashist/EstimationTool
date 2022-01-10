@@ -89,6 +89,7 @@ const EstimationDetail = () => {
   const [tagDataArray, setTagDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
   const [countError, setCountError] = useState(false);
+  const [isRequirementValid, setIsRequirementValid] = useState({});
 
   const [openExport, setOpenExport] = useState(false);
 
@@ -252,7 +253,6 @@ const EstimationDetail = () => {
   const getRequirementDataById = (callback) => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
-        console.log(res);
         let dataResponse = res.data.body;
         console.log("requirement data by id", dataResponse);
 
@@ -311,6 +311,8 @@ const EstimationDetail = () => {
 
         setSummaryHeaderArray([...dataResponse.summaryCallHeader]);
         setSummaryDataArray([...dataResponse.summaryCalData]);
+
+        setIsRequirementValid(dataResponse.isReqValid);
 
         setLoader(false);
         callback();
@@ -457,6 +459,18 @@ const EstimationDetail = () => {
   const handleCountError = (flag) => {
     setCountError(flag);
   };
+  console.log("isRequirementValid", isRequirementValid.err);
+
+  const printErr = () => {
+    return isRequirementValid.err
+      ? isRequirementValid.err.map((el, i) => (
+          <span>
+            {el}
+            {i + 1 !== isRequirementValid.err.length && `,`}
+          </span>
+        ))
+      : "";
+  };
 
   return (
     <div className="estimation-detail-cover">
@@ -575,30 +589,26 @@ const EstimationDetail = () => {
       <Container>
         <Grid container>
           <Grid item class="multi-button-grid">
-            
-               <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/ImportExcelRequirements",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: headerData,
-                  },
-                }}
-              >
-                <Button
-                  style={{ marginRight: "15px" }}
-                  variant="outlined"
-                >
-                  {" "}
-                  Import Requirements
-                </Button>
-              </Link>
+            <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/ImportExcelRequirements",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: headerData,
+                },
+              }}
+            >
+              <Button style={{ marginRight: "15px" }} variant="outlined">
+                {" "}
+                Import Requirements
+              </Button>
+            </Link>
             <Button
               variant="outlined"
               className="estimation-detail-button"
@@ -627,6 +637,14 @@ const EstimationDetail = () => {
           <div>
             <div className="addReqTableHeader">
               <h3>Estimation (in {headerData.effortUnit}s)</h3>
+              {!isRequirementValid.isValid && (
+                <p className="generalWarning">
+                  Please include{" "}
+                  <span className="generalWarning_item">{printErr()}</span>
+                  &nbsp; since estimation type is{" "}
+                  <b>{headerData.estTypeId.estType}</b>
+                </p>
+              )}
             </div>
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
