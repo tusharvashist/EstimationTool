@@ -573,6 +573,30 @@ const EstimationDetail = () => {
       <Container>
         <Grid container>
           <Grid item class="multi-button-grid">
+            
+               <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/ImportExcelRequirements",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: headerData,
+                  },
+                }}
+              >
+                <Button
+                  style={{ marginRight: "15px" }}
+                  variant="outlined"
+                >
+                  {" "}
+                  Import Requirements
+                </Button>
+              </Link>
             <Button
               variant="outlined"
               className="estimation-detail-button"

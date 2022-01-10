@@ -15,6 +15,9 @@ global.ResourceWeekHours = 40;
 //do connection
 dbconnection();
 
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
+
 //cors
 app.use(cors());
 
@@ -42,6 +45,8 @@ app.use("/api/v1/project", require("./routes/project.route"));
 
 //----------- Role Route
 app.use("/api/v1/role", require("./routes/roleMaster.route"));
+
+app.use("/api/v1/uploadExcel", require("./routes/excelUpload.route"));
 
 //----------- Role Route
 app.use(

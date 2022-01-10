@@ -53,11 +53,27 @@ module.exports.getRequirementWithQuery = async ({ id }) => {
       throw new Error(constant.requirementMessage.INVALID_ID);
     }
 
-    var requirementList = await RequirementRepository.getRequirementWithQuery(
-      id
-    );
-    let response = { ...constant.requirementResponse };
+    var requirementList = await RequirementRepository.getRequirementWithQuery(id);
+    let response = { ...constant.requirementListResponse };
     response.featureList = requirementList;
+    var estimationCount = await RequirementRepository.numberOfEstimationInProject(id);
+    if (estimationCount.length != 0) {
+
+      response.noOfEstimation = estimationCount[0].estimationCount;
+    
+      if (response.featureList.length !=0 && response.noOfEstimation == 0) {
+        response.showDeleteAllRequirement = true;
+      } else {
+        response.showDeleteAllRequirement = false;
+      }
+    } else {
+      response.noOfEstimation = 0;
+      if (response.featureList.length == 0) {
+        response.showDeleteAllRequirement = false;
+      } else {
+         response.showDeleteAllRequirement = true;
+      }
+    }
 
     return formatMongoData(response);
   } catch (err) {
@@ -66,7 +82,9 @@ module.exports.getRequirementWithQuery = async ({ id }) => {
   }
 };
 
-module.exports.getUnpairedRequirementEstimation = async (query) => {
+
+
+module.exports.getUnpairedRequirementEstimation = async ( query) => {
   try {
     // if (!mongoose.Types.ObjectId(id)) {
     //   throw new Error(constant.requirementMessage.INVALID_ID);
@@ -283,6 +301,20 @@ module.exports.deleteRequirementData = async (id) => {
   }
 };
 
+module.exports.allRequirementDelete = async (id) => {
+  try {
+    var estimationCount = await RequirementRepository.numberOfEstimationInProject(id);
+    if (estimationCount.length == 0) {
+        var deleteAllRequirements = await RequirementRepository.deleteAllRequirements(id);
+        return formatMongoData(deleteAllRequirements);
+    } else {
+       throw new Error(constant.requirementMessage.DELETE_ALL_REQUIREMENT_ERROR);
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 class sumOfKey extends Array {
   sum(key) {
     return this.reduce((a, b) => a + (b[key] || 0), 0);
@@ -319,6 +351,7 @@ module.exports.getById = async ({ id }) => {
     throw new Error(err);
   }
 };
+
 
 module.exports.getRequirementData = async ({ id }) => {
   try {

@@ -1,12 +1,12 @@
 const constant = require("../constant");
 const estimationExportService = require("../service/estimationExportService");
-
+ 
 //@type     GET
 //@desc     To get all the data for excel
 module.exports.getAllData = async (req, res) => {
   try {
-    await estimationExportService.generateExcelReport(req.body);
-
+    let isComplete = await estimationExportService.generateExcelReport(req.body);
+    console.log(isComplete);
     res.status(200).send("Report Gentrated");
   } catch (err) {
     console.log(err);

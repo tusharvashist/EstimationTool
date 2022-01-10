@@ -1,5 +1,6 @@
 import axios from "axios";
 import Url from "../../shared/service/urls.service";
+var FormData = require('form-data');
 const RequirementService = {
     
     getTagsType: function () {
@@ -22,6 +23,13 @@ const RequirementService = {
         let url = Url.estimationDetail+"/allRequirement/"+actionId;        
         return axios.delete(url);
     },
+
+    uploadExcel: function (file,actionId) {
+        let formData = new FormData();
+        formData.append('file', file);
+        let url = Url.uploadExcel + "/" + actionId; 
+        return axios.post(url, formData, {});
+  },
 }
 
 export default RequirementService;

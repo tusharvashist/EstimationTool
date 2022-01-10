@@ -30,6 +30,20 @@ module.exports.createRequirement = async (serviceData) => {
     return result;
   }
 };
+module.exports.isRequirementAvailable = async (projectId,title) => {
+
+  const findRecord = await ProjectRequirement.find(
+    { title: title },
+    { project: projectId }
+  );
+
+  if (findRecord.length != 0) {
+    return  true;
+  } else {
+    return false;
+  }
+};
+
 
 module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
   const estHeaderModel = await EstHeaderModel.findById({
@@ -688,36 +702,7 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
     EstimationCalcAttributes: EstimationCalcAttributes,
   };
 
-  //     {
-  //       _id: "6177d49fb6e42413fe1baf18",
-  //       attributeCode: "DEV",
-  //       attributeName: "Front End",
-  //       description: "name",
-  //       Total: 265,
-  //     },
-  //     {
-  //       _id: "6177dc8bb6e42413fe1baf24",
-  //       attributeCode: "DEV",
-  //       attributeName: "Back End",
-  //       description: "Back End",
-  //       Total: 115,
-  //     },
-  //   ],
-  //   EstimationCalcAttributes: [
-  //     {
-  //       _id: "618b8f4b6259f87257bc2201",
-  //       calcAttribute: " ",
-  //       calcAttributeName: "QA",
-  //       Total: 85,
-  //     },
-  //     {
-  //       _id: "618b8f5f6259f87257bc2203",
-  //       calcAttribute: " ",
-  //       calcAttributeName: "ProjectManager",
-  //       Total: 95,
-  //     },
-  //   ],
-  // };
+
   console.log("ResourceCount :", resourceCount);
   return resourceCount;
 };
@@ -1090,4 +1075,42 @@ module.exports.getRequirementWithQuery = async (projectId) => {
   } else {
     return [];
   }
+};
+
+
+
+module.exports.numberOfEstimationInProject = async (projectId) => {
+
+  let estHeaderModel = await EstHeaderModel.aggregate(
+    [
+      {
+        $match: {
+          projectId: ObjectId(projectId),
+          isDeleted: false
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          estimationCount: {
+            $sum: 1
+          }
+        }
+      }
+    ]
+  );
+  
+  return estHeaderModel;
+};
+
+
+module.exports.deleteAllRequirements = async (projectId) => {
+
+   let deleteResponse = await ProjectRequirement.deleteMany({
+      project: projectId,
+    });
+    if (!deleteResponse) {
+      return new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+    }
+    return formatMongoData(deleteResponse);
 };
