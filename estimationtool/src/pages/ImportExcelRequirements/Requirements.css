@@ -35,3 +35,26 @@
   .MuiDataGrid-columnHeaderTitleContainer {
   flex-direction: unset !important;
 }
+.importFormRow {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.importFormRow > span {
+  padding-right: 10px;
+}
+.importFormRow_input {
+  width: 70% !important;
+  top: -5px !important;
+}
+.importFormRowContainer > div {
+  padding: 10px 0;
+}
+.importFormRow_Button {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+.importFormRow_Button > button {
+  margin: 0 10px;
+}
