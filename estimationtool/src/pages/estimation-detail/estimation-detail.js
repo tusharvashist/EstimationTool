@@ -186,9 +186,9 @@ const EstimationDetail = () => {
   console.log("HeaderData: ", headerData);
   const getBasicDetailById = (calback) => {
     setLoader(true);
-    console.log("Request for getById: ");
     EstimationService.getById(estimationId)
       .then((res) => {
+        console.log("getBasicDetailById", res.data.body);
         setHeaderData({ ...res.data.body.basicDetails });
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
@@ -252,7 +252,9 @@ const EstimationDetail = () => {
   const getRequirementDataById = (callback) => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
+        console.log(res);
         let dataResponse = res.data.body;
+        console.log("requirement data by id", dataResponse);
 
         var estHeaderAttribute = [
           {

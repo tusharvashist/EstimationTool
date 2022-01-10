@@ -27,6 +27,7 @@ module.exports = {
     tagSummaryHeader: [],
     tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
+    isReqValid: { message: "", isValid: true },
   },
 
   requirementListResponse: {

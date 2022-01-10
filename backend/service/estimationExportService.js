@@ -4,7 +4,7 @@ const resourceCountMixService = require("./resourceMixService");
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
 // include node fs module
-var fs = require('fs');
+var fs = require("fs");
 const { throws } = require("assert");
 
 module.exports.generateExcelReport = async (reportPayload) => {
@@ -16,9 +16,11 @@ module.exports.generateExcelReport = async (reportPayload) => {
   deleteFile();
 
   try {
-    await generateRequiredSpreadsheet(workbook,reportPayload);
+    await generateRequiredSpreadsheet(workbook, reportPayload);
     const Promise1 = workbook.xlsx.writeFile("./report/Estimation.xlsx");
-      Promise1.then(()=> {return true})
+    Promise1.then(() => {
+      return true;
+    });
   } catch (err) {
     console.log("Workbok Error + err" + err);
   }
@@ -45,6 +47,8 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       constant.excelSheetName.ESTIMATION_SUMMARY
     );
 
+    worksheet.properties.defaultColWidth = 20;
+
     let colTagData = (await getEstimationRequirementData(reportPayload))
       .estTagColumns;
 
@@ -64,7 +68,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
 
     worksheet.addTable({
       name: "MyTable2",
-      ref: "A20",
+      ref: `A${worksheet.rowCount + 5}`,
       headerRow: true,
       style: {
         theme: "TableStyleMedium6",
@@ -91,31 +95,32 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   if (getReportFlagValue("resourcePlanning", reportPayload)) {
     const worksheet = workbook.addWorksheet("Resource Planning");
     worksheet.columns = getResourcePlanningColumns();
-    var rowData = await getResourcePlanningRowData(reportPayload.estimationHeaderId);
+    var rowData = await getResourcePlanningRowData(
+      reportPayload.estimationHeaderId
+    );
     worksheet.addRows(rowData.resPlanningRowData);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     });
 
-    if(rowData.resPlanningRowData.length >0){
-     // Insert a row by sparse Array 
-    var rowValuesTotalCost = [];
-    rowValuesTotalCost[6] = "Total";
-    rowValuesTotalCost[7] = rowData.totalCost;
-    rowValuesTotalCost[8] = rowData.totalPrice;
-    worksheet.insertRow(worksheet.rowCount+1, rowValuesTotalCost);
-   
-    var rowValuesMargin = [];
-    rowValuesMargin[6] = "Margin";
-    rowValuesMargin[7] = rowData.margin;
-    worksheet.insertRow(worksheet.rowCount+1, rowValuesMargin);
-   
-    var rowValuesMarginPercent = [];
-    rowValuesMarginPercent[6] = "Margin %";
-    rowValuesMarginPercent[7] = rowData.marginPercent;
-    worksheet.insertRow(worksheet.rowCount+1, rowValuesMarginPercent);
+    if (rowData.resPlanningRowData.length > 0) {
+      // Insert a row by sparse Array
+      var rowValuesTotalCost = [];
+      rowValuesTotalCost[6] = "Total";
+      rowValuesTotalCost[7] = rowData.totalCost;
+      rowValuesTotalCost[8] = rowData.totalPrice;
+      worksheet.insertRow(worksheet.rowCount + 1, rowValuesTotalCost);
+
+      var rowValuesMargin = [];
+      rowValuesMargin[6] = "Margin";
+      rowValuesMargin[7] = rowData.margin;
+      worksheet.insertRow(worksheet.rowCount + 1, rowValuesMargin);
+
+      var rowValuesMarginPercent = [];
+      rowValuesMarginPercent[6] = "Margin %";
+      rowValuesMarginPercent[7] = rowData.marginPercent;
+      worksheet.insertRow(worksheet.rowCount + 1, rowValuesMarginPercent);
     }
-  
   }
 
   if (getReportFlagValue("resourceTimeline", reportPayload)) {
@@ -138,28 +143,27 @@ function getResourcePlanningColumns() {
 
 async function getResourcePlanningRowData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
-  const resData =  await resourceCountMixService.getResourceMixPlanning(payload);
-  console.log(
-    "Resoure Planning data",
-    resData
-  );
+  const resData = await resourceCountMixService.getResourceMixPlanning(payload);
+  console.log("Resoure Planning data", resData);
   var totalCost = resData.total.cost;
   var totalPrice = resData.total.price;
   var margin = resData.margin;
   var marginPercent = resData.marginPercent;
 
-  var resPlanningRowData = resData.resourceMixData.map((e,i) => {
-    return {s_no: i+1,
-            allocation: e.resourceMix.allocationPercent,
-            role: e.resourceMix.role.resourceRole,
-            skill: e.attributeName,
-            cost: e.resourceMix.role.cost,
-            price: e.resourceMix.role.price,
-            cost_cal: e.costcal,
-            price_cal: e.pricecal   }
-  })
-  
-  return {resPlanningRowData,totalCost,totalPrice,margin,marginPercent};
+  var resPlanningRowData = resData.resourceMixData.map((e, i) => {
+    return {
+      s_no: i + 1,
+      allocation: e.resourceMix.allocationPercent,
+      role: e.resourceMix.role.resourceRole,
+      skill: e.attributeName,
+      cost: e.resourceMix.role.cost,
+      price: e.resourceMix.role.price,
+      cost_cal: e.costcal,
+      price_cal: e.pricecal,
+    };
+  });
+
+  return { resPlanningRowData, totalCost, totalPrice, margin, marginPercent };
 }
 
 function getResourceCountMixColumns() {
@@ -222,6 +226,7 @@ async function getEstimationRequirementData(conditions) {
     return {
       name: el.headerName === "" ? "Tag" : el.headerName,
       key: el.id === 1 ? "tag" : el.id,
+      width: 20,
     };
   });
   estTagRowData = requirementData.tagSummaryData.map((el) => {
@@ -236,6 +241,7 @@ async function getEstimationRequirementData(conditions) {
     return {
       name: el.headerName,
       key: el.field,
+      width: 20,
     };
   });
   estCalRowData = requirementData.summaryCalData.map((el) => {
@@ -265,9 +271,9 @@ async function getEstimationRequirementData(conditions) {
   };
 }
 
-function deleteFile(){
-  try{
+function deleteFile() {
+  try {
     // delete file if already exists
     fs.unlinkSync("./report/Estimation.xlsx");
-  }catch(err){}
+  } catch (err) {}
 }
