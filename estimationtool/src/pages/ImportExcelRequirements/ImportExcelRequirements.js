@@ -10,6 +10,8 @@ import { ClientProjectHeader ,EstimationHeader} from "../estimation-detail/heade
 import { RequirementTable, RequirementTableWithFilter} from "./RequirementTable"
 import  RequirementService from "./requirement.service"
 import Deletedailog from "./delete-dailog"
+import { MdOpenInBrowser ,MdDone} from "react-icons/md";
+
 const ImportExcelRequirements = () => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
@@ -80,6 +82,17 @@ const ImportExcelRequirements = () => {
 
 
 
+  const getTemplate = () => {
+    setDeleteDailog(false);
+    RequirementService.getTemplate(projectsInfo._id)
+      .then((res) => {
+        console.log("get EstimationService by id error");
+        
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
+  };
 
   const allRequirementDelete = () => {
     setDeleteDailog(false);
@@ -192,42 +205,48 @@ const ImportExcelRequirements = () => {
       {headerData.estName ? ( <EstimationHeader data={headerData} />) : null}
       <BorderedContainer>
           <Container>
-      <Grid >
-        <p>  <Link href="#">Download</Link> a template file
-          containing the default column names that
-          will be mapped in requirements.</p>
+          <Grid >
+            <p>
+              <Button onClick={getTemplate} style={{ padding: "0", "textTransform": "none" }} component={Link} to="/about" variant="d" color="primary">
+                Download</Button> a template file containing the default column names that will be mapped in requirements.</p>
           </Grid>
-        </Container></BorderedContainer>
+        </Container>
+      </BorderedContainer>
       <BorderedContainer>
-        <Container>
-        <Grid container>
-          <Grid item class="multi-button-grid" >
-              <p>Import Requirements: </p>
+        <Grid container  >
+          <Grid item xs={3} direction="row" justifyContent="flex-start" alignItems="center" >
+            Import Requirements: 
                 <input
-        style={{ display: "none" }}
-        // accept=".zip,.rar"
-        ref={inputFile}
-        onChange={handleFileUpload}
-        type="file"
+                  style={{ display: "none" }}
+                  ref={inputFile}
+                  onChange={handleFileUpload}
+                  type="file"
               />
+            </Grid>
+             <Grid item xs={6} direction="row" justifyContent="flex-start" alignItems="center" >
                <TextField
-                id="standard-basic"
+                style={{ padding: "0 10px" }}
                 label={browseFileLbl}
                 variant="standard"
                 value={selectedFileName}
-                
               />
-              <Button onClick={browseFile} variant="outlined">
-                Browse
+              </Grid>
+               <Grid item xs={3} direction="row" justifyContent="flex-start" alignItems="center" >
+            <Button onClick={browseFile} variant="outlined">
+              <MdOpenInBrowser style={{fontSize: "20px"}}/>
+              &nbsp;
+              Browse
               </Button>
               </Grid>
-                <Grid item class="multi-button-grid" >
-              <Button onClick={handleSubmission} variant="outlined">
-                Submit
-              </Button>
-	        </Grid>
+                <Grid item xs={12} style={{width: "100%"}}  direction="row" justifyContent="flex-end" alignItems="center" >
+                 <Button onClick={handleSubmission} variant="outlined">
+                    <MdDone style={{fontSize: "20px"}}/>
+                     &nbsp;
+                       Submit
+                   </Button>
+	              </Grid> 
+               
         </Grid>
-      </Container>
       </BorderedContainer>
      
       <BorderedContainer>
