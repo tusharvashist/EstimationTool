@@ -466,7 +466,7 @@ const EstimationDetail = () => {
       ? isRequirementValid.err.map((el, i) => (
           <span>
             {el}
-            {i + 1 !== isRequirementValid.err.length && `,`}
+            {i + 1 !== isRequirementValid.err.length && `, `}
           </span>
         ))
       : "";
