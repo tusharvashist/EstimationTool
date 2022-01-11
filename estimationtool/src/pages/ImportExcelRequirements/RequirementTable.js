@@ -32,31 +32,29 @@ import Pagination from "@mui/material/Pagination";
 import { ClassNames } from "@emotion/react";
 import { dark } from "@material-ui/core/styles/createPalette";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 function CustomFooterStatusComponent(props) {
   return (
-    <Box sx={{ padding: '10px', display: 'flex' }}>
-      <p>No of records: {props.noOfRecords} 
+    <Box sx={{ padding: "10px", display: "flex" }}>
+      <p>
+        No of records: {props.noOfRecords}
         <br></br>
-        No of error: 5
-        <br></br>
-        No of modification: 4
-        <br></br>
+        No of error: 5<br></br>
+        No of modification: 4<br></br>
         No of records inserted: 4
       </p>
     </Box>
   );
 }
 CustomFooterStatusComponent.propTypes = {
-  noOfRecords: PropTypes.oneOf(['connected', 'disconnected']).isRequired,
+  noOfRecords: PropTypes.oneOf(["connected", "disconnected"]).isRequired,
 };
 
 export const RequirementTable = (props) => {
-
   const classes = useTableStyle();
 
- // const classes = useStyles();
+  // const classes = useStyles();
   const location = useLocation();
   const [pageSize, setPageSize] = React.useState(10);
   const clientInfo = { ...location.state.clientInfo };
@@ -80,12 +78,11 @@ export const RequirementTable = (props) => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
   //const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [requirementSummary, setRequirementSummary] =
-    useState({
+  const [requirementSummary, setRequirementSummary] = useState({
     noOfRecords: 0,
     noOfError: 0,
     noOfModification: 0,
-    noOfRecordsInserted: 0
+    noOfRecordsInserted: 0,
   });
 
   useEffect(() => {
@@ -202,17 +199,18 @@ export const RequirementTable = (props) => {
               ))}
             </Select>
           </div> */}
-            <div style={{ height: 400, width: "100%" }}>
-            
+          <div style={{ height: 400, width: "100%" }}>
             <DataGrid
               className={`${classes.root} ${classes.dataGrid}`}
               rows={requirementHeaderDataFilter}
               columns={requirementHeader}
+              // columns={[{ field: "aa", headerAlign:'left' }]}
               hideFooterPagination={false}
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               rowsPerPageOptions={[10, 20, 50]}
               pagination
+              error={true}
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
                 //selected={(event, rowData, togglePanel) => {
@@ -226,23 +224,26 @@ export const RequirementTable = (props) => {
                   props.handleCheckBoxClicked(rows);
                 }
               }}
-                components={{
-                  Footer: () => <Box sx={{ padding: '10px', display: 'flex' }}>
-                                 <p>No of records: {props.requirementSummary.noOfRecords} 
-                                 <br></br>
-                                   No of error: {props.requirementSummary.noOfError} 
-                                  <br></br>
-                                   No of modification:  {props.requirementSummary.noOfModification} 
-                                  <br></br>
-                                        No of records inserted:  {props.requirementSummary.noOfRecordsInserted} 
-                                  </p>
-                                 </Box>,
-                }}
-                
-                
+              components={{
+                Footer: () => (
+                  <Box sx={{ padding: "10px", display: "flex" }}>
+                    <p>
+                      No of records: {props.requirementSummary.noOfRecords}
+                      <br></br>
+                      No of error: {props.requirementSummary.noOfError}
+                      <br></br>
+                      No of modification:{" "}
+                      {props.requirementSummary.noOfModification}
+                      <br></br>
+                      No of records inserted:{" "}
+                      {props.requirementSummary.noOfRecordsInserted}
+                    </p>
+                  </Box>
+                ),
+                ErrorOverlay: () => <p>Error</p>,
+              }}
             />
           </div>
-          
         </>
       )}
     </>

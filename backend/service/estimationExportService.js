@@ -1,6 +1,7 @@
 const estimationRequirementService = require("./estimationRequirementService");
 const resourceCountMixService = require("./resourceMixService");
 const estimationHeaderModal = require("../database/models/estHeaderModel");
+const estimationResourceCountService = require("./estimationResourceCountService");
 
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
@@ -96,6 +97,66 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   }
 
   if (getReportFlagValue("resourceCount", reportPayload)) {
+    let newPayload = { estheaderid: reportPayload.estimationHeaderId };
+
+    const worksheet = workbook.addWorksheet(
+      constant.excelSheetName.RESOURCE_MIX
+    );
+    worksheet.properties.defaultColWidth = 20;
+
+    let rowData = await estimationResourceCountService.getResourceCount(
+      newPayload
+    );
+
+    console.log("rowData", rowData);
+
+    let colData = [
+      { header: "S No.", key: "s_no", width: 10 },
+      { header: "Resource Count", key: "resourceCount", width: 15 },
+      {
+        header: "Skills(Effort & Summary Attributes)",
+        key: "skill",
+        width: 30,
+      },
+      { header: "Technologies", key: "techskills", width: 20 },
+      { header: "Role", key: "role", width: 20 },
+    ];
+
+    //Here
+    const getStringRoleCount = () => {};
+    let roleStringArr = rowData
+      .map((el) => {
+        return el.rolecount.map((item) => {
+          return `${item.count} ${item.resourceRole}`;
+        });
+      })
+      .map((item) => {
+        return item;
+      });
+
+    console.log("roleStringArr", roleStringArr);
+
+    let tableRowData = rowData.map((data, i) => {
+      return {
+        s_no: i + 1,
+        resourceCount: data.resourceCount,
+        skill: data.attributeName,
+        techskills: data.skills,
+      };
+    });
+
+    worksheet.addTable({
+      name: "MyTable",
+      ref: "A1",
+      headerRow: true,
+      totalsRow: true,
+      style: {
+        theme: "TableStyleDark3",
+        showRowStripes: true,
+      },
+      columns: colData,
+      rows: tableRowData,
+    });
   }
 
   if (getReportFlagValue("resourcePlanning", reportPayload)) {
@@ -150,7 +211,7 @@ function getResourcePlanningColumns() {
 async function getResourcePlanningRowData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
   const resData = await resourceCountMixService.getResourceMixPlanning(payload);
-  console.log("Resoure Planning data", resData);
+  //console.log("Resoure Planning data", resData);
   var totalCost = resData.total.cost;
   var totalPrice = resData.total.price;
   var margin = resData.margin;

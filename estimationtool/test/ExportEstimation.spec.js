@@ -1,4 +1,3 @@
-"use strict";
 import React from "react";
 import { findDOMNode } from "react-dom";
 import ReactTestUtils from "react-dom/test-utils";

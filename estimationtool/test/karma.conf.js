@@ -1,7 +1,7 @@
 module.exports = function (config) {
   config.set({
     frameworks: ["jasmine"],
-    files: ["./*.spec.js"],
+    files: [{ pattern: "*/*.spec.js", type: "module", autoWatch: true }],
     singleRun: false,
     concurrency: Infinity,
     autoWatch: true,
