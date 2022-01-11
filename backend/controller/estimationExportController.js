@@ -1,6 +1,6 @@
 const constant = require("../constant");
 const estimationExportService = require("../service/estimationExportService");
- 
+
 //@type     GET
 //@desc     To get all the data for excel
 module.exports.getAllData = async (req, res) => {
@@ -17,5 +17,13 @@ module.exports.getAllData = async (req, res) => {
 };
 
 module.exports.getReport = async (req, res) => {
-  res.download("./report/Estimation.xlsx", "Estimation.xlsx");
+  try {
+    let name = await estimationExportService.checkEstName(req.query);
+    res.download(
+      `./report/Estimation_${name.estName}.xlsx`,
+      `Estimation_${name.estName}.xlsx`
+    );
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 };

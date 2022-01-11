@@ -1,5 +1,6 @@
 const estimationRequirementService = require("./estimationRequirementService");
 const resourceCountMixService = require("./resourceMixService");
+const estimationHeaderModal = require("../database/models/estHeaderModel");
 
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
@@ -8,16 +9,21 @@ var fs = require("fs");
 const { throws } = require("assert");
 
 module.exports.generateExcelReport = async (reportPayload) => {
+  //Get Estimation Name
+  let est = await this.checkEstName(reportPayload);
+
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Estimation";
   workbook.created = new Date();
 
   // delete old file if exist
-  deleteFile();
+  deleteFile(est.estName);
 
   try {
     await generateRequiredSpreadsheet(workbook, reportPayload);
-    const Promise1 = workbook.xlsx.writeFile("./report/Estimation.xlsx");
+    const Promise1 = workbook.xlsx.writeFile(
+      `./report/Estimation_${est.estName}.xlsx`
+    );
     Promise1.then(() => {
       return true;
     });
@@ -271,9 +277,17 @@ async function getEstimationRequirementData(conditions) {
   };
 }
 
-function deleteFile() {
+module.exports.checkEstName = async (reqPayload) => {
+  let est = await estimationHeaderModal.findById(
+    reqPayload.estimationHeaderId,
+    "estName"
+  );
+  return est;
+};
+
+function deleteFile(name) {
   try {
     // delete file if already exists
-    fs.unlinkSync("./report/Estimation.xlsx");
+    fs.unlinkSync(`./report/Estimation_${name}.xlsx`);
   } catch (err) {}
 }

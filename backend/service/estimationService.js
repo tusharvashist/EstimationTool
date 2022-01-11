@@ -199,7 +199,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
-    console.log(".>>>>>>....>>>>>>>." + serviceData);
+    // console.log(".>>>>>>....>>>>>>>." + serviceData);
     //Remove All Attributes from Estimation Header
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
       serviceData,
@@ -542,10 +542,10 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
 };
 
 function ValidateFormula(FormulaTags, tag) {
-  console.log("##########");
-  console.log(FormulaTags);
-  console.log(tag);
-  console.log("##########");
+  // console.log("##########");
+  // console.log(FormulaTags);
+  // console.log(tag);
+  // console.log("##########");
   let exists = FormulaTags.filter((x) => String(x) == String(tag));
   if (exists.length > 0) return true;
 }
