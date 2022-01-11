@@ -35,7 +35,7 @@ export const RequirementTable = (props) => {
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
-    { headerName: "RequirementID", field: "req_id", width: 170 },
+    { headerName: "Req. Id", field: "req_id", width: 80 },
     { headerName: "Requirement", field: "Requirement", width: 170 },
     { headerName: "Description", field: "Description", width: 200 },
     { headerName: "Tag", field: "Tag", width: 150 },
