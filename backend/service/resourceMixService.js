@@ -19,15 +19,17 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       var priceTotal = 0;
       var margin = 0;
       var marginPercent = 0;
-
+      var weeks = [];
       costTotal = getSumFromObjects(queryResult,"costcal");
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);
       marginPercent = calculateMarginPercentage(margin,priceTotal);
-
+      weeks = calculateWeeks(queryResult);
+      console.log(weeks);
       response.total = {'cost': '$'+ costTotal, 'price': '$'+ priceTotal};
       response.margin = '$' + margin;
       response.marginPercent = marginPercent+'%';
+      response.weeks= weeks;
       return response;
     } catch (err) {
       throw new Error(err);
@@ -36,6 +38,23 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
 
   function getSumFromObjects(arr,prop) {
     return arr.reduce((a,curr) => a + curr[prop], 0);
+  }
+
+  function calculateWeeks(arr) {
+    var weeksArray = [];
+    let totalhours = 40
+    let flag =0;
+    arr.forEach(t => {
+      var temp = {};
+      temp._id=t._id;
+      for(let i=1;i<=t.estimationHeader.estTentativeTimeline; i++) {
+        let str = 'week'+i;
+        let cal = totalhours * (t.resourceMix.allocationPercent / 100);
+        temp[str] = cal;
+      }
+      weeksArray.push(temp);
+    });
+    return weeksArray;
   }
 
   function calculateMargin(priceTotal,costTotal){
