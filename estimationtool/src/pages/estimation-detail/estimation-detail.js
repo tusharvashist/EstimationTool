@@ -279,6 +279,14 @@ const EstimationDetail = () => {
             ],
           },
           {
+            headerName: "RequirementID",
+            field: "req_id",
+            //id: 1,
+            //editable: false,
+            flex: 1,
+            minWidth: 140,
+          },
+          {
             headerName: "Requirement",
             field: "Requirement",
             //id: 1,

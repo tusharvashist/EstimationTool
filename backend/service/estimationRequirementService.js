@@ -520,6 +520,7 @@ async function getRequirementList(
         _id: item._id,
         id: item._id,
         action: item._id,
+        req_id: item.requirement.req_id,
       };
 
       if (item.requirement.queryassumptions.length !== 0) {
