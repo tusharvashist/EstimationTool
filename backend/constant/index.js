@@ -27,13 +27,14 @@ module.exports = {
     tagSummaryHeader: [],
     tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
+    isReqValid: { err: [], isValid: true },
   },
 
   requirementListResponse: {
     showDeleteAllRequirement: false,
-    noOfEstimation: 0, 
+    noOfEstimation: 0,
     featureList: [],
-    requirementSummary:[],
+    requirementSummary: [],
   },
 
   estimationAttribute: {
@@ -83,7 +84,8 @@ module.exports = {
     REQUIREMENT_DATA_UPDATE: "Requirement data update successfully",
     REQUIREMENT_DELETE: "Requirement delete successfully",
     DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
-    DELETE_ALL_REQUIREMENT_ERROR: "ALL requirement can't be deleted because estimation in this project already exist.",
+    DELETE_ALL_REQUIREMENT_ERROR:
+      "ALL requirement can't be deleted because estimation in this project already exist.",
   },
 
   excelUploadMessage: {
@@ -91,10 +93,10 @@ module.exports = {
     REQUIREMENT_FILE_NOT_RECEIVED: "Excel file not received.",
     REQUIREMENT_NOTFOUND_REQUIREMENT: "Requirement not found!",
     REQUIREMENT_NOTFOUND_Description: "Description not found!",
-    
+
     REQUIREMENT_ALREADY_AVAILABLE: "Requirement already available!",
-    
-    REQUIREMENT_DUPLICATE : "Duplicate requirement!",
+
+    REQUIREMENT_DUPLICATE: "Duplicate requirement!",
   },
 
   estimationTemplateCalcAttrMessage: {
@@ -159,6 +161,8 @@ module.exports = {
       "estimationHeaderAtrributeCalc delete successfully",
     DUPLICATE_estimationHeaderAtrributeCalc:
       "estimationHeaderAtrributeCalc already exist with given name.",
+    estimationHeaderAtrributeCalcCyclic_ERROR:
+      "Calc Attribute formula having circular references,Please check formula tags.",
   },
 
   techSkillMasterMessage: {

@@ -13,6 +13,7 @@ const { estimationHeaderAtrributeMessage } = require("../constant");
 const RequirementType = require("../database/models/requirementType");
 const RequirementTag = require("../database/models/requirementTag");
 const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
+const { valid } = require("joi");
 
 // module.exports.createEstimation = async(serviceData)=>{
 //   try{
@@ -123,7 +124,9 @@ module.exports.createEstimationHeader = async (serviceData) => {
     let estimation = new EstimationHeader({ ...serviceData });
     estimation.estStep = "1";
     estimation.createdBy = global.loginId;
-    const findRecord = await EstimationHeader.find({ estName: estimation.estName });
+    const findRecord = await EstimationHeader.find({
+      estName: estimation.estName,
+    });
     if (findRecord.length != 0) {
       throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE);
     }
@@ -152,13 +155,19 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       throw new Error(constant.estimationMessage.INVALID_ID);
     }
 
-    const findRecord = await EstimationHeader.find({ estName: updatedInfo.estName });
+    const findRecord = await EstimationHeader.find({
+      estName: updatedInfo.estName,
+    });
     updatedInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
       if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
-        let estimation = await EstimationHeader.findOneAndUpdate({ _id: id }, updatedInfo, {
-          new: true,
-        });
+        let estimation = await EstimationHeader.findOneAndUpdate(
+          { _id: id },
+          updatedInfo,
+          {
+            new: true,
+          }
+        );
         if (!estimation) {
           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
         }
@@ -182,7 +191,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
       "something went wrong: service > Update Estimation Header ",
       err
     );
-   
+
     throw new Error(err);
   }
 };
@@ -318,7 +327,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
       );
-      console.log("hi this is service data of final step " + estimation);
+      //console.log("hi this is service data of final step " + estimation);
       if (estimation) {
         estimation.estStep = "3";
         estimation.updatedBy = global.loginId;
@@ -341,6 +350,58 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
         }
       });
 
+      //Check formula for circular error
+      let errorData = [];
+      serviceData.forEach(async (element) => {
+        let estcalcdata = new EstimationHeaderAtrributeCalc({
+          ...element,
+        });
+        //errorData.push(estcalcdata);
+        let FormulaTags = AddItemInJsonList([], estcalcdata.formulaTags);
+        //check tag exits in formula or not
+        if (ValidateFormula(FormulaTags, estcalcdata.tag)) {
+          errorData.push(estcalcdata);
+          return;
+        }
+
+        // Add new formula tags in calc attribute to expand formula
+        let check = false;
+        let formulas = FormulaTags;
+        do {
+          for (let index = 0; index < FormulaTags.length; index++) {
+            const formulaelement = FormulaTags[index];
+
+            let data = serviceData.filter(
+              (x) =>
+                String(x.tag) == String(formulaelement) &&
+                String(x.tag) != String(estcalcdata.tag)
+            );
+
+            if (data.length > 0) {
+              check = true;
+              let estcalc = new EstimationHeaderAtrributeCalc({
+                ...data[0],
+              });
+              ///console.log("--------", formulas);
+              formulas = AddItemInJsonList(formulas, estcalc.formulaTags);
+
+              if (ValidateFormula(formulas, estcalcdata.tag)) {
+                errorData.push(estcalcdata);
+                return;
+              }
+            }
+          }
+          if (FormulaTags.length != formulas.length) {
+            FormulaTags = formulas;
+          } else check = false;
+        } while (check);
+      });
+
+      if (errorData.length > 0) {
+        throw new Error(
+          constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalcCyclic_ERROR
+        );
+      }
       //check data based on est header id and calc id , if found- then update , else insert
 
       var bulk =
@@ -380,12 +441,10 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
       );
   } catch (err) {
     console.log(
-      "something went wrong: service 12121`22> createEstimation ",
+      "something went wrong: service createEstimation Calc Attribute",
       err
     );
-    throw new Error(
-      constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR
-    );
+    throw new Error(err);
   }
 };
 
@@ -481,3 +540,21 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
     throw new Error(err);
   }
 };
+
+function ValidateFormula(FormulaTags, tag) {
+  console.log("##########");
+  console.log(FormulaTags);
+  console.log(tag);
+  console.log("##########");
+  let exists = FormulaTags.filter((x) => String(x) == String(tag));
+  if (exists.length > 0) return true;
+}
+
+function AddItemInJsonList(list, items) {
+  items.forEach((element) => {
+    if (list.filter((x) => String(x) == String(element)).length == 0) {
+      list.push(element);
+    }
+  });
+  return list;
+}

@@ -1,17 +1,20 @@
+"use strict";
 import React from "react";
 import { findDOMNode } from "react-dom";
 import ReactTestUtils from "react-dom/test-utils";
-import { ExportEstimationPopup } from "./ExportEstimation";
+import ExportEstimation from "./ExportEstimation";
 
 describe("ExportEstimation", () => {
-  let result, chart;
+  let result, exportEstimation;
 
   beforeEach(() => {
-    result = ReactTestUtils.renderIntoDocument(<ExportEstimationPopup />);
-    cart = findDOMNode(result);
+    result = ReactTestUtils.renderIntoDocument(
+      <ExportEstimation.ExportEstimationPopup />
+    );
+    exportEstimation = findDOMNode(result);
   });
 
   it("Renders Export popup", () => {
-    expect(chart).toBeDefined();
+    expect(exportEstimation).toBeDefined();
   });
 });

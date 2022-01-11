@@ -22,7 +22,7 @@ module.exports.createPermission = async (serviceData) => {
     }
 }
 
-module.exports.getAllPermission = async ({ }) => {
+module.exports.getAllPermission = async () => {
     try {
         let lst = await Permission.find().
             populate({
