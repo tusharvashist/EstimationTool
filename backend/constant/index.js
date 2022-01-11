@@ -301,6 +301,10 @@ module.exports = {
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
   },
+  timelinePlanningMessage: {
+    TIMELINEPLANNING_FETCH: "Resource timeline planning fetch successfully",
+    INVALID_ID: "Invalid id",
+  },
   excelSheetName: {
     ESTIMATION_DETAIL: "Estimation Detail",
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
