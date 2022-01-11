@@ -16,6 +16,8 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
+
+import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import {
   DataGrid,
   GridToolbarContainer,
@@ -51,8 +53,12 @@ CustomFooterStatusComponent.propTypes = {
 };
 
 export const RequirementTable = (props) => {
+
+  const classes = useTableStyle();
+
+ // const classes = useStyles();
   const location = useLocation();
-  const [pageSize, setPageSize] = React.useState(5);
+  const [pageSize, setPageSize] = React.useState(10);
   const clientInfo = { ...location.state.clientInfo };
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
@@ -85,8 +91,6 @@ export const RequirementTable = (props) => {
   useEffect(() => {
     setRequirementHeaderData([...props.requirementHeaderData]);
     setFilterRequirementHeaderData([...props.requirementHeaderData]);
-    //setRequirementSummary(...props.requirementSummary);
-    // setRequirementTypeArray([...props.requirementTypeArray]);
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
 
@@ -168,7 +172,6 @@ export const RequirementTable = (props) => {
       },
     })
   );
-  const classes = useStyles();
   console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
 
   //console.log("available: ", available);
@@ -202,13 +205,14 @@ export const RequirementTable = (props) => {
             <div style={{ height: 400, width: "100%" }}>
             
             <DataGrid
-              className={classes.root}
+              className={`${classes.root} ${classes.dataGrid}`}
               rows={requirementHeaderDataFilter}
               columns={requirementHeader}
-                 pageSize={pageSize}
-        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-        rowsPerPageOptions={[5, 10, 20]}
-        pagination
+              hideFooterPagination={false}
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[10, 20, 50]}
+              pagination
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
                 //selected={(event, rowData, togglePanel) => {
@@ -224,15 +228,15 @@ export const RequirementTable = (props) => {
               }}
                 components={{
                   Footer: () => <Box sx={{ padding: '10px', display: 'flex' }}>
-      <p>No of records: {props.requirementSummary.noOfRecords} 
-        <br></br>
-        No of error: {props.requirementSummary.noOfError} 
-        <br></br>
-        No of modification:  {props.requirementSummary.noOfModification} 
-        <br></br>
-        No of records inserted:  {props.requirementSummary.noOfRecordsInserted} 
-      </p>
-    </Box>,
+                                 <p>No of records: {props.requirementSummary.noOfRecords} 
+                                 <br></br>
+                                   No of error: {props.requirementSummary.noOfError} 
+                                  <br></br>
+                                   No of modification:  {props.requirementSummary.noOfModification} 
+                                  <br></br>
+                                        No of records inserted:  {props.requirementSummary.noOfRecordsInserted} 
+                                  </p>
+                                 </Box>,
                 }}
                 
                 

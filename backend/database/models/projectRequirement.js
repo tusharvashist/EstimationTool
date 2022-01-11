@@ -1,6 +1,7 @@
 const { boolean } = require("joi");
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const projectRequirementSchema = new mongoose.Schema(
   {
@@ -52,5 +53,6 @@ const projectRequirementSchema = new mongoose.Schema(
     },
   }
 );
+projectRequirementSchema.plugin(AutoIncrement, {inc_field: 'req_id'});
 projectRequirementSchema.index({ updatedAt: "-1" });
 module.exports = mongoose.model("ProjectRequirement", projectRequirementSchema);
