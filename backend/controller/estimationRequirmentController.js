@@ -43,6 +43,7 @@ module.exports.update = async (req, res) => {
     responce.message = constant.requirementMessage.REQUIREMENT_UPDATE;
     responce.body = responceFromClientSer;
   } catch (err) {
+    responce.status = 400;
     responce.message = err.message;
   }
   return res.status(responce.status).send(responce);

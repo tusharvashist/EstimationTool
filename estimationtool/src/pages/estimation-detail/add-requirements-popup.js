@@ -168,12 +168,38 @@ const AddRequirements = (props) => {
       setQuery(props.editData[0].Query);
       setAssumption(props.editData[0].Assumption);
       setReply(props.editData[0].Reply);
-      setSelectedRequirementTag({
-        _id: props.editData[0].Tagid,
-        name: props.editData[0].Tag,
-      });
+
+      if (props.editData[0].Tagid !== undefined) {
+        setSelectedRequirementTag({
+          _id: props.editData[0].Tagid,
+          name: props.editData[0].Tag,
+        });
+      } else {
+        setSelectedRequirementTag({
+          _id: 0,
+          name: "",
+        });
+      }
+      // setSelectedRequirementTag({
+      //   _id: props.editData[0].Tagid,
+      //   name: props.editData[0].Tag,
+      // });
+      //setSelectedRequirementType(props.editData[0].Type);
+      if (props.editData[0].Type !== undefined) {
       setSelectedRequirementType(props.editData[0].Type);
-      setId(props.editData[0].requirementId);
+        // setSelectedRequirementType({
+        //   _id: props.editData[0].Typeid,
+        //   name: props.editData[0].Type,
+        // });
+      } else {
+        
+        setSelectedRequirementType({
+          _id: 0,
+          name: "",
+        });
+      }
+        
+        setId(props.editData[0].requirementId);
       setFormdata();
     }
   }, [

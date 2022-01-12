@@ -42,7 +42,7 @@ const AddRequirements = (props) => {
   const [isOpen, setOpen] = React.useState({});
 
   useEffect(() => {
-    setFormdata();
+    setFormatData();
   }, [
     requirementTitle,
     requirementDescription,
@@ -56,9 +56,7 @@ const AddRequirements = (props) => {
   const onSubmitForm = (e) => {
     if (
       requirementTitle &&
-      requirementDescription &&
-      selectedRequirementType &&
-      selectedRequirementTag
+      requirementDescription
     ) {
       setShowError(false);
       callAPI();
@@ -68,60 +66,24 @@ const AddRequirements = (props) => {
   };
 
   const callAPI = () => {
-    // setFormdata();
-    // if (props.editData) {
-    //   EstimationService.updateRequirement(id, formData)
-    //     .then((res) => {
-    //       props.saveFun();
-    //       // setOpen({ open: true, severity: "success", message: res.data.message });
-    //     })
-    //     .catch((err) => {
-    //       console.log("get updateRequirement by id error", err);
-    //       // if ((err.response.data = 401) || (err.response.data = 404)) {
-    //       //   let url = "/login";
-    //       //   history.push(url);
-    //       // }
-    //       setOpen({
-    //         open: true,
-    //         severity: "error",
-    //         message: err.response.data.message,
-    //       });
-    //     });
-    // } else {
-    //   EstimationService.createRequirement(formData)
-    //     .then((res) => {
-    //       props.saveFun();
-    //       // setOpen({ open: true, severity: "success", message: res.data.message });
-    //     })
-    //     .catch((err) => {
-    //       console.log("get createRequirement by id error", err);
-    //       // if ((err.response.data = 401) || (err.response.data = 404)) {
-    //       //   let url = "/login";
-    //       //   history.push(url);
-    //       // }
-    //       setOpen({
-    //         open: true,
-    //         severity: "error",
-    //         message: err.response.data.message,
-    //       });
-    //     });
-    // }
+    setFormatData();
+    props.saveFun(editData[0].id , formData);
   };
 
-  const setFormdata = () => {
-    setFormData({
-      title: requirementTitle,
-      description: requirementDescription,
-      tag: selectedRequirementTag._id,
-      type: selectedRequirementType._id,
-      mitigation: "mitigation",
-      project: props.project,
-      estHeader: props.estHeader,
-      isDeleted: false,
-      query: query,
-      assumption: assumption,
-      reply: reply,
-    });
+  const setFormatData = () => {
+      setFormData({
+        Requirement: requirementTitle,
+        description: requirementDescription,
+        tag: selectedRequirementTag.name,
+        type: selectedRequirementType.name,
+        mitigation: "mitigation",
+        project: props.project,
+        estHeader: props.estHeader,
+        isDeleted: false,
+        query: query,
+        assumption: assumption,
+        reply: reply,
+      });
   };
 
   const handelRequirement = (event) => {
@@ -168,13 +130,32 @@ const AddRequirements = (props) => {
       setQuery(props.editData[0].Query);
       setAssumption(props.editData[0].Assumption);
       setReply(props.editData[0].Reply);
-      setSelectedRequirementTag({
-        _id: props.editData[0].Tagid,
+      if (props.editData[0].TagId !== undefined) {
+          setSelectedRequirementTag({
+        _id: props.editData[0].TagId,
         name: props.editData[0].Tag,
       });
-      setSelectedRequirementType(props.editData[0].Type);
+      } else {
+          setSelectedRequirementTag({
+        _id: 0,
+        name: "",
+      });
+      }
+      if (props.editData[0].Type !== undefined) {
+      
+           setSelectedRequirementType({
+        _id: props.editData[0].TypeId,
+        name: props.editData[0].Type,
+      });
+      } else {
+        
+        setSelectedRequirementType({
+        _id: 0,
+        name: "",
+      });
+      }
       setId(props.editData[0].requirementId);
-      setFormdata();
+      setFormatData();
     }
   }, [
     props.requirementTagArray,
@@ -203,8 +184,8 @@ const AddRequirements = (props) => {
           <FormControl fullWidth>
             <InputLabel id="requirement-group">Tag</InputLabel>
             <Select
-              required
-              error={showError && !selectedRequirementTag.name}
+             // required
+             // error={showError && !selectedRequirementTag.name}
               labelId="requirement-tag"
               id="requirement-tag"
               value={selectedRequirementTag._id}
@@ -225,8 +206,8 @@ const AddRequirements = (props) => {
           <FormControl fullWidth>
             <InputLabel id="requirement-type">Type</InputLabel>
             <Select
-              required
-              error={showError && !selectedRequirementType.name}
+             // required
+             // error={showError && !selectedRequirementType.name}
               labelId="requirement-type"
               id="requirement-type"
               value={selectedRequirementType._id}

@@ -35,6 +35,29 @@ const RequirementService = {
         return axios.post(url, formData, {});
     },
     
+    validateSave: function (requirementData,projectId,estHeaderId) {
+        let url = Url.uploadExcel + "/validateSave/" + projectId + "/" + estHeaderId; 
+        return axios.post(url, requirementData, {});
+    },
+
+
+    updateData: function (requirementData,projectId) {
+        let url = Url.uploadExcel + "/" + projectId ; 
+        return axios.put(url, requirementData, {});
+    },
+
+
+  // getAllExportData: function (estimationOptions) {
+  //   let url = Url.getAllExportData + "/";
+  //   // return axios.post(url, estimationOptions);
+  //   return axios({
+  //     url,
+  //     method: "POST",
+  //     data: estimationOptions,
+  //   });
+  //   },
+  
+  
     getTemplate: function () {
     let url = Url.uploadExcel + "/getTemplate"
     return axios({ url, responseType: "blob", method: "GET" }).then((res) => {

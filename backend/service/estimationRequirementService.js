@@ -510,12 +510,26 @@ async function getRequirementList(
   estHeaderRequirement.forEach((item, i) => {
     if (item.isDeleted === false) {
       var field = item.requirement.title;
+
+      var tag = "";
+      var tagid = 0;
+      var type = "";
+      
+      if (item.requirement.tag !== undefined) {
+        tag = item.requirement.tag.name;
+     
+         tagid = item.requirement.tag._id;
+       }
+       if (item.requirement.type !== undefined) {
+         type = item.requirement.type;
+       }
+      
       var requirement = {
         Requirement: item.requirement.title,
         Description: item.requirement.description,
-        Tag: item.requirement.tag.name,
-        Tagid: item.requirement.tag._id,
-        Type: item.requirement.type,
+        Tag: tag,
+        Tagid: tagid,
+        Type: type,
         requirementId: item.requirement._id,
         _id: item._id,
         id: item._id,

@@ -38,18 +38,27 @@ import { makeStyles, createStyles } from "@mui/styles";
 import Pagination from "@mui/material/Pagination";
 import { ClassNames } from "@emotion/react";
 import { dark } from "@material-ui/core/styles/createPalette";
+import PropTypes from 'prop-types';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import StarIcon from '@mui/icons-material/Star';
 
-import PropTypes from "prop-types";
+import { MdPlaylistAdd ,MdEditNote} from "react-icons/md";
+
+import { BiErrorCircle } from "react-icons/bi";
+import { AiOutlineNumber } from "react-icons/ai";
 
 function CustomFooterStatusComponent(props) {
   return (
-    <Box sx={{ padding: "10px", display: "flex" }}>
-      <p>
-        No of records: {props.noOfRecords}
+    <Box sx={{ padding: '10px', display: 'flex' }}>
+      <p>Total records: {props.noOfRecords} 
         <br></br>
-        No of error: 5<br></br>
-        No of modification: 4<br></br>
-        No of records inserted: 4
+        Error found: 5
+        <br></br>
+        Modification made: 4
+        <br></br>
+        Records inserted: 4
       </p>
     </Box>
   );
@@ -214,7 +223,9 @@ export const RequirementTable = (props) => {
               ))}
             </Select>
           </div> */}
-          <div style={{ height: 400, width: "100%" }}>
+            <div>
+            <div style={{ height: 400, width: "100%" }}>
+            
             <DataGrid
               className={`${classes.root} ${classes.dataGrid}`}
               rows={requirementHeaderDataFilter}
@@ -239,8 +250,10 @@ export const RequirementTable = (props) => {
                 }
               }}
             />
-          </div>
-          <Box
+            </div>
+            <div style={{ height: 200, width: "100%" }}>
+            {  requirementHeaderData.length !== 0 ? (
+                     <Box
             className="import-report"
             sx={{ padding: "10px", display: "flex" }}
           >
@@ -251,28 +264,35 @@ export const RequirementTable = (props) => {
                 {props.requirementSummary.noOfRecords}
               </span>
             </p>
-            <p className="report report_error">
-              <BiErrorAlt style={{ fontSize: "18px" }} />
+                    {props.requirementSummary.noOfError !== 0 ? (
+                      <p className="report report_error">
+                     
+                        <BiErrorAlt style={{ fontSize: "18px" }} />
               &nbsp;No of error:&nbsp;
               <span className="report_item">
                 {props.requirementSummary.noOfError}
               </span>
-            </p>
-            <p className="report report_modify">
+            </p>): null}
+             {props.requirementSummary.noOfModification !== 0 ? ( <p className="report report_modify">
               <VscTools style={{ fontSize: "18px" }} />
               &nbsp;No of modification:&nbsp;
               <span className="report_item">
                 {props.requirementSummary.noOfModification}
               </span>
-            </p>
-            <p className="report report_add">
+            </p>): null}
+            {props.requirementSummary.noOfRecordsInserted !== 0 ? ( <p className="report report_add">
               <MdOutlineFileDownloadDone style={{ fontSize: "18px" }} />
-              &nbsp;No of records inserted:&nbsp;
+              &nbsp;Excel file has been successfully imported. Number of records inserted:&nbsp;
               <span className="report_item">
                 {props.requirementSummary.noOfRecordsInserted}
               </span>
-            </p>
+            </p>): null}
           </Box>
+                
+                     ) : null }
+              </div>
+          </div>
+          
         </>
       )}
     </>
