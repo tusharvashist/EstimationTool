@@ -63,14 +63,6 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     let colSummaryData = (await getEstimationRequirementData(reportPayload))
       .estCalColumns;
 
-    console.log(
-      "colTagData",
-      colTagData,
-      "****",
-      "row",
-      (await getEstimationRequirementData(reportPayload)).estTagRowData
-    );
-
     worksheet.addTable({
       name: "MyTable",
       ref: "A1",
@@ -93,16 +85,6 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       columns: colSummaryData,
       rows: (await getEstimationRequirementData(reportPayload)).estCalRowData,
     });
-
-    // worksheet.columns = (
-    //   await getEstimationRequirementData(reportPayload)
-    // ).estTagColumns;
-    // worksheet.addRows(
-    //   (await getEstimationRequirementData(reportPayload)).estTagRowData
-    // );
-    // worksheet.getRow(1).eachCell((cell) => {
-    //   cell.font = { bold: true };
-    // });
   }
 
   if (getReportFlagValue("resourceCount", reportPayload)) {
@@ -111,13 +93,10 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     const worksheet = workbook.addWorksheet(
       constant.excelSheetName.RESOURCE_MIX
     );
-    worksheet.properties.defaultColWidth = 20;
 
     let rowData = await estimationResourceCountService.getResourceCount(
       newPayload
     );
-
-    console.log("rowData", rowData);
 
     let colData = [
       { name: "S No.", key: "s_no", width: 3 },
@@ -132,9 +111,9 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     ];
 
     const getRoleCountString = (arr) => {
-      let newString = "";
-      arr.forEach((el) => newString.concat(el.count, el.resourceRole));
-      return newString;
+      let newArr = [];
+      arr.forEach((el) => newArr.push(`${el.count} ${el.resourceRole}`));
+      return newArr.toString();
     };
 
     let tableRowData = rowData.map((data, i) => {
@@ -143,18 +122,9 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
         data.resourceCount,
         data.attributeName,
         data.skills,
-        // getRoleCountString(data.rolecount),
-        "",
+        getRoleCountString(data.rolecount),
       ];
-      //   s_no:
-      //   resourceCount: data.resourceCount,
-      //   skill: data.attributeName,
-      //   techskills: data.skills,
-      //   role: `${data.rolecount[0]} ${data.rolecount[1]}`,
-      // };
     });
-
-    console.log("tableRowData", tableRowData, "---", "colData", colData);
 
     worksheet.addTable({
       name: "MyTable",
