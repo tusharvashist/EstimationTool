@@ -58,3 +58,46 @@
 .importFormRow_Button > button {
   margin: 0 10px;
 }
+.align-center_error {
+  font-size: 20px;
+  justify-content: center !important;
+  color: grey;
+}
+.import-report {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  flex-wrap: wrap;
+}
+.import-report > p {
+  margin: 5px 0;
+}
+.report_total {
+  background-color: rgba(255, 255, 45, 0.35);
+  color: rgb(90, 77, 0);
+}
+.report_error {
+  background-color: rgba(255, 45, 45, 0.35);
+  color: rgb(90, 0, 0);
+}
+.report_modify {
+  background-color: rgba(45, 136, 255, 0.35);
+  color: rgb(0, 36, 90);
+}
+.report_add {
+  background-color: rgba(62, 255, 45, 0.35);
+  color: rgb(29, 90, 0);
+}
+
+.report_item {
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 0 5px;
+  border-radius: 5px;
+}
+.report {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
