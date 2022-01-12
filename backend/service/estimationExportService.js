@@ -8,6 +8,7 @@ const constant = require("../constant/index");
 // include node fs module
 var fs = require("fs");
 const { throws } = require("assert");
+const { string } = require("joi");
 
 module.exports.generateExcelReport = async (reportPayload) => {
   //Get Estimation Name
@@ -62,6 +63,14 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     let colSummaryData = (await getEstimationRequirementData(reportPayload))
       .estCalColumns;
 
+    console.log(
+      "colTagData",
+      colTagData,
+      "****",
+      "row",
+      (await getEstimationRequirementData(reportPayload)).estTagRowData
+    );
+
     worksheet.addTable({
       name: "MyTable",
       ref: "A1",
@@ -111,47 +120,48 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     console.log("rowData", rowData);
 
     let colData = [
-      { header: "S No.", key: "s_no", width: 10 },
-      { header: "Resource Count", key: "resourceCount", width: 15 },
+      { name: "S No.", key: "s_no", width: 3 },
+      { name: "Resource Count", key: "resourceCount", width: 15 },
       {
-        header: "Skills(Effort & Summary Attributes)",
+        name: "Skills(Effort & Summary Attributes)",
         key: "skill",
-        width: 30,
+        width: 40,
       },
-      { header: "Technologies", key: "techskills", width: 20 },
-      { header: "Role", key: "role", width: 20 },
+      { name: "Technologies", key: "techskills", width: 20 },
+      { name: "Role", key: "role", width: 30 },
     ];
 
-    //Here
-    const getStringRoleCount = () => {};
-    let roleStringArr = rowData
-      .map((el) => {
-        return el.rolecount.map((item) => {
-          return `${item.count} ${item.resourceRole}`;
-        });
-      })
-      .map((item) => {
-        return item;
-      });
-
-    console.log("roleStringArr", roleStringArr);
+    const getRoleCountString = (arr) => {
+      let newString = "";
+      arr.forEach((el) => newString.concat(el.count, el.resourceRole));
+      return newString;
+    };
 
     let tableRowData = rowData.map((data, i) => {
-      return {
-        s_no: i + 1,
-        resourceCount: data.resourceCount,
-        skill: data.attributeName,
-        techskills: data.skills,
-      };
+      return [
+        i + 1,
+        data.resourceCount,
+        data.attributeName,
+        data.skills,
+        // getRoleCountString(data.rolecount),
+        "",
+      ];
+      //   s_no:
+      //   resourceCount: data.resourceCount,
+      //   skill: data.attributeName,
+      //   techskills: data.skills,
+      //   role: `${data.rolecount[0]} ${data.rolecount[1]}`,
+      // };
     });
+
+    console.log("tableRowData", tableRowData, "---", "colData", colData);
 
     worksheet.addTable({
       name: "MyTable",
       ref: "A1",
       headerRow: true,
-      totalsRow: true,
       style: {
-        theme: "TableStyleDark3",
+        theme: "TableStyleMedium6",
         showRowStripes: true,
       },
       columns: colData,
