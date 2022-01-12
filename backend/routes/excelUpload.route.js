@@ -12,4 +12,11 @@ router.post("/:id",
 );
 
 
+
+//----- Create -----------
+router.get("/getTemplate",
+    tokenValidation.validateToken,
+    excelUploadController.getTemplate
+);
+
 module.exports = router;

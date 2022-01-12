@@ -14,12 +14,13 @@ module.exports.uploadExcel = async (req, res) => {
             response.message = constant.excelUploadMessage.REQUIREMENT_RECEIVED;
             response.body = uploadExcel;
             return res.status(response.status).send(response);
-
         }
-       
     } catch (err) {
         response.message = err.message;
         return res.status(response.status).send(response);
     }
     }
     
+    module.exports.getTemplate = async (req, res) => {
+        res.download("./excelTemplate/EstimationRequirementTemplate.xlsx", "EstimationRequirementTemplate.xlsx");
+    };

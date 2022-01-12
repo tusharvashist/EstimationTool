@@ -1,10 +1,9 @@
 const constant = require("../constant");
-//const estResourcePlanning = require("../database/models/estResourcePlanning");
 const ResourceMixRepository = require("../repository/estResourceMixRepository.js")
 const mongoose = require("mongoose");
 const { formatMongoData } = require("../helper/dbhelper")
 
-module.exports.getResourceMixPlanning = async ({ id }) => {
+module.exports.getTimelinePlanning = async ({ id }) => {
     try {
   
       if (!mongoose.Types.ObjectId(id)) {
@@ -24,6 +23,19 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);
       marginPercent = calculateMarginPercentage(margin,priceTotal);
+
+      queryResult.forEach(t => {
+        t.weeks = [];
+        for(let i=1;i<=t.estimationHeader.estTentativeTimeline; i++) {
+          var temp = {};
+          let str = 'week'+i;
+          let cal = 40 * (t.resourceMix.allocationPercent / 100);
+          temp[str] = cal;
+          t.weeks.push(temp);
+
+        }
+      });
+
       response.total = {'cost': '$'+ costTotal, 'price': '$'+ priceTotal};
       response.margin = '$' + margin;
       response.marginPercent = marginPercent+'%';

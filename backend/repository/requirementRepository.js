@@ -1030,6 +1030,9 @@ module.exports.getRequirementWithQuery = async (projectId) => {
         id: {
           $first: "$_id",
         },
+        req_id: {
+          $first: "$req_id",
+        },
         isDeleted: {
           $first: "$isDeleted",
         },

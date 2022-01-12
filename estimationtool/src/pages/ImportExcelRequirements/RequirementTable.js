@@ -16,6 +16,15 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
+import { BiErrorAlt, BiCheckCircle } from "react-icons/bi";
+import { ImSigma } from "react-icons/im";
+import { VscTools } from "react-icons/vsc";
+import { MdOutlineFileDownloadDone } from "react-icons/md";
+import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import { styled } from "@mui/material/styles";
+
+import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import {
   DataGrid,
   GridToolbarContainer,
@@ -30,34 +39,46 @@ import Pagination from "@mui/material/Pagination";
 import { ClassNames } from "@emotion/react";
 import { dark } from "@material-ui/core/styles/createPalette";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 function CustomFooterStatusComponent(props) {
   return (
-    <Box sx={{ padding: '10px', display: 'flex' }}>
-      <p>No of records: {props.noOfRecords} 
+    <Box sx={{ padding: "10px", display: "flex" }}>
+      <p>
+        No of records: {props.noOfRecords}
         <br></br>
-        No of error: 5
-        <br></br>
-        No of modification: 4
-        <br></br>
+        No of error: 5<br></br>
+        No of modification: 4<br></br>
         No of records inserted: 4
       </p>
     </Box>
   );
 }
 CustomFooterStatusComponent.propTypes = {
-  noOfRecords: PropTypes.oneOf(['connected', 'disconnected']).isRequired,
+  noOfRecords: PropTypes.oneOf(["connected", "disconnected"]).isRequired,
 };
 
 export const RequirementTable = (props) => {
+  const classes = useTableStyle();
+
+  // const classes = useStyles();
   const location = useLocation();
-  const [pageSize, setPageSize] = React.useState(5);
+  const [pageSize, setPageSize] = React.useState(10);
   const clientInfo = { ...location.state.clientInfo };
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
     { headerName: "S.R No.", field: "id", width: 70 },
+    {
+      headerName: "Error",
+      field: "Error",
+      width: 80,
+      headerAlign: "center",
+      cellClassName: "align-center_error",
+      renderCell: (params) => (
+        <ErrorComponent color={params.color} {...params} />
+      ),
+    },
     { headerName: "Requirement", field: "Requirement", width: 170 },
     { headerName: "Description", field: "Description", width: 200 },
     { headerName: "Tag", field: "Tag", width: 100 },
@@ -65,7 +86,6 @@ export const RequirementTable = (props) => {
     { headerName: "Query", field: "Query", width: 200 },
     { headerName: "Assumption", field: "Assumption", width: 200 },
     { headerName: "Reply", field: "Reply", width: 200 },
-    { headerName: "Error", field: "Error", width: 200 },
   ]);
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
@@ -74,19 +94,15 @@ export const RequirementTable = (props) => {
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
   //const [requirementTypeArray, setRequirementTypeArray] = useState([]);
-  const [requirementSummary, setRequirementSummary] =
-    useState({
+  const [requirementSummary, setRequirementSummary] = useState({
     noOfRecords: 0,
     noOfError: 0,
     noOfModification: 0,
-    noOfRecordsInserted: 0
+    noOfRecordsInserted: 0,
   });
-
   useEffect(() => {
     setRequirementHeaderData([...props.requirementHeaderData]);
     setFilterRequirementHeaderData([...props.requirementHeaderData]);
-    //setRequirementSummary(...props.requirementSummary);
-    // setRequirementTypeArray([...props.requirementTypeArray]);
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
 
@@ -168,7 +184,6 @@ export const RequirementTable = (props) => {
       },
     })
   );
-  const classes = useStyles();
   console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
 
   //console.log("available: ", available);
@@ -199,16 +214,17 @@ export const RequirementTable = (props) => {
               ))}
             </Select>
           </div> */}
-            <div style={{ height: 400, width: "100%" }}>
-            
+          <div style={{ height: 400, width: "100%" }}>
             <DataGrid
-              className={classes.root}
+              className={`${classes.root} ${classes.dataGrid}`}
               rows={requirementHeaderDataFilter}
               columns={requirementHeader}
-                 pageSize={pageSize}
-        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-        rowsPerPageOptions={[5, 10, 20]}
-        pagination
+              // columns={[{ field: "aa", headerAlign:'left' }]}
+              hideFooterPagination={false}
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[10, 20, 50]}
+              pagination
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
                 //selected={(event, rowData, togglePanel) => {
@@ -222,23 +238,41 @@ export const RequirementTable = (props) => {
                   props.handleCheckBoxClicked(rows);
                 }
               }}
-                components={{
-                  Footer: () => <Box sx={{ padding: '10px', display: 'flex' }}>
-      <p>No of records: {props.requirementSummary.noOfRecords} 
-        <br></br>
-        No of error: {props.requirementSummary.noOfError} 
-        <br></br>
-        No of modification:  {props.requirementSummary.noOfModification} 
-        <br></br>
-        No of records inserted:  {props.requirementSummary.noOfRecordsInserted} 
-      </p>
-    </Box>,
-                }}
-                
-                
             />
           </div>
-          
+          <Box
+            className="import-report"
+            sx={{ padding: "10px", display: "flex" }}
+          >
+            <p className="report report_total">
+              <ImSigma style={{ fontSize: "18px" }} />
+              &nbsp;Total records:&nbsp;
+              <span className="report_item">
+                {props.requirementSummary.noOfRecords}
+              </span>
+            </p>
+            <p className="report report_error">
+              <BiErrorAlt style={{ fontSize: "18px" }} />
+              &nbsp;No of error:&nbsp;
+              <span className="report_item">
+                {props.requirementSummary.noOfError}
+              </span>
+            </p>
+            <p className="report report_modify">
+              <VscTools style={{ fontSize: "18px" }} />
+              &nbsp;No of modification:&nbsp;
+              <span className="report_item">
+                {props.requirementSummary.noOfModification}
+              </span>
+            </p>
+            <p className="report report_add">
+              <MdOutlineFileDownloadDone style={{ fontSize: "18px" }} />
+              &nbsp;No of records inserted:&nbsp;
+              <span className="report_item">
+                {props.requirementSummary.noOfRecordsInserted}
+              </span>
+            </p>
+          </Box>
         </>
       )}
     </>
@@ -269,5 +303,43 @@ export const RequirementTablePopup = (props) => {
         />
       </CustomizedDialogs>
     </>
+  );
+};
+
+export const ErrorComponent = (props) => {
+  const HtmlTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: "#f5f5f9",
+      color: "rgba(0, 0, 0, 0.87)",
+      maxWidth: 220,
+      fontSize: theme.typography.pxToRem(12),
+      border: "1px solid #dadde9",
+      padding: "10px",
+    },
+    [`& .${tooltipClasses.tooltip} ul`]: {
+      listStyleType: "none",
+    },
+  }));
+
+  return props.row.Error.length === 0 ? (
+    <BiCheckCircle style={{ color: "green" }} />
+  ) : (
+    <HtmlTooltip
+      title={
+        <React.Fragment>
+          <ul>
+            {props.row.Error.map((err, i) => (
+              <li key={i + 1}>{err}</li>
+            ))}
+          </ul>
+        </React.Fragment>
+      }
+    >
+      <span>
+        <BiErrorAlt className="align-center_error" style={{ color: "red" }} />
+      </span>
+    </HtmlTooltip>
   );
 };

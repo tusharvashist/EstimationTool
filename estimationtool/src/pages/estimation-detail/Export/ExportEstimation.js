@@ -58,7 +58,7 @@ export const ExportEstimationPopup = (props) => {
         props.closeExportEstimation();
 
         if (res.status === 200) {
-          EstimationService.getReport();
+          EstimationService.getReport(payload.estimationHeaderId);
         }
       })
       .catch((err) => {

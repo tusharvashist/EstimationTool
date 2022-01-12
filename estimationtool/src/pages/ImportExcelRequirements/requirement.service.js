@@ -1,6 +1,10 @@
 import axios from "axios";
 import Url from "../../shared/service/urls.service";
+
+import FileDownload from "js-file-download";
+
 var FormData = require('form-data');
+
 const RequirementService = {
     
     getTagsType: function () {
@@ -29,6 +33,13 @@ const RequirementService = {
         formData.append('file', file);
         let url = Url.uploadExcel + "/" + actionId; 
         return axios.post(url, formData, {});
+    },
+    
+    getTemplate: function () {
+    let url = Url.uploadExcel + "/getTemplate"
+    return axios({ url, responseType: "blob", method: "GET" }).then((res) => {
+      FileDownload(res.data, "Estimation.xlsx");
+    });
   },
 }
 
