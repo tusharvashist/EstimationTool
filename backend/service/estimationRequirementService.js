@@ -376,6 +376,7 @@ module.exports.getById = async ({ id }) => {
 
 const checkValidation = (validationList, requirementList) => {
   const error = [];
+  try{
   validationList.map((validationItem) => {
     let foundReq = requirementList.some(
       (req) => req.Type._id.toString() === validationItem.id.toString()
@@ -389,6 +390,11 @@ const checkValidation = (validationList, requirementList) => {
   return error.length > 0
     ? { err: error, isValid: false }
     : { err: error, isValid: true };
+} catch(excep){
+  return error.length > 0
+    ? { err: error, isValid: false }
+    : { err: error, isValid: true };
+}
 };
 
 module.exports.getRequirementData = async ({ id }) => {
