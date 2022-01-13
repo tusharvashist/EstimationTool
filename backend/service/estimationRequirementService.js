@@ -17,19 +17,25 @@ module.exports.create = async (serviceData) => {
     let requirement = await RequirementRepository.createRequirement(
       serviceData
     );
-    let queryAssumption = await RequirementRepository.createQueryAssumption(
-      requirement._id,
-      serviceData
-    );
-    if (serviceData.estHeader.length != 0) {
-      return formatMongoData(
-        await RequirementRepository.mapHeaderRequirement(
-          requirement._id,
-          serviceData
-        )
+
+    if (requirement !== false) {
+      let queryAssumption = await RequirementRepository.createQueryAssumption(
+        requirement._id,
+        serviceData
       );
-    }
+      if (serviceData.estHeader.length != 0) {
+        return formatMongoData(
+          await RequirementRepository.mapHeaderRequirement(
+            requirement._id,
+            serviceData
+          )
+        );
+      }
+
     return formatMongoData(requirement);
+    } else {
+      throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+    }
   } catch (err) {
     throw new Error(err);
   }
@@ -197,7 +203,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
     );
     updateInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
-      if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
+      if (String(findRecord[0]._id) == id) {
         let requirement = await ProjectRequirement.findOneAndUpdate(
           { _id: id },
           updateInfo,
@@ -217,16 +223,23 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
         throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
       }
     } else {
-      let requirement = await ProjectRequirement.findOneAndUpdate(
-        { _id: id },
-        updateInfo,
-        { new: true }
-      );
-      if (!requirement) {
-        throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
-      }
-      return formatMongoData(requirement);
+
+       let requirement = await ProjectRequirement.findOneAndUpdate(
+          { _id: id },
+          updateInfo,
+          { new: true }
+        );
+        if (!requirement) {
+          throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+        }
+
+        let queryAssumption = await RequirementRepository.updateQuery(
+          requirement._id,
+          updateInfo
+        );
+       
     }
+
   } catch (err) {
     ////console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
@@ -363,6 +376,7 @@ module.exports.getById = async ({ id }) => {
 
 const checkValidation = (validationList, requirementList) => {
   const error = [];
+  try{
   validationList.map((validationItem) => {
     let foundReq = requirementList.some(
       (req) => req.Type._id.toString() === validationItem.id.toString()
@@ -376,6 +390,11 @@ const checkValidation = (validationList, requirementList) => {
   return error.length > 0
     ? { err: error, isValid: false }
     : { err: error, isValid: true };
+} catch(excep){
+  return error.length > 0
+    ? { err: error, isValid: false }
+    : { err: error, isValid: true };
+}
 };
 
 module.exports.getRequirementData = async ({ id }) => {
@@ -510,16 +529,31 @@ async function getRequirementList(
   estHeaderRequirement.forEach((item, i) => {
     if (item.isDeleted === false) {
       var field = item.requirement.title;
+
+      var tag = "";
+      var tagid = 0;
+      var type = "";
+      
+      if (item.requirement.tag !== undefined) {
+        tag = item.requirement.tag.name;
+     
+         tagid = item.requirement.tag._id;
+       }
+       if (item.requirement.type !== undefined) {
+         type = item.requirement.type;
+       }
+      
       var requirement = {
         Requirement: item.requirement.title,
         Description: item.requirement.description,
-        Tag: item.requirement.tag.name,
-        Tagid: item.requirement.tag._id,
-        Type: item.requirement.type,
+        Tag: tag,
+        Tagid: tagid,
+        Type: type,
         requirementId: item.requirement._id,
         _id: item._id,
         id: item._id,
         action: item._id,
+        req_id: item.requirement.req_id,
       };
 
       if (item.requirement.queryassumptions.length !== 0) {

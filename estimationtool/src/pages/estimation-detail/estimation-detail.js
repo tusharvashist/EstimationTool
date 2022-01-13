@@ -32,6 +32,7 @@ import { MdOutlineDocumentScanner } from "react-icons/md";
 import { MdOutlineTimeline } from "react-icons/md";
 import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
+import { BiImport } from "react-icons/bi";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -279,6 +280,14 @@ const EstimationDetail = () => {
             ],
           },
           {
+            headerName: "Req. Id",
+            field: "req_id",
+            //id: 1,
+            //editable: false,
+            flex: 1,
+            minWidth: 80,
+          },
+          {
             headerName: "Requirement",
             field: "Requirement",
             //id: 1,
@@ -466,7 +475,7 @@ const EstimationDetail = () => {
       ? isRequirementValid.err.map((el, i) => (
           <span>
             {el}
-            {i + 1 !== isRequirementValid.err.length && `,`}
+            {i + 1 !== isRequirementValid.err.length && `, `}
           </span>
         ))
       : "";
@@ -589,26 +598,31 @@ const EstimationDetail = () => {
       <Container>
         <Grid container>
           <Grid item class="multi-button-grid">
-            <Link
-              to={{
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/ImportExcelRequirements",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: headerData,
-                },
-              }}
-            >
-              <Button style={{ marginRight: "15px" }} variant="outlined">
-                {" "}
-                Import Requirements
-              </Button>
-            </Link>
+            
+               <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/ImportExcelRequirements",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: headerData,
+                  },
+                }}
+              >
+                <Button
+                  style={{ marginRight: "15px" }}
+                  variant="outlined"
+              >
+                   <BiImport style={{fontSize: "20px"}}/>
+                   &nbsp;
+                  Import Requirements
+                </Button>
+              </Link>
             <Button
               variant="outlined"
               className="estimation-detail-button"

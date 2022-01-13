@@ -51,7 +51,6 @@ const EstimationService = {
 
   getAllExportData: function (estimationOptions) {
     let url = Url.getAllExportData + "/";
-    // return axios.post(url, estimationOptions);
     return axios({
       url,
       method: "POST",
@@ -59,9 +58,16 @@ const EstimationService = {
     });
   },
 
-  getReport: function () {
+  getReport: function (estId) {
     let url = Url.getReport + "/";
-    return axios({ url, responseType: "blob", method: "GET" }).then((res) => {
+    return axios({
+      url,
+      responseType: "blob",
+      method: "GET",
+      params: {
+        estimationHeaderId: estId,
+      },
+    }).then((res) => {
       FileDownload(res.data, "Estimation.xlsx");
     });
   },

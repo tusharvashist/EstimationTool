@@ -1,17 +1,13 @@
-"use strict";
-import React from "react";
-import { findDOMNode } from "react-dom";
-import ReactTestUtils from "react-dom/test-utils";
-import ExportEstimation from "./ExportEstimation";
-
 describe("ExportEstimation", () => {
-  let result, exportEstimation;
+  let exportEstimation;
+  const estimationdetail = require("../estimation-detail");
+  const findDOMNode = require("react-dom/findDOMNode");
+  const ReactTestUtils = require("react-dom/test-utils");
 
   beforeEach(() => {
-    result = ReactTestUtils.renderIntoDocument(
-      <ExportEstimation.ExportEstimationPopup />
-    );
+    let result = ReactTestUtils.renderIntoDocument(estimationdetail);
     exportEstimation = findDOMNode(result);
+    console.log(result);
   });
 
   it("Renders Export popup", () => {

@@ -35,6 +35,8 @@ module.exports = {
     noOfEstimation: 0,
     featureList: [],
     requirementSummary: [],
+    requirementSaveResult: {},
+    requirementMapResult: {},
   },
 
   estimationAttribute: {
@@ -91,12 +93,12 @@ module.exports = {
   excelUploadMessage: {
     REQUIREMENT_RECEIVED: "Excel file received.",
     REQUIREMENT_FILE_NOT_RECEIVED: "Excel file not received.",
-    REQUIREMENT_NOTFOUND_REQUIREMENT: "Requirement not found!",
-    REQUIREMENT_NOTFOUND_Description: "Description not found!",
-
-    REQUIREMENT_ALREADY_AVAILABLE: "Requirement already available!",
-
-    REQUIREMENT_DUPLICATE: "Duplicate requirement!",
+    REQUIREMENT_NOTFOUND_REQUIREMENT: "Requirement not found.",
+    REQUIREMENT_NOTFOUND_Description: "Description not found.",
+    REQUIREMENT_ALREADY_AVAILABLE: "Requirement already available in database.",
+    REQUIREMENT_DUPLICATE: "Duplicate requirement found same as: ",
+    REQUIREMENT_INVALID_TAGS: "Invalid requirement tags.",
+    REQUIREMENT_INVALID_TYPE: "Invalid requirement type.",
   },
 
   estimationTemplateCalcAttrMessage: {
@@ -301,10 +303,15 @@ module.exports = {
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
   },
+  timelinePlanningMessage: {
+    TIMELINEPLANNING_FETCH: "Resource timeline planning fetch successfully",
+    INVALID_ID: "Invalid id",
+  },
   excelSheetName: {
     ESTIMATION_DETAIL: "Estimation Detail",
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
     ESTIMATION_SUMMARY: "Estimation Summary",
+    RESOURCE_MIX: "Resource Mix",
   },
 };

@@ -1,0 +1,33 @@
+[{
+  "_id": "617b7e9906b52001082eeb29", 
+  "roleName": "Admin",
+  "roleDescription": "Admin Role have all permission in application."
+},{
+  "_id": "617b7e9906b52001082eeb30",
+  "roleName": "Super Admin",
+  "roleDescription": "Super Admin Role have all permission in application."
+},{
+  "_id": "617b7e9906b52001082eeb31",
+  "roleName": "Full Contributor",
+  "roleDescription": "This role have permission of estimation detail,add requirement and view pricing"
+},{
+  "_id": "617b7e9906b52001082eeb32",
+  "roleName": "Basic Contributor",
+  "roleDescription": "This role have permission of estimation detail,add requirement."
+},{
+  "_id": "617b7e9906b52001082eeb33",
+  "roleName": "Full Reviewer",
+  "roleDescription": "This role have permission of view pricing and adding review comment."
+},{
+  "_id": "617b7e9906b52001082eeb34",
+  "roleName": "Basic Reviewer",
+  "roleDescription": "This role have permission of adding review comment."
+},{
+  "_id": "617b7e9906b52001082eeb35",
+  "roleName": "Full Viewer",
+  "roleDescription": "This role have permission of view pricing."
+},{
+  "_id": "617b7e9906b52001082eeb36",
+  "roleName": "Basic Viewer",
+  "roleDescription": "This role have basic permission of application without any crud operation."
+}]

@@ -31,7 +31,7 @@ import {
 import { setProjectId } from "../../Redux/projectRedux";
 import Header from "../../shared/layout/Header/Header";
 import usePermission from "../../shared/layout/hooks/usePermissions";
-
+import { BiImport } from "react-icons/bi";
 export default function ClientDetails(props) {
   const history = useHistory();
   const roleState = useSelector((state) => state.role);
@@ -219,7 +219,8 @@ export default function ClientDetails(props) {
                   variant="outlined"
                 >
                   {" "}
-                  <ArrowUpwardOutlinedIcon />
+                  <BiImport style={{fontSize: "20px"}}/>
+                   &nbsp;
                   Import Requirements
                 </Button>
                   </Link>

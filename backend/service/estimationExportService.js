@@ -1,23 +1,31 @@
 const estimationRequirementService = require("./estimationRequirementService");
 const resourceCountMixService = require("./resourceMixService");
+const estimationHeaderModal = require("../database/models/estHeaderModel");
+const estimationResourceCountService = require("./estimationResourceCountService");
 
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
 // include node fs module
 var fs = require("fs");
 const { throws } = require("assert");
+const { string } = require("joi");
 
 module.exports.generateExcelReport = async (reportPayload) => {
+  //Get Estimation Name
+  let est = await this.checkEstName(reportPayload);
+
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "Estimation";
   workbook.created = new Date();
 
   // delete old file if exist
-  deleteFile();
+  deleteFile(est.estName);
 
   try {
     await generateRequiredSpreadsheet(workbook, reportPayload);
-    const Promise1 = workbook.xlsx.writeFile("./report/Estimation.xlsx");
+    const Promise1 = workbook.xlsx.writeFile(
+      `./report/Estimation_${est.estName}.xlsx`
+    );
     Promise1.then(() => {
       return true;
     });
@@ -77,19 +85,58 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       columns: colSummaryData,
       rows: (await getEstimationRequirementData(reportPayload)).estCalRowData,
     });
-
-    // worksheet.columns = (
-    //   await getEstimationRequirementData(reportPayload)
-    // ).estTagColumns;
-    // worksheet.addRows(
-    //   (await getEstimationRequirementData(reportPayload)).estTagRowData
-    // );
-    // worksheet.getRow(1).eachCell((cell) => {
-    //   cell.font = { bold: true };
-    // });
   }
 
   if (getReportFlagValue("resourceCount", reportPayload)) {
+    let newPayload = { estheaderid: reportPayload.estimationHeaderId };
+
+    const worksheet = workbook.addWorksheet(
+      constant.excelSheetName.RESOURCE_MIX
+    );
+
+    let countRowData = await estimationResourceCountService.getResourceCount(
+      newPayload
+    );
+
+    let colData = [
+      { name: "S No.", key: "s_no", width: 3 },
+      { name: "Resource Count", key: "resourceCount", width: 15 },
+      {
+        name: "Skills(Effort & Summary Attributes)",
+        key: "skill",
+        width: 40,
+      },
+      { name: "Technologies", key: "techskills", width: 20 },
+      { name: "Role", key: "role", width: 30 },
+    ];
+
+    const getRoleCountString = (arr) => {
+      let newArr = [];
+      arr.forEach((el) => newArr.push(`${el.count} ${el.resourceRole}`));
+      return newArr.toString();
+    };
+
+    let tableRowData = countRowData.map((data, i) => {
+      return [
+        i + 1,
+        data.resourceCount,
+        data.attributeName,
+        data.skills,
+        getRoleCountString(data.rolecount),
+      ];
+    });
+
+    worksheet.addTable({
+      name: "MyTable",
+      ref: "A1",
+      headerRow: true,
+      style: {
+        theme: "TableStyleMedium6",
+        showRowStripes: true,
+      },
+      columns: colData,
+      rows: tableRowData,
+    });
   }
 
   if (getReportFlagValue("resourcePlanning", reportPayload)) {
@@ -144,7 +191,6 @@ function getResourcePlanningColumns() {
 async function getResourcePlanningRowData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
   const resData = await resourceCountMixService.getResourceMixPlanning(payload);
-  console.log("Resoure Planning data", resData);
   var totalCost = resData.total.cost;
   var totalPrice = resData.total.price;
   var margin = resData.margin;
@@ -252,14 +298,6 @@ async function getEstimationRequirementData(conditions) {
     return rowDataArr;
   });
 
-  // console.log(
-  //   "estCalColumns",
-  //   estCalColumns,
-  //   "estCalRowData",
-  //   requirementData.summaryCalData,
-  //   estCalRowData
-  // );
-
   // return values
   return {
     estRequirementColumns,
@@ -271,9 +309,16 @@ async function getEstimationRequirementData(conditions) {
   };
 }
 
-function deleteFile() {
+module.exports.checkEstName = async (reqPayload) => {
+  return estimationHeaderModal.findById(
+    reqPayload.estimationHeaderId,
+    "estName"
+  );
+};
+
+function deleteFile(name) {
   try {
     // delete file if already exists
-    fs.unlinkSync("./report/Estimation.xlsx");
+    fs.unlinkSync(`./report/Estimation_${name}.xlsx`);
   } catch (err) {}
 }
