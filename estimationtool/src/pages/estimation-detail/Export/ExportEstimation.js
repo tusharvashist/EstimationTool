@@ -59,15 +59,12 @@ export const ExportEstimationPopup = (props) => {
 
         if (res.status === 200) {
           EstimationService.getReport(payload.estimationHeaderId);
+        } else {
+          console.log("Export Estimation", res);
         }
       })
       .catch((err) => {
         console.log(err);
-        // setOpen({
-        //   open: true,
-        //   severity: "error",
-        //   message: err.response.data.message,
-        // });
       });
   };
 
