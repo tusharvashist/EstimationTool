@@ -7,13 +7,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Container
 } from "@material-ui/core";
 import ProjectEstimationsGridView from "../project/project-estimations";
 import "./project-details.css";
 import { useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
-
+import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 import { useSelector, useDispatch } from "react-redux";
@@ -30,7 +31,7 @@ import {
 import { setProjectId } from "../../Redux/projectRedux";
 import Header from "../../shared/layout/Header/Header";
 import usePermission from "../../shared/layout/hooks/usePermissions";
-
+import { BiImport } from "react-icons/bi";
 export default function ClientDetails(props) {
   const history = useHistory();
   const roleState = useSelector((state) => state.role);
@@ -184,31 +185,8 @@ export default function ClientDetails(props) {
               />
             </Grid>
           </Grid>
-          <Grid container alignItems="center">
-            <Grid item xs={6}>
-              <Box sx={{ maxWidth: 200 }}>
-                <FormControl width="300px">
-                  <InputLabel id="client-simple-select">
-                    Estimation Status{" "}
-                  </InputLabel>
-
-                  <Select
-                    labelId="client-simple-select"
-                    id="client-simple-select"
-                    value={projectStatus.title}
-                    label={projectStatus.title}
-                    defaultValue={"Active"}
-                    onChange={getDropDownvalue}
-                  >
-                    {projectStatus.map((item) => (
-                      <MenuItem key={item.title} value={item.title}>
-                        {item.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            </Grid>
+          <Grid container alignItems="stretch">
+            
             {/* <Dropdown
               defaultValue={{ title: "All", value: "All" }}
               title="Estimation status"
@@ -216,12 +194,38 @@ export default function ClientDetails(props) {
               getVal={getDropDownvalue}
             /> */}
 
-            <Grid
-              item
-              xs={6}
-              justifyContent="flex-end"
-              style={{ textAlign: "right" }}
-            >
+          <Container>
+        <Grid container>
+          <Grid item className="multi-button-grid">
+           
+              <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/ImportExcelRequirements",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: "",
+                  },
+                }}
+              >
+                <Button
+                  style={{ marginRight: "15px" }}
+                  onClick={createEstimationHandle}
+                  variant="outlined"
+                >
+                  {" "}
+                  <BiImport style={{fontSize: "20px"}}/>
+                   &nbsp;
+                  Import Requirements
+                </Button>
+                  </Link>
+                  
+           
               <Link
                 to={{
                   pathname:
@@ -247,6 +251,7 @@ export default function ClientDetails(props) {
                   Create New Requirements
                 </Button>
               </Link>
+     
               <Link
                 to={{
                   pathname:
@@ -269,8 +274,35 @@ export default function ClientDetails(props) {
                 </Button>)
                 }
               </Link>
-            </Grid>
+       </Grid>
+        </Grid>
+      </Container>
+    
           </Grid>
+          <Grid item xs={6}>
+              <Box sx={{ maxWidth: 200 }}>
+                <FormControl width="300px">
+                  <InputLabel id="client-simple-select">
+                    Estimation Status{" "}
+                  </InputLabel>
+
+                  <Select
+                    labelId="client-simple-select"
+                    id="client-simple-select"
+                    value={projectStatus.title}
+                    label={projectStatus.title}
+                    defaultValue={"Active"}
+                    onChange={getDropDownvalue}
+                  >
+                    {projectStatus.map((item) => (
+                      <MenuItem key={item.title} value={item.title}>
+                        {item.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Grid>
         </Grid>
       </Box>
       <Box p={0} pt={0}>

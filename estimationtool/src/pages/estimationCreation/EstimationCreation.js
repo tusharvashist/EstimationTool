@@ -204,12 +204,15 @@ const EstimationCreation = (props) => {
         history.push(finishLocation);
       })
       .catch((err) => {
-        //   if ((err.response.data = 401) || (err.response.data = 404)) {
-        //     let url = "/login";
-        //     history.push(url);
-        //   }
+        if ((err.response.data.status = 400)) {
+          setOpen({
+            open: true,
+            severity: "error",
+            message: err.response.data.message,
+          });
+        }
         // console.log("save estimation header detail error : ", err);
-        // childRef.current.showError(err);
+        //childRef.current.showError(err);
       });
   };
   // save effort Attribute data
@@ -243,15 +246,18 @@ const EstimationCreation = (props) => {
   };
 
   const getCalcAttributeRequestPayload = () => {
-    console.log("calcAttributeSave", calcAttributeSave)
-    let arr = calcAttributeSave.data.map(item => {
-  
-      return ({
-        ...item, tag: item.tag._id, formulaTags: item.formulaTags ? item.formulaTags.map(x => x._id).slice() : []
-      })
-    })
+    console.log("calcAttributeSave", calcAttributeSave);
+    let arr = calcAttributeSave.data.map((item) => {
+      return {
+        ...item,
+        tag: item.tag._id,
+        formulaTags: item.formulaTags
+          ? item.formulaTags.map((x) => x._id).slice()
+          : [],
+      };
+    });
     return {
-      estattcalclist: arr
+      estattcalclist: arr,
     };
   };
 
@@ -263,7 +269,8 @@ const EstimationCreation = (props) => {
       basicDetailRedux.esttimationDesc &&
       basicDetailRedux.efforUnit &&
       Number(basicDetailRedux.estimationTentativeTimeline) > 0 &&
-      Number(basicDetailRedux.estimationContingency) > 0 && Number(basicDetailRedux.estimationContingency) <=100
+      Number(basicDetailRedux.estimationContingency) > 0 &&
+      Number(basicDetailRedux.estimationContingency) <= 100
     ) {
       estimationHeaderId
         ? updateEstimationBasicDetail(getRequestPayload())
@@ -449,7 +456,7 @@ const EstimationCreation = (props) => {
                 <SecondStep
                   estimatioHeaderId={basicDetailRedux.estimationHeaderId}
                   estimationTypeId={basicDetailRedux.estimationTypeId}
-                // ref={secondChildRef}
+                  // ref={secondChildRef}
                 />
               )}
               {activeStep == 2 && (

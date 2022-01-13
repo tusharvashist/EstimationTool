@@ -32,6 +32,7 @@ import { MdOutlineDocumentScanner } from "react-icons/md";
 import { MdOutlineTimeline } from "react-icons/md";
 import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
+import { BiImport } from "react-icons/bi";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -89,6 +90,7 @@ const EstimationDetail = () => {
   const [tagDataArray, setTagDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
   const [countError, setCountError] = useState(false);
+  const [isRequirementValid, setIsRequirementValid] = useState({});
 
   const [openExport, setOpenExport] = useState(false);
 
@@ -186,9 +188,9 @@ const EstimationDetail = () => {
   console.log("HeaderData: ", headerData);
   const getBasicDetailById = (calback) => {
     setLoader(true);
-    console.log("Request for getById: ");
     EstimationService.getById(estimationId)
       .then((res) => {
+        console.log("getBasicDetailById", res.data.body);
         setHeaderData({ ...res.data.body.basicDetails });
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
@@ -253,6 +255,7 @@ const EstimationDetail = () => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
+        console.log("requirement data by id", dataResponse);
 
         var estHeaderAttribute = [
           {
@@ -275,6 +278,14 @@ const EstimationDetail = () => {
                 />
               </>,
             ],
+          },
+          {
+            headerName: "Req. Id",
+            field: "req_id",
+            //id: 1,
+            //editable: false,
+            flex: 1,
+            minWidth: 80,
           },
           {
             headerName: "Requirement",
@@ -309,6 +320,8 @@ const EstimationDetail = () => {
 
         setSummaryHeaderArray([...dataResponse.summaryCallHeader]);
         setSummaryDataArray([...dataResponse.summaryCalData]);
+
+        setIsRequirementValid(dataResponse.isReqValid);
 
         setLoader(false);
         callback();
@@ -455,6 +468,29 @@ const EstimationDetail = () => {
   const handleCountError = (flag) => {
     setCountError(flag);
   };
+  console.log("isRequirementValid", isRequirementValid.err);
+
+  const printErr = () => {
+    return isRequirementValid.err
+      ? isRequirementValid.err.map((el, i) => (
+          <span>
+            {el}
+            {i + 1 !== isRequirementValid.err.length && `, `}
+          </span>
+        ))
+      : "";
+  };
+
+
+const releaseEstimation = (id) => {
+  EstimationService.estimationPublish(id).then((res) => {
+    console.log("Estimation Publish", res.data)
+  })
+  .catch((err) => {
+    console.log(" Error Estimation Publish", err)
+    
+  });
+}
 
   return (
     <div className="estimation-detail-cover">
@@ -573,6 +609,31 @@ const EstimationDetail = () => {
       <Container>
         <Grid container>
           <Grid item class="multi-button-grid">
+            
+               <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/ImportExcelRequirements",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: headerData,
+                  },
+                }}
+              >
+                <Button
+                  style={{ marginRight: "15px" }}
+                  variant="outlined"
+              >
+                   <BiImport style={{fontSize: "20px"}}/>
+                   &nbsp;
+                  Import Requirements
+                </Button>
+              </Link>
             <Button
               variant="outlined"
               className="estimation-detail-button"
@@ -601,6 +662,20 @@ const EstimationDetail = () => {
           <div>
             <div className="addReqTableHeader">
               <h3>Estimation (in {headerData.effortUnit}s)</h3>
+              {!isRequirementValid.isValid && (
+                <div className="warningDiv">
+                  <IoWarningOutline
+                    className="generalWarning"
+                    style={{ fontSize: "12px" }}
+                  />{" "}
+                  <p className="generalWarning">
+                    WARNING: Please include{" "}
+                    <span className="generalWarning_item">{printErr()}</span> in
+                    below requirements, since estimation type is{" "}
+                    <b>{headerData.estTypeId.estType}</b>
+                  </p>
+                </div>
+              )}
             </div>
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
@@ -795,6 +870,16 @@ const EstimationDetail = () => {
           >
             <MdOutlineTimeline style={{ fontSize: "18px" }} />
             &nbsp;Generate Timeline Plan
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="outlined"
+            onClick={()=>
+              {releaseEstimation(estimationId)}}
+          >
+            {/* <MdOutlineTimeline style={{ fontSize: "18px" }} /> */}
+            &nbsp;Estimation Release
           </Button>
         </Grid>
       </Grid>

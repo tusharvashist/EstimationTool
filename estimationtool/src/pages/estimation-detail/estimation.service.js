@@ -59,11 +59,24 @@ const EstimationService = {
     });
   },
 
-  getReport: function () {
+  getReport: function (estId) {
     let url = Url.getReport + "/";
-    return axios({ url, responseType: "blob", method: "GET" }).then((res) => {
+    return axios({
+      url,
+      responseType: "blob",
+      method: "GET",
+      params: {
+        estimationHeaderId: estId,
+      },
+    }).then((res) => {
       FileDownload(res.data, "Estimation.xlsx");
     });
   },
+
+  estimationPublish: function (id) {
+    let url = Url.releaseEstimation + "/";
+    return axios.post(url, id);
+  },
+
 };
 export default EstimationService;

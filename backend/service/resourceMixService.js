@@ -19,12 +19,11 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       var priceTotal = 0;
       var margin = 0;
       var marginPercent = 0;
-
+      var weeks = [];
       costTotal = getSumFromObjects(queryResult,"costcal");
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);
       marginPercent = calculateMarginPercentage(margin,priceTotal);
-
       response.total = {'cost': '$'+ costTotal, 'price': '$'+ priceTotal};
       response.margin = '$' + margin;
       response.marginPercent = marginPercent+'%';

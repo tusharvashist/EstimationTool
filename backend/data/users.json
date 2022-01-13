@@ -1,0 +1,64 @@
+[{
+  "_id":"61812a553d538cfc93016f05",
+  "firstName": "Pyramid",
+  "lastName": "Admin",
+  "email": "admin@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb29"
+},{
+  "_id":"61dd6c7a82ac56d1f0909a03",
+  "firstName": "Pyramid",
+  "lastName": "Super Admin",
+  "email": "superadmin@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb30", 
+  "__v": 0
+},{
+  "_id":"61dd6cbe82ac56d1f0909a04",
+  "firstName": "Pyramid",
+  "lastName": "Full Contributor",
+  "email": "fullcontributor@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb31",
+  "__v": 0
+},{
+  "_id":"61dd6ce082ac56d1f0909a05",
+  "firstName": "Pyramid",
+  "lastName": "Basic Contributor",
+  "email": "basiccontributor@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb32",
+  "__v": 0
+},{
+  "_id":"61dd6d1682ac56d1f0909a06",
+  "firstName": "Pyramid",
+  "lastName": "Full Reviewer",
+  "email": "fullreviewer@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb33",
+  "__v": 0
+},{
+  "_id":"61dd6d3382ac56d1f0909a07",
+  "firstName": "Pyramid",
+  "lastName": "Basic Reviewer",
+  "email": "basicreviewer@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb34",
+  "__v": 0
+},{
+  "_id":"61dd6d5f82ac56d1f0909a08",
+  "firstName": "Pyramid",
+  "lastName": "Basic Viewer",
+  "email": "basicviewer@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb36",
+  "__v": 0
+},{
+  "_id":"61dd6d7b82ac56d1f0909a09",
+  "firstName": "Pyramid",
+  "lastName": "Full Viewer",
+  "email": "fullviewer@pyramidconsultinginc.com",
+  "password": "$2b$12$jgq.rLoeSpyljT8Y3AUZpeUeavY.rH.t/itkhbcD7s.52AwRWHIK2",
+  "roleId":"617b7e9906b52001082eeb35",
+  "__v": 0
+}]

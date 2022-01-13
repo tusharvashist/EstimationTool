@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 const RequirementRepository = require("../repository/requirementRepository");
 
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
+const { defaultResponce } = require("../constant");
 
 module.exports.create = async (serviceData) => {
   try {
@@ -56,8 +57,26 @@ module.exports.getRequirementWithQuery = async ({ id }) => {
     var requirementList = await RequirementRepository.getRequirementWithQuery(
       id
     );
-    let response = { ...constant.requirementResponse };
+    let response = { ...constant.requirementListResponse };
     response.featureList = requirementList;
+    var estimationCount =
+      await RequirementRepository.numberOfEstimationInProject(id);
+    if (estimationCount.length != 0) {
+      response.noOfEstimation = estimationCount[0].estimationCount;
+
+      if (response.featureList.length != 0 && response.noOfEstimation == 0) {
+        response.showDeleteAllRequirement = true;
+      } else {
+        response.showDeleteAllRequirement = false;
+      }
+    } else {
+      response.noOfEstimation = 0;
+      if (response.featureList.length == 0) {
+        response.showDeleteAllRequirement = false;
+      } else {
+        response.showDeleteAllRequirement = true;
+      }
+    }
 
     return formatMongoData(response);
   } catch (err) {
@@ -283,11 +302,40 @@ module.exports.deleteRequirementData = async (id) => {
   }
 };
 
+module.exports.allRequirementDelete = async (id) => {
+  try {
+    var estimationCount =
+      await RequirementRepository.numberOfEstimationInProject(id);
+    if (estimationCount.length == 0) {
+      var deleteAllRequirements =
+        await RequirementRepository.deleteAllRequirements(id);
+      return formatMongoData(deleteAllRequirements);
+    } else {
+      throw new Error(constant.requirementMessage.DELETE_ALL_REQUIREMENT_ERROR);
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 class sumOfKey extends Array {
   sum(key) {
     return this.reduce((a, b) => a + (b[key] || 0), 0);
   }
 }
+
+const getEstBasicDetail = async (id) => {
+  let estimations = await EstHeaderModel.findById({ _id: id })
+    .populate({
+      path: "projectId",
+      populate: { path: "client" },
+    })
+    .populate({
+      path: "estTypeId",
+      populate: { path: "reqTypeValidation" },
+    });
+  return estimations;
+};
 
 module.exports.getById = async ({ id }) => {
   try {
@@ -302,14 +350,7 @@ module.exports.getById = async ({ id }) => {
     //3
     response.requirementTag = await RequirementRepository.getTags();
     //5
-    let estimations = await EstHeaderModel.findById({ _id: id })
-      .populate({
-        path: "projectId",
-        populate: { path: "client" },
-      })
-      .populate({
-        path: "estTypeId",
-      });
+    let estimations = await getEstBasicDetail(id);
 
     response.basicDetails = estimations;
     //console.log("GetByID Ends");
@@ -318,6 +359,23 @@ module.exports.getById = async ({ id }) => {
     //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
+};
+
+const checkValidation = (validationList, requirementList) => {
+  const error = [];
+  validationList.map((validationItem) => {
+    let foundReq = requirementList.some(
+      (req) => req.Type._id.toString() === validationItem.id.toString()
+    );
+
+    if (!foundReq) {
+      error.push(validationItem.name);
+    }
+  });
+
+  return error.length > 0
+    ? { err: error, isValid: false }
+    : { err: error, isValid: true };
 };
 
 module.exports.getRequirementData = async ({ id }) => {
@@ -360,14 +418,14 @@ module.exports.getRequirementData = async ({ id }) => {
         contingencySuffix
       );
     var tagTotal = response.tagSummaryData[response.tagSummaryData.length - 1];
-    console.log("tagTotal: ", tagTotal);
+    // console.log("tagTotal: ", tagTotal);
     response.summaryCalData =
       await RequirementRepository.getCalculativeAttributes(
         id,
         contingency,
         contingencySuffix
       );
-    console.log("summaryCalData: ", response.summaryCalData);
+    // console.log("summaryCalData: ", response.summaryCalData);
 
     var projectTotal = {
       id: 1,
@@ -424,9 +482,21 @@ module.exports.getRequirementData = async ({ id }) => {
     response.summaryCallHeader = calculativeHeader;
     //4
     response.estHeaderAttribute = await getEstHeaderAttribute(id);
+
+    //5
+    let estimations = await getEstBasicDetail(id);
+    response.basicDetails = estimations;
+
+    //check validation for req type
+    //6
+    response.isReqValid = checkValidation(
+      estimations.estTypeId.reqTypeValidation,
+      response.requirementList
+    );
+
     return formatMongoData(response);
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
+    console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
 };
@@ -440,16 +510,31 @@ async function getRequirementList(
   estHeaderRequirement.forEach((item, i) => {
     if (item.isDeleted === false) {
       var field = item.requirement.title;
+
+      var tag = "";
+      var tagid = 0;
+      var type = "";
+      
+      if (item.requirement.tag !== undefined) {
+        tag = item.requirement.tag.name;
+     
+         tagid = item.requirement.tag._id;
+       }
+       if (item.requirement.type !== undefined) {
+         type = item.requirement.type;
+       }
+      
       var requirement = {
         Requirement: item.requirement.title,
         Description: item.requirement.description,
-        Tag: item.requirement.tag.name,
-        Tagid: item.requirement.tag._id,
-        Type: item.requirement.type,
+        Tag: tag,
+        Tagid: tagid,
+        Type: type,
         requirementId: item.requirement._id,
         _id: item._id,
         id: item._id,
         action: item._id,
+        req_id: item.requirement.req_id,
       };
 
       if (item.requirement.queryassumptions.length !== 0) {

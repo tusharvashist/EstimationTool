@@ -9,7 +9,7 @@ import {
     ClientProjectHeader,
 } from "../estimation-detail/header-element";
 import { DataGrid } from "@material-ui/data-grid";
-import ResourceMixService from "../ResourceMix/ResourceMix.service";
+import TimelinePlanningService from "./timelinePlanning.service";
 import styleClasses from "../ResourceMix/resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import ResourceCountService from "../ResourceCount/resourcecount.service";
@@ -24,11 +24,11 @@ const TimelinePlanning = () => {
     const clientDetails = location.state !== undefined ? location.state.clientInfo : resMixData.data;
     const projectDetails = location.state !== undefined ? location.state.projectInfo : resMixData.data;
     const headerData = location.state !== undefined ? location.state.headerData : resMixData.data;
-
     const [loaderComponent, setLoader] = useLoader();
 
     const [resourceMixList, setResourceMixList] = useState([]);
     const [totalMargin, setTotalMargin] = useState({});
+    const [noOfWeeks, setNoOfWeeks] = useState({});
 
     useEffect(() => {
         getResourceCountData(estimationId);
@@ -44,47 +44,30 @@ const TimelinePlanning = () => {
 
     const getAllResourceMixData = (estimationId) => {
         setLoader(true)
-        ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
+        TimelinePlanningService.getTimelinePlanningData(estimationId) //619e3ddb8c705cf78e273c02
             .then((res) => {
                 console.log("mixdata", res);
                 setLoader(false)
-                let objArr = res.data.body.resourceMixData.map((el, i) => {
-                    return {
-                        id: i + 1,
-                        allocationPercent: el.resourceMix.allocationPercent,
-                        resourceRole: el.resourceMix.role.resourceRole,
-                        attributeName: el.attributeName || null,
-                        // estCalId: el.attributeSkill.attributeName || null,
-                        cost: el.costcal,
-                        price: el.pricecal,
-                    };
-                    // if (!el.attributeSkill.calcAttributeName) {
-                    //   return {
-                    //     id: i + 1,
-                    //     allocationPercent: el.resourceMix.allocationPercent,
-                    //     resourceRole: el.resourceMix.role.resourceRole,
-                    //     attributeName: el.attributeSkill.attributeName,
-                    //     cost: el.costcal,
-                    //     price: el.pricecal,
-                    //   };
-                    // } else {
-                    //   return {
-                    //     id: i + 1,
-                    //     allocationPercent: el.resourceMix.allocationPercent,
-                    //     resourceRole: el.resourceMix.role.resourceRole,
-                    //     calcAttributeName: el.attributeSkill.calcAttributeName,
-                    //     cost: el.costcal,
-                    //     price: el.pricecal,
-                    //   };
-                    // }
+                const mixData = res.data.body.resourceMixData;
+                const weeks = res.data.body.resourceMixData[0].estimationHeader.estTentativeTimeline;
+                let objArr = res.data.body.timelinePlanning.map((el, i) => {
+                    let result = {};
+                    result.id = i+1;
+                    result.resourceRole= el.resourceRole;
+                    result.attributeName= el.attributeName || null;
+                    result.totalHours= el.totalHours;
+                    for(let i = 1; i<=weeks; i++) {
+                        const str = 'week' + i;
+                        result[str] = el.week1;
+                    }
+                    return result;
                 });
-                console.log(objArr);
                 setResourceMixList(objArr);
                 setTotalMargin({
-                    cost: res.data.body.total.cost,
-                    price: res.data.body.total.price,
-                    margin: res.data.body.margin,
-                    marginPercent: res.data.body.marginPercent,
+                    totalNumberOfHours: res.data.body.totalNumberOfHours,
+                });
+                setNoOfWeeks({
+                    noOfWeeks:res.data.body.resourceMixData[0].estimationHeader.estTentativeTimeline,
                 });
             })
             .catch((error) => {
@@ -100,12 +83,6 @@ const TimelinePlanning = () => {
             sortable: false,
         },
         {
-            field: "allocationPercent",
-            headerName: "Allocation %",
-            sortable: false,
-            width: 170,
-        },
-        {
             field: "resourceRole",
             headerName: "Role",
             sortable: false,
@@ -117,19 +94,21 @@ const TimelinePlanning = () => {
             sortable: false,
             width: 280,
         },
-        {
-            field: "cost",
-            headerName: "Cost ($)",
-            sortable: false,
-            width: 160,
-        },
-        {
-            field: "price",
-            headerName: "Price ($)",
-            sortable: false,
-            width: 160,
-        },
     ];
+    for(let i = 1; i<=noOfWeeks.noOfWeeks; i++) {
+        const col = {};
+            col.field= "week" + i.toString();
+            col.headerName= "week" + i.toString();
+            col.sortable= false;
+            col.width= 160;
+        columns.push(col);
+    }
+    columns.push({
+        field: "totalHours",
+        headerName: "totalHours",
+        sortable: false,
+        width: 280,
+    });
     console.log(resourceMixList, totalMargin);
 
     return (
@@ -172,33 +151,15 @@ const TimelinePlanning = () => {
                                 pageSize={5}
                                 rowsPerPageOptions={[5]}
                                 disableSelectionOnClick
-                            // components={{
-                            //   NoRowsOverlay: NNoRowOverlay,
-                            // }}
                             />
                         </div>
                         <div className={styleClasses.totalcontainer}>
                             <div className={styleClasses.totalRow}>
                                 <div className={styleClasses.total_item}>
                                     <h4>
-                                        Total Cost: <span>{totalMargin.cost}</span>
+                                        Total Number of Hours: <span>{totalMargin.totalNumberOfHours}</span>
                                     </h4>
                                 </div>
-                                <div className={styleClasses.total_item}>
-                                    <h4>
-                                        Total Price: <span>{totalMargin.price}</span>
-                                    </h4>
-                                </div>
-                            </div>
-                            <div className={styleClasses.total_item}>
-                                <h4>
-                                    Margin = Price - Cost: <span>{totalMargin.margin}</span>
-                                </h4>
-                            </div>
-                            <div className={styleClasses.total_item}>
-                                <h4>
-                                    Margin: <span>{totalMargin.marginPercent}</span>
-                                </h4>
                             </div>
                         </div>
                     </>

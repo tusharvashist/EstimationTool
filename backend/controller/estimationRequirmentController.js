@@ -43,6 +43,7 @@ module.exports.update = async (req, res) => {
     responce.message = constant.requirementMessage.REQUIREMENT_UPDATE;
     responce.body = responceFromClientSer;
   } catch (err) {
+    responce.status = 400;
     responce.message = err.message;
   }
   return res.status(responce.status).send(responce);
@@ -141,16 +142,32 @@ module.exports.updateRequirementData = async (req, res) => {
 };
 
 //-----------------  Delete
-module.exports.requirementDelete = async (req, res) => {
-  let responce = { ...constant.defaultResponse };
-  try {
-    const responceDelete =
-      await estimationRequirementService.deleteRequirementData(req.params.id);
-    responce.status = 200;
-    responce.message = constant.requirementMessage.REQUIREMENT_DELETE;
-    responce.body = responceDelete;
-  } catch (err) {
-    responce.message = err.message;
-  }
-  return res.status(responce.status).send(responce);
-};
+module.exports.requirementDelete = async (req,res)=>{
+    let responce = {...constant.defaultResponse};
+    try{
+       const responceDelete = await estimationRequirementService.deleteRequirementData(req.params.id);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_DELETE;
+        responce.body = responceDelete;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
+
+
+module.exports.allRequirementDelete = async (req,res)=>{
+    let responce = {...constant.defaultResponse};
+    try{
+       const responceDelete = await estimationRequirementService.allRequirementDelete(req.params.id);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_DELETE;
+        responce.body = responceDelete;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}
+
+

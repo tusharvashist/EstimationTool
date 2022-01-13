@@ -5,6 +5,16 @@ module.exports = {
     body: {},
   },
 
+  requirementExcelHeader: {
+    Requirement: "Requirement",
+    Description: "Description",
+    Tag: "Tag",
+    Type: "Type",
+    Query: "Query",
+    Assumption: "Assumption",
+    Reply: "Reply",
+  },
+
   requirementResponse: {
     basicDetails: {},
     featureList: [],
@@ -17,7 +27,18 @@ module.exports = {
     tagSummaryHeader: [],
     tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
+    isReqValid: { err: [], isValid: true },
   },
+
+  requirementListResponse: {
+    showDeleteAllRequirement: false,
+    noOfEstimation: 0,
+    featureList: [],
+    requirementSummary: [],
+    requirementSaveResult: {},
+    requirementMapResult: {},
+  },
+
   estimationAttribute: {
     _id: "",
     attributeCode: "",
@@ -65,7 +86,21 @@ module.exports = {
     REQUIREMENT_DATA_UPDATE: "Requirement data update successfully",
     REQUIREMENT_DELETE: "Requirement delete successfully",
     DUPLICATE_REQUIREMENT: "Requirement already exist with given name.",
+    DELETE_ALL_REQUIREMENT_ERROR:
+      "ALL requirement can't be deleted because estimation in this project already exist.",
   },
+
+  excelUploadMessage: {
+    REQUIREMENT_RECEIVED: "Excel file received.",
+    REQUIREMENT_FILE_NOT_RECEIVED: "Excel file not received.",
+    REQUIREMENT_NOTFOUND_REQUIREMENT: "Requirement not found.",
+    REQUIREMENT_NOTFOUND_Description: "Description not found.",
+    REQUIREMENT_ALREADY_AVAILABLE: "Requirement already available in database.",
+    REQUIREMENT_DUPLICATE: "Duplicate requirement found same as: ",
+    REQUIREMENT_INVALID_TAGS: "Invalid requirement tags.",
+    REQUIREMENT_INVALID_TYPE: "Invalid requirement type.",
+  },
+
   estimationTemplateCalcAttrMessage: {
     ESTIMATIONTEMPLATECALCATTR_CREATED:
       "Estimation Template Calc Attr created successfully",
@@ -128,6 +163,8 @@ module.exports = {
       "estimationHeaderAtrributeCalc delete successfully",
     DUPLICATE_estimationHeaderAtrributeCalc:
       "estimationHeaderAtrributeCalc already exist with given name.",
+    estimationHeaderAtrributeCalcCyclic_ERROR:
+      "Calc Attribute formula having circular references,Please check formula tags.",
   },
 
   techSkillMasterMessage: {
@@ -266,10 +303,16 @@ module.exports = {
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
   },
+  timelinePlanningMessage: {
+    TIMELINEPLANNING_FETCH: "Resource timeline planning fetch successfully",
+    INVALID_ID: "Invalid id",
+  },
   excelSheetName: {
     ESTIMATION_DETAIL: "Estimation Detail",
     RESOURMIX_FETCH: "Resource mix detail fetch successfully",
     INVALID_ID: "Invalid id",
+    ESTIMATION_SUMMARY: "Estimation Summary",
+    RESOURCE_MIX: "Resource Mix",
   },
   publishMessage: {
     PUBLISH_VALIDATION: "Validation failed",

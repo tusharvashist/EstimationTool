@@ -324,14 +324,18 @@ module.exports.estimationHeaderAtrributeCalcDelete = async (req, res) => {
 module.exports.releaseEstimation= async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
-        const responceFromEstimationHeaderAtrributeCalcSer =
+        const responceReleaseEstimate =
             await estimationHeaderAtrributeSer.ReleaseEstimation(
                 req.body.estHeaderId
             );
+            if(responceReleaseEstimate.message === undefined) {
         responce.status = 200;
-        responce.message =
-            constant.publishMessage.PUBLISH_CREATE;
-        responce.body = '';
+        responce.message = 'Estimation Publish Successfully';
+        responce.body = responceReleaseEstimate;
+            } else {
+                responce.message = responceReleaseEstimate.message;
+                responce.body = responceReleaseEstimate;
+            }
     } catch (err) {
         responce.message = err.message;
     }

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "import": "node seedData.js -i",
+    "remove": "node seedData.js -d"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +19,12 @@
     "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.0.5",
+    "mongoose-sequence": "^5.3.1",
     "mongoose-unique-validator": "^3.0.0",
     "react-icons": "^4.3.1",
     "swagger-jsdoc": "^6.1.0",

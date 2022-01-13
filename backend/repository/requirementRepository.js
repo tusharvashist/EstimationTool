@@ -2,6 +2,8 @@ const constant = require("../constant");
 const { ObjectId } = require("mongodb");
 const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
 const Client = require("../database/models/clientModel");
+const Project = require("../database/models/projectModel");
+
 const EstHeaderModel = require("../database/models/estHeaderModel");
 const ProjectRequirement = require("../database/models/projectRequirement");
 const QueryAssumptionModel = require("../database/models/queryAssumptionModel");
@@ -15,6 +17,7 @@ const EstimationHeaderAttributeCalc = require("../database/models/estimationHead
 const EstimationAttributes = require("../database/models/estimationAttributesModel");
 const mongoose = require("mongoose");
 const estimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
+
 module.exports.createRequirement = async (serviceData) => {
   let projectRequirement = new ProjectRequirement({ ...serviceData });
   let requirementId = "";
@@ -29,6 +32,119 @@ module.exports.createRequirement = async (serviceData) => {
     let result = await projectRequirement.save();
     return result;
   }
+};
+
+
+module.exports.getProjectById = async ( id ) => {
+  try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
+    let project = await Project.findById(id)
+      .populate({ path: "createdBy updatedBy" })
+      .populate("client")
+      .populate({
+        path: "estimates",
+        populate: { path: "estTypeId createdBy updatedBy" },
+      });
+    if (!project) {
+      throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
+    }
+    return project;
+  } catch (err) {
+    console.log(
+      "something went wrong: service > projectservice > getProjectById",
+      err
+    );
+    throw new Error(err);
+  }
+};
+
+module.exports.createBulkRequirement = async (projectId, requirementList) => {
+  try {
+
+    var bulk = ProjectRequirement.collection.initializeUnorderedBulkOp();
+    requirementList.forEach(async (requirement) => {
+      //mongoose.Types.ObjectId(serviceData),
+     
+      var type = '';
+      var tag = '';
+      if (requirement.TypeId.length != 0) {
+          type = mongoose.Types.ObjectId(requirement.TypeId);
+      }
+       if (requirement.TagId.length != 0) {
+         tag = mongoose.Types.ObjectId(requirement.TagId);
+      }
+
+      let result = bulk.insert({
+          title: requirement.Requirement,
+          description: requirement.Description,
+          project: projectId._id,
+          type: type,
+          tag:tag,
+      });
+      
+    });
+    const result = await bulk.execute();
+    return formatMongoData(result);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+
+
+module.exports.bulkInsertQueryAssumption = async (
+  requirementList
+) => {
+   try {
+    var bulk = QueryAssumptionModel.collection.initializeUnorderedBulkOp();
+    requirementList.forEach(async (requirement) => {
+     
+      var projectRequirement = '';
+      if (requirement._id.length != 0) {
+          projectRequirement = mongoose.Types.ObjectId(requirement._id);
+      }
+
+      let result = bulk.insert({
+          query: requirement.Query,
+          assumption: requirement.Assumption,
+          reply: requirement.Reply,
+          projectRequirement: projectRequirement,
+      });
+      
+    });
+    const result = await bulk.execute();
+    return formatMongoData(result);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+module.exports.isRequirementAvailable = async (projectId,title) => {
+
+  const findRecord = await ProjectRequirement.find(
+    { title: title },
+    { project: projectId }
+  );
+
+  if (findRecord.length != 0) {
+    return  true;
+  } else {
+    return false;
+  }
+};
+
+
+
+module.exports.getAllProjectRequirement = async (projectId) => {
+
+  const findRecord = await ProjectRequirement.find(
+    { project: projectId }
+  );
+
+    return  findRecord;
+
 };
 
 module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
@@ -132,6 +248,8 @@ module.exports.createQueryAssumption = async (
     return findRecord[0];
   }
 };
+
+
 
 module.exports.getTags = async () => {
   let requirementTag = await RequirementTag.find({}).sort({ name: 1 });
@@ -688,36 +806,7 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
     EstimationCalcAttributes: EstimationCalcAttributes,
   };
 
-  //     {
-  //       _id: "6177d49fb6e42413fe1baf18",
-  //       attributeCode: "DEV",
-  //       attributeName: "Front End",
-  //       description: "name",
-  //       Total: 265,
-  //     },
-  //     {
-  //       _id: "6177dc8bb6e42413fe1baf24",
-  //       attributeCode: "DEV",
-  //       attributeName: "Back End",
-  //       description: "Back End",
-  //       Total: 115,
-  //     },
-  //   ],
-  //   EstimationCalcAttributes: [
-  //     {
-  //       _id: "618b8f4b6259f87257bc2201",
-  //       calcAttribute: " ",
-  //       calcAttributeName: "QA",
-  //       Total: 85,
-  //     },
-  //     {
-  //       _id: "618b8f5f6259f87257bc2203",
-  //       calcAttribute: " ",
-  //       calcAttributeName: "ProjectManager",
-  //       Total: 95,
-  //     },
-  //   ],
-  // };
+
   console.log("ResourceCount :", resourceCount);
   return resourceCount;
 };
@@ -1045,6 +1134,9 @@ module.exports.getRequirementWithQuery = async (projectId) => {
         id: {
           $first: "$_id",
         },
+        req_id: {
+          $first: "$req_id",
+        },
         isDeleted: {
           $first: "$isDeleted",
         },
@@ -1090,4 +1182,42 @@ module.exports.getRequirementWithQuery = async (projectId) => {
   } else {
     return [];
   }
+};
+
+
+
+module.exports.numberOfEstimationInProject = async (projectId) => {
+
+  let estHeaderModel = await EstHeaderModel.aggregate(
+    [
+      {
+        $match: {
+          projectId: ObjectId(projectId),
+          isDeleted: false
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          estimationCount: {
+            $sum: 1
+          }
+        }
+      }
+    ]
+  );
+  
+  return estHeaderModel;
+};
+
+
+module.exports.deleteAllRequirements = async (projectId) => {
+
+   let deleteResponse = await ProjectRequirement.deleteMany({
+      project: projectId,
+    });
+    if (!deleteResponse) {
+      return new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+    }
+    return formatMongoData(deleteResponse);
 };

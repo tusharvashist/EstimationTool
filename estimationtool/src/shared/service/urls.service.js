@@ -3,6 +3,7 @@ const Url = {
   user: `${process.env.REACT_APP_URL}user`,
   allestimation: `${process.env.REACT_APP_URL}estimation`,
   estimationDetail: `${process.env.REACT_APP_URL}estimationDetail`,
+  uploadExcel: `${process.env.REACT_APP_URL}uploadExcel`,
   masterEstimationTypes: `${process.env.REACT_APP_URL}estimationTemplate`,
 
   createClient: `${process.env.REACT_APP_URL}client`,
@@ -29,7 +30,9 @@ const Url = {
   updateResourceRole: `${process.env.REACT_APP_URL}resource/updateresourcerole`,
   getResourceRoleMaster: `${process.env.REACT_APP_URL}resourceRoleMaster`,
   getResourceMixData: `${process.env.REACT_APP_URL}resource/mix`,
+  getTimelinePlanningData: `${process.env.REACT_APP_URL}resource/timelineplanning`,
   getAllExportData: `${process.env.REACT_APP_URL}export`,
   getReport: `${process.env.REACT_APP_URL}report`,
+  releaseEstimation: `${process.env.REACT_APP_URL}estimation/releaseEstimation`
 };
 export default Url;
