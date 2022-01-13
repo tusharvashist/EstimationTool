@@ -197,13 +197,13 @@ module.exports.updateManualCallAttribute = async (id, updateInfo) => {
 
 module.exports.updateRequirement = async ({ id, updateInfo }) => {
   try {
-    // const findRecord = await ProjectRequirement.find(
-    //   { title: updateInfo.title },
-    //   { project: updateInfo.project }
-    // );
+    const findRecord = await ProjectRequirement.find(
+      { title: updateInfo.title },
+      { project: updateInfo.project }
+    );
     updateInfo.updatedBy = global.loginId;
-    // if (findRecord.length != 0) {
-     // if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
+    if (findRecord.length != 0) {
+      if (String(findRecord[0]._id) == id) {
         let requirement = await ProjectRequirement.findOneAndUpdate(
           { _id: id },
           updateInfo,
@@ -219,20 +219,27 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
         );
 
         return formatMongoData(requirement);
-      //} else {
-       // throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
-     // }
-    // } else {
-    //   let requirement = await ProjectRequirement.findOneAndUpdate(
-    //     { _id: id },
-    //     updateInfo,
-    //     { new: true }
-    //   );
-    //   if (!requirement) {
-    //     throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
-    //   }
-    //   return formatMongoData(requirement);
-    // }
+      } else {
+        throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+      }
+    } else {
+
+       let requirement = await ProjectRequirement.findOneAndUpdate(
+          { _id: id },
+          updateInfo,
+          { new: true }
+        );
+        if (!requirement) {
+          throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+        }
+
+        let queryAssumption = await RequirementRepository.updateQuery(
+          requirement._id,
+          updateInfo
+        );
+       
+    }
+
   } catch (err) {
     ////console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
