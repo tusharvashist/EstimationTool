@@ -54,5 +54,5 @@ const projectRequirementSchema = new mongoose.Schema(
   }
 );
 // projectRequirementSchema.plugin(AutoIncrement, {inc_field: 'req_id'});
-// projectRequirementSchema.index({ updatedAt: "-1" });
+projectRequirementSchema.index({ updatedAt: "-1" });
 module.exports = mongoose.model("ProjectRequirement", projectRequirementSchema);

@@ -27,7 +27,8 @@ module.exports.createRequirement = async (serviceData) => {
   );
 
   if (findRecord.length != 0) {
-    return findRecord[0];
+   
+    return false;
   } else {
     let result = await projectRequirement.save();
     return result;

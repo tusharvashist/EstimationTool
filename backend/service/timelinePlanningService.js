@@ -30,8 +30,8 @@ module.exports.getTimelinePlanning = async ({ id }) => {
         let totalNumberOfHoursForResource = 0;
         let timelinePlanningForResource = {};
         timelinePlanningForResource.id = number++;
-        timelinePlanningForResource.attributeName = t.resourceMix.role.resourceRole;
-        timelinePlanningForResource.resourceRole = t.attributeName;
+        timelinePlanningForResource.attributeName = t.attributeName;
+        timelinePlanningForResource.resourceRole = t.resourceMix.role.resourceRole;
         for(let i=1;i<=t.estimationHeader.estTentativeTimeline; i++) {
           let str = 'week'+i;
           let cal = 40 * (t.resourceMix.allocationPercent / 100);

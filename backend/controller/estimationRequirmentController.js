@@ -9,6 +9,7 @@ module.exports.create = async (req, res) => {
     responce.message = constant.requirementMessage.REQUIREMENT_CREATED;
     responce.body = responceGetByID;
   } catch (err) {
+    responce.status = 400;
     responce.message = err.message;
   }
   return res.status(responce.status).send(responce);

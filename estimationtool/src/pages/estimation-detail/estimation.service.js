@@ -51,7 +51,6 @@ const EstimationService = {
 
   getAllExportData: function (estimationOptions) {
     let url = Url.getAllExportData + "/";
-    // return axios.post(url, estimationOptions);
     return axios({
       url,
       method: "POST",
