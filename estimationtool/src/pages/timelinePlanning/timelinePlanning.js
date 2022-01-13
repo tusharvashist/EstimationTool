@@ -98,14 +98,14 @@ const TimelinePlanning = () => {
     for(let i = 1; i<=noOfWeeks.noOfWeeks; i++) {
         const col = {};
             col.field= "week" + i.toString();
-            col.headerName= "week" + i.toString();
+            col.headerName= "Week" + i.toString();
             col.sortable= false;
             col.width= 160;
         columns.push(col);
     }
     columns.push({
         field: "totalHours",
-        headerName: "totalHours",
+        headerName: "Total Hours",
         sortable: false,
         width: 280,
     });
@@ -157,7 +157,7 @@ const TimelinePlanning = () => {
                             <div className={styleClasses.totalRow}>
                                 <div className={styleClasses.total_item}>
                                     <h4>
-                                        Total Number of Hours: <span>{totalMargin.totalNumberOfHours}</span>
+                                       Gr. Total: <span>{totalMargin.totalNumberOfHours}</span>
                                     </h4>
                                 </div>
                             </div>
