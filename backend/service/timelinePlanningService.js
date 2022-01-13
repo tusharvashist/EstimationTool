@@ -23,20 +23,27 @@ module.exports.getTimelinePlanning = async ({ id }) => {
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);
       marginPercent = calculateMarginPercentage(margin,priceTotal);
-
+      let totalNumberOfHours = 0;
+      let timelinePlanning = [];
+      let number = 1;
       queryResult.forEach(t => {
-        t.weeks = [];
+        let totalNumberOfHoursForResource = 0;
+        let timelinePlanningForResource = {};
+        timelinePlanningForResource.id = number++;
+        timelinePlanningForResource.attributeName = t.resourceMix.role.resourceRole;
+        timelinePlanningForResource.resourceRole = t.attributeName;
         for(let i=1;i<=t.estimationHeader.estTentativeTimeline; i++) {
-          var temp = {};
           let str = 'week'+i;
           let cal = 40 * (t.resourceMix.allocationPercent / 100);
-          temp[str] = cal;
-          t.weeks.push(temp);
-
+          timelinePlanningForResource[str] = cal;
+          totalNumberOfHoursForResource += cal;
+          totalNumberOfHours += cal;
         }
+        timelinePlanningForResource.totalHours = totalNumberOfHoursForResource;
+        timelinePlanning.push(timelinePlanningForResource);
       });
-
-      response.total = {'cost': '$'+ costTotal, 'price': '$'+ priceTotal};
+      response.timelinePlanning = timelinePlanning;
+      response.totalNumberOfHours = totalNumberOfHours;
       response.margin = '$' + margin;
       response.marginPercent = marginPercent+'%';
       return response;

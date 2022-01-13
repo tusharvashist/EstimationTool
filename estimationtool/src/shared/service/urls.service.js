@@ -29,7 +29,7 @@ const Url = {
   updateTechnology: `${process.env.REACT_APP_URL}resource/updatetechnology`,
   updateResourceRole: `${process.env.REACT_APP_URL}resource/updateresourcerole`,
   getResourceRoleMaster: `${process.env.REACT_APP_URL}resourceRoleMaster`,
-  getResourceMixData: `${process.env.REACT_APP_URL}resource/timelineplanning`,
+  getResourceMixData: `${process.env.REACT_APP_URL}resource/mix`,
   getTimelinePlanningData: `${process.env.REACT_APP_URL}resource/timelineplanning`,
   getAllExportData: `${process.env.REACT_APP_URL}export`,
   getReport: `${process.env.REACT_APP_URL}report`,
