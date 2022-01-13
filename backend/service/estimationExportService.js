@@ -94,7 +94,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       constant.excelSheetName.RESOURCE_MIX
     );
 
-    let rowData = await estimationResourceCountService.getResourceCount(
+    let countRowData = await estimationResourceCountService.getResourceCount(
       newPayload
     );
 
@@ -116,7 +116,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       return newArr.toString();
     };
 
-    let tableRowData = rowData.map((data, i) => {
+    let tableRowData = countRowData.map((data, i) => {
       return [
         i + 1,
         data.resourceCount,
@@ -191,7 +191,6 @@ function getResourcePlanningColumns() {
 async function getResourcePlanningRowData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
   const resData = await resourceCountMixService.getResourceMixPlanning(payload);
-  //console.log("Resoure Planning data", resData);
   var totalCost = resData.total.cost;
   var totalPrice = resData.total.price;
   var margin = resData.margin;
@@ -299,14 +298,6 @@ async function getEstimationRequirementData(conditions) {
     return rowDataArr;
   });
 
-  // console.log(
-  //   "estCalColumns",
-  //   estCalColumns,
-  //   "estCalRowData",
-  //   requirementData.summaryCalData,
-  //   estCalRowData
-  // );
-
   // return values
   return {
     estRequirementColumns,
@@ -319,11 +310,10 @@ async function getEstimationRequirementData(conditions) {
 }
 
 module.exports.checkEstName = async (reqPayload) => {
-  let est = await estimationHeaderModal.findById(
+  return estimationHeaderModal.findById(
     reqPayload.estimationHeaderId,
     "estName"
   );
-  return est;
 };
 
 function deleteFile(name) {
