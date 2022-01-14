@@ -425,7 +425,10 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
       //Map req with 
       var queryAssumptionList = await getQueryAssumptionList(projectRequirement_list, recordList);
       //Insert //bulkInsertQueryAssumption
-        var resultQueryAssumption = await RequirementRepository.bulkInsertQueryAssumption(queryAssumptionList);
+      if(queryAssumptionList.length >0){
+
+        await RequirementRepository.bulkInsertQueryAssumption(queryAssumptionList);
+      }
     
   
       response.requirementSummary.noOfRecordsInserted = result.nInserted;

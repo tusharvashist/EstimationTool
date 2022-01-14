@@ -65,7 +65,7 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
   try {
 
     var bulk = ProjectRequirement.collection.initializeUnorderedBulkOp();
-    requirementList.forEach(async (requirement) => {
+    requirementList.forEach(async (requirement,i) => {
       //mongoose.Types.ObjectId(serviceData),
      
       var type = '';
@@ -83,8 +83,7 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
           project: projectId._id,
           type: type,
           tag:tag,
-      });
-      
+      });      
     });
     const result = await bulk.execute();
     return formatMongoData(result);
@@ -99,6 +98,7 @@ module.exports.bulkInsertQueryAssumption = async (
   requirementList
 ) => {
    try {
+     if(requirementList.length >0){
     var bulk = QueryAssumptionModel.collection.initializeUnorderedBulkOp();
     requirementList.forEach(async (requirement) => {
      
@@ -117,6 +117,7 @@ module.exports.bulkInsertQueryAssumption = async (
     });
     const result = await bulk.execute();
     return formatMongoData(result);
+  }
   } catch (err) {
     throw new Error(err);
   }
