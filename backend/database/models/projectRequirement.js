@@ -6,6 +6,7 @@ const projectRequirementSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
+    req_id: Number,
     type: {
       type: Schema.Types.ObjectId,
       ref: "requirementType",

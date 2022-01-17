@@ -238,7 +238,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
       );
     }
   } catch (err) {
-    ////console.log("something went wrong: service > createEstimation ", err);
+    //console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
   }
 };
