@@ -19,12 +19,10 @@ module.exports.generateExcelReport = async (reportPayload) => {
   workbook.created = new Date();
 
   //check report directory if not exist, create one
-   createDirIfNotExist()
-   .then(() => {
+  createDirIfNotExist().then(() => {
     // delete old file if exist
     deleteFile(est.estName);
-   });
-  
+  });
 
   try {
     await generateRequiredSpreadsheet(workbook, reportPayload);
@@ -105,7 +103,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
 
     let colData = [
       { name: "S No.", key: "s_no", width: 3 },
-      { name: "Resource Count", key: "resourceCount", width: 15 },
+      //{ name: "Resource Count", key: "resourceCount", width: 15 },
       {
         name: "Skills(Effort & Summary Attributes)",
         key: "skill",
@@ -124,7 +122,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     let tableRowData = countRowData.map((data, i) => {
       return [
         i + 1,
-        data.resourceCount,
+        //data.resourceCount,
         data.attributeName,
         data.skills,
         getRoleCountString(data.rolecount),
@@ -176,7 +174,6 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   }
 
   if (getReportFlagValue("resourceTimeline", reportPayload)) {
-
   }
 }
 
@@ -216,17 +213,6 @@ async function getResourcePlanningRowData(estinationHeaderId) {
   });
 
   return { resPlanningRowData, totalCost, totalPrice, margin, marginPercent };
-}
-
-function getResourceCountMixColumns() {
-  var resCountHeaderAttr = [
-    { header: "S NO.", key: "s_no", width: 20 },
-    { header: "Resource Count", key: "resource_count", width: 20 },
-    { header: "Skills(Effort & Summary Attributes)", key: "skill", width: 40 },
-    { header: "Technology", key: "technology", width: 40 },
-    { header: "Role", key: "role", width: 40 },
-  ];
-  return resCountHeaderAttr;
 }
 
 function getReportFlagValue(key, reportPayload) {
@@ -325,19 +311,16 @@ module.exports.checkEstName = async (reqPayload) => {
 function deleteFile(name) {
   try {
     // delete file if already exists
-    if (fs.existsSync(`./report/Estimation_${name}.xlsx`)){
-    fs.unlinkSync(`./report/Estimation_${name}.xlsx`);
+    if (fs.existsSync(`./report/Estimation_${name}.xlsx`)) {
+      fs.unlinkSync(`./report/Estimation_${name}.xlsx`);
     }
-  } catch (err) {
-
-  }
+  } catch (err) {}
 }
 
-async function createDirIfNotExist(){
+async function createDirIfNotExist() {
   var dir = `./report`;
-  if (!fs.existsSync(dir)){
+  if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
   return true;
 }
-
