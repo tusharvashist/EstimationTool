@@ -691,8 +691,8 @@ module.exports.ReleaseEstimation = async (req) => {
           errorArray.resourceCountDataError.length == 0 &&
           errorArray.estimationTemplateError.isValid === true
         ) {
-          estimation.publishDate = Date.now();
-          let result = await estimation.save();
+          // estimation.publishDate = Date.now();
+          // let result = await estimation.save();
           return { res: errorArray, message: "Add Data to this Estimation" };
         }
         else if (
