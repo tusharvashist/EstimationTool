@@ -15,8 +15,8 @@ const RequirementTag = require("../database/models/requirementTag");
 const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
 const RequirementRepository = require("../repository/requirementRepository");
 const EstRequirementServ = require("../service/estimationRequirementService");
-const EstResourceCountServ = require('../service/estimationResourceCountService');
-const EstTempServ = require('../service/estimationTemplateService');
+const EstResourceCountServ = require("../service/estimationResourceCountService");
+const EstTempServ = require("../service/estimationTemplateService");
 const EstHeaderModel = require("../database/models/estHeaderModel");
 
 // module.exports.createEstimation = async(serviceData)=>{
@@ -495,7 +495,6 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
   }
 };
 
-
 //  function for release estimation
 
 // var error = {
@@ -509,21 +508,21 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
 //
 //   estDetail = {
 //   "Requirment": "Not found"
-// "title": 
+// "title":
 // description
 //   "tag":
 //   "type":
 // estRequirementData:
 // ESTAttributeID
 // ESTData
-// 
-// 
+//
+//
 //   "Attribut" : [
 //   "frondtEnd": "found nill"
 //   ]
 //   }
 
-// 
+//
 
 // let dataArray = []
 // let newDataObj = {}
@@ -551,7 +550,7 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
 //           let temp = {}
 //           temp[key] = newObj[key]
 //           dataArray[dataArray.length] = temp
-//           newDataObj[key] = newObj[key] 
+//           newDataObj[key] = newObj[key]
 //         }
 //       } else {
 //         if (typeof dataObj[key] == 'object') {
@@ -565,129 +564,153 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
 // }
 
 const replaceEmptyKeys = (arr) => {
-  return arr.map((o) => updateKeys(o))
-  }
+  return arr.map((o) => updateKeys(o));
+};
 
-  const updateKeys= (obj) => {
-    const finalObj = {};
-    for(let oKey in obj) {
-        if(!obj[oKey]) {
-            finalObj[oKey] = "Not Found";
-        } 
-      }
-    return ({...finalObj})
+const updateKeys = (obj) => {
+  const finalObj = {};
+  for (let oKey in obj) {
+    if (!obj[oKey]) {
+      finalObj[oKey] = "Not Found";
     }
+  }
+  return { ...finalObj };
+};
 
 // Release estimation
 
-
-
-module.exports.ReleaseEstimation = async (estheaderId) => {
+module.exports.ReleaseEstimation = async (req) => {
   const errorArray = {
     requirementError: [],
-    resourceCountAllocationError: '',
+    resourceCountAllocationError: "",
     resourceCountDataError: [],
-    estimationTemplateError: []
+    estimationTemplateError: [],
   };
   let response = { ...constant.publishMessage };
-const estheaderid = estheaderId;
-const obj = { skip: 0, limit: 10 }
+  var estheaderId = req.estimationHeaderId;
+  // console.log("estheaderId", estheaderId);
+
+  // const estheaderid = id;
+  const obj = { skip: 0, limit: 10 };
   try {
+
     let estimation = await EstimationHeader.findById(estheaderId);
-    console.log('estimation',estimation)
-    if(estimation) {
-   if (estimation.publishDate) {
-    return (" Estimation Already Published ", estimation.publishDate);
-   } else {
-    var contingency = await RequirementRepository.getContingency(estheaderId);
-    var contingencySuffix = " Contingency";
-    var estHeaderRequirement = await RequirementRepository.getEstHeaderRequirementWithContingency( estheaderId);
-    // console.log("estHeaderRequirement", JSON.stringify(estHeaderRequirement));
-   
-    
-    if (estHeaderRequirement.length != 0) {
-      response.requirementList = await getRequirementList(
-        estHeaderRequirement,
-        contingency,
-        contingencySuffix
-      );  
-       const validatedrequirement = replaceEmptyKeys(response.requirementList);
-    // console.log("validatedrequirement",validatedrequirement)
+    // console.log("estimation", estimation);
+    if (estimation) {
+      if (estimation.publishDate) {
+        return " Estimation Already Published ", estimation.publishDate;
+      } else {
+        var contingency = await RequirementRepository.getContingency(
+          estheaderId
+        );
+        var contingencySuffix = " Contingency";
+        var estHeaderRequirement =
+          await RequirementRepository.getEstHeaderRequirementWithContingency(
+            estheaderId
+          );
+        // console.log("estHeaderRequirement", JSON.stringify(estHeaderRequirement));
 
-       if (validatedrequirement[0].length === 0) {
-        errorArray.requirementError = validatedrequirement;
+        if (estHeaderRequirement.length != 0) {
+          response.requirementList = await getRequirementList(
+            estHeaderRequirement,
+            contingency,
+            contingencySuffix
+          );
+          const validatedrequirement = replaceEmptyKeys(
+            response.requirementList
+          );
+          // console.log("validatedrequirement",validatedrequirement)
 
-        //  console.log("validation Passed")
-       } else {
-         errorArray.requirementError = validatedrequirement;
-        // console.log("validation Failed")
-       }
-    
-    }
-    // console.log("First data pushed in Error Array",errorArray);
+          if (validatedrequirement[0].length === 0) {
+            errorArray.requirementError = validatedrequirement;
 
-    var resourceCount = await EstResourceCountServ.getResourceCount({estheaderid})
-    var valError = getValidationError(resourceCount);
-    if(valError != null || valError != undefined) 
-    {
-      errorArray.resourceCountAllocationError = 'Allocate Resource Properly';
-      // console.log("Second data pushed in Error Array",errorArray);
-    
+            //  console.log("validation Passed")
+          } else {
+            errorArray.requirementError = validatedrequirement;
+            // console.log("validation Failed")
+          }
+        }
+        // console.log("First data pushed in Error Array",errorArray);
+
+        var resourceCount = await EstResourceCountServ.getResourceCount({
+          estheaderId,
+        });
+        console.log("resourceCount",resourceCount);
+
+        var valError = getValidationError(resourceCount);
+        if (valError != null || valError != undefined) {
+          errorArray.resourceCountAllocationError =
+            "Allocate Resource Properly";
+          // console.log("Second data pushed in Error Array",errorArray);
+        } else {
+          errorArray.resourceCountAllocationError = "";
+        }
+        // console.log("valError",valError);
+        var getResCountData = replaceEmptyKeys(test(resourceCount));
+        // console.log("getResCountData",getResCountData)
+
+        if (getResCountData.length != 0) {
+          errorArray.resourceCountDataError = getResCountData;
+
+          // console.log("validation count Passed")
+        } else {
+          //  console.log("validation count Failed")
+        }
+        // console.log("third data pushed in Error Array",errorArray);
+
+        // var estType = await RequirementRepository.getEstimationType(estheaderId);
+        // console.log('estType',estType);
+        // var allEstimationTemplate = await EstTempServ.getAllEstimationTemplate(obj);
+        // console.log('allEstimationTemplate',allEstimationTemplate);
+
+        let estimations = await getEstBasicDetail(estheaderId);
+
+        response.basicDetails = estimations;
+        // console.log('response.basicDetails',response.basicDetails)
+        // console.log('response.requirementList',response.requirementList)
+
+        response.isReqValid = checkValidation(
+          estimations.estTypeId.reqTypeValidation,
+          response.requirementList
+        );
+        if (response.isReqValid.length === 0) {
+          errorArray.estimationTemplateError = [];
+
+          // console.log("validation of SWAG, EPIC, ROM is Passed")
+        } else {
+          errorArray.estimationTemplateError = response.isReqValid;
+          //  console.log("validation of SWAG, EPIC, ROM is Failed")
+        }
+        // console.log('response.isReqValid',response.isReqValid);
+
+        console.log('errorArray',errorArray);
+
+        if (
+          errorArray.requirementError.length == 0 &&
+          errorArray.resourceCountAllocationError === "" &&
+          errorArray.resourceCountDataError.length == 0 &&
+          errorArray.estimationTemplateError.isValid === true
+        ) {
+          estimation.publishDate = Date.now();
+          let result = await estimation.save();
+          return { res: errorArray, message: "Add Data to this Estimation" };
+        }
+        else if (
+          errorArray.requirementError[0].length == 0 &&
+          errorArray.resourceCountAllocationError === "" &&
+          errorArray.resourceCountDataError[0].length == 0 &&
+          errorArray.estimationTemplateError.isValid === true
+        ) {
+          estimation.publishDate = Date.now();
+          let result = await estimation.save();
+          return "Estimation Published Successfully";
+        } else {
+          return { res: errorArray, message: "Error" };
+        }
+      }
     } else {
-      errorArray.resourceCountAllocationError = '';
-
+      return { message: "No Estimation Found" };
     }
-    // console.log("valError",valError);
-    var getResCountData = replaceEmptyKeys(test(resourceCount))
-    // console.log("getResCountData",getResCountData)
-
-    if  (getResCountData[0].length === 0) {
-      // console.log("validation count Passed")
-    } else {
-      errorArray.resourceCountDataError = getResCountData;
-    //  console.log("validation count Failed")
-    }
-    // console.log("third data pushed in Error Array",errorArray);
-
-    // var estType = await RequirementRepository.getEstimationType(estheaderId);
-    // console.log('estType',estType);
-    // var allEstimationTemplate = await EstTempServ.getAllEstimationTemplate(obj);
-    // console.log('allEstimationTemplate',allEstimationTemplate);
-
-    let estimations = await getEstBasicDetail(estheaderId);
-
-    response.basicDetails = estimations;
-    // console.log('response.basicDetails',response.basicDetails)
-    // console.log('response.requirementList',response.requirementList)
-
-    response.isReqValid = checkValidation(
-      estimations.estTypeId.reqTypeValidation,
-      response.requirementList
-    );
-    if (response.isReqValid.length === 0) {
-      errorArray.estimationTemplateError = [];
-
-      // console.log("validation of SWAG, EPIC, ROM is Passed")
-    } else {
-      errorArray.estimationTemplateError = response.isReqValid;
-    //  console.log("validation of SWAG, EPIC, ROM is Failed")
-    }
-    // console.log('response.isReqValid',response.isReqValid);
-
-    // console.log('errorArray',errorArray);
-
-    if (errorArray.requirementError[0].length === 0 && errorArray.resourceCountAllocationError === ''
-     && errorArray.resourceCountDataError[0].length === 0 && errorArray.estimationTemplateError.isValid === true) {
-       estimation.publishDate = Date.now();
-       let result = await estimation.save();
-       return "Estimation Published Successfully";
-     } else {
-      return {res:errorArray, message: "Error"};
-     }
-   }
-  } else {
-    return {message:"No data Found"};
-  }
   } catch (err) {
     console.log("err", err);
     throw new Error(err);
@@ -695,7 +718,7 @@ const obj = { skip: 0, limit: 10 }
 };
 
 // Too simplyfy the requirement data is single object
- function getRequirementList(
+function getRequirementList(
   estHeaderRequirement,
   contingency,
   contingencySuffix
@@ -712,7 +735,7 @@ const obj = { skip: 0, limit: 10 }
         Typename: item.requirement.type.name,
         Typeid: item.requirement.type._id,
         requirementId: item.requirement._id,
-        _id: item._id
+        _id: item._id,
       };
 
       item.estRequirementData.forEach((item, i) => {
@@ -722,14 +745,13 @@ const obj = { skip: 0, limit: 10 }
             item.ESTAttributeID !== null
           ) {
             // ESTAttributeID =  item.ESTAttributeID._id;
-            requirement['ESTAttributeID'] =  item.ESTAttributeID._id;
+            requirement["ESTAttributeID"] = item.ESTAttributeID._id;
             // EstAttributeName = item.ESTAttributeID.attributeName;
-            requirement['EstAttributeName'] =  item.ESTAttributeID.attributeName;
+            requirement["EstAttributeName"] = item.ESTAttributeID.attributeName;
 
-            requirement['ESTData'] = item.ESTData;
+            requirement["ESTData"] = item.ESTData;
             if (contingency > 0) {
-              requirement['ESTDataContingency'] =
-                item.ESTDataContingency;
+              requirement["ESTDataContingency"] = item.ESTDataContingency;
             }
           }
         }
@@ -741,19 +763,19 @@ const obj = { skip: 0, limit: 10 }
   return arrayRequirement;
 }
 
-
 // check validation on SWAG, EPIC and ROM
 
 const checkValidation = (validationList, requirementList) => {
   const error = [];
   validationList.map((validationItem) => {
+    if (requirementList !== undefined) {
     let foundReq = requirementList.some(
       (req) => req.Typeid.toString() === validationItem.id.toString()
     );
 
     if (!foundReq) {
       error.push(validationItem.name);
-    }
+    } }
   });
 
   return error.length > 0
@@ -778,32 +800,30 @@ const getEstBasicDetail = async (id) => {
 
 // selected item for resource count
 const getValidationError = (show) => {
-  
-  var {validationerror} = show;
-  if(validationerror === true) {
-    validationerror = 'Please assign role count Properply';
+  var { validationerror } = show;
+  if (validationerror === true) {
+    validationerror = "Please assign role count Properply";
     return validationerror;
   } else {
     return validationerror;
   }
-  
-}
+};
 
 function test(arr) {
-  const data = []
+  const data = [];
   arr.map((item) => {
-   if (item.resourceCount > 0) {
-    var resource = {
-      resourceCount: item.resourceCount,
-      attributeName: item.attributeName,
-      estAttributeId: item.estAttributeId,
-      skills: item.skills,
-      skillsId: item.skillsId
-    };
-    // console.log("resource",resource)
-    data.push(resource)
-  return  resource;
-  }
-  })
+    if (item.resourceCount > 0) {
+      var resource = {
+        resourceCount: item.resourceCount,
+        attributeName: item.attributeName,
+        estAttributeId: item.estAttributeId,
+        skills: item.skills,
+        skillsId: item.skillsId,
+      };
+      // console.log("resource",resource)
+      data.push(resource);
+      return resource;
+    }
+  });
   return data;
 }

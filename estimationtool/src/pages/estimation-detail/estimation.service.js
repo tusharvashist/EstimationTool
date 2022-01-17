@@ -74,7 +74,7 @@ const EstimationService = {
 
   estimationPublish: function (id) {
     let url = Url.releaseEstimation + "/";
-    return axios.post(url, id);
+    return axios.post(url, {estimationHeaderId:id});
   },
 
 };

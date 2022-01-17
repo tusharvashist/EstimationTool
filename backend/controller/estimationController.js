@@ -324,9 +324,10 @@ module.exports.estimationHeaderAtrributeCalcDelete = async (req, res) => {
 module.exports.releaseEstimation= async (req, res) => {
     let responce = { ...constant.defaultResponce };
     try {
+        // console.log('req',req.body.estimationHeaderId)
         const responceReleaseEstimate =
             await estimationHeaderAtrributeSer.ReleaseEstimation(
-                req.body.estHeaderId
+                req.body
             );
             if(responceReleaseEstimate.message === undefined) {
         responce.status = 200;
