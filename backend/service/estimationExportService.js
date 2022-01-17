@@ -18,8 +18,13 @@ module.exports.generateExcelReport = async (reportPayload) => {
   workbook.creator = "Estimation";
   workbook.created = new Date();
 
-  // delete old file if exist
-  deleteFile(est.estName);
+  //check report directory if not exist, create one
+   createDirIfNotExist()
+   .then(() => {
+    // delete old file if exist
+    deleteFile(est.estName);
+   });
+  
 
   try {
     await generateRequiredSpreadsheet(workbook, reportPayload);
@@ -171,6 +176,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   }
 
   if (getReportFlagValue("resourceTimeline", reportPayload)) {
+
   }
 }
 
@@ -319,6 +325,19 @@ module.exports.checkEstName = async (reqPayload) => {
 function deleteFile(name) {
   try {
     // delete file if already exists
+    if (fs.existsSync(`./report/Estimation_${name}.xlsx`)){
     fs.unlinkSync(`./report/Estimation_${name}.xlsx`);
-  } catch (err) {}
+    }
+  } catch (err) {
+
+  }
 }
+
+async function createDirIfNotExist(){
+  var dir = `./report`;
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir);
+  }
+  return true;
+}
+
