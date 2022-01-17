@@ -589,6 +589,7 @@ module.exports.ReleaseEstimation = async (req) => {
   let response = { ...constant.publishMessage };
   var estheaderId = req.estimationHeaderId;
   // console.log("estheaderId", estheaderId);
+  var estheaderid = req.estimationHeaderId;
 
   // const estheaderid = id;
   const obj = { skip: 0, limit: 10 };
@@ -598,7 +599,7 @@ module.exports.ReleaseEstimation = async (req) => {
     // console.log("estimation", estimation);
     if (estimation) {
       if (estimation.publishDate) {
-        return " Estimation Already Published ", estimation.publishDate;
+        return {message:" Estimation Already Published ", publishDate:estimation.publishDate};
       } else {
         var contingency = await RequirementRepository.getContingency(
           estheaderId
@@ -619,9 +620,9 @@ module.exports.ReleaseEstimation = async (req) => {
           const validatedrequirement = replaceEmptyKeys(
             response.requirementList
           );
-          // console.log("validatedrequirement",validatedrequirement)
+          console.log("validatedrequirement",validatedrequirement)
 
-          if (validatedrequirement[0].length === 0) {
+          if (validatedrequirement[0] == {}) {
             errorArray.requirementError = validatedrequirement;
 
             //  console.log("validation Passed")
@@ -631,14 +632,13 @@ module.exports.ReleaseEstimation = async (req) => {
           }
         }
         // console.log("First data pushed in Error Array",errorArray);
-
         var resourceCount = await EstResourceCountServ.getResourceCount({
-          estheaderId,
+          estheaderid
         });
         console.log("resourceCount",resourceCount);
 
         var valError = getValidationError(resourceCount);
-        if (valError != null || valError != undefined) {
+        if (valError.msg != '') {
           errorArray.resourceCountAllocationError =
             "Allocate Resource Properly";
           // console.log("Second data pushed in Error Array",errorArray);
@@ -696,14 +696,14 @@ module.exports.ReleaseEstimation = async (req) => {
           return { res: errorArray, message: "Add Data to this Estimation" };
         }
         else if (
-          errorArray.requirementError[0].length == 0 &&
+          errorArray.requirementError[0] == {} &&
           errorArray.resourceCountAllocationError === "" &&
-          errorArray.resourceCountDataError[0].length == 0 &&
+          errorArray.resourceCountDataError[0] == {} &&
           errorArray.estimationTemplateError.isValid === true
         ) {
           estimation.publishDate = Date.now();
           let result = await estimation.save();
-          return "Estimation Published Successfully";
+          return {message:"Estimation Published Successfully"};
         } else {
           return { res: errorArray, message: "Error" };
         }
@@ -800,12 +800,15 @@ const getEstBasicDetail = async (id) => {
 
 // selected item for resource count
 const getValidationError = (show) => {
-  var { validationerror } = show;
-  if (validationerror === true) {
-    validationerror = "Please assign role count Properply";
-    return validationerror;
+  const validation = show.filter(item => 
+    item.validationerror == true
+  )
+  // var { validationerror } = show;
+  // console.log('validation',validation)
+  if (validation) {  
+    return {msg: "Please assign role count Properply"};
   } else {
-    return validationerror;
+    return {msg:''};
   }
 };
 

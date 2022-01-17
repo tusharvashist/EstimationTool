@@ -329,13 +329,16 @@ module.exports.releaseEstimation= async (req, res) => {
             await estimationHeaderAtrributeSer.ReleaseEstimation(
                 req.body
             );
-            if(responceReleaseEstimate.message === undefined) {
+            if(responceReleaseEstimate.res === undefined) {
         responce.status = 200;
         responce.message = 'Estimation Publish Successfully';
         responce.body = responceReleaseEstimate;
+            } else if (responceReleaseEstimate.message === ' Estimation Already Published '){
+                responce.message = ' Estimation Already Published ';
+                responce.body = responceReleaseEstimate.publishDate;
             } else {
                 responce.message = responceReleaseEstimate.message;
-                responce.body = responceReleaseEstimate;
+                responce.body = responceReleaseEstimate.res;
             }
     } catch (err) {
         responce.message = err.message;
