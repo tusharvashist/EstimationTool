@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 module.exports = async () => {
   try {
      const url =
-       "mongodb://pyramid-estimation-tool:yaWd3INCLYfHAMAe90uLduu0Yp8jWC2H8D6JDciDuS7FN2ArZ7Us4RKqIEJ7qDw3mXrLdIS9ioXO6o4AqUDxMg==@pyramid-estimation-tool.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@pyramid-estimation-tool@";
+       "mongodb://pyramidestimationtool-db:ATSZMTmrvjY5YkInDYEinHAYHJ9ckRWsNOOI8GR5HkpENYfejUCIA3XqdvaoYYs1kHQD1HkOShNdTkbRq1kKVQ%3D%3D@pyramidestimationtool-db.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@pyramidestimationtool-db@";
     //const url =
       //process.env.DB_URL || "mongodb://localhost:27017/estimationtool";
     let localMsz = () => {
