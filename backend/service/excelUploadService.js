@@ -12,9 +12,10 @@ module.exports.uploadExcel = async (projectId,excelFile) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(excelFile.file.data);
     let response = { ...constant.requirementListResponse };
+       let excelImportStatus = { ...constant.importRequirementStatus };
     readExcelRecords(projectId, allProjectRequirement ,tags,type,workbook,  (record_list) => { 
         response.featureList =  isDuplicate(record_list);
-        response.requirementSummary =  recordSummary(record_list);
+        response.requirementSummary =  recordSummary(excelImportStatus.importFile, record_list);
         console.log(response);
     })
 
@@ -251,7 +252,7 @@ const getRecords =  (projectId,allProjectRequirement,tags,type, id,row,headerAdd
   return record;
 };
 
-const recordSummary =  (records) => {
+const recordSummary =  (action,records) => {
        var numberOfError = 0;
   records.forEach((record) => {
     if (record.Error !== undefined) {
@@ -265,6 +266,7 @@ const recordSummary =  (records) => {
         "noOfModification": 0,
         "noOfRecordsInserted": 0 ,
         "noOfModification": 0,
+        "action":action
         }
   return summary;
 };
@@ -290,8 +292,9 @@ const updateRecordsValidation = (projectId, allProjectRequirement, tags,type, up
 
 const updatedRowRecord =  (projectId,allProjectRequirement,tags,type, id,row) => {
   try {
-      var record = {
-                "id":id,
+    var record = {
+        
+      "id": id,
                  "Requirement": "",
                  "Description": "",
                  "Tag": "",
@@ -364,7 +367,8 @@ module.exports.updateRecord = async (projectId,payLoad) => {
     var type = await RequirementRepository.getTypes();
     var updatedRecord = payLoad.updated;
     var original = payLoad.original;
-    var response = validateRecord(projectId, allProjectRequirement, tags, type, updatedRecord);
+     let excelImportStatus = { ...constant.importRequirementStatus };
+    var response = validateRecord(projectId, excelImportStatus.updateData , allProjectRequirement, tags, type, updatedRecord);
   //  response.requirementSummary.noOfModification = getNoUpdatedRecords(original,response.featureList)
   return formatMongoData(response);
   } catch (err) {
@@ -376,12 +380,12 @@ const getNoUpdatedRecords = (original, updatedRecord) => {
   //const results = original.filter(({ value: id1 }) => !updatedRecord.some(({ value: id2 }) => id2 === id1));
   return result.count;
 }
-const validateRecord = (projectId, allProjectRequirement,tags,type, recordList) => {
+const validateRecord = (projectId, status, allProjectRequirement,tags,type, recordList) => {
   try {
   let response = { ...constant.requirementListResponse };
   updateRecordsValidation(projectId, allProjectRequirement,tags,type, recordList, (record_list) => {
     response.featureList = isDuplicate(record_list);
-    response.requirementSummary = recordSummary(record_list);
+    response.requirementSummary = recordSummary(status,record_list);
   });
   
     return response
@@ -416,11 +420,11 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
     var allProjectRequirement = await RequirementRepository.getAllProjectRequirement(projectId);
     var tags = await RequirementRepository.getTags();
     var type = await RequirementRepository.getTypes();
-    var response = validateRecord(projectId, allProjectRequirement,tags,type, recordList);
+         let excelImportStatus = { ...constant.importRequirementStatus };
+    var response = validateRecord(projectId,excelImportStatus.insertSuccess, allProjectRequirement,tags,type, recordList);
     if (response.requirementSummary.noOfError === 0) {
       var result = await RequirementRepository.createBulkRequirement(project, recordList);
       response.requirementSaveResult = result;
-
       var projectRequirement_list = await RequirementRepository.getAllProjectRequirement(projectId);
       //Map req with 
       var queryAssumptionList = await getQueryAssumptionList(projectRequirement_list, recordList);
@@ -430,8 +434,13 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
         await RequirementRepository.bulkInsertQueryAssumption(queryAssumptionList);
       }
     
+     // response.requirementSummary = result;
+
   
       response.requirementSummary.noOfRecordsInserted = result.nInserted;
+      if (result.nInserted === 0) {
+        response.requirementSummary.action = excelImportStatus.insertFail;
+      }
       if (estHeaderId != 0) {
         var requirementIds = [];
            for (const [key, value] of Object.entries(result.insertedIds)) {
@@ -439,7 +448,9 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
              }
          await RequirementRepository.mapHeaderToMultipleRequirement(estHeaderId, requirementIds);        
       }
-    } 
+    } else {
+      response.requirementSummary.action = excelImportStatus.insertFail;
+    }
     console.log(response);
      return formatMongoData(response);
   } catch (err) {

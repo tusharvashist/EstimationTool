@@ -15,6 +15,13 @@ module.exports = {
     Reply: "Reply",
   },
 
+  importRequirementStatus: {
+    importFile: 1,
+    updateData: 2,
+    insertSuccess: 3,
+    insertFail : 4,
+  },
+
   requirementResponse: {
     basicDetails: {},
     featureList: [],

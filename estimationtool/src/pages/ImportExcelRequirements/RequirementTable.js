@@ -29,6 +29,8 @@ import {
   DataGrid,
   GridToolbarContainer,
   GridToolbarColumnsButton,
+
+  GridActionsCellItem,
   GridToolbarFilterButton,
   GridToolbarExport,
   GridToolbarDensitySelector,
@@ -48,7 +50,8 @@ import { MdPlaylistAdd ,MdEditNote} from "react-icons/md";
 
 import { BiErrorCircle } from "react-icons/bi";
 import { AiOutlineNumber } from "react-icons/ai";
-
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import EditIcon from "@mui/icons-material/Edit";
 function CustomFooterStatusComponent(props) {
   return (
     <Box sx={{ padding: '10px', display: 'flex' }}>
@@ -76,7 +79,10 @@ export const RequirementTable = (props) => {
   const clientInfo = { ...location.state.clientInfo };
   const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
+  
+  const [isDeleted, setIsDeleted] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
+   
     { headerName: "S.R No.", field: "id", width: 70 },
     {
       headerName: "Error",
@@ -96,7 +102,12 @@ export const RequirementTable = (props) => {
     { headerName: "Assumption", field: "Assumption", width: 200 },
     { headerName: "Reply", field: "Reply", width: 200 },
   ]);
-
+  
+  const deleteUser = (params) => {
+    setIsDeleted(!isDeleted);
+    console.log("delete",params);
+  }
+  
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
@@ -279,6 +290,12 @@ export const RequirementTable = (props) => {
               <span className="report_item">
                 {props.requirementSummary.noOfModification}
               </span>
+                    </p>) : null}
+                      {props.requirementSummary.action === 4 ? ( <p className="report report_error">
+              <BiErrorAlt style={{ fontSize: "18px" }} />
+              &nbsp;Please fix the error and try again !&nbsp;
+              <span className="report_item">
+              </span>
             </p>): null}
             {props.requirementSummary.noOfRecordsInserted !== 0 ? ( <p className="report report_add">
               <MdOutlineFileDownloadDone style={{ fontSize: "18px" }} />
@@ -286,7 +303,8 @@ export const RequirementTable = (props) => {
               <span className="report_item">
                 {props.requirementSummary.noOfRecordsInserted}
               </span>
-            </p>): null}
+                    </p>) : null}
+                    
           </Box>
                 
                      ) : null }
