@@ -223,7 +223,6 @@ function ProjectEstimations(props) {
                 // openUpdateDailog();
               },
               disabled: rowData.isDeleted,
-              hidden: !estimationUpdate
             }),
             (rowData) => ({
               icon: "delete",

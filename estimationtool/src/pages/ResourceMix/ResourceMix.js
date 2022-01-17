@@ -16,6 +16,7 @@ import ResourceCountService from "../ResourceCount/resourcecount.service";
 import { useSelector, useDispatch } from "react-redux";
 import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 const RequirementMix = () => {
   const resMixData = useSelector((state) => state.resourceMixData);
@@ -38,6 +39,7 @@ const RequirementMix = () => {
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
   const [openExport, setOpenExport] = useState(false);
+  const {   estimation_export_resourcemix  } = usePermission();
 
   useEffect(() => {
     getResourceCountData(estimationId);
@@ -184,10 +186,11 @@ const RequirementMix = () => {
       <Container>
       <Grid container>
           <Grid item className="multi-button-grid">
-        <Button variant="outlined" onClick={openExportEstimation}>
+      {estimation_export_resourcemix &&  <Button variant="outlined" onClick={openExportEstimation}>
               <BiExport style={{ fontSize: "18px" }} />
               &nbsp;Export in Excel
             </Button>
+}
           {/* <Link
             to={{
               pathname:

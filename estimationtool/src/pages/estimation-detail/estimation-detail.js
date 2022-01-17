@@ -34,6 +34,7 @@ import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 import { BiImport } from "react-icons/bi";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -41,7 +42,16 @@ const EstimationDetail = () => {
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
-
+  const {
+    estimation_generate_timeline,
+    estimation_export_resourcemix,
+    estimation_generate_resourcemix,
+    estimationAttributeData,
+    estimation_calc_attribute_data,
+    estimationConfiguation,
+    estimation_export_excel,
+    estimation_requirement_add
+  } = usePermission();
   const [isOpen, setOpen] = React.useState({});
   let estimationId;
   if (location.state !== undefined) {
@@ -596,10 +606,11 @@ const handleClose = () => {
       <Container>
         <Grid container>
           <Grid item className="multi-button-grid">
-            <Button variant="outlined" onClick={openExportEstimation}>
+           {estimation_export_excel && <Button variant="outlined" onClick={openExportEstimation}>
               <BiExport style={{ fontSize: "18px" }} />
               &nbsp;Export in Excel
             </Button>
+}
             <Link
               to={{
                 pathname:
@@ -615,10 +626,11 @@ const handleClose = () => {
                 },
               }}
             >
-              <Button variant="outlined" className="estimation-detail-button">
+             {estimationConfiguation && <Button variant="outlined" className="estimation-detail-button">
                 <EditOutlined style={{ fontSize: "18px" }} />
                 &nbsp;Edit Configuration
               </Button>
+}
             </Link>
           </Grid>
         </Grid>
@@ -653,7 +665,7 @@ const handleClose = () => {
                   Import Requirements
                 </Button>
               </Link>
-            <Button
+           {estimation_requirement_add && <Button
               variant="outlined"
               className="estimation-detail-button"
               onClick={openAddAvailableRequirement}
@@ -661,8 +673,8 @@ const handleClose = () => {
               {" "}
               <Add style={{ fontSize: "18px" }} />
               &nbsp;Include Project Requirements
-            </Button>
-            <Button
+            </Button>}
+          {estimation_requirement_add &&  <Button
               variant="outlined"
               className="estimation-detail-button"
               onClick={openAddRequirement}
@@ -671,6 +683,7 @@ const handleClose = () => {
               <Add style={{ fontSize: "18px" }} />
               &nbsp;Create New Requirements
             </Button>
+}
           </Grid>
         </Grid>
       </Container>
@@ -716,6 +729,7 @@ const handleClose = () => {
                 components={{
                   Toolbar: CustomToolbar,
                 }}
+                isCellEditable={()=> estimationAttributeData}
               />
             </div>
           </div>
@@ -761,6 +775,8 @@ const handleClose = () => {
                   (params.colDef.field === "total_Contingency" && "darkbg")
                 );
               }}
+              isCellEditable={()=> estimation_calc_attribute_data}
+
             />
           )}
         </div>
@@ -828,7 +844,7 @@ const handleClose = () => {
             }}
           > */}
           <div class="tooltip">
-            <Button
+          {!estimation_generate_resourcemix &&  <Button
               disabled={countError}
               variant="outlined"
               onClick={() =>
@@ -852,6 +868,7 @@ const handleClose = () => {
               <MdOutlineDocumentScanner style={{ fontSize: "18px" }} />
               &nbsp;Generate Resource Mix
             </Button>
+}
             {countError ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
@@ -867,7 +884,7 @@ const handleClose = () => {
           {/* </Link> */}
         </Grid>
         <Grid item>
-          <Button
+          {!estimation_generate_timeline &&<Button
             variant="outlined"
             onClick={() =>
               history.push({
@@ -890,6 +907,7 @@ const handleClose = () => {
             <MdOutlineTimeline style={{ fontSize: "18px" }} />
             &nbsp;Generate Timeline Plan
           </Button>
+}
         </Grid>
         <Grid item>
           <Button
