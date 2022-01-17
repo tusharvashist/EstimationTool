@@ -229,14 +229,18 @@ module.exports.updateQuery = async (projectRequirementId, serviceData) => {
     };
 
     let queryAssumptionModel = await QueryAssumptionModel.findOneAndUpdate(
-      { _id: findRecord[0]._id },
+      { projectRequirement: projectRequirementId  },
       newQuery,
       { new: true }
     );
 
     return queryAssumptionModel;
   } else {
-    return "OK";
+
+        let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
+    queryAssumptionModel.projectRequirement = projectRequirementId;
+    let result = await queryAssumptionModel.save();
+    return result;
   }
 };
 
@@ -954,7 +958,7 @@ async function requirementDataForEstHeader(estHeaderId) {
     },
     {
       $sort: {
-        "requirement.title": 1,
+        "requirement.req_id": 1,
       },
     },
   ]);
@@ -1184,6 +1188,12 @@ module.exports.getRequirementWithQuery = async (projectId) => {
         },
       },
     },
+  
+   {
+    $sort: {
+        req_id: 1
+    }
+}
   ]);
 
   if (projectRequirement.length != 0) {
