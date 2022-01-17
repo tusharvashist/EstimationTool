@@ -290,6 +290,7 @@ const FirstStep = forwardRef((props, ref) => {
             </Grid>
             <Grid item xs={4} style={{ margin: "8px 0px" }}>
               <TextField
+                autoComplete="off"
                 id="standard-basic"
                 label="Estimation Name*"
                 variant="outlined"
@@ -302,6 +303,7 @@ const FirstStep = forwardRef((props, ref) => {
           <Grid container style={{ gap: 200 }} className="gridgap">
             <Grid item xs={4} style={{ margin: "8px 0px" }}>
               <TextField
+                autoComplete="off"
                 id="standard-basic"
                 label="Tentative Timeline (Weeks)*"
                 variant="outlined"
@@ -319,6 +321,7 @@ const FirstStep = forwardRef((props, ref) => {
             </Grid>
             <Grid item xs={4} style={{ margin: "8px 0px" }}>
               <TextField
+                autoComplete="off"
                 id="standard-basic"
                 label="Contengency(%)*"
                 variant="outlined"
@@ -343,6 +346,7 @@ const FirstStep = forwardRef((props, ref) => {
           </Grid>
           <Grid item xs={8} spacing={1} style={{ margin: "8px 0px" }}>
             <TextField
+              autoComplete="off"
               id="standard-basic"
               label="Description*"
               variant="standard"

@@ -229,7 +229,13 @@ const ImportExcelRequirements = () => {
               setRequirementHeaderData([...res.data.body.featureList]);
           
              setRequirementSummary({ ...res.data.body.requirementSummary });
+             if (res.data.body.requirementSummary.noOfError === 0) {
+               
              setIsRecordSubmitted(true);
+             } else {
+               
+             setIsRecordSubmitted(false);
+             }
         })
         .catch((err) => {
           console.log("get EstimationService by id error", err);
@@ -354,7 +360,7 @@ const ImportExcelRequirements = () => {
         />
       </BorderedContainer>
       <Grid container justifyContent="flex-end">
-        {isRecordSubmitted == false ? (<Grid item style={{ margin: "10px" }}>
+        {isRecordSubmitted === false ? (<Grid item style={{ margin: "10px" }}>
           <Button onClick={validateSave} variant="outlined">
             {" "}
             Verify and save

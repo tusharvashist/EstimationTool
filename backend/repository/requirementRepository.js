@@ -17,9 +17,11 @@ const EstimationHeaderAttributeCalc = require("../database/models/estimationHead
 const EstimationAttributes = require("../database/models/estimationAttributesModel");
 const mongoose = require("mongoose");
 const estimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
+const ReqCounter = require("../database/models/reqCounter");
 
 module.exports.createRequirement = async (serviceData) => {
-  let projectRequirement = new ProjectRequirement({ ...serviceData });
+  let countId = await getNextSequenceValue("req_id",1);
+  let projectRequirement = new ProjectRequirement({ ...serviceData, req_id:countId });
   let requirementId = "";
   const findRecord = await ProjectRequirement.find(
     { title: projectRequirement.title },
@@ -63,11 +65,11 @@ module.exports.getProjectById = async ( id ) => {
 
 module.exports.createBulkRequirement = async (projectId, requirementList) => {
   try {
-
-    var bulk = ProjectRequirement.collection.initializeUnorderedBulkOp();
+    var counter = await getNextSequenceValue("req_id", 1);
+    var updatedCounter = counter;
+    var bulk = ProjectRequirement.collection.initializeOrderedBulkOp();
     requirementList.forEach(async (requirement,i) => {
       //mongoose.Types.ObjectId(serviceData),
-     
       var type = '';
       var tag = '';
       if (requirement.TypeId.length != 0) {
@@ -76,6 +78,7 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
        if (requirement.TagId.length != 0) {
          tag = mongoose.Types.ObjectId(requirement.TagId);
       }
+      updatedCounter = counter+i;
 
       let result = bulk.insert({
           title: requirement.Requirement,
@@ -83,9 +86,13 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
           project: projectId._id,
           type: type,
           tag:tag,
+          req_id: updatedCounter,
       });      
     });
     const result = await bulk.execute();
+    if(result){
+      await getNextSequenceValue("req_id", requirementList.length-1);
+    }
     return formatMongoData(result);
   } catch (err) {
     throw new Error(err);
@@ -211,8 +218,8 @@ module.exports.mapHeaderToMultipleRequirement = async (
 
 module.exports.updateQuery = async (projectRequirementId, serviceData) => {
   const findRecord = await QueryAssumptionModel.find(
-    { projectRequirement: projectRequirementId },
-    { query: serviceData.query }
+    { projectRequirement: projectRequirementId }
+    //{ query: serviceData.query }
   );
   if (findRecord.length !== 0) {
     var newQuery = {
@@ -222,14 +229,18 @@ module.exports.updateQuery = async (projectRequirementId, serviceData) => {
     };
 
     let queryAssumptionModel = await QueryAssumptionModel.findOneAndUpdate(
-      { _id: findRecord[0]._id },
+      { projectRequirement: projectRequirementId  },
       newQuery,
       { new: true }
     );
 
     return queryAssumptionModel;
   } else {
-    return "OK";
+
+        let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
+    queryAssumptionModel.projectRequirement = projectRequirementId;
+    let result = await queryAssumptionModel.save();
+    return result;
   }
 };
 
@@ -947,7 +958,7 @@ async function requirementDataForEstHeader(estHeaderId) {
     },
     {
       $sort: {
-        "requirement.title": 1,
+        "requirement.req_id": 1,
       },
     },
   ]);
@@ -1177,6 +1188,12 @@ module.exports.getRequirementWithQuery = async (projectId) => {
         },
       },
     },
+  
+   {
+    $sort: {
+        req_id: 1
+    }
+}
   ]);
 
   if (projectRequirement.length != 0) {
@@ -1223,3 +1240,15 @@ module.exports.deleteAllRequirements = async (projectId) => {
     }
     return formatMongoData(deleteResponse);
 };
+
+ async function getNextSequenceValue(sequenceName, increment){
+  let sequenceDocument =  await ReqCounter.findOneAndUpdate({key: sequenceName },
+     {$inc:{seq:increment}},
+     {new:true}
+  );
+  if(!sequenceDocument){
+   await ReqCounter.create({key:sequenceName, seq:increment});
+  return 1;
+  }
+  return sequenceDocument.seq;
+}

@@ -1,5 +1,5 @@
 import { Button, Container } from "@material-ui/core";
-import { Box } from "@material-ui/core";
+import { Box,Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useLocation, Link } from "react-router-dom";
@@ -14,6 +14,8 @@ import styleClasses from "../ResourceMix/resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import ResourceCountService from "../ResourceCount/resourcecount.service";
 import { useSelector, useDispatch } from "react-redux";
+import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
+import { BiExport } from "react-icons/bi";
 
 const TimelinePlanning = () => {
     const resMixData = useSelector((state) => state.resourceMixData);
@@ -29,6 +31,7 @@ const TimelinePlanning = () => {
     const [resourceMixList, setResourceMixList] = useState([]);
     const [totalMargin, setTotalMargin] = useState({});
     const [noOfWeeks, setNoOfWeeks] = useState({});
+    const [openExport, setOpenExport] = useState(false);
 
     useEffect(() => {
         getResourceCountData(estimationId);
@@ -75,6 +78,19 @@ const TimelinePlanning = () => {
             });
     };
 
+    ///============== JS- Export Estimation Pop up - START ==============///
+  const openExportEstimation = () => {
+    setOpenExport(true);
+  };
+
+  const closeExportEstimation = () => {
+    setOpenExport(false);
+  };
+
+  const exportFun = (a) => {
+    console.log(a);
+  };
+  ///============== JS- Export Estimation Pop up - END ==============///
     const columns = [
         {
             field: "id",
@@ -113,30 +129,27 @@ const TimelinePlanning = () => {
 
     return (
         <div className="estimation-detail-cover">
+            {/*========= JSX- Export Estimation in Report - START ========= */}
+            <ExportEstimationPopup
+                openExport={openExport}
+                openExportEstimation={openExportEstimation}
+                closeExportEstimation={closeExportEstimation}
+                title="Export Estimation"
+                oktitle="Genrate"
+                cancelTitle="Cancel"
+                exportFun={exportFun}
+            />
+            {/*========= JSX- Export Estimation in Report - END ========= */}
             <Container>
-                <Box sx={{ width: "100%" }} className="estimation-detail-box" mt={2}>
-                    {/* <Link
-            to={{
-              pathname:
-                "/All-Clients/" +
-                clientDetails.clientName +
-                "/" +
-                projectDetails.projectName +
-                "/createEstimate",
-              state: {
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
-                estimationHeaderId: estimationId,
-              },
-            }}
-          >
-            <Button variant="outlined" className="estimation-detail-button">
-              {" "}
-              <> Edit Estimation Configuration</>
+      <Grid container>
+          <Grid item className="multi-button-grid">
+        <Button variant="outlined" onClick={openExportEstimation}>
+              <BiExport style={{ fontSize: "18px" }} />
+              &nbsp;Export in Excel
             </Button>
-          </Link> */}
-                </Box>
-            </Container>
+         </Grid>
+        </Grid>
+      </Container>
             <ClientProjectHeader client={clientDetails} project={projectDetails} />
             <EstimationHeader data={headerData} />
             <BorderedContainer>

@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EditCalAttributeDialog = (props) => {
-  console.log(props + ">>>>>>>>>>>>>>>")
+  console.log(props + ">>>>>>>>>>>>>>>");
   const classes = useStyles();
   const [calcType, setCalcType] = useState("per");
 
@@ -36,7 +36,7 @@ const EditCalAttributeDialog = (props) => {
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
   const [showError, setShowError] = useState(false);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
-  console.log(props + ">>>>>>>>>>>>>>>")
+  console.log(props + ">>>>>>>>>>>>>>>");
   const handelCalAttributeName = (e) => {
     let newObject = { ...formData };
     newObject.calcAttributeName = e.target.value;
@@ -158,6 +158,7 @@ const EditCalAttributeDialog = (props) => {
             <Grid item xs={3}>
               <TextField
                 required
+                autoComplete="off"
                 error={showError && !unit}
                 helperText={showError ? "Please enter only b/w 1-100" : ""}
                 id="standard-basic"

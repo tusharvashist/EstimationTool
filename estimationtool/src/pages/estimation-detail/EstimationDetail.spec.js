@@ -1,13 +1,13 @@
-describe("Estimation Detail", () => {
-  let result;
-  beforeEach(() => {
-    const estimationDetail = require("./estimation-detail");
-    const reactRender = require("react-test-renderer");
-    const reactTestUtils = require("react-dom/test-utils");
+import estimationDetail from "./estimation-detail";
 
-    result = reactRender(estimationDetail);
-  });
-  it("Should render estimation detail page", () => {
-    expect(result).toBeDefined;
+window.describe("A suite is just a function", function () {
+  var a;
+
+  before;
+
+  it("and so is a spec", function () {
+    a = true;
+
+    expect(a).toBe(true);
   });
 });

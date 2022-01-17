@@ -203,6 +203,7 @@ const AddCalAttributeDialog = (props) => {
         <Grid item md={12} style={{ margin: "8px 0px" }}>
           <TextField
             required
+            autoComplete="off"
             error={showError && !calcAttributeName}
             autoFocus
             id="filled-basic"
@@ -269,6 +270,7 @@ const AddCalAttributeDialog = (props) => {
               <Grid item xs={3} style={{ margin: "8px 0px" }}>
                 <TextField
                   required
+                  autoComplete="off"
                   error={showError && !unit}
                   helperText={showError ? "Enter b/w 1-100" : ""}
                   id="standard-basic"

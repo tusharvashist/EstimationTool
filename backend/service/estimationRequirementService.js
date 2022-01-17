@@ -203,25 +203,38 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
     );
     updateInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
-      if (String(findRecord[0]._id) == id) {
-        let requirement = await ProjectRequirement.findOneAndUpdate(
-          { _id: id },
-          updateInfo,
-          { new: true }
-        );
-        if (!requirement) {
-          throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+      var alreadyAvailable = true;
+
+      var projectReq = ProjectRequirement();
+      findRecord.forEach((record) => {
+        console.log("Req: ",String(record._id));
+        if (String(record._id) == id) {
+          alreadyAvailable = false;
+          projectReq = record;
         }
+      });
 
-        let queryAssumption = await RequirementRepository.updateQuery(
-          requirement._id,
-          updateInfo
-        );
-
-        return formatMongoData(requirement);
-      } else {
+      if(alreadyAvailable) {
         throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
+      } else {
+           let requirement = await ProjectRequirement.findOneAndUpdate(
+            { _id: projectReq._id },
+            updateInfo,
+            { new: true }
+          );
+          if (!requirement) {
+            throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+          }
+
+          let queryAssumption = await RequirementRepository.updateQuery(
+            requirement._id,
+            updateInfo
+          );
+
+          return formatMongoData(requirement);
       }
+
+
     } else {
       let requirement = await ProjectRequirement.findOneAndUpdate(
         { _id: id },
@@ -238,7 +251,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
       );
     }
   } catch (err) {
-    ////console.log("something went wrong: service > createEstimation ", err);
+    //console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
   }
 };

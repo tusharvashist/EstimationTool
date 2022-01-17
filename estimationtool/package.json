@@ -72,6 +72,7 @@
     "karma-mocha": "^2.0.1",
     "karma-sourcemap-loader": "^0.3.8",
     "karma-spec-reporter": "^0.0.32",
+    "karma-webpack-preprocessor": "^1.0.1",
     "react-test-renderer": "^17.0.2"
   }
 }
