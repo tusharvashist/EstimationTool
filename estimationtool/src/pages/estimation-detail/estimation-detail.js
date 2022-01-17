@@ -33,6 +33,7 @@ import { MdOutlineTimeline } from "react-icons/md";
 import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 import { BiImport } from "react-icons/bi";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -41,6 +42,7 @@ const EstimationDetail = () => {
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
 
+  const [isOpen, setOpen] = React.useState({});
   let estimationId;
   if (location.state !== undefined) {
     estimationId = location.state.estId;
@@ -481,6 +483,34 @@ const EstimationDetail = () => {
       : "";
   };
 
+
+const releaseEstimation = (id) => {
+  EstimationService.estimationPublish(id).then((res) => {
+    // console.log("Estimation Publish", res.data);
+    setOpen({
+      open: true,
+      severity: "success",
+      message: res.data.message,
+    });
+  })
+  .catch((err) => {
+    // console.log(" Error Estimation Publish", err);
+    setOpen({
+      open: true,
+      severity: "error",
+      message: err.response.data.message,
+    });
+  
+  });
+}
+
+const handleClose = () => {
+  setOpen({});
+};
+
+  // Destructing of snackbar
+  const { message, severity, open } = isOpen || {};
+
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Export Estimation in Report - START ========= */}
@@ -861,7 +891,24 @@ const EstimationDetail = () => {
             &nbsp;Generate Timeline Plan
           </Button>
         </Grid>
+        <Grid item>
+          <Button
+            variant="outlined"
+            onClick={()=>
+              {releaseEstimation(estimationId)}}
+          >
+            {/* <MdOutlineTimeline style={{ fontSize: "18px" }} /> */}
+            &nbsp;Estimation Release
+          </Button>
+        </Grid>
       </Grid>
+      <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
     </div>
   );
 };

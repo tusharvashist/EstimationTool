@@ -33,5 +33,6 @@ const Url = {
   getTimelinePlanningData: `${process.env.REACT_APP_URL}resource/timelineplanning`,
   getAllExportData: `${process.env.REACT_APP_URL}export`,
   getReport: `${process.env.REACT_APP_URL}report`,
+  releaseEstimation: `${process.env.REACT_APP_URL}estimation/releaseEstimation`
 };
 export default Url;

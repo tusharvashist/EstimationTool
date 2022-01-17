@@ -13,7 +13,11 @@ const { estimationHeaderAtrributeMessage } = require("../constant");
 const RequirementType = require("../database/models/requirementType");
 const RequirementTag = require("../database/models/requirementTag");
 const EstimationHeaderAtrributeModel = require("../database/models/estimationHeaderAtrributeModel");
-const { valid } = require("joi");
+const RequirementRepository = require("../repository/requirementRepository");
+const EstRequirementServ = require("../service/estimationRequirementService");
+const EstResourceCountServ = require("../service/estimationResourceCountService");
+const EstTempServ = require("../service/estimationTemplateService");
+const EstHeaderModel = require("../database/models/estHeaderModel");
 
 // module.exports.createEstimation = async(serviceData)=>{
 //   try{
@@ -199,7 +203,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
-    // console.log(".>>>>>>....>>>>>>>." + serviceData);
+    console.log(".>>>>>>....>>>>>>>." + serviceData);
     //Remove All Attributes from Estimation Header
     let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
       serviceData,
@@ -327,7 +331,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
       );
-      //console.log("hi this is service data of final step " + estimation);
+      console.log("hi this is service data of final step " + estimation);
       if (estimation) {
         estimation.estStep = "3";
         estimation.updatedBy = global.loginId;
@@ -350,58 +354,6 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
         }
       });
 
-      //Check formula for circular error
-      let errorData = [];
-      serviceData.forEach(async (element) => {
-        let estcalcdata = new EstimationHeaderAtrributeCalc({
-          ...element,
-        });
-        //errorData.push(estcalcdata);
-        let FormulaTags = AddItemInJsonList([], estcalcdata.formulaTags);
-        //check tag exits in formula or not
-        if (ValidateFormula(FormulaTags, estcalcdata.tag)) {
-          errorData.push(estcalcdata);
-          return;
-        }
-
-        // Add new formula tags in calc attribute to expand formula
-        let check = false;
-        let formulas = FormulaTags;
-        do {
-          for (let index = 0; index < FormulaTags.length; index++) {
-            const formulaelement = FormulaTags[index];
-
-            let data = serviceData.filter(
-              (x) =>
-                String(x.tag) == String(formulaelement) &&
-                String(x.tag) != String(estcalcdata.tag)
-            );
-
-            if (data.length > 0) {
-              check = true;
-              let estcalc = new EstimationHeaderAtrributeCalc({
-                ...data[0],
-              });
-              ///console.log("--------", formulas);
-              formulas = AddItemInJsonList(formulas, estcalc.formulaTags);
-
-              if (ValidateFormula(formulas, estcalcdata.tag)) {
-                errorData.push(estcalcdata);
-                return;
-              }
-            }
-          }
-          if (FormulaTags.length != formulas.length) {
-            FormulaTags = formulas;
-          } else check = false;
-        } while (check);
-      });
-
-      if (errorData.length > 0) {
-        throw new Error(
-          constant.estimationHeaderAtrributeCalcMessage.estimationHeaderAtrributeCalcCyclic_ERROR
-        );
-      }
       //check data based on est header id and calc id , if found- then update , else insert
 
       var bulk =
@@ -441,10 +393,12 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
       );
   } catch (err) {
     console.log(
-      "something went wrong: service createEstimation Calc Attribute",
+      "something went wrong: service 12121`22> createEstimation ",
       err
     );
-    throw new Error(err);
+    throw new Error(
+      constant.estimationHeaderAtrributeMessage.estimationHeaderAtrribute_ERROR
+    );
   }
 };
 
@@ -541,20 +495,338 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
   }
 };
 
-function ValidateFormula(FormulaTags, tag) {
-  // console.log("##########");
-  // console.log(FormulaTags);
-  // console.log(tag);
-  // console.log("##########");
-  let exists = FormulaTags.filter((x) => String(x) == String(tag));
-  if (exists.length > 0) return true;
-}
+//  function for release estimation
 
-function AddItemInJsonList(list, items) {
-  items.forEach((element) => {
-    if (list.filter((x) => String(x) == String(element)).length == 0) {
-      list.push(element);
+// var error = {
+//   "estDetail": [],
+//   "ResourceMix": [],
+//   "Timelineplanning": [],
+//   "Resource Count": [],
+//   }
+//
+//
+//
+//   estDetail = {
+//   "Requirment": "Not found"
+// "title":
+// description
+//   "tag":
+//   "type":
+// estRequirementData:
+// ESTAttributeID
+// ESTData
+//
+//
+//   "Attribut" : [
+//   "frondtEnd": "found nill"
+//   ]
+//   }
+
+//
+
+// let dataArray = []
+// let newDataObj = {}
+// let paramArray = ["requirement","title","description","tag","type","estRequirementData","ESTAttributeID","ESTData"]
+
+// function validateESTDetails(dataObj) {
+//   if (Array.isArray(dataObj)) {
+//     let newArr = []
+//     for (let arr of dataObj) {
+//       if (typeof arr == "object") {
+//         newArr[newArr.length] = validateESTDetails(arr, dataArray)
+//       } else {
+//         if (!arr && typeof arr != "boolean") {
+//           newArr[newArr.length] = "Not Found"
+//         }
+//       }
+//     }
+//     return newArr
+//   } else {
+//     let newObj = {}
+//     for (let key of Object.keys(dataObj)) {
+//       if (!dataObj[key] && typeof dataObj[key] != "boolean") {
+//         newObj[key] = "Not Found"
+//         if (paramArray.filter((value)=>value==key).length){
+//           let temp = {}
+//           temp[key] = newObj[key]
+//           dataArray[dataArray.length] = temp
+//           newDataObj[key] = newObj[key]
+//         }
+//       } else {
+//         if (typeof dataObj[key] == 'object') {
+//           newObj[key] = validateESTDetails(dataObj[key], dataArray)
+//         }
+//       }
+
+//     }
+//     return newObj
+//   }
+// }
+
+const replaceEmptyKeys = (arr) => {
+  return arr.map((o) => updateKeys(o));
+};
+
+const updateKeys = (obj) => {
+  const finalObj = {};
+  for (let oKey in obj) {
+    if (!obj[oKey]) {
+      finalObj[oKey] = "Not Found";
+    }
+  }
+  return { ...finalObj };
+};
+
+// Release estimation
+
+module.exports.ReleaseEstimation = async (req) => {
+  const errorArray = {
+    requirementError: [],
+    resourceCountAllocationError: "",
+    resourceCountDataError: [],
+    estimationTemplateError: [],
+  };
+  let response = { ...constant.publishMessage };
+  var estheaderId = req.estimationHeaderId;
+  // console.log("estheaderId", estheaderId);
+  var estheaderid = req.estimationHeaderId;
+
+  // const estheaderid = id;
+  const obj = { skip: 0, limit: 10 };
+  try {
+
+    let estimation = await EstimationHeader.findById(estheaderId);
+    // console.log("estimation", estimation);
+    if (estimation) {
+      if (estimation.publishDate) {
+        return {message:" Estimation Already Published ", publishDate:estimation.publishDate};
+      } else {
+        var contingency = await RequirementRepository.getContingency(
+          estheaderId
+        );
+        var contingencySuffix = " Contingency";
+        var estHeaderRequirement =
+          await RequirementRepository.getEstHeaderRequirementWithContingency(
+            estheaderId
+          );
+        // console.log("estHeaderRequirement", JSON.stringify(estHeaderRequirement));
+
+        if (estHeaderRequirement.length != 0) {
+          response.requirementList = await getRequirementList(
+            estHeaderRequirement,
+            contingency,
+            contingencySuffix
+          );
+          const validatedrequirement = replaceEmptyKeys(
+            response.requirementList
+          );
+          console.log("validatedrequirement",validatedrequirement)
+
+          if (validatedrequirement[0] == {}) {
+            errorArray.requirementError = validatedrequirement;
+
+            //  console.log("validation Passed")
+          } else {
+            errorArray.requirementError = validatedrequirement;
+            // console.log("validation Failed")
+          }
+        }
+        // console.log("First data pushed in Error Array",errorArray);
+        var resourceCount = await EstResourceCountServ.getResourceCount({
+          estheaderid
+        });
+        console.log("resourceCount",resourceCount);
+
+        var valError = getValidationError(resourceCount);
+        if (valError.msg != '') {
+          errorArray.resourceCountAllocationError =
+            "Allocate Resource Properly";
+          // console.log("Second data pushed in Error Array",errorArray);
+        } else {
+          errorArray.resourceCountAllocationError = "";
+        }
+        // console.log("valError",valError);
+        var getResCountData = replaceEmptyKeys(test(resourceCount));
+        // console.log("getResCountData",getResCountData)
+
+        if (getResCountData.length != 0) {
+          errorArray.resourceCountDataError = getResCountData;
+
+          // console.log("validation count Passed")
+        } else {
+          //  console.log("validation count Failed")
+        }
+        // console.log("third data pushed in Error Array",errorArray);
+
+        // var estType = await RequirementRepository.getEstimationType(estheaderId);
+        // console.log('estType',estType);
+        // var allEstimationTemplate = await EstTempServ.getAllEstimationTemplate(obj);
+        // console.log('allEstimationTemplate',allEstimationTemplate);
+
+        let estimations = await getEstBasicDetail(estheaderId);
+
+        response.basicDetails = estimations;
+        // console.log('response.basicDetails',response.basicDetails)
+        // console.log('response.requirementList',response.requirementList)
+
+        response.isReqValid = checkValidation(
+          estimations.estTypeId.reqTypeValidation,
+          response.requirementList
+        );
+        if (response.isReqValid.length === 0) {
+          errorArray.estimationTemplateError = [];
+
+          // console.log("validation of SWAG, EPIC, ROM is Passed")
+        } else {
+          errorArray.estimationTemplateError = response.isReqValid;
+          //  console.log("validation of SWAG, EPIC, ROM is Failed")
+        }
+        // console.log('response.isReqValid',response.isReqValid);
+
+        console.log('errorArray',errorArray);
+
+        if (
+          errorArray.requirementError.length == 0 &&
+          errorArray.resourceCountAllocationError === "" &&
+          errorArray.resourceCountDataError.length == 0 &&
+          errorArray.estimationTemplateError.isValid === true
+        ) {
+          // estimation.publishDate = Date.now();
+          // let result = await estimation.save();
+          return { res: errorArray, message: "Add Data to this Estimation" };
+        }
+        else if (
+          errorArray.requirementError[0] == {} &&
+          errorArray.resourceCountAllocationError === "" &&
+          errorArray.resourceCountDataError[0] == {} &&
+          errorArray.estimationTemplateError.isValid === true
+        ) {
+          estimation.publishDate = Date.now();
+          let result = await estimation.save();
+          return {message:"Estimation Published Successfully"};
+        } else {
+          return { res: errorArray, message: "Error" };
+        }
+      }
+    } else {
+      return { message: "No Estimation Found" };
+    }
+  } catch (err) {
+    console.log("err", err);
+    throw new Error(err);
+  }
+};
+
+// Too simplyfy the requirement data is single object
+function getRequirementList(
+  estHeaderRequirement,
+  contingency,
+  contingencySuffix
+) {
+  var arrayRequirement = [];
+  estHeaderRequirement.forEach((item, i) => {
+    if (item.isDeleted === false) {
+      var field = item.requirement.title;
+      var requirement = {
+        Requirement: item.requirement.title,
+        Description: item.requirement.description,
+        Tagname: item.requirement.tag.name,
+        Tagid: item.requirement.tag._id,
+        Typename: item.requirement.type.name,
+        Typeid: item.requirement.type._id,
+        requirementId: item.requirement._id,
+        _id: item._id,
+      };
+
+      item.estRequirementData.forEach((item, i) => {
+        if (item.ESTData !== undefined && item.ESTData !== null) {
+          if (
+            item.ESTAttributeID !== undefined &&
+            item.ESTAttributeID !== null
+          ) {
+            // ESTAttributeID =  item.ESTAttributeID._id;
+            requirement["ESTAttributeID"] = item.ESTAttributeID._id;
+            // EstAttributeName = item.ESTAttributeID.attributeName;
+            requirement["EstAttributeName"] = item.ESTAttributeID.attributeName;
+
+            requirement["ESTData"] = item.ESTData;
+            if (contingency > 0) {
+              requirement["ESTDataContingency"] = item.ESTDataContingency;
+            }
+          }
+        }
+      });
+      arrayRequirement.push(requirement);
     }
   });
-  return list;
+
+  return arrayRequirement;
+}
+
+// check validation on SWAG, EPIC and ROM
+
+const checkValidation = (validationList, requirementList) => {
+  const error = [];
+  validationList.map((validationItem) => {
+    if (requirementList !== undefined) {
+    let foundReq = requirementList.some(
+      (req) => req.Typeid.toString() === validationItem.id.toString()
+    );
+
+    if (!foundReq) {
+      error.push(validationItem.name);
+    } }
+  });
+
+  return error.length > 0
+    ? { err: error, isValid: false }
+    : { err: error, isValid: true };
+};
+
+// basic detail for estimation
+
+const getEstBasicDetail = async (id) => {
+  let estimations = await EstHeaderModel.findById({ _id: id })
+    .populate({
+      path: "projectId",
+      populate: { path: "client" },
+    })
+    .populate({
+      path: "estTypeId",
+      populate: { path: "reqTypeValidation" },
+    });
+  return estimations;
+};
+
+// selected item for resource count
+const getValidationError = (show) => {
+  const validation = show.filter(item => 
+    item.validationerror == true
+  )
+  // var { validationerror } = show;
+  // console.log('validation',validation)
+  if (validation) {  
+    return {msg: "Please assign role count Properply"};
+  } else {
+    return {msg:''};
+  }
+};
+
+function test(arr) {
+  const data = [];
+  arr.map((item) => {
+    if (item.resourceCount > 0) {
+      var resource = {
+        resourceCount: item.resourceCount,
+        attributeName: item.attributeName,
+        estAttributeId: item.estAttributeId,
+        skills: item.skills,
+        skillsId: item.skillsId,
+      };
+      // console.log("resource",resource)
+      data.push(resource);
+      return resource;
+    }
+  });
+  return data;
 }

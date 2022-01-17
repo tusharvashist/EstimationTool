@@ -71,5 +71,11 @@ const EstimationService = {
       FileDownload(res.data, "Estimation.xlsx");
     });
   },
+
+  estimationPublish: function (id) {
+    let url = Url.releaseEstimation + "/";
+    return axios.post(url, {estimationHeaderId:id});
+  },
+
 };
 export default EstimationService;

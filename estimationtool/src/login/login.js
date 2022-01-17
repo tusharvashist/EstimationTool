@@ -76,6 +76,7 @@ export default function Login(props) {
     for (let userP in USER_PERMISSIONS) {
       // finalPermissions[USER_PERMISSIONS[userP]] = !!permissionObj[userP];
       finalPermissions[USER_PERMISSIONS[userP]] = true;
+
     }
 
     return { ...finalPermissions };

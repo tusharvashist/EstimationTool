@@ -15,6 +15,13 @@ module.exports = {
     Reply: "Reply",
   },
 
+  importRequirementStatus: {
+    importFile: 1,
+    updateData: 2,
+    insertSuccess: 3,
+    insertFail : 4,
+  },
+
   requirementResponse: {
     basicDetails: {},
     featureList: [],
@@ -313,5 +320,9 @@ module.exports = {
     INVALID_ID: "Invalid id",
     ESTIMATION_SUMMARY: "Estimation Summary",
     RESOURCE_MIX: "Resource Mix",
+  },
+  publishMessage: {
+    PUBLISH_VALIDATION: "Validation failed",
+    PUBLISH_CREATE: "Estimation published successfully",
   },
 };

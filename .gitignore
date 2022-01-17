@@ -7,6 +7,10 @@
 /.pnp
 .pnp.js
 
+/backend/.scannerwork
+
+/.scannerwork
+/estimationtool/.scannerwork
 # testing
 /coverage
 

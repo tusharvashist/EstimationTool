@@ -316,3 +316,33 @@ module.exports.estimationHeaderAtrributeCalcDelete = async (req, res) => {
     }
     return res.status(responce.status).send(responce);
 };
+
+
+// ------------- Estimation Release
+
+//-----------------  Delete
+module.exports.releaseEstimation= async (req, res) => {
+    let responce = { ...constant.defaultResponce };
+    try {
+        // console.log('req',req.body.estimationHeaderId)
+        const responceReleaseEstimate =
+            await estimationHeaderAtrributeSer.ReleaseEstimation(
+                req.body
+            );
+            if(responceReleaseEstimate.res === undefined) {
+        responce.status = 200;
+        responce.message = 'Estimation Publish Successfully';
+        responce.body = responceReleaseEstimate;
+            } else if (responceReleaseEstimate.message === ' Estimation Already Published '){
+                responce.message = ' Estimation Already Published ';
+                responce.body = responceReleaseEstimate.publishDate;
+            } else {
+                responce.message = responceReleaseEstimate.message;
+                responce.body = responceReleaseEstimate.res;
+            }
+    } catch (err) {
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+};
+

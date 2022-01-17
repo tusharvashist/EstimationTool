@@ -298,7 +298,7 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !query} //To be chnaged for Query
+           
             id="standard-basic"
             label="Query"
             className="full-width"
@@ -311,7 +311,7 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !assumption} //To be chnaged for Assumption
+          
             id="standard-basic"
             label="Assumption"
             className="full-width"
@@ -324,7 +324,7 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !reply} //To be chnaged for Reply
+           
             id="standard-basic"
             label="Reply"
             className="full-width"

@@ -132,6 +132,19 @@ router.delete("/atrributeCalc/:id",
     tokenValidation.validateToken,
     estimationController.estimationHeaderAtrributeCalcDelete
 );
+
+
+
+
+
+
+// ------------------Release Estimation
+
+router.post("/releaseEstimation/",
+    // tokenValidation.validateToken,
+    estimationController.releaseEstimation
+);
+
 module.exports = router;
 
 
