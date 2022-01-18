@@ -1,5 +1,5 @@
 import { Button, Container } from "@material-ui/core";
-import { Box , Grid} from "@material-ui/core";
+import { Box, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useLocation, Link } from "react-router-dom";
@@ -39,7 +39,7 @@ const RequirementMix = () => {
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
   const [openExport, setOpenExport] = useState(false);
-  const {   estimation_export_resourcemix  } = usePermission();
+  const { estimation_export_resourcemix } = usePermission();
 
   useEffect(() => {
     getResourceCountData(estimationId);
@@ -69,7 +69,7 @@ const RequirementMix = () => {
             cost: el.costcal,
             price: el.pricecal,
             costrate: el.resourceMix.role.cost,
-            pricerate: el.resourceMix.role.price
+            pricerate: el.resourceMix.role.price,
           };
           // if (!el.attributeSkill.calcAttributeName) {
           //   return {
@@ -123,52 +123,104 @@ const RequirementMix = () => {
       field: "id",
       headerName: "S No.",
       width: 120,
-      sortable: false,
     },
     {
       field: "allocationPercent",
       headerName: "Allocation %",
-      sortable: false,
+
       width: 170,
     },
     {
       field: "resourceRole",
       headerName: "Role",
-      sortable: false,
+
       width: 150,
     },
     {
       field: "attributeName",
       headerName: "Skills(Effort & Summary Attributes)",
-      sortable: false,
+
       width: 280,
     },
     {
       field: "costrate",
       headerName: "Cost/Hr ($)",
-      sortable: false,
+
       width: 160,
     },
     {
       field: "pricerate",
       headerName: "Price/Hr ($)",
-      sortable: false,
+
       width: 160,
     },
     {
       field: "cost",
       headerName: "Cost ($)",
-      sortable: false,
+
       width: 160,
     },
     {
       field: "price",
       headerName: "Price ($)",
-      sortable: false,
+
       width: 160,
     },
   ];
   console.log(resourceMixList, totalMargin);
+
+  // const columns2 = [
+  //   { field: "id", headerName: "ID", width: 90 },
+  //   {
+  //     field: "allocationPercent",
+  //     headerName: "Allocation %",
+  //     width: 150,
+  //   },
+  //   {
+  //     field: "resourceRole",
+  //     headerName: "Role",
+  //     width: 150,
+  //     editable: true,
+  //   },
+  //   {
+  //     field: "attributeName",
+  //     headerName: "Skills(Effort & Summary Attributes)",
+  //     width: 280,
+  //     editable: true,
+  //   },
+  //   {
+  //     field: "costrate",
+  //     headerName: "Cost/Hr ($)",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "pricerate",
+  //     headerName: "Price/Hr ($)",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "cost",
+  //     headerName: "Cost ($)",
+  //     width: 160,
+  //   },
+  //   {
+  //     field: "price",
+  //     headerName: "Price ($)",
+  //     width: 160,
+  //   },
+  // ];
+
+  const rows2 = [
+    { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
+    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
+    { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
+    { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
+    { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
+    { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
+    { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
+    { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
+    { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
+  ];
 
   return (
     <div className="estimation-detail-cover">
@@ -184,14 +236,15 @@ const RequirementMix = () => {
       />
       {/*========= JSX- Export Estimation in Report - END ========= */}
       <Container>
-      <Grid container>
+        <Grid container>
           <Grid item className="multi-button-grid">
-      {estimation_export_resourcemix &&  <Button variant="outlined" onClick={openExportEstimation}>
-              <BiExport style={{ fontSize: "18px" }} />
-              &nbsp;Export in Excel
-            </Button>
-}
-          {/* <Link
+            {estimation_export_resourcemix && (
+              <Button variant="outlined" onClick={openExportEstimation}>
+                <BiExport style={{ fontSize: "18px" }} />
+                &nbsp;Export in Excel
+              </Button>
+            )}
+            {/* <Link
             to={{
               pathname:
                 "/All-Clients/" +
@@ -211,7 +264,7 @@ const RequirementMix = () => {
               <> Edit Estimation Configuration</>
             </Button>
           </Link> */}
-         </Grid>
+          </Grid>
         </Grid>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
@@ -226,8 +279,12 @@ const RequirementMix = () => {
                 disableColumnMenu
                 className={`${classes.root} ${classes.dataGrid}`}
                 rows={resourceMixList}
-                columns={columns}
-                pageSize={5}
+                columns={columns.map((column) => ({
+                  ...column,
+                  sortable: false,
+                }))}
+                // columns={columns}
+                pageSize={100}
                 rowsPerPageOptions={[5]}
                 disableSelectionOnClick
               />

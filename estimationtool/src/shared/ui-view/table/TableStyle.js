@@ -1,3 +1,4 @@
+import { ImportantDevices } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@mui/styles";
 
 export function useTableStyle() {
@@ -13,6 +14,7 @@ export function useTableStyle() {
         },
         "& .MuiDataGrid-columnHeaderWrapper": {
           backgroundColor: "rgb(229, 235, 247)",
+          height: "60px !important",
         },
         "& .MuiDataGrid-cell--editable": {
           backgroundColor: "#fff",

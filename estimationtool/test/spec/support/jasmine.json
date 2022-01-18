@@ -1,0 +1,15 @@
+{
+  "spec_dir": "src",
+  "spec_files": [
+    "../../../src/pages/estimation-detail/EstimationDetail.spec.js",
+    "./**/*.spec.js",
+    "./**/*spec.js",
+    "**/*.spec.js",
+    "*.spec.js"
+  ],
+  "helpers": ["helpers/babel.js", "helpers/**/*.js"],
+  "env": {
+    "stopSpecOnExpectationFailure": false,
+    "random": true
+  }
+}
