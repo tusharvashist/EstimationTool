@@ -291,19 +291,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       estResourcePlanning.estHeaderId = updatedInfo.estHeaderId;
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
-      switch (true) {
-        case mincount <= 0.25:
-          estResourcePlanning.allocationPercent = 25;
-          break;
-        case mincount <= 0.5:
-          estResourcePlanning.allocationPercent = 50;
-          break;
-        case mincount <= 0.75:
-          estResourcePlanning.allocationPercent = 75;
-          break;
-        default:
-          estResourcePlanning.allocationPercent = 100;
-      }
+      SetAllocationPercent(mincount, estResourcePlanning);
       return estResourcePlanning.save();
     } else {
       let deleted = await EstResourcePlanning.findOneAndDelete({
@@ -338,3 +326,18 @@ calculateResourceCount = async ({ estimation, total }) => {
     (global.ResourceWeekHours * estimation.estTentativeTimeline)
   ).toFixed(2);
 };
+function SetAllocationPercent(mincount, estResourcePlanning) {
+  switch (true) {
+    case mincount <= 0.25:
+      estResourcePlanning.allocationPercent = 25;
+      break;
+    case mincount <= 0.5:
+      estResourcePlanning.allocationPercent = 50;
+      break;
+    case mincount <= 0.75:
+      estResourcePlanning.allocationPercent = 75;
+      break;
+    default:
+      estResourcePlanning.allocationPercent = 100;
+  }
+}
