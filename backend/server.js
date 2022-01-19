@@ -15,7 +15,7 @@ global.ResourceWeekHours = 40;
 //do connection
 dbconnection();
 
-const fileUpload = require('express-fileupload');
+const fileUpload = require("express-fileupload");
 app.use(fileUpload());
 
 //cors
@@ -97,7 +97,8 @@ app.use("/api/v1/resource", require("./routes/timelinePlanning.route"));
 app.use("/api/v1/export", require("./routes/estimationExport.route"));
 app.use("/api/v1/report", require("./routes/estimationExport.route"));
 
-
+//----------- Location
+app.use("/api/v1/location", require("./routes/location.route"));
 
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
