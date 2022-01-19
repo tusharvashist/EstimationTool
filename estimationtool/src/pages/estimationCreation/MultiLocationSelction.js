@@ -7,9 +7,12 @@ import { MenuItem, Select } from "@material-ui/core";
 import FormControl from "@mui/material/FormControl";
 import { useSelector, useDispatch } from "react-redux";
 import masterServices from "../masterservices/master.service";
+import { setEstimationLocation } from "../../Redux/basicDetailRedux";
 
 const MultiLocationSelection = (props) => {
   const basicDetailRedux = useSelector((state) => state.basicDetail);
+  const dispatch = useDispatch();
+
   const [locations, setLocations] = useState([]);
   const [available, setAvailable] = useState([]);
   const ITEM_HEIGHT = 48;
@@ -24,52 +27,43 @@ const MultiLocationSelection = (props) => {
   };
   useEffect(() => {
     getAllLocation();
-
-    return () => {
-      setAvailable([]); // This worked for me
-    };
   }, []);
 
   //get all location
-  const getAllLocation = () => {
-    //setLoader(true);
+  const getAllLocation = async () => {
     let estHeaderId = props.estheaderid;
 
     if (!estHeaderId) {
       estHeaderId = basicDetailRedux.estimationHeaderId;
     }
 
-    masterServices
+    await masterServices
       .getAllEstimationLocations(estHeaderId)
       .then((res) => {
-        console.log("1");
         let dataResponce = res.data.body;
         setLocations(dataResponce);
+
+        let availableArr = [];
+        dataResponce.forEach((element) => {
+          if (element.selected) {
+            availableArr.push(element);
+          }
+        });
+        setAvailable(availableArr);
+        dispatch(setEstimationLocation(availableArr));
       })
       .catch((err) => {
         console.log("get master estimation locations", err);
       });
-
-    setEditData();
-  };
-
-  const setEditData = () => {
-    console.log("2");
-    locations.forEach((element) => {
-      if (element.selected) setAvailable(element.name);
-    });
   };
 
   const handleChange = (event) => {
+    console.log("event", event);
     const {
       target: { value },
     } = event;
-    setAvailable(
-      // On autofill we get a the stringified value.
-      typeof value === "string" ? value.split(",") : value
-    );
-    console.log(value);
-    //filter(value);
+    setAvailable(value);
+    dispatch(setEstimationLocation(value));
   };
 
   return (
@@ -83,13 +77,13 @@ const MultiLocationSelection = (props) => {
           value={available}
           onChange={handleChange}
           input={<OutlinedInput label="Locations" />}
-          renderValue={(selected) => selected.join(", ")}
+          renderValue={(selected) => selected.map((el) => el.name).join(", ")}
           MenuProps={MenuProps}
           style={{ width: "250px" }}
         >
           {locations.map((element) => (
-            <MenuItem key={element._id} value={element.name}>
-              <Checkbox checked={available.indexOf(element.name) > -1} />
+            <MenuItem key={element._id} value={element}>
+              <Checkbox checked={available.indexOf(element) > -1} />
               <ListItemText primary={element.name} />
             </MenuItem>
           ))}

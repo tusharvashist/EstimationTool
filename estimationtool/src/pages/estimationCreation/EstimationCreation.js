@@ -261,6 +261,8 @@ const EstimationCreation = (props) => {
     };
   };
 
+  console.log("basicDetailRedux", basicDetailRedux);
+
   const handleBasicDetailSaveUpdate = () => {
     if (
       projecttInfo._id &&
@@ -268,6 +270,7 @@ const EstimationCreation = (props) => {
       basicDetailRedux.estimationTypeId &&
       basicDetailRedux.esttimationDesc &&
       basicDetailRedux.efforUnit &&
+      basicDetailRedux.estimationLocations.length > 0 &&
       Number(basicDetailRedux.estimationTentativeTimeline) > 0 &&
       Number(basicDetailRedux.estimationContingency) > 0 &&
       Number(basicDetailRedux.estimationContingency) <= 100
@@ -291,6 +294,7 @@ const EstimationCreation = (props) => {
       estDescription: basicDetailRedux.esttimationDesc,
       effortUnit: basicDetailRedux.efforUnit,
       estTentativeTimeline: basicDetailRedux.estimationTentativeTimeline,
+      locations: basicDetailRedux.estimationLocations.map((el) => el._id),
       manCount: 0,
       contingency: basicDetailRedux.estimationContingency,
       totalCost: 0,

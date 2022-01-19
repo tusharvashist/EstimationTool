@@ -2,6 +2,7 @@ const estimationRequirementService = require("./estimationRequirementService");
 const resourceCountMixService = require("./resourceMixService");
 const estimationHeaderModal = require("../database/models/estHeaderModel");
 const estimationResourceCountService = require("./estimationResourceCountService");
+const estTimelinePlanningServive = require("./timelinePlanningService");
 
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
@@ -174,19 +175,38 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   }
 
   if (getReportFlagValue("resourceTimeline", reportPayload)) {
+    const worksheet = workbook.addWorksheet("Timeline Planning");
+    var resData = await getTimelinePlanningData(reportPayload.estimationHeaderId);
+    worksheet.columns = 
+      resData.columnData;
+    worksheet.addRows(
+      resData.rowData
+    );
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.font = { bold: true };
+    });
+
+    if (resData.rowData.length > 0) {
+      // Insert a row by sparse Array
+      var rowValuesTotalHour = [];
+      rowValuesTotalHour[resData.columnData.length-1] = "G. Total Hours";
+      rowValuesTotalHour[resData.columnData.length] = resData.totalHour;
+      worksheet.insertRow(worksheet.rowCount + 2, rowValuesTotalHour);
+    }
+
   }
 }
 
 function getResourcePlanningColumns() {
   var resPlanningHeaderAttr = [
-    { header: "S No.", key: "s_no", width: 10 },
-    { header: "Allocation%", key: "allocation", width: 15 },
-    { header: "Role", key: "role", width: 30 },
-    { header: "Skills(Effort & Summary Attributes)", key: "skill", width: 30 },
-    { header: "Cost/Hr($)", key: "cost", width: 20 },
-    { header: "Price/Hr($)", key: "price", width: 20 },
-    { header: "Cost($)", key: "cost_cal", width: 20 },
-    { header: "Price($)", key: "price_cal", width: 20 },
+    { header: "S No.", key: "s_no", width: 5 },
+    { header: "Allocation%", key: "allocation", width: 13 },
+    { header: "Role", key: "role", width: 12 },
+    { header: "Skills(Effort & Summary Attributes)", key: "skill", width: 25 },
+    { header: "Unit Cost/Hr($)", key: "cost", width: 12 },
+    { header: "Unit Price/Hr($)", key: "price", width: 12 },
+    { header: "Total Cost($)", key: "cost_cal", width: 12 },
+    { header: "Total Price($)", key: "price_cal", width: 12 },
   ];
   return resPlanningHeaderAttr;
 }
@@ -300,6 +320,51 @@ async function getEstimationRequirementData(conditions) {
     estCalRowData,
   };
 }
+
+async function getTimelinePlanningData(estinationHeaderId) {
+  const payload = { id: estinationHeaderId };
+  var totalHour ;
+  var rowData = [];
+  var columnData = [
+    {
+        key: "id",
+        header: "S No.",
+        width: 5,
+    },
+    {
+        key: "resourceRole",
+        header: "Role",
+        width: 12,
+    },
+    {
+        key: "attributeName",
+        header: "Skills(Effort & Summary Attributes)",
+        width: 25,
+    },
+  ];
+  const resData = await estTimelinePlanningServive.getTimelinePlanning(payload);
+   totalHour = resData.totalNumberOfHours;
+   rowData = resData.timelinePlanning;
+  
+  
+  var timeline = resData.resourceMixData[0].estimationHeader.estTentativeTimeline;
+    for(let i = 1; i<=timeline; i++) {
+        const col = {};
+        col.key= "week" + i.toString();
+        col.header= "Week" + i.toString();
+        col.width= 12;
+        columnData.push(col);
+      }
+  columnData.push({
+    key: "totalHours",
+    header: "Total Hours",
+    width: 12,
+});
+  
+
+  return { columnData, totalHour, rowData };
+}
+
 
 module.exports.checkEstName = async (reqPayload) => {
   return estimationHeaderModal.findById(

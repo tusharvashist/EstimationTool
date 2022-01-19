@@ -1,16 +1,17 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 export const basicDetailSlice = createSlice({
-  name: 'basicDetail',
+  name: "basicDetail",
   initialState: {
-    estimationName: '',
-    estimationType: '',
-    estimationTypeId: '',
-    efforUnit: '',
-    esttimationDesc: '',
-    estimationHeaderId: '',
-    estimationTentativeTimeline: '',
-    estimationContingency: '',
+    estimationName: "",
+    estimationType: "",
+    estimationTypeId: "",
+    efforUnit: "",
+    esttimationDesc: "",
+    estimationHeaderId: "",
+    estimationTentativeTimeline: "",
+    estimationContingency: "",
+    estimationLocations: "",
   },
   reducers: {
     setEstimationName: (state, estimationName) => {
@@ -35,15 +36,26 @@ export const basicDetailSlice = createSlice({
     setEstimationTentativeTimeline: (state, estimationTentativeTimeline) => {
       state.estimationTentativeTimeline = estimationTentativeTimeline.payload;
     },
-
     setEstimationContingency: (state, estimationContingency) => {
       state.estimationContingency = estimationContingency.payload;
-    }
-
+    },
+    setEstimationLocation: (state, estimationLocations) => {
+      state.estimationLocations = estimationLocations.payload;
+    },
   },
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { setEstimationName, setEstimationType, setEstimationTypeId, setEfforUnit, setEsttimationDesc,setEstimationHeaderId,setEstimationTentativeTimeline,setEstimationContingency  } = basicDetailSlice.actions
+export const {
+  setEstimationName,
+  setEstimationType,
+  setEstimationTypeId,
+  setEfforUnit,
+  setEsttimationDesc,
+  setEstimationHeaderId,
+  setEstimationTentativeTimeline,
+  setEstimationContingency,
+  setEstimationLocation,
+} = basicDetailSlice.actions;
 
-export default basicDetailSlice.reducer
+export default basicDetailSlice.reducer;
