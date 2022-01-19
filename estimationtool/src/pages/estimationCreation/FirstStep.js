@@ -37,6 +37,8 @@ import { useHistory } from "react-router-dom";
 import { width } from "@material-ui/system";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
+import MultiLocationSelection from "./MultiLocationSelction";
+
 const FirstStep = forwardRef((props, ref) => {
   const history = useHistory();
   const basicDetailRedux = useSelector((state) => state.basicDetail);
@@ -288,6 +290,8 @@ const FirstStep = forwardRef((props, ref) => {
                 </FormControl>
               </div>
             </Grid>
+          </Grid>
+          <Grid container style={{ gap: 200 }} className="gridgap">
             <Grid item xs={4} style={{ margin: "8px 0px" }}>
               <TextField
                 autoComplete="off"
@@ -299,7 +303,11 @@ const FirstStep = forwardRef((props, ref) => {
                 onChange={(e) => estimationNameInputValue(e.target.value)}
               />
             </Grid>
+            <Grid item xs={4} style={{ margin: "8px 0px" }}>
+              <MultiLocationSelection estheaderid={props.estimationHeaderId} />
+            </Grid>
           </Grid>
+
           <Grid container style={{ gap: 200 }} className="gridgap">
             <Grid item xs={4} style={{ margin: "8px 0px" }}>
               <TextField
