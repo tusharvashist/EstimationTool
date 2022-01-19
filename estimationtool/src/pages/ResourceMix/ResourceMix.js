@@ -39,7 +39,7 @@ const RequirementMix = () => {
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
   const [openExport, setOpenExport] = useState(false);
-  const { estimation_export_resourcemix } = usePermission();
+  const { estimation_export_resourcemix, estimation_pricing_view } = usePermission();
 
   useEffect(() => {
     getResourceCountData(estimationId);
@@ -145,82 +145,33 @@ const RequirementMix = () => {
     {
       field: "costrate",
       headerName: "Cost/Hr ($)",
-
+      hide : !estimation_pricing_view,
       width: 160,
     },
     {
       field: "pricerate",
       headerName: "Price/Hr ($)",
-
+      hide : !estimation_pricing_view,
       width: 160,
     },
     {
       field: "cost",
       headerName: "Cost ($)",
+      hide : !estimation_pricing_view,
 
       width: 160,
     },
     {
       field: "price",
       headerName: "Price ($)",
+      hide : !estimation_pricing_view,
 
       width: 160,
     },
   ];
-  console.log(resourceMixList, totalMargin);
+  // console.log(resourceMixList, totalMargin);
 
-  // const columns2 = [
-  //   { field: "id", headerName: "ID", width: 90 },
-  //   {
-  //     field: "allocationPercent",
-  //     headerName: "Allocation %",
-  //     width: 150,
-  //   },
-  //   {
-  //     field: "resourceRole",
-  //     headerName: "Role",
-  //     width: 150,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: "attributeName",
-  //     headerName: "Skills(Effort & Summary Attributes)",
-  //     width: 280,
-  //     editable: true,
-  //   },
-  //   {
-  //     field: "costrate",
-  //     headerName: "Cost/Hr ($)",
-  //     width: 160,
-  //   },
-  //   {
-  //     field: "pricerate",
-  //     headerName: "Price/Hr ($)",
-  //     width: 160,
-  //   },
-  //   {
-  //     field: "cost",
-  //     headerName: "Cost ($)",
-  //     width: 160,
-  //   },
-  //   {
-  //     field: "price",
-  //     headerName: "Price ($)",
-  //     width: 160,
-  //   },
-  // ];
-
-  const rows2 = [
-    { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-    { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-    { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-    { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-    { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-    { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-    { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-    { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-    { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-  ];
+ 
 
   return (
     <div className="estimation-detail-cover">
@@ -289,6 +240,7 @@ const RequirementMix = () => {
                 disableSelectionOnClick
               />
             </div>
+            {estimation_pricing_view &&
             <div className={styleClasses.totalcontainer}>
               <div className={styleClasses.totalRow}>
                 <div className={styleClasses.total_item}>
@@ -313,6 +265,7 @@ const RequirementMix = () => {
                 </h4>
               </div>
             </div>
+}
           </>
         )}
       </BorderedContainer>
