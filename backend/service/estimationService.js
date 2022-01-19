@@ -594,7 +594,7 @@ module.exports.ReleaseEstimation = async (req) => {
   // const estheaderid = id;
   const obj = { skip: 0, limit: 10 };
   try {
-
+    let errorString = [];
     let estimation = await EstimationHeader.findById(estheaderId);
     // console.log("estimation", estimation);
     if (estimation) {
@@ -684,12 +684,11 @@ module.exports.ReleaseEstimation = async (req) => {
         // console.log('response.isReqValid',response.isReqValid);
 
         console.log('errorArray',errorArray);
-
         if (
           errorArray.requirementError.length == 0 &&
-          errorArray.resourceCountAllocationError === "" &&
+          errorArray.resourceCountAllocationError == "" &&
           errorArray.resourceCountDataError.length == 0 &&
-          errorArray.estimationTemplateError.isValid === true
+          errorArray.estimationTemplateError.err.length == 0
         ) {
           // estimation.publishDate = Date.now();
           // let result = await estimation.save();
@@ -697,15 +696,28 @@ module.exports.ReleaseEstimation = async (req) => {
         }
         else if (
           errorArray.requirementError[0] == {} &&
-          errorArray.resourceCountAllocationError === "" &&
+          errorArray.resourceCountAllocationError == "" &&
           errorArray.resourceCountDataError[0] == {} &&
-          errorArray.estimationTemplateError.isValid === true
+          errorArray.estimationTemplateError.err.length == 0 
         ) {
           estimation.publishDate = Date.now();
           let result = await estimation.save();
           return {message:"Estimation Published Successfully"};
         } else {
-          return { res: errorArray, message: "Error" };
+          
+    if(errorArray.requirementError.length != 0) {
+      errorString.push("Requirement Not defined")
+    }
+    if(errorArray.resourceCountAllocationError != '') {
+      errorString.push("Please Allocate Resource properly")
+    }
+    if(errorArray.resourceCountDataError.length != 0) {
+      errorString.push("Resource Count Data is missing")
+    }
+    if(errorArray.estimationTemplateError.err.length != 0) {
+      errorString.push(errorArray.estimationTemplateError.err.toString())
+    }
+          return { res: errorArray, message: `Error: ${errorString.toString()}` };
         }
       }
     } else {
@@ -805,7 +817,7 @@ const getValidationError = (show) => {
   )
   // var { validationerror } = show;
   // console.log('validation',validation)
-  if (validation) {  
+  if (validation.length != 0) {  
     return {msg: "Please assign role count Properply"};
   } else {
     return {msg:''};
