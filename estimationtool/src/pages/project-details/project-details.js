@@ -7,14 +7,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Container
+  Container,
 } from "@material-ui/core";
 import ProjectEstimationsGridView from "../project/project-estimations";
 import "./project-details.css";
 import { useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
-import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
+import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 import { useSelector, useDispatch } from "react-redux";
@@ -36,7 +36,11 @@ export default function ClientDetails(props) {
   const history = useHistory();
   const roleState = useSelector((state) => state.role);
   const projectState = useSelector((state) => state.project);
-  const {estimationCreate} = usePermission();
+  const {
+    estimationCreate,
+    projectRequirementCreate,
+    projectRequirementImport,
+  } = usePermission();
 
   const dispatch = useDispatch();
 
@@ -186,7 +190,6 @@ export default function ClientDetails(props) {
             </Grid>
           </Grid>
           <Grid container alignItems="stretch">
-            
             {/* <Dropdown
               defaultValue={{ title: "All", value: "All" }}
               title="Estimation status"
@@ -194,115 +197,119 @@ export default function ClientDetails(props) {
               getVal={getDropDownvalue}
             /> */}
 
-          <Container>
-        <Grid container>
-          <Grid item className="multi-button-grid">
-           
-              <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/ImportExcelRequirements",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: "",
-                  },
-                }}
-              >
-                <Button
-                  style={{ marginRight: "15px" }}
-                  onClick={createEstimationHandle}
-                  variant="outlined"
-                >
-                  {" "}
-                  <BiImport style={{fontSize: "20px"}}/>
-                   &nbsp;
-                  Import Requirements
-                </Button>
+            <Container>
+              <Grid container>
+                <Grid item className="multi-button-grid">
+                  <Link
+                    to={{
+                      pathname:
+                        "/All-Clients/" +
+                        clientDetails.clientName +
+                        "/" +
+                        projectDetails.projectName +
+                        "/ImportExcelRequirements",
+                      state: {
+                        clientInfo: clientDetails,
+                        projectInfo: projectDetails,
+                        estimationHeaderId: "",
+                      },
+                    }}
+                  >
+                    {projectRequirementImport && (
+                      <Button
+                        style={{ marginRight: "15px" }}
+                        onClick={createEstimationHandle}
+                        variant="outlined"
+                      >
+                        {" "}
+                        <BiImport style={{ fontSize: "20px" }} />
+                        &nbsp; Import Requirements
+                      </Button>
+                    )}
                   </Link>
-                  
-           
-              <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/createRequirements",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: "",
-                  },
-                }}
-              >
-                <Button
-                  style={{ marginRight: "15px" }}
-                  onClick={createEstimationHandle}
-                  variant="outlined"
-                >
-                  {" "}
-                  <AddIcon />
-                  Create New Requirements
-                </Button>
-              </Link>
-     
-              <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/createEstimate",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: "",
-                  },
-                }}
-              >
-               { estimationCreate && ( <Button onClick={createEstimationHandle} variant="outlined">
-                  {" "}
-                  <AddIcon />
-                  Create Estimation
-                </Button>)
-                }
-              </Link>
-       </Grid>
-        </Grid>
-      </Container>
-    
+
+                  <Link
+                    to={{
+                      pathname:
+                        "/All-Clients/" +
+                        clientDetails.clientName +
+                        "/" +
+                        projectDetails.projectName +
+                        "/createRequirements",
+                      state: {
+                        clientInfo: clientDetails,
+                        projectInfo: projectDetails,
+                        estimationHeaderId: "",
+                      },
+                    }}
+                  >
+                    {projectRequirementCreate && (
+                      <Button
+                        style={{ marginRight: "15px" }}
+                        onClick={createEstimationHandle}
+                        variant="outlined"
+                      >
+                        {" "}
+                        <AddIcon />
+                        Create New Requirements
+                      </Button>
+                    )}
+                  </Link>
+
+                  <Link
+                    to={{
+                      pathname:
+                        "/All-Clients/" +
+                        clientDetails.clientName +
+                        "/" +
+                        projectDetails.projectName +
+                        "/createEstimate",
+                      state: {
+                        clientInfo: clientDetails,
+                        projectInfo: projectDetails,
+                        estimationHeaderId: "",
+                      },
+                    }}
+                  >
+                    {estimationCreate && (
+                      <Button
+                        onClick={createEstimationHandle}
+                        variant="outlined"
+                      >
+                        {" "}
+                        <AddIcon />
+                        Create Estimation
+                      </Button>
+                    )}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Container>
           </Grid>
           <Grid item xs={6}>
-              <Box sx={{ maxWidth: 200 }}>
-                <FormControl width="300px">
-                  <InputLabel id="client-simple-select">
-                    Estimation Status{" "}
-                  </InputLabel>
+            <Box sx={{ maxWidth: 200 }}>
+              <FormControl width="300px">
+                <InputLabel id="client-simple-select">
+                  Estimation Status{" "}
+                </InputLabel>
 
-                  <Select
-                    labelId="client-simple-select"
-                    id="client-simple-select"
-                    value={projectStatus.title}
-                    label={projectStatus.title}
-                    defaultValue={"Active"}
-                    onChange={getDropDownvalue}
-                  >
-                    {projectStatus.map((item) => (
-                      <MenuItem key={item.title} value={item.title}>
-                        {item.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
-            </Grid>
+                <Select
+                  labelId="client-simple-select"
+                  id="client-simple-select"
+                  value={projectStatus.title}
+                  label={projectStatus.title}
+                  defaultValue={"Active"}
+                  onChange={getDropDownvalue}
+                >
+                  {projectStatus.map((item) => (
+                    <MenuItem key={item.title} value={item.title}>
+                      {item.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </Grid>
         </Grid>
       </Box>
       <Box p={0} pt={0}>

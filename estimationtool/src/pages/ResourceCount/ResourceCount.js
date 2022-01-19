@@ -12,6 +12,7 @@ import { MdOutlineManageAccounts } from "react-icons/md";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 import NoRowOverlay from "../../shared/ui-view/NoRowOverlay/NoRowOverlay";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 const ResourceCountMatrix = (props) => {
   const [tableOpen, setTableOpen] = useState(false);
@@ -31,7 +32,7 @@ const ResourceCountMatrix = (props) => {
       sort: "asc",
     },
   ]);
-
+  const {   estimation_resourcecount_edit  } = usePermission();
   useEffect(() => {
     // getTechnologySkill();
     getTechnologySkill();
@@ -212,14 +213,16 @@ const ResourceCountMatrix = (props) => {
                     className="editrole_cover"
                     onClick={closeEditHandler}
                   ></div>
-                  <RoleEditCount
+               
+               {estimation_resourcecount_edit &&   <RoleEditCount
                     rowEditData={rowEditData}
                     handleEditChange={handleEditChange}
                   />
+               }
                 </>
               )}
               <div style={{ height: 300, width: "100%" }}>
-                {resouceCountData.length && (
+                {estimation_resourcecount_edit && resouceCountData.length && (
                   <DataGrid
                     sx={{
                       "& .MuiDataGrid-cell:hover": {

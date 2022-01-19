@@ -103,12 +103,14 @@ function AllClient(props) {
       title: "Client Website",
       field: "website",
       render: (dataRow) => {
-        return (
+        return clientView ? (
           <a target="blank" href={`//${dataRow.website}`}>
             {/* <Link target="_blank" to={dataRow.website}>{dataRow.website}</Link> */}
             {dataRow.website}
           </a>
-        );
+        )
+        : <>{dataRow.website}</>
+
       },
     },
     {

@@ -34,6 +34,7 @@ import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 import { BiImport } from "react-icons/bi";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import usePermission from "../../shared/layout/hooks/usePermissions";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -41,7 +42,16 @@ const EstimationDetail = () => {
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
-
+  const {
+    estimation_generate_timeline,
+    estimation_export_resourcemix,
+    estimation_generate_resourcemix,
+    estimationAttributeData,
+    estimation_calc_attribute_data,
+    estimationConfiguation,
+    estimation_export_excel,
+    estimation_requirement_add,
+  } = usePermission();
   const [isOpen, setOpen] = React.useState({});
   let estimationId;
   if (location.state !== undefined) {
@@ -92,7 +102,9 @@ const EstimationDetail = () => {
   const [tagDataArray, setTagDataArray] = useState([]);
   const [requirementHeaderArray, setRequirementHeaderArray] = useState([]);
   const [countError, setCountError] = useState(false);
-  const [isRequirementValid, setIsRequirementValid] = useState({});
+  const [isRequirementValid, setIsRequirementValid] = useState({
+    isValid: true,
+  });
 
   const [openExport, setOpenExport] = useState(false);
 
@@ -483,30 +495,29 @@ const EstimationDetail = () => {
       : "";
   };
 
+  const releaseEstimation = (id) => {
+    EstimationService.estimationPublish(id)
+      .then((res) => {
+        // console.log("Estimation Publish", res.data);
+        setOpen({
+          open: true,
+          severity: "success",
+          message: res.data.message,
+        });
+      })
+      .catch((err) => {
+        // console.log(" Error Estimation Publish", err);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+      });
+  };
 
-const releaseEstimation = (id) => {
-  EstimationService.estimationPublish(id).then((res) => {
-    // console.log("Estimation Publish", res.data);
-    setOpen({
-      open: true,
-      severity: "success",
-      message: res.data.message,
-    });
-  })
-  .catch((err) => {
-    // console.log(" Error Estimation Publish", err);
-    setOpen({
-      open: true,
-      severity: "error",
-      message: err.response.data.message,
-    });
-  
-  });
-}
-
-const handleClose = () => {
-  setOpen({});
-};
+  const handleClose = () => {
+    setOpen({});
+  };
 
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
@@ -519,7 +530,7 @@ const handleClose = () => {
         openExportEstimation={openExportEstimation}
         closeExportEstimation={closeExportEstimation}
         title="Export Estimation"
-        oktitle="Genrate"
+        oktitle="Generate"
         cancelTitle="Cancel"
         exportFun={exportFun}
       />
@@ -596,10 +607,12 @@ const handleClose = () => {
       <Container>
         <Grid container>
           <Grid item className="multi-button-grid">
-            <Button variant="outlined" onClick={openExportEstimation}>
-              <BiExport style={{ fontSize: "18px" }} />
-              &nbsp;Export in Excel
-            </Button>
+            {estimation_export_excel && (
+              <Button variant="outlined" onClick={openExportEstimation}>
+                <BiExport style={{ fontSize: "18px" }} />
+                &nbsp;Export in Excel
+              </Button>
+            )}
             <Link
               to={{
                 pathname:
@@ -615,10 +628,12 @@ const handleClose = () => {
                 },
               }}
             >
-              <Button variant="outlined" className="estimation-detail-button">
-                <EditOutlined style={{ fontSize: "18px" }} />
-                &nbsp;Edit Configuration
-              </Button>
+              {estimationConfiguation && (
+                <Button variant="outlined" className="estimation-detail-button">
+                  <EditOutlined style={{ fontSize: "18px" }} />
+                  &nbsp;Edit Configuration
+                </Button>
+              )}
             </Link>
           </Grid>
         </Grid>
@@ -628,49 +643,48 @@ const handleClose = () => {
       <Container>
         <Grid container>
           <Grid item class="multi-button-grid">
-            
-               <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/ImportExcelRequirements",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: headerData,
-                  },
-                }}
-              >
-                <Button
-                  style={{ marginRight: "15px" }}
-                  variant="outlined"
-              >
-                   <BiImport style={{fontSize: "20px"}}/>
-                   &nbsp;
-                  Import Requirements
-                </Button>
-              </Link>
-            <Button
-              variant="outlined"
-              className="estimation-detail-button"
-              onClick={openAddAvailableRequirement}
+            <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/ImportExcelRequirements",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: headerData,
+                },
+              }}
             >
-              {" "}
-              <Add style={{ fontSize: "18px" }} />
-              &nbsp;Include Project Requirements
-            </Button>
-            <Button
-              variant="outlined"
-              className="estimation-detail-button"
-              onClick={openAddRequirement}
-            >
-              {" "}
-              <Add style={{ fontSize: "18px" }} />
-              &nbsp;Create New Requirements
-            </Button>
+              <Button style={{ marginRight: "15px" }} variant="outlined">
+                <BiImport style={{ fontSize: "20px" }} />
+                &nbsp; Import Requirements
+              </Button>
+            </Link>
+            {estimation_requirement_add && (
+              <Button
+                variant="outlined"
+                className="estimation-detail-button"
+                onClick={openAddAvailableRequirement}
+              >
+                {" "}
+                <Add style={{ fontSize: "18px" }} />
+                &nbsp;Include Project Requirements
+              </Button>
+            )}
+            {estimation_requirement_add && (
+              <Button
+                variant="outlined"
+                className="estimation-detail-button"
+                onClick={openAddRequirement}
+              >
+                {" "}
+                <Add style={{ fontSize: "18px" }} />
+                &nbsp;Create New Requirements
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Container>
@@ -716,6 +730,7 @@ const handleClose = () => {
                 components={{
                   Toolbar: CustomToolbar,
                 }}
+                isCellEditable={() => estimationAttributeData}
               />
             </div>
           </div>
@@ -761,6 +776,7 @@ const handleClose = () => {
                   (params.colDef.field === "total_Contingency" && "darkbg")
                 );
               }}
+              isCellEditable={() => estimation_calc_attribute_data}
             />
           )}
         </div>
@@ -828,30 +844,32 @@ const handleClose = () => {
             }}
           > */}
           <div class="tooltip">
-            <Button
-              disabled={countError}
-              variant="outlined"
-              onClick={() =>
-                history.push({
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/Estimation-Detail" +
-                    "/ResourceMix",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: estimationId,
-                    headerData: headerData,
-                  },
-                })
-              }
-            >
-              <MdOutlineDocumentScanner style={{ fontSize: "18px" }} />
-              &nbsp;Generate Resource Mix
-            </Button>
+            {estimation_generate_resourcemix && (
+              <Button
+                disabled={countError}
+                variant="outlined"
+                onClick={() =>
+                  history.push({
+                    pathname:
+                      "/All-Clients/" +
+                      clientDetails.clientName +
+                      "/" +
+                      projectDetails.projectName +
+                      "/Estimation-Detail" +
+                      "/ResourceMix",
+                    state: {
+                      clientInfo: clientDetails,
+                      projectInfo: projectDetails,
+                      estimationHeaderId: estimationId,
+                      headerData: headerData,
+                    },
+                  })
+                }
+              >
+                <MdOutlineDocumentScanner style={{ fontSize: "18px" }} />
+                &nbsp;Generate Resource Mix
+              </Button>
+            )}
             {countError ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
@@ -866,36 +884,39 @@ const handleClose = () => {
           </div>
           {/* </Link> */}
         </Grid>
-        <Grid item>
-          <Button
-            variant="outlined"
-            onClick={() =>
-              history.push({
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/Estimation-Detail" +
-                  "/TimelinePlanning",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: estimationId,
-                  headerData: headerData,
-                },
-              })
-            }
-          >
-            <MdOutlineTimeline style={{ fontSize: "18px" }} />
-            &nbsp;Generate Timeline Plan
-          </Button>
+        <Grid item style={{ marginRight: "10px" }}>
+          {estimation_generate_timeline && (
+            <Button
+              variant="outlined"
+              onClick={() =>
+                history.push({
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/Estimation-Detail" +
+                    "/TimelinePlanning",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: estimationId,
+                    headerData: headerData,
+                  },
+                })
+              }
+            >
+              <MdOutlineTimeline style={{ fontSize: "18px" }} />
+              &nbsp;Generate Timeline Plan
+            </Button>
+          )}
         </Grid>
-        <Grid item>
+        <Grid item style={{ marginRight: "10px" }}>
           <Button
             variant="outlined"
-            onClick={()=>
-              {releaseEstimation(estimationId)}}
+            onClick={() => {
+              releaseEstimation(estimationId);
+            }}
           >
             {/* <MdOutlineTimeline style={{ fontSize: "18px" }} /> */}
             &nbsp;Estimation Release
@@ -903,12 +924,12 @@ const handleClose = () => {
         </Grid>
       </Grid>
       <Snackbar
-          isOpen={open}
-          severity={severity}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          message={message}
-        />
+        isOpen={open}
+        severity={severity}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={message}
+      />
     </div>
   );
 };
