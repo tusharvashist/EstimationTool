@@ -844,7 +844,7 @@ const handleClose = () => {
             }}
           > */}
           <div class="tooltip">
-          {!estimation_generate_resourcemix &&  <Button
+          {estimation_generate_resourcemix &&  <Button
               disabled={countError}
               variant="outlined"
               onClick={() =>
@@ -884,7 +884,7 @@ const handleClose = () => {
           {/* </Link> */}
         </Grid>
         <Grid item>
-          {!estimation_generate_timeline &&<Button
+          {estimation_generate_timeline &&<Button
             variant="outlined"
             onClick={() =>
               history.push({

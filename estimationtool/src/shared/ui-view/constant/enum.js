@@ -30,9 +30,9 @@ export const USER_PERMISSIONS = {
   estimation_generate_timeline: "estimation_generate_timeline",
   estimation_export_resourcemix: "estimation_export_resourcemix",
   estimation_export_timeline: "estimation_export_timeline",
-  estimation_share: "estimation_share",
+  estimation_share: "estimation_share",  // Not implemented
   estimation_requirement_add: "estimation_requirement_add",
-  estimation_pricing_view: "estimation_pricing_view",
-  estimation_add_review_comment: "estimation_add_review_comment",
+  estimation_pricing_view: "estimation_pricing_view",  // Not implemented
+  estimation_add_review_comment: "estimation_add_review_comment", // Not implemented
   estimation_resourcecount_edit: "estimation_resourcecount_edit",
 };
