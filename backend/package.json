@@ -6,7 +6,9 @@
   "scripts": {
     "start": "nodemon server.js",
     "import": "node seedData.js -i",
-    "remove": "node seedData.js -d"
+    "remove": "node seedData.js -d",
+    "test-init": "./node_modules/jasmine/bin/jasmine.js init",
+    "test": "./node_modules/jasmine/bin/jasmine.js"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +20,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "exceljs": "^4.3.0",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "express-fileupload": "^1.2.1",
     "joi": "^17.4.2",
     "jsonwebtoken": "^8.5.1",
@@ -26,11 +28,13 @@
     "mongoose": "^6.0.5",
     "mongoose-unique-validator": "^3.0.0",
     "react-icons": "^4.3.1",
+    "request": "^2.88.2",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "jasmine": "^4.0.2",
     "nodemon": "^2.0.12"
   }
 }

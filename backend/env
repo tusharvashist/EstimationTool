@@ -1,4 +1,6 @@
-NAME = Production
+NAME = Devlopment
 DB_PROD_URL = mongodb://pyramid-estimation-tool:yaWd3INCLYfHAMAe90uLduu0Yp8jWC2H8D6JDciDuS7FN2ArZ7Us4RKqIEJ7qDw3mXrLdIS9ioXO6o4AqUDxMg==@pyramid-estimation-tool.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@pyramid-estimation-tool@
 DB_URL = mongodb://pyramid-estimation-tool:yaWd3INCLYfHAMAe90uLduu0Yp8jWC2H8D6JDciDuS7FN2ArZ7Us4RKqIEJ7qDw3mXrLdIS9ioXO6o4AqUDxMg==@pyramid-estimation-tool.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@pyramid-estimation-tool@
+DB_DEV_URL = mongodb://estimationtool-dev-db:I5WeRnPcC7eVSODMybAHWwBi6w0ErSxTSVNkzqklo1GxPyhGUKednGDxbQUIOf1qnMPljuBOW9vqb2yr2AoIbA==@estimationtool-dev-db.mongo.cosmos.azure.com:10255/?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@estimationtool-dev-db@
 SECRET_KEY = py-estimation#$#
+PORT = 3232
