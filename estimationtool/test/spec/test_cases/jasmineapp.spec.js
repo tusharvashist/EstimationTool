@@ -11,6 +11,7 @@ it("should render App", () => {
   ReactDOM.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
+        a
         <App />
       </PersistGate>
     </Provider>,
