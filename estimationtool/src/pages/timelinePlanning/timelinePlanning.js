@@ -144,7 +144,7 @@ const TimelinePlanning = () => {
         openExportEstimation={openExportEstimation}
         closeExportEstimation={closeExportEstimation}
         title="Export Estimation"
-        oktitle="Genrate"
+        oktitle="Generate"
         cancelTitle="Cancel"
         exportFun={exportFun}
       />

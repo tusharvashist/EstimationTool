@@ -21,8 +21,6 @@ it("renders estimation detail page", () => {
   const state = { a: 123, b: 456 };
   history.push("/", state);
 
-  render;
-
   ReactDOM.render(
     <Router history={history}>
       <EstimationDetail />
