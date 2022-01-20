@@ -146,7 +146,7 @@ const RoleEditItem = (props) => {
 
     obj = {
       ...obj,
-      resourceRoleID: e.target.value,
+      resourceRoleID: event.target.value,
       qty: 0,
       defaultAdjusted: true,
     };
