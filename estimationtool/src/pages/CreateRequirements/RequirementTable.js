@@ -28,6 +28,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import Pagination from "@mui/material/Pagination";
 import { ClassNames } from "@emotion/react";
 import { dark } from "@material-ui/core/styles/createPalette";
+import DeleteForever from "@material-ui/icons/DeleteForever";
 
 export const RequirementTable = (props) => {
   const location = useLocation();
@@ -47,6 +48,8 @@ export const RequirementTable = (props) => {
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
+
+  const [selectedRequirements, setSelectedRequirements] = useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
@@ -138,9 +141,10 @@ export const RequirementTable = (props) => {
     })
   );
   const classes = useStyles();
-  console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
 
-  //console.log("available: ", available);
+  const deleteAction = () => {
+    props.deleteAction(selectedRequirements);
+  };
   return (
     <>
       {loaderComponent ? (
@@ -148,25 +152,58 @@ export const RequirementTable = (props) => {
       ) : (
         <>
           <div className="addReqTableHeader">
-            <h3>Requirement Types</h3>
-            <Select
-              labelId="demo-multiple-checkbox-label"
-              id="demo-multiple-checkbox"
-              multiple
-              value={available}
-              onChange={handleChange}
-              input={<OutlinedInput label="Tag" />}
-              renderValue={(selected) => selected.join(", ")}
-              MenuProps={MenuProps}
-              style={{ width: "250px" }}
-            >
-              {types.map((name) => (
-                <MenuItem key={name} value={name}>
-                  <Checkbox checked={available.indexOf(name) > -1} />
-                  <ListItemText primary={name} />
-                </MenuItem>
-              ))}
-            </Select>
+            <Grid container>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-multiple-checkbox-label">
+                    Available Requirement Types Filter:
+                  </InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={available}
+                    onChange={handleChange}
+                    input={
+                      <OutlinedInput label="Available Requirement Types Filter:" />
+                    }
+                    renderValue={(selected) => selected.join(", ")}
+                    MenuProps={MenuProps}
+                    style={{ width: "250px" }}
+                  >
+                    {types.map((name) => (
+                      <MenuItem key={name} value={name}>
+                        <Checkbox checked={available.indexOf(name) > -1} />
+                        <ListItemText primary={name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              {props.isDeleteButton === true ? (
+                <Grid
+                  item
+                  xs={6}
+                  style={{ display: "flex" }}
+                  justifyContent="flex-end"
+                  alignItems="center"
+                >
+                  <Button
+                    onClick={deleteAction}
+                    disabled={selectedRequirements.length !== 0 ? false : true}
+                    variant="outlined"
+                  >
+                    <DeleteForever />
+                    {`Delete Selected Requirement${
+                      selectedRequirements.length > 1 ? "s" : ""
+                    }`}
+                  </Button>
+                </Grid>
+              ) : (
+                ""
+              )}
+            </Grid>
           </div>
           <div style={{ height: 400, width: "100%" }}>
             <DataGrid
@@ -177,48 +214,20 @@ export const RequirementTable = (props) => {
               rowsPerPageOptions={[5]}
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
-                //selected={(event, rowData, togglePanel) => {
                 if (props.isEditable) {
                   props.openEditRequirement(event, params.row);
                 }
               }}
               onSelectionModelChange={(rows) => {
                 console.log("onSelectionModelChange: ", rows);
-                if (props.selection === true) {
+                setSelectedRequirements(rows);
+                if (props.isDeleteButton === false) {
                   props.handleCheckBoxClicked(rows);
                 }
               }}
+              selectionModel={selectedRequirements}
             />
           </div>
-          {/* <MaterialTable
-            style={{ boxShadow: "none" }}
-            columns={requirementHeader}
-            data={requirementHeaderDataFilter}
-            editable={"never"}
-            onRowClick={(event, rowData, togglePanel) => {
-              if (props.isEditable) {
-                props.openEditRequirement(event, rowData);
-              }
-            }}
-              onSelectionChange={(rows) => {
-                if (props.selection === true) {
-                  props.handleCheckBoxClicked(rows);
-                }
-                
-              }}
-            options={{
-              search: false,
-              selection: props.selection,
-              showTitle: false,
-              showTextRowsSelected: true,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-            }}
-          /> */}
         </>
       )}
     </>

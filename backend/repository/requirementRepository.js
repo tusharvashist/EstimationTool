@@ -1241,6 +1241,57 @@ module.exports.deleteAllRequirements = async (projectId) => {
     return formatMongoData(deleteResponse);
 };
 
+
+module.exports.deleteRequirementQueryAssumption = async (requirementList ) => {
+
+  var batch = QueryAssumptionModel.collection.initializeOrderedBulkOp();
+  
+    requirementList.forEach( (requirementId,i) => {
+      var projectRequirementId = '';
+      if (requirementId.length != 0) {
+          projectRequirementId = mongoose.Types.ObjectId(requirementId);
+      }
+
+        let result = batch.find({
+          projectRequirement: projectRequirementId,
+       }).delete();      
+           
+    });
+  const result = await batch.execute(function (err, result) {
+    console.log(result);
+   });
+  
+    return formatMongoData(result);
+};
+
+
+
+module.exports.deleteSelectedProjectRequirement = async (requirementList ) => {
+
+  var bulk = ProjectRequirement.collection.initializeUnorderedBulkOp();
+  
+    requirementList.forEach(async (requirementId,i) => {
+      var projectRequirementId = '';
+      if (requirementId.length != 0) {
+          projectRequirementId = mongoose.Types.ObjectId(requirementId);
+      }
+         
+      bulk.find({
+          _id: projectRequirementId,
+      }).delete(); 
+
+    });
+  
+    const result = await bulk.execute(function (err, result) {
+    console.log(result);
+    });
+  
+    return formatMongoData(result);
+};
+
+
+
+
  async function getNextSequenceValue(sequenceName, increment){
   let sequenceDocument =  await ReqCounter.findOneAndUpdate({key: sequenceName },
      {$inc:{seq:increment}},

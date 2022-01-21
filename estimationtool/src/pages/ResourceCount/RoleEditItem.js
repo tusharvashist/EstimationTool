@@ -1,23 +1,46 @@
 import React, { useState, useEffect } from "react";
 import ResourceCountService from "./resourcecount.service";
+import PropTypes from "prop-types";
+import { styled } from "@mui/material/styles";
+import RadioGroup, { useRadioGroup } from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Radio from "@mui/material/Radio";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const RoleEditItem = (props) => {
   const [isOpen, setOpen] = React.useState({});
   const [disabledState, setDisabledState] = useState(false);
-  console.log("edit props", props);
+
+  const [value, setValue] = React.useState(false);
+  const [helperText, setHelperText] = React.useState(
+    "*Selected Role will be adjusted to remianing allocation"
+  );
 
   const [roleData, setRoleData] = useState([]);
-  const [reloadEditCount, setReloadEditCount] = useState(false);
+  const [adjustedTrueRole, setAdjustedTrueRole] = useState("");
 
   useEffect(() => {
     getResourceMasterRoleData(props.rowEditData._id);
-  }, [props.rowEditData, reloadEditCount]);
+  }, [props.rowEditData, value]);
 
-  const getResourceMasterRoleData = (resourceCountId) => {
-    ResourceCountService.getResourceMasterRole(resourceCountId)
+  const getResourceMasterRoleData = async (resourceCountId) => {
+    await ResourceCountService.getResourceMasterRole(resourceCountId)
       .then((res) => {
+        let id = "";
+        let check = false;
+        res.data.body.forEach((el, i) => {
+          if (el.defaultAdjusted) {
+            console.log("ccccc", "true", i);
+            setAdjustedTrueRole(el._id);
+            check = true;
+          }
+        });
+        if (!check) {
+          res.data.body[0].defaultAdjusted = true;
+          setAdjustedTrueRole(res.data.body[0]._id);
+        }
         setRoleData(res.data.body);
+        console.log("res1", res);
       })
       .catch((err) => {});
   };
@@ -33,15 +56,22 @@ const RoleEditItem = (props) => {
   };
 
   const handleIncrementCount = (e) => {
-    obj = { ...obj, resourceRoleID: e.target.id, qty: 1 };
+    obj =
+      e.target.id === adjustedTrueRole
+        ? { ...obj, resourceRoleID: e.target.id, qty: 1, defaultAdjusted: true }
+        : {
+            ...obj,
+            resourceRoleID: e.target.id,
+            qty: 1,
+            defaultAdjusted: false,
+          };
 
     ResourceCountService.updateResourceRole(obj)
       .then((res) => {
-        console.log("3res", res);
-
         // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
-        setReloadEditCount(!reloadEditCount);
+        getResourceMasterRoleData(props.rowEditData._id);
+        setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -57,15 +87,29 @@ const RoleEditItem = (props) => {
   };
 
   const handleDecrementCount = (e) => {
-    obj = { ...obj, resourceRoleID: e.target.id, qty: -1 };
+    obj =
+      e.target.id === adjustedTrueRole
+        ? {
+            ...obj,
+            resourceRoleID: e.target.id,
+            qty: -1,
+            defaultAdjusted: true,
+          }
+        : {
+            ...obj,
+            resourceRoleID: e.target.id,
+            qty: -1,
+            defaultAdjusted: false,
+          };
+
     ResourceCountService.updateResourceRole(obj)
       .then((res) => {
         console.log(res);
         setDisabledState(false);
 
-        // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
-        setReloadEditCount(!reloadEditCount);
+        getResourceMasterRoleData(props.rowEditData._id);
+        setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -80,6 +124,74 @@ const RoleEditItem = (props) => {
       });
   };
 
+  const StyledFormControlLabel = styled((props) => (
+    <FormControlLabel {...props} />
+  ))(({ theme, checked }) => ({
+    ".MuiFormControlLabel-label": checked && {
+      color: "#61dafb",
+    },
+    ".css-vqmohf-MuiButtonBase-root-MuiRadio-root.Mui-checked": {
+      color: "#61dafb !important",
+    },
+    ".css-vqmohf-MuiButtonBase-root-MuiRadio-root": {
+      color: "#ffffff",
+    },
+  }));
+
+  function MyFormControlLabel(prop) {
+    const radioGroup = useRadioGroup();
+
+    let checked = false;
+
+    if (radioGroup) {
+      checked = radioGroup.value === prop.value;
+    }
+
+    return <StyledFormControlLabel checked={checked} {...prop} />;
+  }
+
+  const handleRadioChange = (event) => {
+    console.log(event.target.id);
+    setAdjustedTrueRole(event.target.value);
+    setHelperText(
+      `*${event.target.id} will be adjusted to remianing allocation`
+    );
+
+    obj = {
+      ...obj,
+      resourceRoleID: event.target.value,
+      qty: 0,
+      defaultAdjusted: true,
+    };
+    roleData.forEach((el) => {
+      if (el._id === event.target.value) {
+        if (el.count > 0) {
+          updateAdjustingFlag();
+        }
+      }
+    });
+    function updateAdjustingFlag() {
+      ResourceCountService.updateResourceRole(obj)
+        .then((res) => {
+          console.log(res);
+          setDisabledState(false);
+          props.handleEditChange();
+          getResourceMasterRoleData(props.rowEditData._id);
+        })
+        .catch((err) => {
+          if (!err.response.data.message) console.log(err);
+          else {
+            setDisabledState(true);
+            setOpen({
+              open: true,
+              severity: "error",
+              message: err.response.data.message,
+            });
+          }
+        });
+    }
+  };
+
   const { message, severity, open } = isOpen || {};
 
   const handleClose = () => {
@@ -88,24 +200,37 @@ const RoleEditItem = (props) => {
 
   return (
     <div className="roleitem">
-      {roleData.map((item) => (
-        <div className="roleitem_list">
-          <p>{item.resourceRole}</p>
-          <div className="optionbtn">
-            <button id={item._id} onClick={handleDecrementCount}>
-              -
-            </button>
-            <p id={item._id}>{item.count}</p>
-            <button
-              id={item._id}
-              disabled={disabledState}
-              onClick={handleIncrementCount}
-            >
-              +
-            </button>
-          </div>
-        </div>
-      ))}
+      {roleData[0] !== undefined && (
+        <RadioGroup
+          name="use-radio-group"
+          defaultValue={adjustedTrueRole}
+          onChange={handleRadioChange}
+        >
+          {roleData.map((item) => (
+            <div className="roleitem_list">
+              <MyFormControlLabel
+                value={item._id}
+                label={`${item.resourceRole} (${item.location.name})`}
+                control={<Radio id={item.resourceRole} />}
+              />
+              <div className="optionbtn">
+                <button id={item._id} onClick={(e) => handleDecrementCount(e)}>
+                  -
+                </button>
+                <p id={item._id}>{item.count}</p>
+                <button
+                  id={item._id}
+                  disabled={disabledState}
+                  onClick={(e) => handleIncrementCount(e)}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          ))}
+        </RadioGroup>
+      )}
+      <p className="helpertext">{helperText}</p>
       {open && (
         <Snackbar
           isOpen={open}

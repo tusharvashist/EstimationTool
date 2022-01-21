@@ -598,6 +598,7 @@ const EstimationDetail = () => {
           saveFun={saveAddAvailableRequirementFun}
           cancelTitle="Cancel"
           requirementHeaderData={requirementHeaderData}
+           isDeleteAction ={ false }
           selection={false}
           requirementTypeArray={requirementTypeArray}
           handleCheckBoxClicked={handleCheckBoxClicked}

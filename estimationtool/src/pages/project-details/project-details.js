@@ -190,13 +190,6 @@ export default function ClientDetails(props) {
             </Grid>
           </Grid>
           <Grid container alignItems="stretch">
-            {/* <Dropdown
-              defaultValue={{ title: "All", value: "All" }}
-              title="Estimation status"
-              list={clientStatus}
-              getVal={getDropDownvalue}
-            /> */}
-
             <Container>
               <Grid container>
                 <Grid item className="multi-button-grid">
@@ -235,7 +228,7 @@ export default function ClientDetails(props) {
                         clientDetails.clientName +
                         "/" +
                         projectDetails.projectName +
-                        "/createRequirements",
+                        "/CreateRequirements",
                       state: {
                         clientInfo: clientDetails,
                         projectInfo: projectDetails,
@@ -249,9 +242,7 @@ export default function ClientDetails(props) {
                         onClick={createEstimationHandle}
                         variant="outlined"
                       >
-                        {" "}
-                        <AddIcon />
-                        Create New Requirements
+                        Manage Requirements
                       </Button>
                     )}
                   </Link>
@@ -263,7 +254,7 @@ export default function ClientDetails(props) {
                         clientDetails.clientName +
                         "/" +
                         projectDetails.projectName +
-                        "/createEstimate",
+                        "/CreateEstimate",
                       state: {
                         clientInfo: clientDetails,
                         projectInfo: projectDetails,

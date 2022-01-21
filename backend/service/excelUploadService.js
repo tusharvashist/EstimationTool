@@ -13,7 +13,7 @@ module.exports.uploadExcel = async (projectId,excelFile) => {
     await workbook.xlsx.load(excelFile.file.data);
     let response = { ...constant.requirementListResponse };
        let excelImportStatus = { ...constant.importRequirementStatus };
-    readExcelRecords(projectId, allProjectRequirement ,tags,type,workbook,  (record_list) => { 
+        readExcelRecords(projectId, allProjectRequirement ,tags,type,workbook,  (record_list) => { 
         response.featureList =  isDuplicate(record_list);
         response.requirementSummary =  recordSummary(excelImportStatus.importFile, record_list);
         console.log(response);
@@ -39,6 +39,10 @@ const readExcelRecords = (projectId, allProjectRequirement,tags,type, workbook, 
         index = index + 1;
         if (index == 0) {
           headerAddress = getHeaderAddress(row);
+          if (!validateHeader(headerAddress)) {
+             throw new Error("Invalid Excel : Excel should have Requirement and Description colum.");
+          }
+
         } else {
         if (isValidRow(row)) {
           var record = getRecords(projectId, allProjectRequirement,tags,type, index, row, headerAddress)
@@ -56,6 +60,19 @@ const readExcelRecords = (projectId, allProjectRequirement,tags,type, workbook, 
   
   
 };
+
+const validateHeader = (headerAddress) => {
+  var isValidateHeader = true;
+  if (headerAddress.Requirement.length == 0) {
+    isValidateHeader = false;
+  }
+
+  if (headerAddress.Description.length == 0) {
+   isValidateHeader = false;
+  }
+  
+  return isValidateHeader;
+}
 
 const getHeaderAddress = (row) => {
     var headerAddress = {
@@ -192,7 +209,8 @@ const isDuplicate = (record_list) => {
 
 const getRecords =  (projectId,allProjectRequirement,tags,type, id,row,headerAddress) => {
   var record = {
-                "id":id,
+    "id": id,
+                "isDeleted" : false,
                  "Requirement": "",
                  "Description": "",
                  "Tag": "",
@@ -249,6 +267,24 @@ const getRecords =  (projectId,allProjectRequirement,tags,type, id,row,headerAdd
             break;
           }
         });
+  
+  if (record.Requirement.length == 0) {
+  //  var findError = record.Error.find(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT);
+    var findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT) > -1 );
+    console.log("findError: ", findError);
+    if (findError == false) {
+     record.Error.push(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT);
+      }
+  }
+
+  if (record.Description.length == 0) {
+    var findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description) > -1 );
+    console.log("findError: ", findError);
+       if (findError == false) {
+         record.Error.push(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description);
+      }
+  }
+  
   return record;
 };
 
@@ -275,35 +311,44 @@ const columName = (_address) =>{
   return _address.replace(/[0-9]/g, '');
 };
 
-const updateRecordsValidation = (projectId, allProjectRequirement, tags,type, updatedRecords, callBack) => {
+const updateRecordsValidation = (onSave, projectId, allProjectRequirement, tags,type, updatedRecords, callBack) => {
   var record_list = [];
   var index = 0;
   var totalRecordExecuted = 0;
   updatedRecords.forEach((row) => {
-    index = index + 1;
-    var record = updatedRowRecord(projectId, allProjectRequirement, tags,type, index, row)
-    record_list.push(record);
-    totalRecordExecuted = totalRecordExecuted + 1
-    if (totalRecordExecuted >= (updatedRecords.length - 1)) {
-      callBack(record_list);
+    var isDeleted = false;
+    if (!onSave) {
+      if (row.isDeleted) {
+        isDeleted = true;
+      }
     }
-  });
+    if (isDeleted == false) {
+      index = index + 1;
+      var record = updatedRowRecord(projectId, allProjectRequirement, tags, type, index, row)
+      record_list.push(record);
+    }
+    totalRecordExecuted = totalRecordExecuted + 1
+        if (totalRecordExecuted >= (updatedRecords.length - 1)) {
+          callBack(record_list);
+        }
+      }
+    );
 };
 
 const updatedRowRecord =  (projectId,allProjectRequirement,tags,type, id,row) => {
   try {
-    var record = {
-        
-      "id": id,
-                 "Requirement": "",
-                 "Description": "",
-                 "Tag": "",
-                 "TagId": "",
-                 "Type": "",
-                 "TypeId":"",
-                 "Query": "",
-                 "Assumption": "",
-                 "Error" : []
+    var record = {   
+                "id": id,
+                "isDeleted" : false,
+                "Requirement": "",
+                "Description": "",
+                "Tag": "",
+                "TagId": "",
+                "Type": "",
+                "TypeId":"",
+                "Query": "",
+                "Assumption": "",
+                "Error" : []
       };
     
               if (row.Requirement === undefined || row.Requirement.length === 0) {
@@ -368,7 +413,7 @@ module.exports.updateRecord = async (projectId,payLoad) => {
     var updatedRecord = payLoad.updated;
     var original = payLoad.original;
      let excelImportStatus = { ...constant.importRequirementStatus };
-    var response = validateRecord(projectId, excelImportStatus.updateData , allProjectRequirement, tags, type, updatedRecord);
+    var response = validateRecord(false, projectId, excelImportStatus.updateData , allProjectRequirement, tags, type, updatedRecord);
   //  response.requirementSummary.noOfModification = getNoUpdatedRecords(original,response.featureList)
   return formatMongoData(response);
   } catch (err) {
@@ -380,10 +425,10 @@ const getNoUpdatedRecords = (original, updatedRecord) => {
   //const results = original.filter(({ value: id1 }) => !updatedRecord.some(({ value: id2 }) => id2 === id1));
   return result.count;
 }
-const validateRecord = (projectId, status, allProjectRequirement,tags,type, recordList) => {
+const validateRecord = (onSave , projectId, status, allProjectRequirement,tags,type, recordList) => {
   try {
   let response = { ...constant.requirementListResponse };
-  updateRecordsValidation(projectId, allProjectRequirement,tags,type, recordList, (record_list) => {
+  updateRecordsValidation(onSave, projectId, allProjectRequirement,tags,type, recordList, (record_list) => {
     response.featureList = isDuplicate(record_list);
     response.requirementSummary = recordSummary(status,record_list);
   });
@@ -421,7 +466,7 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
     var tags = await RequirementRepository.getTags();
     var type = await RequirementRepository.getTypes();
          let excelImportStatus = { ...constant.importRequirementStatus };
-    var response = validateRecord(projectId,excelImportStatus.insertSuccess, allProjectRequirement,tags,type, recordList);
+    var response = validateRecord(true, projectId,excelImportStatus.insertSuccess, allProjectRequirement,tags,type, recordList);
     if (response.requirementSummary.noOfError === 0) {
       var result = await RequirementRepository.createBulkRequirement(project, recordList);
       response.requirementSaveResult = result;

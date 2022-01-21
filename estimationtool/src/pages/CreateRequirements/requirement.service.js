@@ -18,9 +18,14 @@ const RequirementService = {
         return axios.get(url);
     },
 
-    allRequirementDelete: function (actionId) {
+    allRequirementDelete: function (actionId,requirementList) {
         let url = Url.estimationDetail+"/allRequirement/"+actionId;        
-        return axios.delete(url);
+        return axios.delete(url,requirementList);
+    },
+
+    deleteSelectedRecords: function (actionId,requirementList) {
+        let url = Url.estimationDetail+"/deleteSelectedRequirement/"+actionId;        
+        return axios.post(url, requirementList, {});
     },
 }
 

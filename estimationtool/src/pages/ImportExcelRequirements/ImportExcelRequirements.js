@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Box,
   Button,
   Grid,
-  ListItem,
-  Input,
   Container,
   Link,
   TextField,
 } from "@material-ui/core";
-import { useLocation,useHistory } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteForever from "@material-ui/icons/DeleteForever";
-import MaterialTable from "material-table";
 import AddRequirements from "./add-requirements-popup";
 import {
   ClientProjectHeader,
@@ -21,11 +15,12 @@ import {
 } from "../estimation-detail/header-element";
 import {
   RequirementTable,
-  RequirementTableWithFilter,
 } from "./RequirementTable";
 import RequirementService from "./requirement.service";
 import Deletedailog from "./delete-dailog";
 import { MdOpenInBrowser, MdDone } from "react-icons/md";
+
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const ImportExcelRequirements = () => {
   const history = useHistory();
@@ -41,25 +36,26 @@ const ImportExcelRequirements = () => {
   const [openEditConfigurationBox, setOpenEditConfigurationBox] =
     useState(false);
   const [editData, setEditData] = useState([]);
-
+  const [isOpen, setOpen] = React.useState({});
   const [originalData, setOriginalData] = useState([]);
 
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [isDeleteDailog, setDeleteDailog] = useState(false);
   const [selectedFile, setSelectedFile] = useState();
   const [selectedFileName, setSelectedFileName] = useState();
-  const browseFilelabelText = "No File Selected...";
-  const [browseFileLbl, setBrowseFileLbl] = useState(browseFilelabelText);
+  const browseFileLabelText = "No File Selected...";
+  const [browseFileLbl, setBrowseFileLbl] = useState(browseFileLabelText);
   const [isFilePicked, setIsFilePicked] = useState(false);
-   const [isRecordSubmitted, setIsRecordSubmitted] = useState(false);
+  const [isRecordSubmitted, setIsRecordSubmitted] = useState(false);
   const [requirementSummary, setRequirementSummary] = useState({});
+   const [isDataAvailable, setIsDataAvailable] = useState(false);
 
   const inputFile = useRef(null);
   useEffect(() => {
     getTagsType();
-  },[]);
- 
- const openEditRequirement = (event, rowData) => {
+  }, []);
+
+  const openEditRequirement = (event, rowData) => {
     console.log(rowData);
     setEditData([rowData]);
     openFun();
@@ -81,15 +77,15 @@ const ImportExcelRequirements = () => {
     setDeleteDailog(false);
   };
 
+  console.log("location: ", location);
 
-  console.log("location: ",location);
-  
-  console.log("history: ",history);
+  console.log("history: ", history);
   const getTagsType = () => {
     RequirementService.getTagsType()
       .then((res) => {
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
+      
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -133,7 +129,8 @@ const ImportExcelRequirements = () => {
   const saveAddRequirementsFun = () => {
     closeAddFun();
   };
-///get updated record
+
+
   const updateAddRequirementsFun = (index, editedData) => {
     var updatedRequirementData = requirementHeaderData;
     var oldRecord = requirementHeaderData[index - 1];
@@ -142,13 +139,12 @@ const ImportExcelRequirements = () => {
     if (editedData.tag !== 0 && editedData.tag !== undefined) {
       tag = editedData.tag;
     }
-    
+
     if (editedData.type !== 0 && editedData.type !== undefined) {
       type = editedData.type;
     }
-    
-    var updatedRecord = {
 
+    var updatedRecord = {
       Requirement: editedData.Requirement,
       Assumption: editedData.assumption,
       Description: editedData.description,
@@ -156,60 +152,131 @@ const ImportExcelRequirements = () => {
       Query: editedData.query,
       Reply: editedData.reply,
       Type: type,
-      Tag : tag,
-      id: oldRecord.id
-    }
+      Tag: tag,
+      id: oldRecord.id,
+    };
 
     updatedRequirementData[index - 1] = updatedRecord;
     setOpenEditConfigurationBox(false);
     updateData(updatedRequirementData);
   };
 
+  const showVerifySaveButton = (list) => {
+      if (list.length !== 0) {
+          setIsDataAvailable(true);
+        } else {
+           setIsDataAvailable(false);
+        }
+        
+  }
 
   const updateData = (updatedRequirementData) => {
     var payload = {
-      "original": originalData,
-      "updated": updatedRequirementData,
+      original: originalData,
+      updated: updatedRequirementData,
     };
-      RequirementService.updateData(payload,projectsInfo._id)
-        .then((res) => {
-             
-          setRequirementHeaderData([...res.data.body.featureList]);
-         
-          setRequirementSummary({ ...res.data.body.requirementSummary });
-        })
-        .catch((err) => {
-          console.log("get EstimationService by id error", err);
-        });
+    RequirementService.updateData(payload, projectsInfo._id)
+      .then((res) => {
+        setRequirementHeaderData([...res.data.body.featureList]);
+
+        setRequirementSummary({ ...res.data.body.requirementSummary });
+        showVerifySaveButton([...res.data.body.featureList]);
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
   };
   
-
-
+  const deleteSelected = (requirementHeaderDataFilter) => {
+    var requirementList = requirementHeaderData;
+    requirementHeaderDataFilter.forEach((filerRequirement) => {
+      requirementList.forEach((requirement) => {
+        if (requirement.id === filerRequirement) {
+          requirement.isDeleted = true;
+        }
+      });
+    })
+    
+    updateData(requirementList);
+  }
+  
   console.log(requirementHeaderData);
 
   console.log(requirementHeaderData);
-  
-	const changeHandler = (event) => {
-		setSelectedFile(event.target.files[0]);
-		setIsFilePicked(true);
+
+  const changeHandler = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setIsFilePicked(true);
   };
-  
+
   const browseFile = () => {
-
-    setSelectedFile();
-    setIsFilePicked(false);
-    setSelectedFileName("");
-    setBrowseFileLbl(browseFilelabelText);
+    
+    //setSelectedFile();
+   // setIsFilePicked(false);
+    //setSelectedFileName("");
+    //setBrowseFileLbl(browseFileLabelText);
     inputFile.current.click();
   };
 
   const handleSubmission = () => {
+    setRequirementHeaderData([]);
+          setOriginalData([]);
+    setRequirementSummary({ });
+    
     if (isFilePicked) {
       RequirementService.uploadExcel(selectedFile, projectsInfo._id)
         .then((res) => {
           setRequirementHeaderData([...res.data.body.featureList]);
           setOriginalData([...res.data.body.featureList]);
           setRequirementSummary({ ...res.data.body.requirementSummary });
+          setIsRecordSubmitted(false);
+          showVerifySaveButton([...res.data.body.featureList]);
+        })
+        .catch((err) => {
+
+
+
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+
+
+
+          console.log("get EstimationService by id error", err);
+        });
+    }
+  };
+  const { message, severity, open } = isOpen || {};
+
+  const handleClose = () => { 
+    setOpen(false);
+  }
+
+
+  const validateSave = () => {
+    var headerDataId = 0;
+
+    if (headerData.estName !== undefined) {
+      headerDataId = headerData._id;
+    }
+    if (requirementHeaderData.length !== 0) {
+      RequirementService.validateSave(
+        requirementHeaderData,
+        projectsInfo._id,
+        headerDataId
+      )
+        .then((res) => {
+          setRequirementHeaderData([...res.data.body.featureList]);
+
+          setRequirementSummary({ ...res.data.body.requirementSummary });
+          if (res.data.body.requirementSummary.noOfError === 0) {
+            setIsRecordSubmitted(true);
+          } else {
+            setIsRecordSubmitted(false);
+          }
+          
         })
         .catch((err) => {
           console.log("get EstimationService by id error", err);
@@ -217,34 +284,7 @@ const ImportExcelRequirements = () => {
     }
   };
 
-  const validateSave = () => {
-     var headerDataId = 0;
-
-  if (headerData.estName !== undefined) {
-       headerDataId = headerData._id
-  } 
-  
-         RequirementService.validateSave(requirementHeaderData,projectsInfo._id,headerDataId)
-           .then((res) => {
-              setRequirementHeaderData([...res.data.body.featureList]);
-          
-             setRequirementSummary({ ...res.data.body.requirementSummary });
-             if (res.data.body.requirementSummary.noOfError === 0) {
-               
-             setIsRecordSubmitted(true);
-             } else {
-               
-             setIsRecordSubmitted(false);
-             }
-        })
-        .catch((err) => {
-          console.log("get EstimationService by id error", err);
-        });
-    
-  };
-  
-  
-  const handleFileUpload = e => {
+  const handleFileUpload = (e) => {
     const { files } = e.target;
     if (files && files.length) {
       const filename = files[0].name;
@@ -258,8 +298,8 @@ const ImportExcelRequirements = () => {
     }
   };
 
- console.log("RequirementSummary ====", requirementSummary);
- 
+  console.log("RequirementSummary ====", requirementSummary);
+
   return (
     <>
       {isDeleteDailog === true ? (
@@ -351,7 +391,8 @@ const ImportExcelRequirements = () => {
         <RequirementTable
           requirementHeaderData={requirementHeaderData}
           requirementSummary={requirementSummary}
-          selection={false}
+          deleteSelected={ deleteSelected}
+          selection={true}
           requirementTypeArray={requirementTypeArray}
           openEditRequirement={(event, rowData, togglePanel) =>
             openEditRequirement(event, rowData)
@@ -360,18 +401,36 @@ const ImportExcelRequirements = () => {
         />
       </BorderedContainer>
       <Grid container justifyContent="flex-end">
-        {isRecordSubmitted === false ? (<Grid item style={{ margin: "10px" }}>
-          <Button onClick={validateSave} variant="outlined">
-            {" "}
-            Verify and save
-          </Button>
-        </Grid>) :
+        {isRecordSubmitted === false ? (
           <Grid item style={{ margin: "10px" }}>
-            <Button onClick={() => { history.goBack() }} variant="outlined">
+            <Button  disabled={isDataAvailable ? false : true} onClick={validateSave} variant="outlined">
+              {" "}
+              Verify and save
+            </Button>
+          </Grid>
+        ) : (
+          <Grid item style={{ margin: "10px" }}>
+            <Button
+              onClick={() => {
+                history.goBack();
+              }}
+              variant="outlined"
+            >
               {" "}
               Done
             </Button>
-          </Grid>}
+          </Grid>
+        )}
+
+        {open && (
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        )}
       </Grid>
     </>
   );

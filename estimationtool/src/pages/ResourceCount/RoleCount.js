@@ -12,17 +12,33 @@ const RoleCount = (props) => {
   const getResourceMasterRoleData = (resourceCountId) => {
     ResourceCountService.getResourceMasterRole(resourceCountId)
       .then((res) => {
-        setRoleData(res.data.body);
+        console.log("rr", res.data);
+        if (res.data.body.length == 0) {
+          setRoleData([
+            {
+              count: "No technology Selected",
+              _id: 0,
+            },
+          ]);
+        } else {
+          setRoleData(res.data.body);
+        }
       })
       .catch((err) => {});
   };
+
+  console.log("count", roleData);
 
   return (
     <React.Fragment>
       <div className="role">
         {roleData.map((el) => (
           <span key={el._id}>
-            {el.count} {el.resourceRole},
+            {typeof el.count === "string" ? (
+              <i className="notech">{el.count}</i>
+            ) : (
+              `${el.count} ${el.resourceRole},`
+            )}
           </span>
         ))}
       </div>

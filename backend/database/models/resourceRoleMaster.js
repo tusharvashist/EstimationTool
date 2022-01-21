@@ -7,10 +7,16 @@ const resourceRoleMaster = new mongoose.Schema(
     resourceRole: String,
     cost: Number,
     price: Number,
-    techSkill: String,
-    location: String,
+    techSkill: {
+      type: Schema.Types.ObjectId,
+      ref: "TechSkillMaster",
+    },
+    location: {
+      type: Schema.Types.ObjectId,
+      ref: "locationMaster",
+    },
     isDeleted: Boolean,
-    defaultAdjusted: Boolean
+    defaultAdjusted: Boolean,
   },
   {
     timestamps: true,

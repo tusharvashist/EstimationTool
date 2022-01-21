@@ -108,6 +108,7 @@ module.exports.getRequirementData = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
 module.exports.updateManualCallAttribute = async (req, res) => {
   let responce = { ...constant.defaultResponse };
   try {
@@ -156,8 +157,6 @@ module.exports.requirementDelete = async (req,res)=>{
     return res.status(responce.status).send(responce);
 }
 
-
-
 module.exports.allRequirementDelete = async (req,res)=>{
     let responce = {...constant.defaultResponse};
     try{
@@ -171,4 +170,15 @@ module.exports.allRequirementDelete = async (req,res)=>{
     return res.status(responce.status).send(responce);
 }
 
-
+module.exports.deleteSelectedRequirement = async (req,res)=>{
+    let responce = {...constant.defaultResponse};
+    try{
+       const responceDelete = await estimationRequirementService.deleteSelectedRequirement(req.params.id,req.body);
+        responce.status = 200;
+        responce.message = constant.requirementMessage.REQUIREMENT_DELETE;
+        responce.body = responceDelete;
+    }catch(err){
+        responce.message = err.message;
+    }
+    return res.status(responce.status).send(responce);
+}

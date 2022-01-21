@@ -1,15 +1,19 @@
 import React, { useState ,useEffect} from "react";
-import { Button, Grid, ListItem } from "@material-ui/core";
+import { Button, Grid, ListItem,Container } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteForever from "@material-ui/icons/DeleteForever"
+import DeleteForever from "@material-ui/icons/DeleteForever";
 import MaterialTable from "material-table";
 import AddRequirements from "../estimation-detail/add-requirements-popup";
 import { ClientProjectHeader } from "../estimation-detail/header-element";
 import { RequirementTable, RequirementTableWithFilter} from "./RequirementTable"
 import  RequirementService from "./requirement.service"
 import Deletedailog from "./delete-dailog"
+
+import { Link } from "react-router-dom";
+import { BiImport } from "react-icons/bi";
+
 const CreateRequirements = () => {
   const location = useLocation();
   const clientInfo = { ...location.state.clientInfo };
@@ -91,9 +95,6 @@ const CreateRequirements = () => {
       });
   };
 
-
-
-
   const allRequirementDelete = () => {
     setDeleteDailog(false);
     RequirementService.allRequirementDelete(projectsInfo._id)
@@ -105,6 +106,16 @@ const CreateRequirements = () => {
         console.log("get EstimationService by id error", err);
       });
   };
+  const deleteSelectedRecords = (selectedRecords) => {
+   RequirementService.deleteSelectedRecords(projectsInfo._id,selectedRecords)
+      .then((res) => {
+        console.log("get EstimationService by id error");
+         getRequirementWithQuery(() => {});
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
+  }
 
   const openAddRequirement = () => {
     openAddFun();
@@ -123,9 +134,16 @@ const CreateRequirements = () => {
      getRequirementWithQuery(() => { });
   };
 
-    const updateAddRequirementsFun = () => {
+  const updateAddRequirementsFun = () => {
     closeFun();
      getRequirementWithQuery(() => { });
+  };
+  
+  var selectedRequirementsRows = [];
+  
+  const handleCheckBoxClicked = (rows) => {
+    console.log("rows:-- ", rows);
+    selectedRequirementsRows = rows;
   };
 
   return (
@@ -175,7 +193,29 @@ const CreateRequirements = () => {
       ) : null}
        <ClientProjectHeader client={clientInfo} project={ projectsInfo} />
     
-      <Grid container justifyContent="flex-end">
+          <Grid container alignItems="stretch">
+            <Container>
+              <Grid container>
+                <Grid item className="multi-button-grid">
+        <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientInfo.clientName +
+                  "/" +
+                  projectsInfo.projectName +
+                  "/ImportExcelRequirements",
+                state: {
+                  clientInfo: clientInfo,
+                  projectInfo: projectsInfo,
+                },
+              }}
+            >
+              <Button style={{ marginRight: "15px" }} variant="outlined">
+                <BiImport style={{ fontSize: "20px" }} />
+                &nbsp; Import Requirements
+              </Button>
+          </Link>
         <Grid item style={{ margin: "10px" }}>
           <Button onClick={openAddRequirement} variant="outlined">
             {" "}
@@ -183,26 +223,23 @@ const CreateRequirements = () => {
             Add Requirements
           </Button>
         </Grid>
-        {
-          showDeleteAllRequirement ? 
-            <Grid item style={{ margin: "10px" }}>
-              <Button onClick={openDeleteFun} variant="outlined">
-                {" "}
-                <DeleteForever />
-                Delete All Requirement
-              </Button>
-            </Grid> : <div />  
-        }
-      </Grid>
+
+            </Grid>
+          </Grid>
+          </Container>
+        </Grid>
       <BorderedContainer>
         <RequirementTable
           requirementHeaderData={requirementHeaderData}
-          selection={false}
+          selection={showDeleteAllRequirement}
+          isDeleteButton={true}
+          deleteAction={ deleteSelectedRecords}
           requirementTypeArray={requirementTypeArray}
           openEditRequirement={(event, rowData, togglePanel) =>
               openEditRequirement(event, rowData)
             }
           isEditable={true}
+          handleCheckBoxClicked={handleCheckBoxClicked}
           />
       </BorderedContainer>
     </>

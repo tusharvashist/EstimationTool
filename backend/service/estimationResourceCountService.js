@@ -292,8 +292,9 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
       SetAllocationPercent(mincount, estResourcePlanning);
+      await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
       return estResourcePlanning.save();
-    } else {
+    } else if (updatedInfo.qty < 0) {
       let deleted = await EstResourcePlanning.findOneAndDelete({
         $and: [
           filter,
@@ -309,14 +310,43 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
             rescount?.resourceCount
         );
       }
+      await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
       return deleted;
     }
+    //Update only defaultAdjusted flag
+    await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Planning",
       err
     );
     throw new Error(err);
+  }
+
+  async function SetResourceDefaultAdjusted(filter, defaultAdjusted) {
+    if (defaultAdjusted) {
+      //Set False
+      let updatefalse = await EstResourcePlanning.updateMany(
+        {
+          $and: [filter],
+        },
+        { $set: { defaultAdjusted: false } }
+      );
+      //Set True
+      let updatetrue = await EstResourcePlanning.updateMany(
+        {
+          $and: [
+            filter,
+            {
+              resourceRoleID: mongoose.Types.ObjectId(
+                updatedInfo.resourceRoleID
+              ),
+            },
+          ],
+        },
+        { $set: { defaultAdjusted: defaultAdjusted } }
+      );
+    }
   }
 };
 
