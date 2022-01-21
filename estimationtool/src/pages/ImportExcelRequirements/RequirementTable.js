@@ -135,11 +135,10 @@ export const RequirementTable = (props) => {
       ) : (
         <>
           <div>
-            {requirementHeaderDataFilter.length !== 0 ? (
               <Grid container className="importFormRowContainer">
                 <Grid item xs={8} className="importFormRow"></Grid>
                 <Grid item xs={4} className="importFormRow_Button">
-                  <Button onClick={deleteSelected} variant="outlined">
+                  <Button onClick={deleteSelected}  disabled={requirementHeaderDataFilter.length !== 0  ? false : true}   variant="outlined">
                     <AiOutlineDeleteRow style={{ fontSize: "20px" }} />
                     &nbsp;{" "}
                     {`Remove Selected Requirement${
@@ -148,7 +147,7 @@ export const RequirementTable = (props) => {
                   </Button>
                 </Grid>
               </Grid>
-            ) : null}
+            
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
                 className={`${classes.root} ${classes.dataGrid}`}

@@ -91,9 +91,6 @@ const CreateRequirements = () => {
       });
   };
 
-
-
-
   const allRequirementDelete = () => {
     setDeleteDailog(false);
     RequirementService.allRequirementDelete(projectsInfo._id)
@@ -105,6 +102,16 @@ const CreateRequirements = () => {
         console.log("get EstimationService by id error", err);
       });
   };
+  const deleteSelectedRecords = (selectedRecords) => {
+   RequirementService.deleteSelectedRecords(projectsInfo._id,selectedRecords)
+      .then((res) => {
+        console.log("get EstimationService by id error");
+         getRequirementWithQuery(() => {});
+      })
+      .catch((err) => {
+        console.log("get EstimationService by id error", err);
+      });
+  }
 
   const openAddRequirement = () => {
     openAddFun();
@@ -205,7 +212,8 @@ const CreateRequirements = () => {
         <RequirementTable
           requirementHeaderData={requirementHeaderData}
           selection={showDeleteAllRequirement}
-          
+          isDeleteButton={true}
+          deleteAction={ deleteSelectedRecords}
           requirementTypeArray={requirementTypeArray}
           openEditRequirement={(event, rowData, togglePanel) =>
               openEditRequirement(event, rowData)

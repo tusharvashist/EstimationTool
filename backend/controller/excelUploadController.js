@@ -42,9 +42,6 @@ module.exports.validateSave = async (req, res) => {
     }
 }
     
-
-
-
 module.exports.updateRecord = async (req, res) => {
     let response = { ...constant.defaultResponse };
     try {

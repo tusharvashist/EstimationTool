@@ -287,7 +287,6 @@ const updateRecordsValidation = (onSave, projectId, allProjectRequirement, tags,
         isDeleted = true;
       }
     }
-
     if (isDeleted == false) {
       index = index + 1;
       var record = updatedRowRecord(projectId, allProjectRequirement, tags, type, index, row)
@@ -303,19 +302,18 @@ const updateRecordsValidation = (onSave, projectId, allProjectRequirement, tags,
 
 const updatedRowRecord =  (projectId,allProjectRequirement,tags,type, id,row) => {
   try {
-    var record = {
-        
-      "id": id,
-      "isDeleted" : false,
-                 "Requirement": "",
-                 "Description": "",
-                 "Tag": "",
-                 "TagId": "",
-                 "Type": "",
-                 "TypeId":"",
-                 "Query": "",
-                 "Assumption": "",
-                 "Error" : []
+    var record = {   
+                "id": id,
+                "isDeleted" : false,
+                "Requirement": "",
+                "Description": "",
+                "Tag": "",
+                "TagId": "",
+                "Type": "",
+                "TypeId":"",
+                "Query": "",
+                "Assumption": "",
+                "Error" : []
       };
     
               if (row.Requirement === undefined || row.Requirement.length === 0) {

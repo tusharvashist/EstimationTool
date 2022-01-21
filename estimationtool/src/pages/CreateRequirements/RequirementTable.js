@@ -48,6 +48,9 @@ export const RequirementTable = (props) => {
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
+  
+  const [selectedRequirements, setSelectedRequirements] =
+    useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
@@ -139,9 +142,10 @@ export const RequirementTable = (props) => {
     })
   );
   const classes = useStyles();
-  console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
 
-  //console.log("available: ", available);
+  const deleteAction = () => { 
+    props.deleteAction(selectedRequirements);
+  };
   return (
     <>
       {loaderComponent ? (
@@ -169,17 +173,14 @@ export const RequirementTable = (props) => {
               ))}
               </Select>
               
-              {
-          true ? 
-            <Grid item style={{ margin: "10px" }}>
-              <Button  variant="outlined">
-                {" "}
-                <DeleteForever />
-                      
-                       {`Delete Select Requirement${requirementHeaderDataFilter.length > 1 ? "s" : ""}`}
-              </Button>
-            </Grid> : <div />  
-        }
+              {props.isDeleteButton === true  ? 
+                <Grid item style={{ margin: "10px" }}>
+                  <Button onClick={ deleteAction }   disabled={selectedRequirements.length !== 0  ? false : true}  variant="outlined">
+                     <DeleteForever />
+                       {`Delete Selected Requirement${selectedRequirements.length > 1 ? "s" : ""}`}
+                  </Button>
+                </Grid> : <div />  
+              }
           </div>
           <div style={{ height: 400, width: "100%" }}>
             <DataGrid
@@ -196,10 +197,13 @@ export const RequirementTable = (props) => {
               }}
               onSelectionModelChange={(rows) => {
                 console.log("onSelectionModelChange: ", rows);
-                if (props.selection === true) {
+                setSelectedRequirements(rows);
+                if (props.isDeleteButton === false) {
+                  
                   props.handleCheckBoxClicked(rows);
                 }
               }}
+                 selectionModel={selectedRequirements}
             />
           </div>
          

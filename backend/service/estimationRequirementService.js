@@ -341,6 +341,18 @@ module.exports.allRequirementDelete = async (id) => {
   }
 };
 
+module.exports.deleteSelectedRequirement = async (id,requirementList ) => {
+  try {
+
+    var queryAssumptionResponse = await RequirementRepository.deleteRequirementQueryAssumption(requirementList);
+    var ProjectRequirementResponse = await RequirementRepository.deleteSelectedProjectRequirement(requirementList);
+
+     return formatMongoData(ProjectRequirementResponse);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 class sumOfKey extends Array {
   sum(key) {
     return this.reduce((a, b) => a + (b[key] || 0), 0);

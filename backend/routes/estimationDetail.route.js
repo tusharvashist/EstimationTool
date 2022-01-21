@@ -59,9 +59,9 @@ router.delete("/:id",
     tokenValidation.validateToken,
    estimationDetail.requirementDelete
 );
-router.delete("/allRequirement/:id",
+router.post("/deleteSelectedRequirement/:id",
     tokenValidation.validateToken,
-   estimationDetail.allRequirementDelete
+   estimationDetail.deleteSelectedRequirement
 );
 
 module.exports = router;
