@@ -34,6 +34,9 @@ const RoleEditItem = (props) => {
           console.log("aaaaaaaaaaaaaaaa", checkFlag);
           if (checkFlag) {
             setAdjustedTrueRole(el._id);
+          } else {
+            res.data.body[0].defaultAdjusted = true;
+            setAdjustedTrueRole(res.data.body[0]._id);
           }
         });
         console.log("aaaa", res.data.body);
@@ -58,7 +61,7 @@ const RoleEditItem = (props) => {
 
   const handleIncrementCount = (e) => {
     obj =
-      e.target.id === value
+      e.target.id === adjustedTrueRole
         ? { ...obj, resourceRoleID: e.target.id, qty: 1, defaultAdjusted: true }
         : {
             ...obj,
@@ -88,7 +91,7 @@ const RoleEditItem = (props) => {
 
   const handleDecrementCount = (e) => {
     obj =
-      e.target.id === value
+      e.target.id === adjustedTrueRole
         ? {
             ...obj,
             resourceRoleID: e.target.id,
@@ -152,7 +155,7 @@ const RoleEditItem = (props) => {
 
   const handleRadioChange = (event) => {
     console.log(event.target.id);
-    setValue(event.target.value);
+
     setHelperText(
       `*${event.target.id} will be adjusted to remianing allocation`
     );
@@ -163,25 +166,33 @@ const RoleEditItem = (props) => {
       qty: 0,
       defaultAdjusted: true,
     };
-
-    ResourceCountService.updateResourceRole(obj)
-      .then((res) => {
-        console.log(res);
-        setDisabledState(false);
-        props.handleEditChange();
-        getResourceMasterRoleData(props.rowEditData._id);
-      })
-      .catch((err) => {
-        if (!err.response.data.message) console.log(err);
-        else {
-          setDisabledState(true);
-          setOpen({
-            open: true,
-            severity: "error",
-            message: err.response.data.message,
-          });
+    roleData.forEach((el) => {
+      if (el._id === event.target.value) {
+        if (el.count > 0) {
+          updateAdjustingFlag();
         }
-      });
+      }
+    });
+    function updateAdjustingFlag() {
+      ResourceCountService.updateResourceRole(obj)
+        .then((res) => {
+          console.log(res);
+          setDisabledState(false);
+          props.handleEditChange();
+          getResourceMasterRoleData(props.rowEditData._id);
+        })
+        .catch((err) => {
+          if (!err.response.data.message) console.log(err);
+          else {
+            setDisabledState(true);
+            setOpen({
+              open: true,
+              severity: "error",
+              message: err.response.data.message,
+            });
+          }
+        });
+    }
   };
 
   const { message, severity, open } = isOpen || {};
