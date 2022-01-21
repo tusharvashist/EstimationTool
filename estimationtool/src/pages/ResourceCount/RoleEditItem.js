@@ -189,7 +189,7 @@ const RoleEditItem = (props) => {
             <div className="roleitem_list">
               <MyFormControlLabel
                 value={item._id}
-                label={`${item.resourceRole} (${item.location})`}
+                label={`${item.resourceRole} (${item.location.name})`}
                 control={<Radio id={item.resourceRole} />}
               />
               <div className="optionbtn">

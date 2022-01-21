@@ -47,7 +47,10 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
       },
       {
         $group: {
-          _id: "$resourceRoleID",
+          _id: {
+            resourceRoleID: "$resourceRoleID",
+            defaultAdjusted: "$defaultAdjusted",
+          },
           count: {
             $sum: 1,
           },
@@ -104,7 +107,7 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
 
     filteredresource.forEach((element) => {
       let exists = planResource.filter(
-        (x) => String(x._id) == String(element._id)
+        (x) => String(x._id.resourceRoleID) == String(element._id)
       );
       if (exists.length > 0) element.count = exists[0].count;
     });
