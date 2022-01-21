@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Box,
   Button,
   Grid,
-  ListItem,
-  Input,
   Container,
   Link,
   TextField,
 } from "@material-ui/core";
 import { useLocation, useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteForever from "@material-ui/icons/DeleteForever";
-import MaterialTable from "material-table";
 import AddRequirements from "./add-requirements-popup";
 import {
   ClientProjectHeader,
@@ -21,7 +15,6 @@ import {
 } from "../estimation-detail/header-element";
 import {
   RequirementTable,
-  RequirementTableWithFilter,
 } from "./RequirementTable";
 import RequirementService from "./requirement.service";
 import Deletedailog from "./delete-dailog";
@@ -53,6 +46,7 @@ const ImportExcelRequirements = () => {
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [isRecordSubmitted, setIsRecordSubmitted] = useState(false);
   const [requirementSummary, setRequirementSummary] = useState({});
+   const [isDataAvailable, setIsDataAvailable] = useState(false);
 
   const inputFile = useRef(null);
   useEffect(() => {
@@ -89,6 +83,7 @@ const ImportExcelRequirements = () => {
       .then((res) => {
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
+      
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -132,7 +127,8 @@ const ImportExcelRequirements = () => {
   const saveAddRequirementsFun = () => {
     closeAddFun();
   };
-  ///get updated record
+
+  
   const updateAddRequirementsFun = (index, editedData) => {
     var updatedRequirementData = requirementHeaderData;
     var oldRecord = requirementHeaderData[index - 1];
@@ -163,6 +159,15 @@ const ImportExcelRequirements = () => {
     updateData(updatedRequirementData);
   };
 
+  const showVerifySaveButton = (list) => {
+      if (list.length !== 0) {
+          setIsDataAvailable(true);
+        } else {
+           setIsDataAvailable(false);
+        }
+        
+  }
+
   const updateData = (updatedRequirementData) => {
     var payload = {
       original: originalData,
@@ -173,12 +178,26 @@ const ImportExcelRequirements = () => {
         setRequirementHeaderData([...res.data.body.featureList]);
 
         setRequirementSummary({ ...res.data.body.requirementSummary });
+        showVerifySaveButton([...res.data.body.featureList]);
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
       });
   };
-
+  
+  const deleteSelected = (requirementHeaderDataFilter) => {
+    var requirementList = requirementHeaderData;
+    requirementHeaderDataFilter.forEach((filerRequirement) => {
+      requirementList.forEach((requirement) => {
+        if (requirement.id === filerRequirement) {
+          requirement.isDeleted = true;
+        }
+      });
+    })
+    
+    updateData(requirementList);
+  }
+  
   console.log(requirementHeaderData);
 
   console.log(requirementHeaderData);
@@ -203,6 +222,8 @@ const ImportExcelRequirements = () => {
           setRequirementHeaderData([...res.data.body.featureList]);
           setOriginalData([...res.data.body.featureList]);
           setRequirementSummary({ ...res.data.body.requirementSummary });
+          setIsRecordSubmitted(false);
+          showVerifySaveButton([...res.data.body.featureList]);
         })
         .catch((err) => {
           console.log("get EstimationService by id error", err);
@@ -216,25 +237,27 @@ const ImportExcelRequirements = () => {
     if (headerData.estName !== undefined) {
       headerDataId = headerData._id;
     }
+    if (requirementHeaderData.length !== 0) {
+      RequirementService.validateSave(
+        requirementHeaderData,
+        projectsInfo._id,
+        headerDataId
+      )
+        .then((res) => {
+          setRequirementHeaderData([...res.data.body.featureList]);
 
-    RequirementService.validateSave(
-      requirementHeaderData,
-      projectsInfo._id,
-      headerDataId
-    )
-      .then((res) => {
-        setRequirementHeaderData([...res.data.body.featureList]);
-
-        setRequirementSummary({ ...res.data.body.requirementSummary });
-        if (res.data.body.requirementSummary.noOfError === 0) {
-          setIsRecordSubmitted(true);
-        } else {
-          setIsRecordSubmitted(false);
-        }
-      })
-      .catch((err) => {
-        console.log("get EstimationService by id error", err);
-      });
+          setRequirementSummary({ ...res.data.body.requirementSummary });
+          if (res.data.body.requirementSummary.noOfError === 0) {
+            setIsRecordSubmitted(true);
+          } else {
+            setIsRecordSubmitted(false);
+          }
+          
+        })
+        .catch((err) => {
+          console.log("get EstimationService by id error", err);
+        });
+    }
   };
 
   const handleFileUpload = (e) => {
@@ -344,6 +367,7 @@ const ImportExcelRequirements = () => {
         <RequirementTable
           requirementHeaderData={requirementHeaderData}
           requirementSummary={requirementSummary}
+          deleteSelected={ deleteSelected}
           selection={true}
           requirementTypeArray={requirementTypeArray}
           openEditRequirement={(event, rowData, togglePanel) =>
@@ -355,7 +379,7 @@ const ImportExcelRequirements = () => {
       <Grid container justifyContent="flex-end">
         {isRecordSubmitted === false ? (
           <Grid item style={{ margin: "10px" }}>
-            <Button onClick={validateSave} variant="outlined">
+            <Button  disabled={isDataAvailable ? false : true} onClick={validateSave} variant="outlined">
               {" "}
               Verify and save
             </Button>

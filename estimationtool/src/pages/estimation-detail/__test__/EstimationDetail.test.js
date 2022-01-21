@@ -10,9 +10,9 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import EstimationDetail from "./estimation-detail";
-import reportWebVitals from "../../reportWebVitals";
-import store from "../../Redux/store";
+import EstimationDetail from "../estimation-detail";
+import reportWebVitals from "../../../reportWebVitals";
+import store from "../../../Redux/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import "jest-canvas-mock";

@@ -3,7 +3,7 @@ import { Button, Grid, ListItem } from "@material-ui/core";
 import { useLocation } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteForever from "@material-ui/icons/DeleteForever"
+import DeleteForever from "@material-ui/icons/DeleteForever";
 import MaterialTable from "material-table";
 import AddRequirements from "../estimation-detail/add-requirements-popup";
 import { ClientProjectHeader } from "../estimation-detail/header-element";
@@ -123,9 +123,16 @@ const CreateRequirements = () => {
      getRequirementWithQuery(() => { });
   };
 
-    const updateAddRequirementsFun = () => {
+  const updateAddRequirementsFun = () => {
     closeFun();
      getRequirementWithQuery(() => { });
+  };
+  
+  var selectedRequirementsRows = [];
+  
+  const handleCheckBoxClicked = (rows) => {
+    console.log("rows:-- ", rows);
+    selectedRequirementsRows = rows;
   };
 
   return (
@@ -183,7 +190,7 @@ const CreateRequirements = () => {
             Add Requirements
           </Button>
         </Grid>
-        {
+        {/* {
           showDeleteAllRequirement ? 
             <Grid item style={{ margin: "10px" }}>
               <Button onClick={openDeleteFun} variant="outlined">
@@ -192,17 +199,19 @@ const CreateRequirements = () => {
                 Delete All Requirement
               </Button>
             </Grid> : <div />  
-        }
+        } */}
       </Grid>
       <BorderedContainer>
         <RequirementTable
           requirementHeaderData={requirementHeaderData}
-          selection={false}
+          selection={showDeleteAllRequirement}
+          
           requirementTypeArray={requirementTypeArray}
           openEditRequirement={(event, rowData, togglePanel) =>
               openEditRequirement(event, rowData)
             }
           isEditable={true}
+          handleCheckBoxClicked={handleCheckBoxClicked}
           />
       </BorderedContainer>
     </>
