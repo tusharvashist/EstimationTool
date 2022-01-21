@@ -8,7 +8,6 @@ import {
   MenuItem,
   Select,
 } from "@material-ui/core";
-//import EstimationService from "./estimation.service";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
@@ -20,12 +19,9 @@ const AddRequirements = (props) => {
   const [selectedRequirementType, setSelectedRequirementType] = useState({});
   const [requirementTitle, setrequirementTitle] = useState("");
   const [requirementDescription, setrequirementDescription] = useState("");
-
   const [query, setQuery] = useState("");
   const [assumption, setAssumption] = useState("");
   const [reply, setReply] = useState("");
-  
-
   const [editData, setEditData] = useState([]);
   const [id, setId] = useState("");
   const [formData, setFormData] = React.useState({

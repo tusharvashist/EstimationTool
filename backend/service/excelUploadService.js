@@ -192,7 +192,8 @@ const isDuplicate = (record_list) => {
 
 const getRecords =  (projectId,allProjectRequirement,tags,type, id,row,headerAddress) => {
   var record = {
-                "id":id,
+    "id": id,
+                "isDeleted" : false,
                  "Requirement": "",
                  "Description": "",
                  "Tag": "",
@@ -275,19 +276,29 @@ const columName = (_address) =>{
   return _address.replace(/[0-9]/g, '');
 };
 
-const updateRecordsValidation = (projectId, allProjectRequirement, tags,type, updatedRecords, callBack) => {
+const updateRecordsValidation = (onSave, projectId, allProjectRequirement, tags,type, updatedRecords, callBack) => {
   var record_list = [];
   var index = 0;
   var totalRecordExecuted = 0;
   updatedRecords.forEach((row) => {
-    index = index + 1;
-    var record = updatedRowRecord(projectId, allProjectRequirement, tags,type, index, row)
-    record_list.push(record);
-    totalRecordExecuted = totalRecordExecuted + 1
-    if (totalRecordExecuted >= (updatedRecords.length - 1)) {
-      callBack(record_list);
+    var isDeleted = false;
+    if (!onSave) {
+      if (row.isDeleted) {
+        isDeleted = true;
+      }
     }
-  });
+
+    if (isDeleted == false) {
+      index = index + 1;
+      var record = updatedRowRecord(projectId, allProjectRequirement, tags, type, index, row)
+      record_list.push(record);
+    }
+    totalRecordExecuted = totalRecordExecuted + 1
+        if (totalRecordExecuted >= (updatedRecords.length - 1)) {
+          callBack(record_list);
+        }
+      }
+    );
 };
 
 const updatedRowRecord =  (projectId,allProjectRequirement,tags,type, id,row) => {
@@ -295,6 +306,7 @@ const updatedRowRecord =  (projectId,allProjectRequirement,tags,type, id,row) =>
     var record = {
         
       "id": id,
+      "isDeleted" : false,
                  "Requirement": "",
                  "Description": "",
                  "Tag": "",
@@ -368,7 +380,7 @@ module.exports.updateRecord = async (projectId,payLoad) => {
     var updatedRecord = payLoad.updated;
     var original = payLoad.original;
      let excelImportStatus = { ...constant.importRequirementStatus };
-    var response = validateRecord(projectId, excelImportStatus.updateData , allProjectRequirement, tags, type, updatedRecord);
+    var response = validateRecord(false, projectId, excelImportStatus.updateData , allProjectRequirement, tags, type, updatedRecord);
   //  response.requirementSummary.noOfModification = getNoUpdatedRecords(original,response.featureList)
   return formatMongoData(response);
   } catch (err) {
@@ -380,10 +392,10 @@ const getNoUpdatedRecords = (original, updatedRecord) => {
   //const results = original.filter(({ value: id1 }) => !updatedRecord.some(({ value: id2 }) => id2 === id1));
   return result.count;
 }
-const validateRecord = (projectId, status, allProjectRequirement,tags,type, recordList) => {
+const validateRecord = (onSave , projectId, status, allProjectRequirement,tags,type, recordList) => {
   try {
   let response = { ...constant.requirementListResponse };
-  updateRecordsValidation(projectId, allProjectRequirement,tags,type, recordList, (record_list) => {
+  updateRecordsValidation(onSave, projectId, allProjectRequirement,tags,type, recordList, (record_list) => {
     response.featureList = isDuplicate(record_list);
     response.requirementSummary = recordSummary(status,record_list);
   });
@@ -421,7 +433,7 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
     var tags = await RequirementRepository.getTags();
     var type = await RequirementRepository.getTypes();
          let excelImportStatus = { ...constant.importRequirementStatus };
-    var response = validateRecord(projectId,excelImportStatus.insertSuccess, allProjectRequirement,tags,type, recordList);
+    var response = validateRecord(true, projectId,excelImportStatus.insertSuccess, allProjectRequirement,tags,type, recordList);
     if (response.requirementSummary.noOfError === 0) {
       var result = await RequirementRepository.createBulkRequirement(project, recordList);
       response.requirementSaveResult = result;

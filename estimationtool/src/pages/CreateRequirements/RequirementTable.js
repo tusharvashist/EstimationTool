@@ -28,6 +28,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import Pagination from "@mui/material/Pagination";
 import { ClassNames } from "@emotion/react";
 import { dark } from "@material-ui/core/styles/createPalette";
+import DeleteForever from "@material-ui/icons/DeleteForever";
 
 export const RequirementTable = (props) => {
   const location = useLocation();
@@ -166,7 +167,19 @@ export const RequirementTable = (props) => {
                   <ListItemText primary={name} />
                 </MenuItem>
               ))}
-            </Select>
+              </Select>
+              
+              {
+          true ? 
+            <Grid item style={{ margin: "10px" }}>
+              <Button  variant="outlined">
+                {" "}
+                <DeleteForever />
+                      
+                       {`Delete Select Requirement${requirementHeaderDataFilter.length > 1 ? "s" : ""}`}
+              </Button>
+            </Grid> : <div />  
+        }
           </div>
           <div style={{ height: 400, width: "100%" }}>
             <DataGrid
@@ -177,7 +190,6 @@ export const RequirementTable = (props) => {
               rowsPerPageOptions={[5]}
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
-                //selected={(event, rowData, togglePanel) => {
                 if (props.isEditable) {
                   props.openEditRequirement(event, params.row);
                 }
@@ -190,35 +202,7 @@ export const RequirementTable = (props) => {
               }}
             />
           </div>
-          {/* <MaterialTable
-            style={{ boxShadow: "none" }}
-            columns={requirementHeader}
-            data={requirementHeaderDataFilter}
-            editable={"never"}
-            onRowClick={(event, rowData, togglePanel) => {
-              if (props.isEditable) {
-                props.openEditRequirement(event, rowData);
-              }
-            }}
-              onSelectionChange={(rows) => {
-                if (props.selection === true) {
-                  props.handleCheckBoxClicked(rows);
-                }
-                
-              }}
-            options={{
-              search: false,
-              selection: props.selection,
-              showTitle: false,
-              showTextRowsSelected: true,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-            }}
-          /> */}
+         
         </>
       )}
     </>
