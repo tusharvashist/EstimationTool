@@ -8,13 +8,10 @@ import Radio from "@mui/material/Radio";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const RoleEditItem = (props) => {
-  console.log("role edit props", props);
   const [isOpen, setOpen] = React.useState({});
   const [disabledState, setDisabledState] = useState(false);
 
   const [value, setValue] = React.useState(false);
-
-  const [clickedRadioOfRes, setClickedRadioOfRes] = useState("");
   const [helperText, setHelperText] = React.useState(
     "*Selected Role will be adjusted to remianing allocation"
   );
@@ -29,28 +26,25 @@ const RoleEditItem = (props) => {
   const getResourceMasterRoleData = async (resourceCountId) => {
     await ResourceCountService.getResourceMasterRole(resourceCountId)
       .then((res) => {
-        let checkFlag = false;
         let id = "";
-        res.data.body.map((el) => {
-          checkFlag = el.defaultAdjusted;
-          console.log("aaaaaaaaaaaaaaaa", checkFlag);
-          if (checkFlag) {
+        let check = false;
+        res.data.body.forEach((el, i) => {
+          if (el.defaultAdjusted) {
+            console.log("ccccc", "true", i);
             setAdjustedTrueRole(el._id);
-          } else {
-            res.data.body[0].defaultAdjusted = true;
-            setAdjustedTrueRole(res.data.body[0]._id);
+            check = true;
           }
         });
-        console.log("aaaa", res.data.body);
-        console.log("aaaaa", id);
-        console.log("aaaaaaaaaa", checkFlag);
+        if (!check) {
+          res.data.body[0].defaultAdjusted = true;
+          setAdjustedTrueRole(res.data.body[0]._id);
+        }
         setRoleData(res.data.body);
-
         console.log("res1", res);
       })
       .catch((err) => {});
   };
-  console.log("roleData", roleData);
+
   let obj = {
     defaultAdjusted: false,
     estHeaderId: props.rowEditData.estHeaderId,
@@ -62,10 +56,8 @@ const RoleEditItem = (props) => {
   };
 
   const handleIncrementCount = (e) => {
-    let checkRoleId =
-      clickedRadioOfRes !== "" ? clickedRadioOfRes : adjustedTrueRole;
     obj =
-      e.target.id === checkRoleId
+      e.target.id === adjustedTrueRole
         ? { ...obj, resourceRoleID: e.target.id, qty: 1, defaultAdjusted: true }
         : {
             ...obj,
@@ -95,10 +87,8 @@ const RoleEditItem = (props) => {
   };
 
   const handleDecrementCount = (e) => {
-    let checkRoleId =
-      clickedRadioOfRes !== "" ? clickedRadioOfRes : adjustedTrueRole;
     obj =
-      e.target.id === checkRoleId
+      e.target.id === adjustedTrueRole
         ? {
             ...obj,
             resourceRoleID: e.target.id,
@@ -117,7 +107,6 @@ const RoleEditItem = (props) => {
         console.log(res);
         setDisabledState(false);
 
-        // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
         getResourceMasterRoleData(props.rowEditData._id);
         setValue(!value);
@@ -163,7 +152,7 @@ const RoleEditItem = (props) => {
 
   const handleRadioChange = (event) => {
     console.log(event.target.id);
-    setClickedRadioOfRes(event.target.value);
+    setAdjustedTrueRole(event.target.value);
     setHelperText(
       `*${event.target.id} will be adjusted to remianing allocation`
     );
@@ -209,17 +198,12 @@ const RoleEditItem = (props) => {
     setOpen({});
   };
 
-  console.log("aaaaaaaaa", adjustedTrueRole);
-  console.log("aaaaaaaaaaaaaaaaaa", roleData);
-
   return (
     <div className="roleitem">
       {roleData[0] !== undefined && (
         <RadioGroup
           name="use-radio-group"
-          defaultValue={
-            adjustedTrueRole === "" ? roleData[0]._id : adjustedTrueRole
-          }
+          defaultValue={adjustedTrueRole}
           onChange={handleRadioChange}
         >
           {roleData.map((item) => (
