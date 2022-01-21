@@ -190,13 +190,6 @@ export default function ClientDetails(props) {
             </Grid>
           </Grid>
           <Grid container alignItems="stretch">
-            {/* <Dropdown
-              defaultValue={{ title: "All", value: "All" }}
-              title="Estimation status"
-              list={clientStatus}
-              getVal={getDropDownvalue}
-            /> */}
-
             <Container>
               <Grid container>
                 <Grid item className="multi-button-grid">

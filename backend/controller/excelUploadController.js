@@ -16,6 +16,7 @@ module.exports.uploadExcel = async (req, res) => {
             return res.status(response.status).send(response);
         }
     } catch (err) {
+        response.status = 400;
         response.message = err.message;
         return res.status(response.status).send(response);
     }
@@ -37,6 +38,7 @@ module.exports.validateSave = async (req, res) => {
             return res.status(response.status).send(response);
      
     } catch (err) {
+        response.status = 400;
         response.message = err.message;
         return res.status(response.status).send(response);
     }
@@ -52,6 +54,7 @@ module.exports.updateRecord = async (req, res) => {
             return res.status(response.status).send(response);
      
     } catch (err) {
+        response.status = 400;
         response.message = err.message;
         return res.status(response.status).send(response);
     }

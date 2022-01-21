@@ -20,6 +20,8 @@ import RequirementService from "./requirement.service";
 import Deletedailog from "./delete-dailog";
 import { MdOpenInBrowser, MdDone } from "react-icons/md";
 
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+
 const ImportExcelRequirements = () => {
   const history = useHistory();
   const location = useLocation();
@@ -34,15 +36,15 @@ const ImportExcelRequirements = () => {
   const [openEditConfigurationBox, setOpenEditConfigurationBox] =
     useState(false);
   const [editData, setEditData] = useState([]);
-
+  const [isOpen, setOpen] = React.useState({});
   const [originalData, setOriginalData] = useState([]);
 
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [isDeleteDailog, setDeleteDailog] = useState(false);
   const [selectedFile, setSelectedFile] = useState();
   const [selectedFileName, setSelectedFileName] = useState();
-  const browseFilelabelText = "No File Selected...";
-  const [browseFileLbl, setBrowseFileLbl] = useState(browseFilelabelText);
+  const browseFileLabelText = "No File Selected...";
+  const [browseFileLbl, setBrowseFileLbl] = useState(browseFileLabelText);
   const [isFilePicked, setIsFilePicked] = useState(false);
   const [isRecordSubmitted, setIsRecordSubmitted] = useState(false);
   const [requirementSummary, setRequirementSummary] = useState({});
@@ -128,7 +130,7 @@ const ImportExcelRequirements = () => {
     closeAddFun();
   };
 
-  
+
   const updateAddRequirementsFun = (index, editedData) => {
     var updatedRequirementData = requirementHeaderData;
     var oldRecord = requirementHeaderData[index - 1];
@@ -208,14 +210,19 @@ const ImportExcelRequirements = () => {
   };
 
   const browseFile = () => {
-    setSelectedFile();
-    setIsFilePicked(false);
-    setSelectedFileName("");
-    setBrowseFileLbl(browseFilelabelText);
+    
+    //setSelectedFile();
+   // setIsFilePicked(false);
+    //setSelectedFileName("");
+    //setBrowseFileLbl(browseFileLabelText);
     inputFile.current.click();
   };
 
   const handleSubmission = () => {
+    setRequirementHeaderData([]);
+          setOriginalData([]);
+    setRequirementSummary({ });
+    
     if (isFilePicked) {
       RequirementService.uploadExcel(selectedFile, projectsInfo._id)
         .then((res) => {
@@ -226,10 +233,27 @@ const ImportExcelRequirements = () => {
           showVerifySaveButton([...res.data.body.featureList]);
         })
         .catch((err) => {
+
+
+
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data.message,
+        });
+
+
+
           console.log("get EstimationService by id error", err);
         });
     }
   };
+  const { message, severity, open } = isOpen || {};
+
+  const handleClose = () => { 
+    setOpen(false);
+  }
+
 
   const validateSave = () => {
     var headerDataId = 0;
@@ -396,6 +420,16 @@ const ImportExcelRequirements = () => {
               Done
             </Button>
           </Grid>
+        )}
+
+        {open && (
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
         )}
       </Grid>
     </>

@@ -13,7 +13,7 @@ module.exports.uploadExcel = async (projectId,excelFile) => {
     await workbook.xlsx.load(excelFile.file.data);
     let response = { ...constant.requirementListResponse };
        let excelImportStatus = { ...constant.importRequirementStatus };
-    readExcelRecords(projectId, allProjectRequirement ,tags,type,workbook,  (record_list) => { 
+        readExcelRecords(projectId, allProjectRequirement ,tags,type,workbook,  (record_list) => { 
         response.featureList =  isDuplicate(record_list);
         response.requirementSummary =  recordSummary(excelImportStatus.importFile, record_list);
         console.log(response);
@@ -39,6 +39,10 @@ const readExcelRecords = (projectId, allProjectRequirement,tags,type, workbook, 
         index = index + 1;
         if (index == 0) {
           headerAddress = getHeaderAddress(row);
+          if (!validateHeader(headerAddress)) {
+             throw new Error("Invalid Excel : Excel should have Requirement and Description colum.");
+          }
+
         } else {
         if (isValidRow(row)) {
           var record = getRecords(projectId, allProjectRequirement,tags,type, index, row, headerAddress)
@@ -56,6 +60,19 @@ const readExcelRecords = (projectId, allProjectRequirement,tags,type, workbook, 
   
   
 };
+
+const validateHeader = (headerAddress) => {
+  var isValidateHeader = true;
+  if (headerAddress.Requirement.length == 0) {
+    isValidateHeader = false;
+  }
+
+  if (headerAddress.Description.length == 0) {
+   isValidateHeader = false;
+  }
+  
+  return isValidateHeader;
+}
 
 const getHeaderAddress = (row) => {
     var headerAddress = {
@@ -250,6 +267,24 @@ const getRecords =  (projectId,allProjectRequirement,tags,type, id,row,headerAdd
             break;
           }
         });
+  
+  if (record.Requirement.length == 0) {
+  //  var findError = record.Error.find(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT);
+    var findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT) > -1 );
+    console.log("findError: ", findError);
+    if (findError == false) {
+     record.Error.push(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT);
+      }
+  }
+
+  if (record.Description.length == 0) {
+    var findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description) > -1 );
+    console.log("findError: ", findError);
+       if (findError == false) {
+         record.Error.push(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description);
+      }
+  }
+  
   return record;
 };
 
