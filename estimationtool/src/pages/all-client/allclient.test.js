@@ -7,8 +7,3 @@ it("should render all client page", () => {
   const div = document.createElement("div");
   ReactDOM.render(<allClient />, div);
 });
-
-it("should render all client page", () => {
-  const div = document.createElement("div");
-  ReactDOM.render(<allClient />, div);
-});

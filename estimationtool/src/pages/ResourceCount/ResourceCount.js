@@ -32,7 +32,7 @@ const ResourceCountMatrix = (props) => {
       sort: "asc",
     },
   ]);
-  const {   estimation_resourcecount_edit  } = usePermission();
+  const { estimation_resourcecount_edit } = usePermission();
   useEffect(() => {
     // getTechnologySkill();
     getTechnologySkill();
@@ -145,16 +145,23 @@ const ResourceCountMatrix = (props) => {
       field: "role",
       sorting: false,
       width: 300,
-      renderCell: (params) => <RoleCount {...params} reload={reload} />,
+      renderCell: (params) => {
+        console.log("role params", params);
+        <RoleCount {...params} reload={reload} />;
+      },
     },
   ];
 
   function handleCellClick(param) {
-    if (param.field === "role" && !openEditCount) {
-      setRowEditData(param.row);
-      setOpenEditCount(true);
-    } else if (param.field === "role" && openEditCount) {
-      setOpenEditCount(false);
+    console.log("param", param);
+    if (param.row.skill) {
+      if (param.field === "role" && !openEditCount) {
+        setRowEditData(param.row);
+        setOpenEditCount(true);
+      } else if (param.field === "role" && openEditCount) {
+        setOpenEditCount(false);
+      }
+    } else {
     }
   }
 
@@ -200,6 +207,8 @@ const ResourceCountMatrix = (props) => {
       .catch((err) => {});
   };
 
+  console.log(openEditCount, technologyList);
+
   return (
     <div className="resource-count-cover">
       {tableOpen && (
@@ -207,18 +216,19 @@ const ResourceCountMatrix = (props) => {
           <div className="resource-pop-cover" onClick={handleCountTable}></div>
           <div className="estimation-detail-count-table">
             <BorderedContainer className="count-box-shadow roleCountInputParent">
-              {openEditCount && (
+              {openEditCount && resouceCountData.skill !== undefined && (
                 <>
                   <div
                     className="editrole_cover"
                     onClick={closeEditHandler}
                   ></div>
-               
-               {estimation_resourcecount_edit &&   <RoleEditCount
-                    rowEditData={rowEditData}
-                    handleEditChange={handleEditChange}
-                  />
-               }
+
+                  {estimation_resourcecount_edit && (
+                    <RoleEditCount
+                      rowEditData={rowEditData}
+                      handleEditChange={handleEditChange}
+                    />
+                  )}
                 </>
               )}
               <div style={{ height: 300, width: "100%" }}>

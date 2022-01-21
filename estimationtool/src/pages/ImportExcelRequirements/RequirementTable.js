@@ -112,9 +112,9 @@ export const RequirementTable = (props) => {
   };
 
   const deleteSelected = () => {
-    if (requirementHeaderDataFilter.length !== 0) {  
+    if (requirementHeaderDataFilter.length !== 0) {
       props.deleteSelected(requirementHeaderDataFilter);
-       setFilterRequirementHeaderData([]);
+      setFilterRequirementHeaderData([]);
     }
   };
 
@@ -134,18 +134,21 @@ export const RequirementTable = (props) => {
         loaderComponent
       ) : (
         <>
-          
           <div>
-       { requirementHeaderDataFilter.length !== 0 ?    ( <Grid container className="importFormRowContainer">
-              <Grid item xs={8} className="importFormRow"></Grid>
-              <Grid item xs={4} className="importFormRow_Button">
-                <Button  onClick={deleteSelected} variant="outlined">
-                  <AiOutlineDeleteRow style={{ fontSize: "20px" }} />
-                    &nbsp;  {`Remove Selected Requirement${requirementHeaderDataFilter.length > 1 ? "s" : ""}`}
-                </Button>
+            {requirementHeaderDataFilter.length !== 0 ? (
+              <Grid container className="importFormRowContainer">
+                <Grid item xs={8} className="importFormRow"></Grid>
+                <Grid item xs={4} className="importFormRow_Button">
+                  <Button onClick={deleteSelected} variant="outlined">
+                    <AiOutlineDeleteRow style={{ fontSize: "20px" }} />
+                    &nbsp;{" "}
+                    {`Remove Selected Requirement${
+                      requirementHeaderDataFilter.length > 1 ? "s" : ""
+                    }`}
+                  </Button>
+                </Grid>
               </Grid>
-              </Grid>) : null
-      }
+            ) : null}
             <div style={{ height: 400, width: "100%" }}>
               <DataGrid
                 className={`${classes.root} ${classes.dataGrid}`}
@@ -156,6 +159,7 @@ export const RequirementTable = (props) => {
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                 rowsPerPageOptions={[10, 20, 50]}
                 pagination
+                disableSelectionOnClick
                 checkboxSelection={props.selection}
                 onRowClick={(params, event) => {
                   if (props.isEditable) {
@@ -165,12 +169,11 @@ export const RequirementTable = (props) => {
                 onSelectionModelChange={(rows) => {
                   console.log("onSelectionModelChange: ", rows);
                   setFilterRequirementHeaderData(rows);
-                  
                 }}
                 selectionModel={requirementHeaderDataFilter} //
               />
             </div>
-            <div style={{  width: "100%" }}>
+            <div style={{ width: "100%" }}>
               {requirementHeaderData.length !== 0 ? (
                 <Box
                   className="import-report"
