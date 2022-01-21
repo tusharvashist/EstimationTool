@@ -12,7 +12,9 @@ const RoleEditItem = (props) => {
   const [isOpen, setOpen] = React.useState({});
   const [disabledState, setDisabledState] = useState(false);
 
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState(false);
+
+  const [clickedRadioOfRes, setClickedRadioOfRes] = useState("");
   const [helperText, setHelperText] = React.useState(
     "*Selected Role will be adjusted to remianing allocation"
   );
@@ -22,7 +24,7 @@ const RoleEditItem = (props) => {
 
   useEffect(() => {
     getResourceMasterRoleData(props.rowEditData._id);
-  }, [props.rowEditData]);
+  }, [props.rowEditData, value]);
 
   const getResourceMasterRoleData = async (resourceCountId) => {
     await ResourceCountService.getResourceMasterRole(resourceCountId)
@@ -60,8 +62,10 @@ const RoleEditItem = (props) => {
   };
 
   const handleIncrementCount = (e) => {
+    let checkRoleId =
+      clickedRadioOfRes !== "" ? clickedRadioOfRes : adjustedTrueRole;
     obj =
-      e.target.id === adjustedTrueRole
+      e.target.id === checkRoleId
         ? { ...obj, resourceRoleID: e.target.id, qty: 1, defaultAdjusted: true }
         : {
             ...obj,
@@ -75,6 +79,7 @@ const RoleEditItem = (props) => {
         // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
         getResourceMasterRoleData(props.rowEditData._id);
+        setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -90,8 +95,10 @@ const RoleEditItem = (props) => {
   };
 
   const handleDecrementCount = (e) => {
+    let checkRoleId =
+      clickedRadioOfRes !== "" ? clickedRadioOfRes : adjustedTrueRole;
     obj =
-      e.target.id === adjustedTrueRole
+      e.target.id === checkRoleId
         ? {
             ...obj,
             resourceRoleID: e.target.id,
@@ -113,6 +120,7 @@ const RoleEditItem = (props) => {
         // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
         getResourceMasterRoleData(props.rowEditData._id);
+        setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -155,7 +163,7 @@ const RoleEditItem = (props) => {
 
   const handleRadioChange = (event) => {
     console.log(event.target.id);
-
+    setClickedRadioOfRes(event.target.value);
     setHelperText(
       `*${event.target.id} will be adjusted to remianing allocation`
     );
