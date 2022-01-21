@@ -13,6 +13,7 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 import NoRowOverlay from "../../shared/ui-view/NoRowOverlay/NoRowOverlay";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const ResourceCountMatrix = (props) => {
   const [tableOpen, setTableOpen] = useState(false);
@@ -24,6 +25,7 @@ const ResourceCountMatrix = (props) => {
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
   const [reload, setReload] = useState(false);
+  const [techError, setTechError] = useState({});
   const [loaderComponent, setLoader] = useLoader();
 
   const [sortModel, setSortModel] = React.useState([
@@ -34,7 +36,6 @@ const ResourceCountMatrix = (props) => {
   ]);
   const { estimation_resourcecount_edit } = usePermission();
   useEffect(() => {
-    // getTechnologySkill();
     getTechnologySkill();
     getResourceCountData(estimationHeaderId);
 
@@ -43,7 +44,7 @@ const ResourceCountMatrix = (props) => {
     } else {
       document.body.style.overflow = "scroll";
     }
-  }, [reload, tableOpen]);
+  }, [tableOpen]);
 
   // Get All Technology Skills
 
@@ -52,7 +53,7 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getAllTechnologies()
       .then((res) => {
         setLoader(false);
-        console.log("tech", res);
+
         setTechnolnogySkills(res.data.body);
       })
       .catch((err) => {});
@@ -64,7 +65,6 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceCount(estimationHeaderId)
       .then((res) => {
         getResourceCountAllData(estimationHeaderId);
-        // getResourceMasterRoleData();
       })
       .catch((err) => {});
   };
@@ -78,10 +78,7 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
         setLoader(false);
-        console.log("all Data getResourceCountAllData", res.data.body);
         setResouceCountData(res.data.body);
-        // setRoleData(res.data.body)
-        // setTechnolnogySkills(res.data.body);
         props.errorFunction(
           res.data.body.some((el) => el.validationerror === true)
         );
@@ -145,23 +142,27 @@ const ResourceCountMatrix = (props) => {
       field: "role",
       sorting: false,
       width: 300,
-      renderCell: (params) => {
-        console.log("role params", params);
-        <RoleCount {...params} reload={reload} />;
-      },
+      renderCell: (params) => <RoleCount {...params} reload={reload} />,
     },
   ];
 
   function handleCellClick(param) {
     console.log("param", param);
-    if (param.row.skill) {
+    if (param.row.skills) {
       if (param.field === "role" && !openEditCount) {
         setRowEditData(param.row);
         setOpenEditCount(true);
+        setTechError(false);
       } else if (param.field === "role" && openEditCount) {
         setOpenEditCount(false);
       }
     } else {
+      setTechError({
+        open: true,
+        severity: "warning",
+        message: "Please set technology before assigning roles",
+      });
+      setOpenEditCount(false);
     }
   }
 
@@ -170,6 +171,7 @@ const ResourceCountMatrix = (props) => {
   };
 
   const handleEditChange = () => {
+    getResourceCountData(estimationHeaderId);
     setReload(!reload);
   };
 
@@ -177,9 +179,8 @@ const ResourceCountMatrix = (props) => {
     if (estimationHeaderId) {
       getResourceCountData(estimationHeaderId);
     }
-    if (!tableOpen) setTableOpen(true);
+    setTableOpen(!tableOpen);
     if (tableOpen) {
-      setTableOpen(false);
       setOpenEditCount(false);
     }
   };
@@ -201,26 +202,33 @@ const ResourceCountMatrix = (props) => {
       .then((res) => {
         console.log("update technology", res.data.body);
         setLoader(false);
-
+        setReload(!reload);
         getResourceCountData(estimationHeaderId);
       })
       .catch((err) => {});
   };
 
-  console.log(openEditCount, technologyList);
+  console.log("resouceCountData", resouceCountData);
+
+  const handleClose = () => {
+    setTechError({});
+  };
 
   return (
     <div className="resource-count-cover">
       {tableOpen && (
         <>
-          <div className="resource-pop-cover" onClick={handleCountTable}></div>
+          <div
+            className="resource-pop-cover"
+            onClick={() => handleCountTable()}
+          ></div>
           <div className="estimation-detail-count-table">
             <BorderedContainer className="count-box-shadow roleCountInputParent">
-              {openEditCount && resouceCountData.skill !== undefined && (
+              {openEditCount && (
                 <>
                   <div
                     className="editrole_cover"
-                    onClick={closeEditHandler}
+                    onClick={() => closeEditHandler()}
                   ></div>
 
                   {estimation_resourcecount_edit && (
@@ -279,7 +287,7 @@ const ResourceCountMatrix = (props) => {
       )}
       <div className="estimation-detail-button-container">
         <button
-          onClick={handleCountTable}
+          onClick={() => handleCountTable()}
           className={`estimation-detail-count-button error-${props.countError}`}
         >
           <MdOutlineManageAccounts
@@ -287,6 +295,15 @@ const ResourceCountMatrix = (props) => {
           />
         </button>
       </div>
+      {techError && (
+        <Snackbar
+          isOpen={techError.open}
+          severity={techError.severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={techError.message}
+        />
+      )}
     </div>
   );
 };

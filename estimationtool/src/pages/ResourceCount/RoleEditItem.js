@@ -18,17 +18,30 @@ const RoleEditItem = (props) => {
   );
 
   const [roleData, setRoleData] = useState([]);
-  const [reloadEditCount, setReloadEditCount] = useState(false);
   const [adjustedTrueRole, setAdjustedTrueRole] = useState("");
 
   useEffect(() => {
     getResourceMasterRoleData(props.rowEditData._id);
-  }, [props.rowEditData, reloadEditCount]);
+  }, [props.rowEditData]);
 
   const getResourceMasterRoleData = async (resourceCountId) => {
     await ResourceCountService.getResourceMasterRole(resourceCountId)
       .then((res) => {
+        let checkFlag = false;
+        let id = "";
+        res.data.body.map((el) => {
+          checkFlag = el.defaultAdjusted;
+          console.log("aaaaaaaaaaaaaaaa", checkFlag);
+          if (checkFlag) {
+            setAdjustedTrueRole(el._id);
+          }
+        });
+        console.log("aaaa", res.data.body);
+        console.log("aaaaa", id);
+        console.log("aaaaaaaaaa", checkFlag);
         setRoleData(res.data.body);
+
+        console.log("res1", res);
       })
       .catch((err) => {});
   };
@@ -58,7 +71,7 @@ const RoleEditItem = (props) => {
       .then((res) => {
         // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
-        setReloadEditCount(!reloadEditCount);
+        getResourceMasterRoleData(props.rowEditData._id);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -96,7 +109,7 @@ const RoleEditItem = (props) => {
 
         // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
-        setReloadEditCount(!reloadEditCount);
+        getResourceMasterRoleData(props.rowEditData._id);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -156,7 +169,7 @@ const RoleEditItem = (props) => {
         console.log(res);
         setDisabledState(false);
         props.handleEditChange();
-        setReloadEditCount(!reloadEditCount);
+        getResourceMasterRoleData(props.rowEditData._id);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -177,12 +190,17 @@ const RoleEditItem = (props) => {
     setOpen({});
   };
 
+  console.log("aaaaaaaaa", adjustedTrueRole);
+  console.log("aaaaaaaaaaaaaaaaaa", roleData);
+
   return (
     <div className="roleitem">
       {roleData[0] !== undefined && (
         <RadioGroup
           name="use-radio-group"
-          defaultValue={roleData[0]._id}
+          defaultValue={
+            adjustedTrueRole === "" ? roleData[0]._id : adjustedTrueRole
+          }
           onChange={handleRadioChange}
         >
           {roleData.map((item) => (
@@ -193,14 +211,14 @@ const RoleEditItem = (props) => {
                 control={<Radio id={item.resourceRole} />}
               />
               <div className="optionbtn">
-                <button id={item._id} onClick={handleDecrementCount}>
+                <button id={item._id} onClick={(e) => handleDecrementCount(e)}>
                   -
                 </button>
                 <p id={item._id}>{item.count}</p>
                 <button
                   id={item._id}
                   disabled={disabledState}
-                  onClick={handleIncrementCount}
+                  onClick={(e) => handleIncrementCount(e)}
                 >
                   +
                 </button>

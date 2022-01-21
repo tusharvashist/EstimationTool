@@ -10,6 +10,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
+import { render, screen } from "@testing-library/react";
 import EstimationDetail from "../estimation-detail";
 import reportWebVitals from "../../../reportWebVitals";
 import store from "../../../Redux/store";
@@ -20,6 +21,8 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { persistStore } from "redux-persist";
 
 let persistor = persistStore(store);
+
+beforeEach(() => {});
 
 it("renders estimation detail page", () => {
   const div = document.createElement("div");
@@ -42,4 +45,9 @@ it("renders estimation detail page", () => {
     </BrowserRouter>,
     div
   );
+});
+
+it.only("Export Button should be clickable and enabled", () => {
+  render(<EstimationDetail />);
+  screen.getByRole("");
 });

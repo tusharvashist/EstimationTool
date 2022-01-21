@@ -97,7 +97,7 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
           },
         },
       ])
-      .addFields({ count: 0 });
+      .addFields({ count: 0, defaultAdjusted: false });
 
     let filteredresource = masterResource.filter((resource) =>
       estheader.locations.some(
@@ -109,7 +109,10 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
       let exists = planResource.filter(
         (x) => String(x._id.resourceRoleID) == String(element._id)
       );
-      if (exists.length > 0) element.count = exists[0].count;
+      if (exists.length > 0) {
+        element.defaultAdjusted = exists[0]._id.defaultAdjusted;
+        element.count = exists[0].count;
+      }
     });
 
     return filteredresource;
