@@ -164,42 +164,21 @@ module.exports.login = async (req) => {
 };
 
 
-module.exports.testUser = async (email,pass) => {
+module.exports.testUser = async (emailID,pass) => {
   try {
-
-            //  var email = "admin@mail.com";
-            //  var pass = "admin";
-
-
-    //              const headresEmailAndPass = req.headers.authorization
-    //   .split("Basic ")[1]
-    //   .replace('"', "");
-    // const emailNpass = Buffer.from(headresEmailAndPass, "base64")
-    //   .toString()
-    //   .split(":");
-    // const email = emailNpass[0].trim();
-    // const pass = emailNpass[1].trim();
-
-
-  
-    const users = await userModel.aggregate([
-      {
-        $match: {
-            email: 'admin@mail.com'
-          }
-      }
-      ]
-    );
+      
+    const users = await userModel.find({email: emailID});
 
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
     }
   
-    const isValid = await bcrypt.compare(pass, user.password);
-    if (!isValid) {
-      throw new Error(constant.userMessage.INVALID_PASS);
-    }
+    // const isValid = await bcrypt.compare(pass, user.password);
+    // if (!isValid) {
+    //   throw new Error(constant.userMessage.INVALID_PASS);
+    // }
+    
     var token = jwt.sign(
       { id: user._id },
       process.env.SECRET_KEY || "py-estimation#$#",

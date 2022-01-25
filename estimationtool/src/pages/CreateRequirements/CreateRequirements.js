@@ -51,14 +51,14 @@ const CreateRequirements = () => {
   
 
  const openEditRequirement = (event, rowData) => {
-   console.log(rowData);
-   var type = {
-     "_id": rowData.Typeid,
-     "name" :  rowData.Type
-   }
-   var data = rowData;
-   data.Type = type;
-    setEditData([data]);
+  // console.log(rowData);
+  //  var type = {
+  //    "_id": "",//rowData.Typeid,
+  //    "name" : "",// rowData.Type
+  //  }
+  //  var data = rowData;
+  //  data.Type = type;
+    setEditData([rowData]);
     openFun();
   };
 
@@ -68,6 +68,7 @@ const CreateRequirements = () => {
   };
 
   const closeFun = () => {
+    console.log("requirementHeaderData : ",requirementHeaderData);
     setOpenEditConfigurationBox(false);
 
   };
