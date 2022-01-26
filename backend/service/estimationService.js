@@ -508,7 +508,6 @@ const replaceEmptyKeys = (arr) => {
 const updateKeys = (obj) => {
   const finalObj = {};
   for (let oKey in obj) {
-    console.log("oKey",oKey, obj[oKey])
     if (!obj[oKey]) {
       finalObj[oKey] = "Not Found";
     }
@@ -555,7 +554,7 @@ module.exports.ReleaseEstimation = async (req) => {
             estHeaderRequirement,
             contingency,
             contingencySuffix
-          );
+          ); 
 
           const validatedrequirement = replaceEmptyKeys(
             response.requirementList
@@ -566,6 +565,8 @@ module.exports.ReleaseEstimation = async (req) => {
             errorArray.requirementError = [...validatedrequirement];
 
           } 
+        } else {
+          throw new Error('Add data to this Estimation')
         }
 
         var resourceCount = await EstResourceCountServ.getResourceCount({
@@ -605,16 +606,7 @@ module.exports.ReleaseEstimation = async (req) => {
         
 
         console.log('errorArray',errorArray);
-        if (
-          errorArray.requirementError.length == 0 &&
-          errorArray.resourceCountAllocationError == "" &&
-          errorArray.resourceCountDataError.length == 0 &&
-          errorArray.estimationTemplateError.err.length == 0
-        ) {
-         
-          return { res: errorArray, message: "Add Data to this Estimation" };
-        }
-        else if (
+   if (
           errorArray.requirementError.length == 0 &&
           errorArray.resourceCountAllocationError == "" &&
           errorArray.resourceCountDataError.length == 0  &&
@@ -622,7 +614,7 @@ module.exports.ReleaseEstimation = async (req) => {
         ) {
           estimation.publishDate = Date.now();
           let result = await estimation.save();
-          return {message:"Estimation Published Successfully"};
+          return {res: result, message:"Estimation Published Successfully"};
         } else {
           
     if(errorArray.requirementError.length != 0) {
@@ -739,7 +731,6 @@ function test(arr) {
       var resource = {
         resourceCount: item.resourceCount,
         attributeName: item.attributeName,
-        estAttributeId: item.estAttributeId,
         skills: item.skills,
         skillsId: item.skillsId,
       };
