@@ -199,12 +199,10 @@ const EstimationDetail = () => {
       callBack();
     }
   };
-  console.log("HeaderData: ", headerData);
   const getBasicDetailById = (calback) => {
     setLoader(true);
     EstimationService.getById(estimationId)
       .then((res) => {
-        console.log("getBasicDetailById", res.data.body);
         setHeaderData({ ...res.data.body.basicDetails });
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
         setClientDetails({ ...res.data.body.basicDetails.projectId.client });
@@ -229,7 +227,6 @@ const EstimationDetail = () => {
   const deleteUser = React.useCallback(
     (id) => () => {
       setTimeout(() => {
-        console.log(id);
         setSelectedDelete(id.row);
         var msg = (
           <center>
@@ -257,7 +254,6 @@ const EstimationDetail = () => {
   const openEditRequirement = React.useCallback(
     (id) => () => {
       setTimeout(() => {
-        console.log(id);
         setEditData([id.row]);
         openFun();
       });
@@ -269,7 +265,6 @@ const EstimationDetail = () => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
-        console.log("requirement data by id", dataResponse);
 
         var estHeaderAttribute = [
           {
@@ -353,8 +348,6 @@ const EstimationDetail = () => {
     for (const [key, value] of Object.entries(editManualCallAtt)) {
       id = key;
       body.push({ _id: key, value: value.Effort.value });
-
-      console.log("Key value: ", id, body);
     }
 
     EstimationService.updateManualCallAttribute(id, body)
@@ -367,7 +360,6 @@ const EstimationDetail = () => {
         console.log("get deleteRequirement by id error", err);
         getRequirementDataById(() => {});
       });
-    console.log("updateManualCallAttributeValue End....", editManualCallAtt);
   };
   function roundToTwo(value) {
     return Number(Number(value).toFixed(2));
@@ -375,10 +367,8 @@ const EstimationDetail = () => {
 
   const updateAttributeValue = async () => {
     setLoader(true);
-    console.log("End....", editRowsModel);
     var editedValueArray = [];
     for (const [key, value] of Object.entries(editRowsModel)) {
-      //  console.log(key, value);
       for (const [key1, value1] of Object.entries(value)) {
         var estRequirementData = {
           ESTAttributeID: key1,
@@ -386,7 +376,6 @@ const EstimationDetail = () => {
           ESTHeaderID: headerData._id,
           ESTData: roundToTwo(value1.value),
         };
-        console.log(estRequirementData);
         editedValueArray.push(estRequirementData);
       }
     }
@@ -425,7 +414,6 @@ const EstimationDetail = () => {
 
   var selectedRequirementsRows = [];
   const handleCheckBoxClicked = (rows) => {
-    console.log("rows:-- ", rows);
     selectedRequirementsRows = rows;
   };
 
@@ -462,9 +450,6 @@ const EstimationDetail = () => {
     setOpenExport(false);
   };
 
-  const exportFun = (a) => {
-    console.log(a);
-  };
   ///============== JS- Export Estimation Pop up - END ==============///
 
   const handleRowEditStart = (params, event) => {
@@ -482,7 +467,6 @@ const EstimationDetail = () => {
   const handleCountError = (flag) => {
     setCountError(flag);
   };
-  console.log("isRequirementValid", isRequirementValid.err);
 
   const printErr = () => {
     return isRequirementValid.err
@@ -518,6 +502,8 @@ const EstimationDetail = () => {
   const handleClose = () => {
     setOpen({});
   };
+
+  const exportFun = () => {};
 
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
@@ -598,7 +584,7 @@ const EstimationDetail = () => {
           saveFun={saveAddAvailableRequirementFun}
           cancelTitle="Cancel"
           requirementHeaderData={requirementHeaderData}
-           isDeleteAction ={ false }
+          isDeleteAction={false}
           selection={false}
           requirementTypeArray={requirementTypeArray}
           handleCheckBoxClicked={handleCheckBoxClicked}

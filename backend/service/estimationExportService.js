@@ -20,10 +20,9 @@ module.exports.generateExcelReport = async (reportPayload) => {
   workbook.created = new Date();
 
   //check report directory if not exist, create one
-  createDirIfNotExist().then(() => {
-    // delete old file if exist
-    deleteFile(est.estName);
-  });
+  await createDirIfNotExist();
+  // delete old file if exist
+  await deleteFile(est.estName);
 
   try {
     await generateRequiredSpreadsheet(workbook, reportPayload);
@@ -374,7 +373,7 @@ module.exports.checkEstName = async (reqPayload) => {
   );
 };
 
-function deleteFile(name) {
+async function deleteFile(name) {
   try {
     // delete file if already exists
     if (fs.existsSync(`./report/Estimation_${name}.xlsx`)) {

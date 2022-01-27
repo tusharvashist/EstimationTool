@@ -220,8 +220,15 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
     if (!rescount) {
       throw new Error(constant.requirementMessage.INVALID_ID);
     }
+    let teckSkill = String(rescount.techSkill);
     rescount.techSkill = updatedInfo.techSkill;
-    let result = rescount.save();
+    let result = await rescount.save();
+    if (teckSkill != updatedInfo.techSkill && result) {
+      //Remove All Resource Allocation from this Resource Count Record
+      let deleted = await EstResourcePlanning.deleteMany({
+        $and: [filter],
+      });
+    }
 
     return formatMongoData(result);
   } catch (err) {
