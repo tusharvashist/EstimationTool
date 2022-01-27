@@ -1,20 +1,31 @@
-// var Request = require("request");
-// var constant = require("../constant/index");
-// var userService = require("../service/userService");
-// var baseUrl = "http://localhost:5252/api/v1";
+var Request = require("request");
+var constant = require("../constant/index");
+var userService = require("../service/userService");
+var baseUrl = "http://localhost:5252/api/v1";
+describe("Server", () => {
+    var server;
+    beforeAll(() => {
+        server = require("../server");
+        //server = require("../app");
+    });
 
-// describe("Client", () => {
-//   var token;
+    afterAll(() => {
+        // server.close();
+    });
+    describe("Client", () => {
+        var token;
   
-//         beforeAll(async () => {
-//           token =  await userService.testUser("admin@mail.com", "admin");
-//         });
+        beforeAll(async () => {
+            global.isUnderTest  = await userService.testUser("admin@pyramidconsultinginc.com", "admin");
+            token = 200;
+        }, 15000);
 
-//         afterAll(() => {
-//         });
+        afterAll(() => {
+        });
     
-//         it("Status 200", () => {
-//             expect(token).toBe(200);
-//         });
-// });
+        it("Status 200", () => {
+            expect(token).toBe(200);
+        });
+    });
 
+});

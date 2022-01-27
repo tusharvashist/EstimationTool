@@ -186,11 +186,11 @@ const AddRequirements = (props) => {
       // });
       //setSelectedRequirementType(props.editData[0].Type);
       if (props.editData[0].Type !== undefined) {
-      setSelectedRequirementType(props.editData[0].Type);
-        // setSelectedRequirementType({
-        //   _id: props.editData[0].Typeid,
-        //   name: props.editData[0].Type,
-        // });
+      // setSelectedRequirementType(props.editData[0].Type);
+        setSelectedRequirementType({
+          _id: props.editData[0].Typeid,
+          name: props.editData[0].Type,
+        });
       } else {
         
         setSelectedRequirementType({

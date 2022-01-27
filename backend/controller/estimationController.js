@@ -329,7 +329,7 @@ module.exports.releaseEstimation= async (req, res) => {
             await estimationHeaderAtrributeSer.ReleaseEstimation(
                 req.body
             );
-            if(responceReleaseEstimate.res === undefined) {
+            if(responceReleaseEstimate.message == 'Estimation Published Successfully') {
         responce.status = 200;
         responce.message = 'Estimation Publish Successfully';
         responce.body = responceReleaseEstimate;

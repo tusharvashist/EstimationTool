@@ -346,7 +346,7 @@ async function getTimelinePlanningData(estinationHeaderId) {
    totalHour = resData.totalNumberOfHours;
    rowData = resData.timelinePlanning;
   
-  
+  if(resData.resourceMixData.length > 0){
   var timeline = resData.resourceMixData[0].estimationHeader.estTentativeTimeline;
     for(let i = 1; i<=timeline; i++) {
         const col = {};
@@ -355,6 +355,7 @@ async function getTimelinePlanningData(estinationHeaderId) {
         col.width= 12;
         columnData.push(col);
       }
+    }
   columnData.push({
     key: "totalHours",
     header: "Total Hours",
