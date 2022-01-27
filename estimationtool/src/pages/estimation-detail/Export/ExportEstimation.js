@@ -56,7 +56,7 @@ export const ExportEstimationPopup = (props) => {
     EstimationService.getAllExportData(payload)
       .then((res) => {
         props.closeExportEstimation();
-
+        resetStatesForSelectedItem();
         if (res.status === 200) {
           EstimationService.getReport(payload.estimationHeaderId);
         } else {
@@ -73,6 +73,14 @@ export const ExportEstimationPopup = (props) => {
   };
 
   const { message, severity, open } = isOpen || {};
+
+  const resetStatesForSelectedItem = () => {
+    setEstimationDetail(true);
+    setEstimationSummary(false);
+    setResourceCount(false);
+    setResourcePlanning(false);
+    setResourceTimeline(false);
+  }
 
   return (
     <>
