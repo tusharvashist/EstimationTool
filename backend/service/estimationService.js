@@ -636,7 +636,7 @@ module.exports.ReleaseEstimation = async (req) => {
       return { message: "No Estimation Found" };
     }
   } catch (err) {
-    console.log("err", err);
+    // console.log("err", err);
     throw new Error(err);
   }
 };
