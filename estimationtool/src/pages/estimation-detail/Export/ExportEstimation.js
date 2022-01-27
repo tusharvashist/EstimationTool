@@ -94,27 +94,29 @@ export const ExportEstimationPopup = (props) => {
             </FormLabel>
             <FormGroup>
               <FormControlLabel
-                control={<Checkbox defaultChecked />}
+                control={
+                  <Checkbox data-testid="export_checkbox" defaultChecked />
+                }
                 label="Estimation Details"
                 onChange={(e) => setEstimationDetail(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Estimation Summary"
                 onChange={(e) => setEstimationSummary(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Resource Count"
                 onChange={(e) => setResourceCount(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Resource Planning"
                 onChange={(e) => setResourcePlanning(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Resource Timeline"
                 onChange={(e) => setResourceTimeline(e.target.checked)}
               />
