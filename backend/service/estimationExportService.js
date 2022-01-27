@@ -34,8 +34,7 @@ module.exports.generateExcelReport = async (reportPayload) => {
       return true;
     });
   } catch (err) {
-    console.log("Workbok Error + err" + err);
-    throw new Error(err);
+    throw new Error(err.message);
   }
 };
 

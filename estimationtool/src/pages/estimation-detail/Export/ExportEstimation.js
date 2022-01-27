@@ -73,7 +73,7 @@ export const ExportEstimationPopup = (props) => {
         setOpen({
           open: true,
           severity: "error",
-          message: err.response.data,
+          message: err.response.data || err.message,
         });
       });
   };
@@ -90,7 +90,7 @@ export const ExportEstimationPopup = (props) => {
     setResourceCount(false);
     setResourcePlanning(false);
     setResourceTimeline(false);
-  }
+  };
 
   return (
     <>
