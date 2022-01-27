@@ -11,8 +11,8 @@ module.exports.getAllData = async (req, res) => {
     console.log(isComplete);
     res.status(200).send("Report Gentrated");
   } catch (err) {
-    console.log(err);
-    res.status(500).send("Server Error");
+    // console.log("this", err);
+    res.status(500).send(err.message);
   }
 };
 
@@ -24,6 +24,7 @@ module.exports.getReport = async (req, res) => {
       `Estimation_${name.estName}.xlsx`
     );
   } catch (err) {
+    console.log("this", err);
     res.status(500).send(err.message);
   }
 };
