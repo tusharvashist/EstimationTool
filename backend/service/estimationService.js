@@ -573,6 +573,7 @@ module.exports.ReleaseEstimation = async (req) => {
           estheaderid
         });
         console.log("resourceCount",resourceCount);
+        if (resourceCount.length != 0) {
 
         var valError = getValidationError(resourceCount);
         if (valError.msg != '') {
@@ -580,6 +581,10 @@ module.exports.ReleaseEstimation = async (req) => {
         } else {
           errorArray.resourceCountAllocationError = "";
         }
+      } else {
+        throw new Error('Allocate Resource First')
+
+      }
         // console.log("valError",valError);
         var getResCountData = replaceEmptyKeys(test(resourceCount));
        
