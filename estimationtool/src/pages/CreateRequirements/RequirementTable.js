@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Grid, ListItem } from "@material-ui/core";
-import { useLocation } from "react-router-dom";
-import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import AddIcon from "@material-ui/icons/Add";
-import MaterialTable from "material-table";
-import AddRequirements from "../estimation-detail/add-requirements-popup";
-import { ClientProjectHeader } from "../estimation-detail/header-element";
+import { Button, Grid } from "@material-ui/core";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
@@ -16,24 +10,11 @@ import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
-import {
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarColumnsButton,
-  GridToolbarFilterButton,
-  GridToolbarExport,
-  GridToolbarDensitySelector,
-} from "@mui/x-data-grid";
+import {DataGrid} from "@mui/x-data-grid";
 import { makeStyles, createStyles } from "@mui/styles";
-import Pagination from "@mui/material/Pagination";
-import { ClassNames } from "@emotion/react";
-import { dark } from "@material-ui/core/styles/createPalette";
 import DeleteForever from "@material-ui/icons/DeleteForever";
 
 export const RequirementTable = (props) => {
-  const location = useLocation();
-  const clientInfo = { ...location.state.clientInfo };
-  const projecttInfo = { ...location.state.projectInfo };
   const [loaderComponent, setLoader] = useLoader(false);
   const [requirementHeader, setSummaryHeaderArray] = useState([
     { headerName: "Req. Id", field: "req_id", width: 80 },
@@ -53,12 +34,10 @@ export const RequirementTable = (props) => {
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
-  //const [requirementTypeArray, setRequirementTypeArray] = useState([]);
 
   useEffect(() => {
     setRequirementHeaderData([...props.requirementHeaderData]);
     setFilterRequirementHeaderData([...props.requirementHeaderData]);
-    // setRequirementTypeArray([...props.requirementTypeArray]);
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
 
@@ -96,7 +75,6 @@ export const RequirementTable = (props) => {
       target: { value },
     } = event;
     setAvailable(
-      // On autofill we get a the stringified value.
       typeof value === "string" ? value.split(",") : value
     );
     console.log(value);
@@ -119,17 +97,6 @@ export const RequirementTable = (props) => {
       setFilterRequirementHeaderData(requirementHeaderData);
     }
   };
-
-  function CustomToolbar() {
-    return (
-      <GridToolbarContainer>
-        <GridToolbarColumnsButton />
-        {/* <GridToolbarFilterButton /> */}
-        {/* <GridToolbarDensitySelector /> */}
-        {/* <GridToolbarExport /> */}
-      </GridToolbarContainer>
-    );
-  }
 
   const useStyles = makeStyles((theme) =>
     createStyles({
@@ -181,7 +148,7 @@ export const RequirementTable = (props) => {
                 </FormControl>
               </Grid>
 
-              {props.isDeleteButton === true ? (
+              {props.isDeleteButton === true && props.selection === true ? (
                 <Grid
                   item
                   xs={6}
@@ -212,6 +179,7 @@ export const RequirementTable = (props) => {
               columns={requirementHeader}
               pageSize={5}
               rowsPerPageOptions={[5]}
+              disableSelectionOnClick
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
                 if (props.isEditable) {
@@ -221,9 +189,9 @@ export const RequirementTable = (props) => {
               onSelectionModelChange={(rows) => {
                 console.log("onSelectionModelChange: ", rows);
                 setSelectedRequirements(rows);
-                if (props.isDeleteButton === false) {
+                //if (props.isDeleteButton === false) {
                   props.handleCheckBoxClicked(rows);
-                }
+                //}
               }}
               selectionModel={selectedRequirements}
             />

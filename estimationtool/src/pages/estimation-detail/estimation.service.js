@@ -18,11 +18,6 @@ const EstimationService = {
     return axios.post(url, requirementData);
   },
 
-  updateRequirement: function (requirementData) {
-    let url = Url.estimationDetail + "/";
-    return axios.put(url, requirementData);
-  },
-
   updateRequirement: function (actionId, requirementData) {
     let url = Url.estimationDetail + "/" + actionId;
     return axios.put(url, requirementData);
