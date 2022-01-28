@@ -58,13 +58,23 @@ export const ExportEstimationPopup = (props) => {
         props.closeExportEstimation();
         resetStatesForSelectedItem();
         if (res.status === 200) {
-          EstimationService.getReport(payload.estimationHeaderId);
-        } else {
-          console.log("Export Estimation", res);
+          EstimationService.getReport(payload.estimationHeaderId).catch(
+            (err) => {
+              setOpen({
+                open: true,
+                severity: "error",
+                message: err.message,
+              });
+            }
+          );
         }
       })
       .catch((err) => {
-        console.log(err);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data || err.message,
+        });
       });
   };
 
@@ -80,7 +90,7 @@ export const ExportEstimationPopup = (props) => {
     setResourceCount(false);
     setResourcePlanning(false);
     setResourceTimeline(false);
-  }
+  };
 
   return (
     <>
