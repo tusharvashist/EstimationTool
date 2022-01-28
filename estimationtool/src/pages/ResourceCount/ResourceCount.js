@@ -124,7 +124,7 @@ const ResourceCountMatrix = (props) => {
             style={{ width: "100%" }}
             onChange={(e) => onChangeSelect(e, rowdata)}
             onMouseEnter={(e) =>
-              rowdata.row.rolecount &&
+              rowdata.row.rolecount.length !== 0 &&
               setTechError({
                 open: true,
                 severity: "warning",
