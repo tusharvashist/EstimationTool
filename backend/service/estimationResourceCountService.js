@@ -363,7 +363,7 @@ calculateResourceCount = async ({ estimation, total }) => {
     (global.ResourceWeekHours * estimation.estTentativeTimeline)
   ).toFixed(2);
 };
-function SetAllocationPercent(mincount, estResourcePlanning) {
+module.exports.SetAllocationPercent = (mincount, estResourcePlanning) => {
   switch (true) {
     case mincount <= 0.25:
       estResourcePlanning.allocationPercent = 25;
@@ -377,4 +377,4 @@ function SetAllocationPercent(mincount, estResourcePlanning) {
     default:
       estResourcePlanning.allocationPercent = 100;
   }
-}
+};
