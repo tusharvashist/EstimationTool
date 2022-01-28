@@ -555,11 +555,10 @@ module.exports.ReleaseEstimation = async (req) => {
             contingency,
             contingencySuffix
           ); 
-
           const validatedrequirement = replaceEmptyKeys(
             response.requirementList
           );
-          console.log("validatedrequirement",validatedrequirement)
+          // console.log("validatedrequirement",validatedrequirement)
 
           if (validatedrequirement.length != 0) {
             errorArray.requirementError = [...validatedrequirement];
@@ -569,10 +568,21 @@ module.exports.ReleaseEstimation = async (req) => {
           throw new Error('Add data to this Estimation')
         }
 
+        response.summaryCalData =
+        await RequirementRepository.getCalculativeAttributes(
+          estheaderId,
+          contingency,
+          contingencySuffix
+        );
+        const getManualData = checkManualField(response.summaryCalData)
+        if (getManualData.msg != '') {
+         throw new Error(getManualData.msg)
+        }
+
         var resourceCount = await EstResourceCountServ.getResourceCount({
           estheaderid
         });
-        console.log("resourceCount",resourceCount);
+        // console.log("resourceCount",resourceCount);
         if (resourceCount.length != 0) {
 
         var valError = getValidationError(resourceCount);
@@ -745,4 +755,16 @@ function test(arr) {
     }
   });
   return data;
+}
+
+
+
+function checkManualField (data) {
+
+  const arr = data.filter(item => item.calcType == 'manual')
+if (arr.find(x => x.Effort == undefined)) {
+return {msg:'Please Enter Manual Calculative Attributes Effort'}
+} else {
+  return {msg:''}
+}
 }
