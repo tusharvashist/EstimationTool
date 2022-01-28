@@ -5,7 +5,7 @@ import useLoader from "../../shared/layout/hooks/useLoader";
 import RoleCount from "./RoleCount";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
-import { Select, MenuItem } from "@material-ui/core";
+import { Select, MenuItem, FormControl } from "@material-ui/core";
 import ReourceCountService from "./resourcecount.service";
 
 import { MdOutlineManageAccounts } from "react-icons/md";
@@ -86,8 +86,6 @@ const ResourceCountMatrix = (props) => {
       .catch((err) => {});
   };
 
-  console.log("resouceCountData", resouceCountData);
-
   const getColumns = ({ onChangeSelect }) => [
     {
       headerName: "Resource Count",
@@ -125,6 +123,14 @@ const ResourceCountMatrix = (props) => {
           <Select
             style={{ width: "100%" }}
             onChange={(e) => onChangeSelect(e, rowdata)}
+            onMouseEnter={(e) =>
+              rowdata.row.rolecount &&
+              setTechError({
+                open: true,
+                severity: "warning",
+                message: `All resource count planning of ${rowdata.row.attributeName} with ${rowdata.row.skills} will be removed, if technology is changed`,
+              })
+            }
             value={rowdata.row.skillsId}
             //   label={technologySkills.skill
           >

@@ -10,6 +10,7 @@ const constant = require("../constant/index");
 var fs = require("fs");
 const { throws } = require("assert");
 const { string } = require("joi");
+const { error } = require("console");
 
 module.exports.generateExcelReport = async (reportPayload) => {
   //Get Estimation Name
@@ -20,10 +21,9 @@ module.exports.generateExcelReport = async (reportPayload) => {
   workbook.created = new Date();
 
   //check report directory if not exist, create one
-  createDirIfNotExist().then(() => {
-    // delete old file if exist
-    deleteFile(est.estName);
-  });
+  await createDirIfNotExist();
+  // delete old file if exist
+  await deleteFile(est.estName);
 
   try {
     await generateRequiredSpreadsheet(workbook, reportPayload);
@@ -34,7 +34,7 @@ module.exports.generateExcelReport = async (reportPayload) => {
       return true;
     });
   } catch (err) {
-    console.log("Workbok Error + err" + err);
+    throw new Error(err.message);
   }
 };
 
@@ -176,12 +176,11 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
 
   if (getReportFlagValue("resourceTimeline", reportPayload)) {
     const worksheet = workbook.addWorksheet("Timeline Planning");
-    var resData = await getTimelinePlanningData(reportPayload.estimationHeaderId);
-    worksheet.columns = 
-      resData.columnData;
-    worksheet.addRows(
-      resData.rowData
+    var resData = await getTimelinePlanningData(
+      reportPayload.estimationHeaderId
     );
+    worksheet.columns = resData.columnData;
+    worksheet.addRows(resData.rowData);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     });
@@ -189,11 +188,10 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     if (resData.rowData.length > 0) {
       // Insert a row by sparse Array
       var rowValuesTotalHour = [];
-      rowValuesTotalHour[resData.columnData.length-1] = "G. Total Hours";
+      rowValuesTotalHour[resData.columnData.length - 1] = "G. Total Hours";
       rowValuesTotalHour[resData.columnData.length] = resData.totalHour;
       worksheet.insertRow(worksheet.rowCount + 2, rowValuesTotalHour);
     }
-
   }
 }
 
@@ -323,58 +321,61 @@ async function getEstimationRequirementData(conditions) {
 
 async function getTimelinePlanningData(estinationHeaderId) {
   const payload = { id: estinationHeaderId };
-  var totalHour ;
+  var totalHour;
   var rowData = [];
   var columnData = [
     {
-        key: "id",
-        header: "S No.",
-        width: 5,
+      key: "id",
+      header: "S No.",
+      width: 5,
     },
     {
-        key: "resourceRole",
-        header: "Role",
-        width: 12,
+      key: "resourceRole",
+      header: "Role",
+      width: 12,
     },
     {
-        key: "attributeName",
-        header: "Skills(Effort & Summary Attributes)",
-        width: 25,
+      key: "attributeName",
+      header: "Skills(Effort & Summary Attributes)",
+      width: 25,
     },
   ];
   const resData = await estTimelinePlanningServive.getTimelinePlanning(payload);
-   totalHour = resData.totalNumberOfHours;
-   rowData = resData.timelinePlanning;
-  
-  if(resData.resourceMixData.length > 0){
-  var timeline = resData.resourceMixData[0].estimationHeader.estTentativeTimeline;
-    for(let i = 1; i<=timeline; i++) {
-        const col = {};
-        col.key= "week" + i.toString();
-        col.header= "Week" + i.toString();
-        col.width= 12;
-        columnData.push(col);
-      }
+  totalHour = resData.totalNumberOfHours;
+  rowData = resData.timelinePlanning;
+
+  if (resData.resourceMixData.length > 0) {
+    var timeline =
+      resData.resourceMixData[0].estimationHeader.estTentativeTimeline;
+    for (let i = 1; i <= timeline; i++) {
+      const col = {};
+      col.key = "week" + i.toString();
+      col.header = "Week" + i.toString();
+      col.width = 12;
+      columnData.push(col);
     }
+  }
   columnData.push({
     key: "totalHours",
     header: "Total Hours",
     width: 12,
-});
-  
+  });
 
   return { columnData, totalHour, rowData };
 }
 
-
 module.exports.checkEstName = async (reqPayload) => {
-  return estimationHeaderModal.findById(
-    reqPayload.estimationHeaderId,
-    "estName"
-  );
+  try {
+    return estimationHeaderModal.findById(
+      reqPayload.estimationHeaderId,
+      "estName"
+    );
+  } catch (err) {
+    throw new Error("Sorry, File not found for this estimation!");
+  }
 };
 
-function deleteFile(name) {
+async function deleteFile(name) {
   try {
     // delete file if already exists
     if (fs.existsSync(`./report/Estimation_${name}.xlsx`)) {

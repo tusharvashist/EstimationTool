@@ -78,7 +78,6 @@ const FirstStep = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     showError(error) {
       handleFieldsError();
-      //alert(error);
     },
   }));
 

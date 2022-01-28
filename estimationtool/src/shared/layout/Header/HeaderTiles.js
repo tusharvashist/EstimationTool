@@ -74,7 +74,7 @@ const HeaderTiles = (props) => {
           <div className={classes.detail}>
             {props.details.map((el, i) =>
               i > 0 ? (
-                <h4 className={classes.name}>
+                <h4 key={i} className={classes.name}>
                   &nbsp;|&nbsp;
                   {el.website ? (
                     <a target="_blank" href={`//${el.website}`}>
@@ -85,7 +85,7 @@ const HeaderTiles = (props) => {
                   )}
                 </h4>
               ) : (
-                <h4 className={classes.name}>
+                <h4 key={i} className={classes.name}>
                   {el.website ? (
                     <a target="_blank" href={`//${el.website}`}>
                       {el.website}

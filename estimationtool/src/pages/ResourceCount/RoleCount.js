@@ -3,6 +3,7 @@ import "./RoleCount.css";
 import ResourceCountService from "./resourcecount.service";
 
 const RoleCount = (props) => {
+  console.log("props rolecount", props);
   const [roleData, setRoleData] = useState([]);
 
   useEffect(() => {
@@ -14,12 +15,21 @@ const RoleCount = (props) => {
       .then((res) => {
         console.log("rr", res.data);
         if (res.data.body.length == 0) {
-          setRoleData([
-            {
-              count: "No technology Selected",
-              _id: 0,
-            },
-          ]);
+          if (!props.row.skills) {
+            setRoleData([
+              {
+                count: "Please select technology",
+                _id: 0,
+              },
+            ]);
+          } else {
+            setRoleData([
+              {
+                count: "No Resource available",
+                _id: 0,
+              },
+            ]);
+          }
         } else {
           setRoleData(res.data.body);
         }

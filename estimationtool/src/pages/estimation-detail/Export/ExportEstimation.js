@@ -56,15 +56,25 @@ export const ExportEstimationPopup = (props) => {
     EstimationService.getAllExportData(payload)
       .then((res) => {
         props.closeExportEstimation();
-
+        resetStatesForSelectedItem();
         if (res.status === 200) {
-          EstimationService.getReport(payload.estimationHeaderId);
-        } else {
-          console.log("Export Estimation", res);
+          EstimationService.getReport(payload.estimationHeaderId).catch(
+            (err) => {
+              setOpen({
+                open: true,
+                severity: "error",
+                message: err.message,
+              });
+            }
+          );
         }
       })
       .catch((err) => {
-        console.log(err);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: err.response.data || err.message,
+        });
       });
   };
 
@@ -73,6 +83,14 @@ export const ExportEstimationPopup = (props) => {
   };
 
   const { message, severity, open } = isOpen || {};
+
+  const resetStatesForSelectedItem = () => {
+    setEstimationDetail(true);
+    setEstimationSummary(false);
+    setResourceCount(false);
+    setResourcePlanning(false);
+    setResourceTimeline(false);
+  };
 
   return (
     <>
@@ -94,27 +112,29 @@ export const ExportEstimationPopup = (props) => {
             </FormLabel>
             <FormGroup>
               <FormControlLabel
-                control={<Checkbox defaultChecked />}
+                control={
+                  <Checkbox data-testid="export_checkbox" defaultChecked />
+                }
                 label="Estimation Details"
                 onChange={(e) => setEstimationDetail(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Estimation Summary"
                 onChange={(e) => setEstimationSummary(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Resource Count"
                 onChange={(e) => setResourceCount(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Resource Planning"
                 onChange={(e) => setResourcePlanning(e.target.checked)}
               />
               <FormControlLabel
-                control={<Checkbox />}
+                control={<Checkbox data-testid="export_checkbox" />}
                 label="Resource Timeline"
                 onChange={(e) => setResourceTimeline(e.target.checked)}
               />

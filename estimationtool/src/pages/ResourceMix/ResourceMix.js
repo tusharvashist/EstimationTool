@@ -39,7 +39,8 @@ const RequirementMix = () => {
   const [resourceMixList, setResourceMixList] = useState([]);
   const [totalMargin, setTotalMargin] = useState({});
   const [openExport, setOpenExport] = useState(false);
-  const { estimation_export_resourcemix, estimation_pricing_view } = usePermission();
+  const { estimation_export_resourcemix, estimation_pricing_view } =
+    usePermission();
 
   useEffect(() => {
     getResourceCountData(estimationId);
@@ -145,33 +146,31 @@ const RequirementMix = () => {
     {
       field: "costrate",
       headerName: "Cost/Hr ($)",
-      hide : !estimation_pricing_view,
+      hide: !estimation_pricing_view,
       width: 160,
     },
     {
       field: "pricerate",
       headerName: "Price/Hr ($)",
-      hide : !estimation_pricing_view,
+      hide: !estimation_pricing_view,
       width: 160,
     },
     {
       field: "cost",
       headerName: "Cost ($)",
-      hide : !estimation_pricing_view,
+      hide: !estimation_pricing_view,
 
       width: 160,
     },
     {
       field: "price",
       headerName: "Price ($)",
-      hide : !estimation_pricing_view,
+      hide: !estimation_pricing_view,
 
       width: 160,
     },
   ];
   // console.log(resourceMixList, totalMargin);
-
- 
 
   return (
     <div className="estimation-detail-cover">
@@ -240,32 +239,32 @@ const RequirementMix = () => {
                 disableSelectionOnClick
               />
             </div>
-            {estimation_pricing_view &&
-            <div className={styleClasses.totalcontainer}>
-              <div className={styleClasses.totalRow}>
+            {estimation_pricing_view && (
+              <div className={styleClasses.totalcontainer}>
+                <div className={styleClasses.totalRow}>
+                  <div className={styleClasses.total_item}>
+                    <h4>
+                      Total Cost: <span>{totalMargin.cost}</span>
+                    </h4>
+                  </div>
+                  <div className={styleClasses.total_item}>
+                    <h4>
+                      Total Price: <span>{totalMargin.price}</span>
+                    </h4>
+                  </div>
+                </div>
                 <div className={styleClasses.total_item}>
                   <h4>
-                    Total Cost: <span>{totalMargin.cost}</span>
+                    Margin = Price - Cost: <span>{totalMargin.margin}</span>
                   </h4>
                 </div>
                 <div className={styleClasses.total_item}>
                   <h4>
-                    Total Price: <span>{totalMargin.price}</span>
+                    Margin: <span>{totalMargin.marginPercent}</span>
                   </h4>
                 </div>
               </div>
-              <div className={styleClasses.total_item}>
-                <h4>
-                  Margin = Price - Cost: <span>{totalMargin.margin}</span>
-                </h4>
-              </div>
-              <div className={styleClasses.total_item}>
-                <h4>
-                  Margin: <span>{totalMargin.marginPercent}</span>
-                </h4>
-              </div>
-            </div>
-}
+            )}
           </>
         )}
       </BorderedContainer>

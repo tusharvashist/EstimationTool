@@ -1,12 +1,7 @@
 {
   "spec_dir": "spec",
-  "spec_files": [
-    "client.spec.js",
-    "login.spec.js"
-  ],
-  "helpers": [
-    "helpers/**/*.?(m)js"
-  ],
+  "spec_files": ["client.spec.js", "login.spec.js", "resourcecount.spec.js"],
+  "helpers": ["helpers/**/*.?(m)js"],
   "env": {
     "stopSpecOnExpectationFailure": false,
     "random": true
