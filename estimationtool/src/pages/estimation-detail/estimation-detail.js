@@ -872,9 +872,12 @@ const EstimationDetail = () => {
           {/* </Link> */}
         </Grid>
         <Grid item style={{ marginRight: "10px" }}>
+        <div class="tooltip">
+
           {estimation_generate_timeline && (
             <Button
-              variant="outlined"
+             disabled={countError}
+             variant="outlined"
               onClick={() =>
                 history.push({
                   pathname:
@@ -897,6 +900,18 @@ const EstimationDetail = () => {
               &nbsp;Generate Timeline Plan
             </Button>
           )}
+           {countError ? (
+              <span class="tooltiptext">
+                <div className="icon-cover">
+                  <IoWarningOutline className="icon-warning" />
+                </div>
+                Please assign proper role allocation for attributes in resource
+                count table to Genrate Timeline Plan
+              </span>
+            ) : (
+              ""
+            )}
+          </div>
         </Grid>
         <Grid item style={{ marginRight: "10px" }}>
           <Button

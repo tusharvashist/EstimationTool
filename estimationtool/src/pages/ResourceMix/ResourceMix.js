@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const RequirementMix = () => {
   const resMixData = useSelector((state) => state.resourceMixData);
@@ -259,9 +260,11 @@ const RequirementMix = () => {
                   </h4>
                 </div>
                 <div className={styleClasses.total_item}>
+                <Tooltip title="Margin Formula = [((Price -Cost)/Price) X 100]">
                   <h4>
                     Margin: <span>{totalMargin.marginPercent}</span>
                   </h4>
+                  </Tooltip>
                 </div>
               </div>
             )}

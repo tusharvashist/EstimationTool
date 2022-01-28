@@ -298,7 +298,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       estResourcePlanning.estHeaderId = updatedInfo.estHeaderId;
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
-      SetAllocationPercent(mincount, estResourcePlanning);
+      this.SetAllocationPercent(mincount, estResourcePlanning);
       await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
       return estResourcePlanning.save();
     } else if (updatedInfo.qty < 0) {
