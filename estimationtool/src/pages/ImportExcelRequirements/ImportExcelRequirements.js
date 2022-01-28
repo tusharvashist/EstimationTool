@@ -9,17 +9,11 @@ import {
 import { useLocation, useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddRequirements from "./add-requirements-popup";
-import {
-  ClientProjectHeader,
-  EstimationHeader,
-} from "../estimation-detail/header-element";
-import {
-  RequirementTable,
-} from "./RequirementTable";
+import {ClientProjectHeader,EstimationHeader} from "../estimation-detail/header-element";
+import { RequirementTable} from "./RequirementTable";
 import RequirementService from "./requirement.service";
 import Deletedailog from "./delete-dailog";
 import { MdOpenInBrowser, MdDone } from "react-icons/md";
-
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const ImportExcelRequirements = () => {
@@ -31,8 +25,6 @@ const ImportExcelRequirements = () => {
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [requirementTypeArray, setRequirementTypeArray] = useState([]);
   const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
-  const [showDeleteAllRequirement, setShowDeleteAllRequirement] =
-    useState(false);
   const [openEditConfigurationBox, setOpenEditConfigurationBox] =
     useState(false);
   const [editData, setEditData] = useState([]);
@@ -77,9 +69,6 @@ const ImportExcelRequirements = () => {
     setDeleteDailog(false);
   };
 
-  console.log("location: ", location);
-
-  console.log("history: ", history);
   const getTagsType = () => {
     RequirementService.getTagsType()
       .then((res) => {
@@ -114,10 +103,6 @@ const ImportExcelRequirements = () => {
       });
   };
 
-  const openAddRequirement = () => {
-    openAddFun();
-  };
-
   const openAddFun = () => {
     setOpenAddRequirementsBox(true);
   };
@@ -129,7 +114,6 @@ const ImportExcelRequirements = () => {
   const saveAddRequirementsFun = () => {
     closeAddFun();
   };
-
 
   const updateAddRequirementsFun = (index, editedData) => {
     var updatedRequirementData = requirementHeaderData;
@@ -200,21 +184,7 @@ const ImportExcelRequirements = () => {
     updateData(requirementList);
   }
   
-  console.log(requirementHeaderData);
-
-  console.log(requirementHeaderData);
-
-  const changeHandler = (event) => {
-    setSelectedFile(event.target.files[0]);
-    setIsFilePicked(true);
-  };
-
   const browseFile = () => {
-    
-    //setSelectedFile();
-   // setIsFilePicked(false);
-    //setSelectedFileName("");
-    //setBrowseFileLbl(browseFileLabelText);
     inputFile.current.click();
   };
 
@@ -233,17 +203,11 @@ const ImportExcelRequirements = () => {
           showVerifySaveButton([...res.data.body.featureList]);
         })
         .catch((err) => {
-
-
-
         setOpen({
           open: true,
           severity: "error",
           message: err.response.data.message,
         });
-
-
-
           console.log("get EstimationService by id error", err);
         });
     }
