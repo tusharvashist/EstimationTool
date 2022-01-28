@@ -181,7 +181,7 @@ export const RequirementTable = (props) => {
                 </FormControl>
               </Grid>
 
-              {props.isDeleteButton === true ? (
+              {props.isDeleteButton === true && props.selection === true ? (
                 <Grid
                   item
                   xs={6}
@@ -212,6 +212,7 @@ export const RequirementTable = (props) => {
               columns={requirementHeader}
               pageSize={5}
               rowsPerPageOptions={[5]}
+              disableSelectionOnClick
               checkboxSelection={props.selection}
               onRowClick={(params, event) => {
                 if (props.isEditable) {
@@ -221,9 +222,9 @@ export const RequirementTable = (props) => {
               onSelectionModelChange={(rows) => {
                 console.log("onSelectionModelChange: ", rows);
                 setSelectedRequirements(rows);
-                if (props.isDeleteButton === false) {
+                //if (props.isDeleteButton === false) {
                   props.handleCheckBoxClicked(rows);
-                }
+                //}
               }}
               selectionModel={selectedRequirements}
             />
