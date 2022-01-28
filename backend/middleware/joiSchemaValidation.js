@@ -47,8 +47,9 @@ module.exports.validateHeadresAuthorization = () => {
     const isError = req.headers.authorization;
     let responce = { ...constant.defaultResponce };
     if (!isError) {
-      throw new Error(constant.requestValidationMessage.AUTHORIZATION_MISSING);
-      res.status(400).send(constant.requestValidationMessage.AUTHORIZATION_MISSING)
+      return res
+        .status(400)
+        .send(constant.requestValidationMessage.AUTHORIZATION_MISSING);
     }
     return next();
   };
