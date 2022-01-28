@@ -568,7 +568,18 @@ module.exports.ReleaseEstimation = async (req) => {
         } else {
           throw new Error('Add data to this Estimation')
         }
-
+        //Added this at 28 jan 2022 for manual attribute validation
+        response.summaryCalData =
+        await RequirementRepository.getCalculativeAttributes(
+          estheaderId,
+          contingency,
+          contingencySuffix
+        );
+        const getManualData = checkManualField(response.summaryCalData)
+        if (getManualData.msg != '') {
+         throw new Error(getManualData.msg)
+        }
+        //------------- 
         var resourceCount = await EstResourceCountServ.getResourceCount({
           estheaderid
         });
@@ -743,4 +754,14 @@ function test(arr) {
     }
   });
   return data;
+}
+
+
+function checkManualField (data) {
+  const arr = data.filter(item => item.calcType == 'manual')
+  if (arr.find(x => x.Effort == undefined)) {
+    return {msg:'Please Enter Manual Calculative Attributes Effort'}
+  } else {
+  return {msg:''}
+  }
 }
