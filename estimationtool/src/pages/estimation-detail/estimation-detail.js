@@ -234,7 +234,7 @@ const EstimationDetail = () => {
               Do you want to remove this requirement from estimation?
               <br />
               <em>
-                Note: You can import this requiremnet agin from project
+                Note: You can import this requirement again from project
                 requirements
               </em>
             </p>
@@ -325,6 +325,7 @@ const EstimationDetail = () => {
         setRequirementHeaderArray(estHeaderAttribute);
         setRequirementDataArray(dataResponse.requirementList);
         setTagHeaderArray([...dataResponse.tagSummaryHeader]);
+
         setTagDataArray([...dataResponse.tagSummaryData]);
 
         setSummaryHeaderArray([...dataResponse.summaryCallHeader]);
@@ -872,35 +873,34 @@ const EstimationDetail = () => {
           {/* </Link> */}
         </Grid>
         <Grid item style={{ marginRight: "10px" }}>
-        <div class="tooltip">
-
-          {estimation_generate_timeline && (
-            <Button
-             disabled={countError}
-             variant="outlined"
-              onClick={() =>
-                history.push({
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/Estimation-Detail" +
-                    "/TimelinePlanning",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: estimationId,
-                    headerData: headerData,
-                  },
-                })
-              }
-            >
-              <MdOutlineTimeline style={{ fontSize: "18px" }} />
-              &nbsp;Generate Timeline Plan
-            </Button>
-          )}
-           {countError ? (
+          <div class="tooltip">
+            {estimation_generate_timeline && (
+              <Button
+                disabled={countError}
+                variant="outlined"
+                onClick={() =>
+                  history.push({
+                    pathname:
+                      "/All-Clients/" +
+                      clientDetails.clientName +
+                      "/" +
+                      projectDetails.projectName +
+                      "/Estimation-Detail" +
+                      "/TimelinePlanning",
+                    state: {
+                      clientInfo: clientDetails,
+                      projectInfo: projectDetails,
+                      estimationHeaderId: estimationId,
+                      headerData: headerData,
+                    },
+                  })
+                }
+              >
+                <MdOutlineTimeline style={{ fontSize: "18px" }} />
+                &nbsp;Generate Timeline Plan
+              </Button>
+            )}
+            {countError ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
                   <IoWarningOutline className="icon-warning" />
