@@ -234,7 +234,7 @@ const EstimationDetail = () => {
               Do you want to remove this requirement from estimation?
               <br />
               <em>
-                Note: You can import this requiremnet agin from project
+                Note: You can import this requirement again from project
                 requirements
               </em>
             </p>

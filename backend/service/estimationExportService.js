@@ -97,7 +97,8 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
     const worksheet = workbook.addWorksheet(
       constant.excelSheetName.RESOURCE_MIX
     );
-
+    // set column width
+    worksheet.properties.defaultColWidth = 20;
     let countRowData = await estimationResourceCountService.getResourceCount(
       newPayload
     );
@@ -281,7 +282,7 @@ async function getEstimationRequirementData(conditions) {
   estTagColumns = requirementData.tagSummaryHeader.map((el) => {
     return {
       name: el.headerName === "" ? "Tag" : el.headerName,
-      key: el.id === 1 ? "tag" : el.id,
+      key: el.id === 1 ? "tag" : el.field,
       width: 20,
     };
   });
