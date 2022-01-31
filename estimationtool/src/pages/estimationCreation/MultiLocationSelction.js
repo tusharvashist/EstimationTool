@@ -8,6 +8,7 @@ import FormControl from "@mui/material/FormControl";
 import { useSelector, useDispatch } from "react-redux";
 import masterServices from "../masterservices/master.service";
 import { setEstimationLocation } from "../../Redux/basicDetailRedux";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const MultiLocationSelection = (props) => {
   const basicDetailRedux = useSelector((state) => state.basicDetail);
@@ -64,6 +65,8 @@ const MultiLocationSelection = (props) => {
     } = event;
     setAvailable(value);
     dispatch(setEstimationLocation(value));
+    //
+    props.errorHandler();
   };
 
   return (
@@ -75,6 +78,7 @@ const MultiLocationSelection = (props) => {
           id="demo-multiple-checkbox"
           multiple
           value={available}
+          error={props.error }
           onChange={handleChange}
           input={<OutlinedInput label="Locations" />}
           renderValue={(selected) => selected.map((el) => el.name).join(", ")}
@@ -88,6 +92,7 @@ const MultiLocationSelection = (props) => {
             </MenuItem>
           ))}
         </Select>
+        {props.error && <FormHelperText>Please select Location</FormHelperText>} 
       </FormControl>
     </>
   );
