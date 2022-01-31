@@ -10,6 +10,7 @@ import CustomizedDialogs from "../../../shared/ui-view/dailog/dailog";
 import EstimationService from "../estimation.service";
 import Snackbar from "../../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
+import useLoader from "../../../shared/layout/hooks/useLoader";
 
 export const ExportEstimationPopup = (props) => {
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
@@ -19,6 +20,7 @@ export const ExportEstimationPopup = (props) => {
   const [resourceCount, setResourceCount] = useState(false);
   const [resourcePlanning, setResourcePlanning] = useState(false);
   const [resourceTimeline, setResourceTimeline] = useState(false);
+  const [loaderComponent, setLoader] = useLoader();
 
   const [isOpen, setOpen] = useState({});
 
@@ -52,9 +54,11 @@ export const ExportEstimationPopup = (props) => {
         },
       ],
     };
-
+    setLoader(true);
     EstimationService.getAllExportData(payload)
       .then((res) => {
+    setLoader(false);
+
         props.closeExportEstimation();
         resetStatesForSelectedItem();
         if (res.status === 200) {
@@ -68,6 +72,7 @@ export const ExportEstimationPopup = (props) => {
             }
           );
         }
+        handleClose();
       })
       .catch((err) => {
         setOpen({
@@ -106,6 +111,9 @@ export const ExportEstimationPopup = (props) => {
         buttonType="submit"
       >
         <form>
+        {loaderComponent ? (
+          loaderComponent
+        ) : (
           <FormControl component="fieldset" className="form-export">
             <FormLabel component="legend">
               Please select from below options to export:
@@ -140,6 +148,8 @@ export const ExportEstimationPopup = (props) => {
               />
             </FormGroup>
           </FormControl>
+        )
+              }
         </form>
       </CustomizedDialogs>
       {open && (
