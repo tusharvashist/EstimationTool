@@ -281,14 +281,14 @@ async function getEstimationRequirementData(conditions) {
   estTagColumns = requirementData.tagSummaryHeader.map((el) => {
     return {
       name: el.headerName === "" ? "Tag" : el.headerName,
-      key: el.id === 1 ? "tag" : el.id,
+      key: el.id === 1 ? "tag" : el.field,
       width: 20,
     };
   });
   estTagRowData = requirementData.tagSummaryData.map((el) => {
     let rowDataArr = [];
     estTagColumns.map((item) => {
-      return rowDataArr.push(el[item.key]);
+      rowDataArr.push(el[item.key]);
     });
     return rowDataArr;
   });
