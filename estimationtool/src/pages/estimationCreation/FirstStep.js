@@ -64,6 +64,7 @@ const FirstStep = forwardRef((props, ref) => {
 
   const [loaderComponent, setLoader] = useLoader();
   const [isOpen, setOpen] = React.useState({});
+  const [isLocationInvalid, setLocationInvalid] = useState(false);
 
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
@@ -92,7 +93,15 @@ const FirstStep = forwardRef((props, ref) => {
     setContingencyInvalid(
       !validateContingency(basicDetailRedux.estimationContingency)
     );
+    //
+    handleLocationErrorOnChange();
   };
+
+  const handleLocationErrorOnChange = () => {
+
+    setLocationInvalid(basicDetailRedux.estimationLocations.length <= 0);
+
+  }
 
   // get estimation basic info
   const getEstimationBasicInfo = () => {
@@ -303,7 +312,7 @@ const FirstStep = forwardRef((props, ref) => {
               />
             </Grid>
             <Grid item xs={4} style={{ margin: "8px 0px" }}>
-              <MultiLocationSelection estheaderid={props.estimationHeaderId} />
+              <MultiLocationSelection estheaderid={props.estimationHeaderId} error={isLocationInvalid} errorHandler={handleLocationErrorOnChange}/>
             </Grid>
           </Grid>
 
