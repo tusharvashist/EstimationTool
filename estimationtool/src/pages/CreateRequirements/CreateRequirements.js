@@ -1,17 +1,13 @@
 import React, { useState ,useEffect} from "react";
-import { Button, Grid, ListItem,Container } from "@material-ui/core";
-import { useLocation } from "react-router-dom";
+import { Button, Grid,Container } from "@material-ui/core";
+import { useLocation ,Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
-import DeleteForever from "@material-ui/icons/DeleteForever";
-import MaterialTable from "material-table";
 import AddRequirements from "../estimation-detail/add-requirements-popup";
 import { ClientProjectHeader } from "../estimation-detail/header-element";
-import { RequirementTable, RequirementTableWithFilter} from "./RequirementTable"
+import { RequirementTable} from "./RequirementTable"
 import  RequirementService from "./requirement.service"
 import Deletedailog from "./delete-dailog"
-
-import { Link } from "react-router-dom";
 import { BiImport } from "react-icons/bi";
 
 const CreateRequirements = () => {
@@ -29,35 +25,24 @@ const CreateRequirements = () => {
     const [isDeleteDailog, setDeleteDailog] = useState(false);
   useEffect(() => {
     console.log("Create  useEffect ");
-    getRequirementWithQuery(() => {
-     
-    });
+    getRequirementWithQuery();
     getTagsType();
   },[]);
 
 
-   function getRequirementWithQuery(callBack) {
+   function getRequirementWithQuery() {
     RequirementService.getRequirementWithQuery(projectsInfo._id)
       .then((res) => {
         setRequirementHeaderData([...res.data.body.featureList]);
         setShowDeleteAllRequirement(res.data.body.showDeleteAllRequirement);
-        callBack();
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
-        callBack();
       });
   }
   
 
  const openEditRequirement = (event, rowData) => {
-  // console.log(rowData);
-  //  var type = {
-  //    "_id": "",//rowData.Typeid,
-  //    "name" : "",// rowData.Type
-  //  }
-  //  var data = rowData;
-  //  data.Type = type;
     setEditData([rowData]);
     openFun();
   };
@@ -101,7 +86,7 @@ const CreateRequirements = () => {
     RequirementService.allRequirementDelete(projectsInfo._id)
       .then((res) => {
         console.log("get EstimationService by id error");
-         getRequirementWithQuery(() => {});
+         getRequirementWithQuery();
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -111,7 +96,7 @@ const CreateRequirements = () => {
    RequirementService.deleteSelectedRecords(projectsInfo._id,selectedRecords)
       .then((res) => {
         console.log("get EstimationService by id error");
-         getRequirementWithQuery(() => {});
+         getRequirementWithQuery();
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
@@ -132,19 +117,16 @@ const CreateRequirements = () => {
 
   const saveAddRequirementsFun = () => {
     closeAddFun();
-     getRequirementWithQuery(() => { });
+     getRequirementWithQuery();
   };
 
   const updateAddRequirementsFun = () => {
     closeFun();
-     getRequirementWithQuery(() => { });
+     getRequirementWithQuery();
   };
-  
-  var selectedRequirementsRows = [];
   
   const handleCheckBoxClicked = (rows) => {
     console.log("rows:-- ", rows);
-    selectedRequirementsRows = rows;
   };
 
   return (
