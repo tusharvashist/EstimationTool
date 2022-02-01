@@ -1,7 +1,6 @@
 const { number } = require("joi");
 const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
-//const uniqueValidator = require('mongoose-unique-validator')
 
 const estimationHeaderSchema = new mongoose.Schema(
   {
@@ -70,6 +69,6 @@ const estimationHeaderSchema = new mongoose.Schema(
     },
   }
 );
-//estimationHeaderSchema.plugin(uniqueValidator)
+
 estimationHeaderSchema.index({ updatedAt: "-1" });
 module.exports = mongoose.model("EstHeader", estimationHeaderSchema);

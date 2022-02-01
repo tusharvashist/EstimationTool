@@ -1,10 +1,10 @@
-module.exports.formatMongoData = (data)=>{
-    if(Array.isArray(data)){
-        let newDataList = [];
-        for(value of data){
-            newDataList.push(value.toObject())
-        }
-        return newDataList;
+module.exports.formatMongoData = (data) => {
+  if (Array.isArray(data)) {
+    let newDataList = [];
+    for (let value of data) {
+      newDataList.push(value.toObject());
     }
-    return data;
-}
+    return newDataList;
+  }
+  return data;
+};

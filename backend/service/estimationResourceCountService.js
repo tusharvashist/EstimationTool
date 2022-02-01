@@ -2,14 +2,10 @@ const constant = require("../constant");
 const mongoose = require("mongoose");
 const { formatMongoData } = require("../helper/dbhelper");
 const ResourceCountRepository = require("../repository/estResourceCountRepository");
-const EstHeaderRequirement = require("../database/models/estHeaderRequirement");
-const EstRequirementData = require("../database/models/estRequirementData");
 const EstimationHeader = require("../database/models/estHeaderModel");
 const RequirementRepository = require("../repository/requirementRepository");
 const EstResourceCount = require("../database/models/estResourceCount");
 const { ObjectId } = require("mongodb");
-const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
-const EstimationAttr = require("../database/models/estimationAttributesModel");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const { string } = require("joi");
 
@@ -37,14 +33,14 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         );
 
       if (element.estAttributeId != undefined && checkattrexists.length == 0) {
-        let resultdelete = await EstResourceCount.deleteOne({
+        await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
         });
       }
 
       if (element.estCalcId != undefined && checkcalcexists.length == 0) {
-        let resultdelete = await EstResourceCount.deleteOne({
+        await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
         });
@@ -53,7 +49,6 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
 
     let estimation = await EstimationHeader.findById(estheaderid);
 
-    //console.log(estimation);
     var bulk = EstResourceCount.collection.initializeUnorderedBulkOp();
     estHeaderRequirement.EstimationAttributes.forEach(async (element) => {
       if (element.Total == 0) {
@@ -64,7 +59,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         (global.ResourceWeekHours * estimation.estTentativeTimeline)
       ).toFixed(2);
 
-      let result = bulk
+      bulk
         .find({
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element._id,
@@ -80,7 +75,6 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           { upsert: false, new: false }
         );
     });
-    //console.log(bulk);
 
     estHeaderRequirement.EstimationCalcAttributes.forEach(async (element) => {
       if (element.Total == 0) {
@@ -91,7 +85,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
         (global.ResourceWeekHours * estimation.estTentativeTimeline)
       ).toFixed(2);
 
-      let result = bulk
+      bulk
         .find({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element._id,
@@ -107,13 +101,10 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           { upsert: false, new: false }
         );
     });
-    //console.log(bulk);
-
-    await bulk.execute();
+    if (bulk.length > 0) await bulk.execute();
 
     return estHeaderRequirement;
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
 };
@@ -158,10 +149,6 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
       },
     },
   ]);
-
-  // let result = await EstResourceCount.find({
-  //   estHeaderId: mongoose.Types.ObjectId(estheaderid),
-  // }).populate("techSkill");
 
   let data = await ResourceCountRepository.getResourceMixData(estheaderid);
 
@@ -225,7 +212,7 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
     let result = await rescount.save();
     if (teckSkill != updatedInfo.techSkill && result) {
       //Remove All Resource Allocation from this Resource Count Record
-      let deleted = await EstResourcePlanning.deleteMany({
+      await EstResourcePlanning.deleteMany({
         $and: [filter],
       });
     }
@@ -333,14 +320,14 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
   async function SetResourceDefaultAdjusted(filter, defaultAdjusted) {
     if (defaultAdjusted) {
       //Set False
-      let updatefalse = await EstResourcePlanning.updateMany(
+      await EstResourcePlanning.updateMany(
         {
           $and: [filter],
         },
         { $set: { defaultAdjusted: false } }
       );
       //Set True
-      let updatetrue = await EstResourcePlanning.updateMany(
+      await EstResourcePlanning.updateMany(
         {
           $and: [
             filter,
@@ -357,7 +344,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
   }
 };
 
-calculateResourceCount = async ({ estimation, total }) => {
+const calculateResourceCount = async ({ estimation, total }) => {
   return (
     total /
     (global.ResourceWeekHours * estimation.estTentativeTimeline)
