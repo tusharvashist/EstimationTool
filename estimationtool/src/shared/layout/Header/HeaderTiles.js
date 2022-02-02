@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import classes from "./HeaderTile.module.css";
 import { MdPeopleOutline, MdQueryStats } from "react-icons/md";
 import {
-  IoPeopleCircleOutline,
   IoBusinessOutline,
   IoTodayOutline,
   IoCalculatorOutline,
@@ -12,7 +11,6 @@ import { VscNote, VscTypeHierarchy } from "react-icons/vsc";
 import { BsMenuAppFill, BsStopwatch, BsCalendar3 } from "react-icons/bs";
 import TextureOutlinedIcon from "@mui/icons-material/TextureOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
-import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 
 const HeaderTiles = (props) => {
   const icon = (word) => {
@@ -26,40 +24,28 @@ const HeaderTiles = (props) => {
     switch (word) {
       case "client":
         return <MdPeopleOutline />;
-        break;
       case "link":
         return <InsertLinkOutlinedIcon />;
-        break;
       case "project":
         return <BsMenuAppFill />;
-        break;
       case "business":
         return <IoBusinessOutline />;
-        break;
       case "estimation":
         return <VscNote />;
-        break;
       case "estimationType":
         return <VscTypeHierarchy />;
-        break;
       case "effortUnitHour":
         return <BsStopwatch />;
-        break;
       case "effortUnitDay":
         return <IoTodayOutline />;
-        break;
       case "effortUnitMonth":
         return <BsCalendar3 />;
-        break;
       case "cost":
         return <IoCalculatorOutline />;
-        break;
       case "contingency":
         return <MdQueryStats />;
-        break;
       case "timeline":
         return <RiTimeLine />;
-        break;
       default:
         return <TextureOutlinedIcon />;
     }

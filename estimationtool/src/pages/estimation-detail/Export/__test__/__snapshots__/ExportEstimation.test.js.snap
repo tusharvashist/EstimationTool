@@ -50,7 +50,15 @@ exports[`snapshot testing genrate snapshot of Export estimation 1`] = `
         }
       }
     >
-      <ExportEstimationPopup />
+      <ExportEstimationPopup
+        cancelTitle="Cancel"
+        closeExportEstimation={[Function]}
+        exportFun={[Function]}
+        oktitle="Generate"
+        openExport={true}
+        openExportEstimation={[Function]}
+        title="Export Estimation"
+      />
     </PersistGate>
   </Provider>
 </Router>

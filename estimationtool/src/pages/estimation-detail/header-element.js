@@ -1,7 +1,6 @@
-import { Box, Grid } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
+import { Grid } from "@material-ui/core";
+import React from "react";
 import Header from "../../shared/layout/Header/Header";
-import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 
 export const EstimationHeader = (props) => {
   return (

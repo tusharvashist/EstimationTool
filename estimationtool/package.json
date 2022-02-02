@@ -24,6 +24,8 @@
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.1",
+    "dotenv": "^15.0.0",
+    "env-cmd": "^10.1.0",
     "js-file-download": "^0.4.12",
     "material-table": "^1.69.3",
     "react": "^17.0.2",

@@ -196,7 +196,7 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
 }
 
 function getResourcePlanningColumns() {
-  var resPlanningHeaderAttr = [
+  return [
     { header: "S No.", key: "s_no", width: 5 },
     { header: "Allocation%", key: "allocation", width: 13 },
     { header: "Role", key: "role", width: 12 },
@@ -206,7 +206,6 @@ function getResourcePlanningColumns() {
     { header: "Total Cost($)", key: "cost_cal", width: 12 },
     { header: "Total Price($)", key: "price_cal", width: 12 },
   ];
-  return resPlanningHeaderAttr;
 }
 
 async function getResourcePlanningRowData(estinationHeaderId) {

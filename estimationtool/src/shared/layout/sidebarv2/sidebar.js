@@ -13,7 +13,7 @@ const Sidebarv2 = (props) => {
   const dashboardClick = () => {
     const listitem = document.getElementsByClassName("listitem");
     const listArr = Array.from(listitem);
-    listArr.map((el) => el.classList.remove("active"));
+    listArr.forEach((el) => el.classList.remove("active"));
 
     const dashboradbutton = document.getElementById("dashboard");
     dashboradbutton.classList.add("active");
@@ -24,7 +24,7 @@ const Sidebarv2 = (props) => {
   const clientClick = () => {
     const listitem = document.getElementsByClassName("listitem");
     const listArr = Array.from(listitem);
-    listArr.map((el) => el.classList.remove("active"));
+    listArr.forEach((el) => el.classList.remove("active"));
 
     const dashboradbutton = document.getElementById("allclients");
     dashboradbutton.classList.add("active");
