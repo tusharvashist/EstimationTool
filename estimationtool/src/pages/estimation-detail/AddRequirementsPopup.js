@@ -8,10 +8,11 @@ import {
   MenuItem,
   Select,
 } from "@material-ui/core";
+import EstimationService from "./EstimationService";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
-const AddRequirements = (props) => {
+const AddRequirementsPopup = (props) => {
   const [showError, setShowError] = React.useState(false);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [selectedRequirementTag, setSelectedRequirementTag] = useState({});
@@ -19,9 +20,12 @@ const AddRequirements = (props) => {
   const [selectedRequirementType, setSelectedRequirementType] = useState({});
   const [requirementTitle, setrequirementTitle] = useState("");
   const [requirementDescription, setrequirementDescription] = useState("");
+
   const [query, setQuery] = useState("");
   const [assumption, setAssumption] = useState("");
   const [reply, setReply] = useState("");
+  
+
   const [editData, setEditData] = useState([]);
   const [id, setId] = useState("");
   const [formData, setFormData] = React.useState({
@@ -38,7 +42,7 @@ const AddRequirements = (props) => {
   const [isOpen, setOpen] = React.useState({});
 
   useEffect(() => {
-    setFormatData();
+    setFormdata();
   }, [
     requirementTitle,
     requirementDescription,
@@ -52,34 +56,67 @@ const AddRequirements = (props) => {
   const onSubmitForm = (e) => {
     if (
       requirementTitle &&
-      requirementDescription
+      requirementDescription &&
+      selectedRequirementType.name &&
+      selectedRequirementTag.name
     ) {
-      setShowError(false);
-      callAPI();
+
+      if (selectedRequirementType.name.length && selectedRequirementTag.name.length) {
+        setShowError(false);
+        callAPI();
+      } else {
+        
+        setShowError(true);
+      }
+      
     } else {
       setShowError(true);
     }
   };
 
   const callAPI = () => {
-    setFormatData();
-    props.saveFun(editData[0].id , formData);
+    setFormdata();
+    if (props.editData) {
+      EstimationService.updateRequirement(id, formData)
+        .then((res) => {
+          props.saveFun();
+        })
+        .catch((err) => {
+          setOpen({
+            open: true,
+            severity: "error",
+            message: err.response.data.message,
+          });
+        });
+    } else {
+      EstimationService.createRequirement(formData)
+        .then((res) => {
+          props.saveFun();
+        })
+        .catch((error) => {
+          setOpen({
+            open: true,
+            severity: "error",
+            message: error.response.data.message,
+          });
+        });
+    }
   };
 
-  const setFormatData = () => {
-      setFormData({
-        Requirement: requirementTitle,
-        description: requirementDescription,
-        tag: selectedRequirementTag.name,
-        type: selectedRequirementType.name,
-        mitigation: "mitigation",
-        project: props.project,
-        estHeader: props.estHeader,
-        isDeleted: false,
-        query: query,
-        assumption: assumption,
-        reply: reply,
-      });
+  const setFormdata = () => {
+    setFormData({
+      title: requirementTitle,
+      description: requirementDescription,
+      tag: selectedRequirementTag._id,
+      type: selectedRequirementType._id,
+      mitigation: "mitigation",
+      project: props.project,
+      estHeader: props.estHeader,
+      isDeleted: false,
+      query: query,
+      assumption: assumption,
+      reply: reply,
+    });
   };
 
   const handelRequirement = (event) => {
@@ -113,8 +150,6 @@ const AddRequirements = (props) => {
     setSelectedRequirementType(selectedValueObj);
   };
 
-  const newLocal = [props.requirementTagArray, props.requirementTypeArray];
-
   useEffect(() => {
     setRequirementTagArray([...props.requirementTagArray]);
     setRequirementTypeArray([...props.requirementTypeArray]);
@@ -126,32 +161,35 @@ const AddRequirements = (props) => {
       setQuery(props.editData[0].Query);
       setAssumption(props.editData[0].Assumption);
       setReply(props.editData[0].Reply);
-      if (props.editData[0].TagId !== undefined) {
-          setSelectedRequirementTag({
-        _id: props.editData[0].TagId,
-        name: props.editData[0].Tag,
-      });
+
+      if (props.editData[0].Tagid !== undefined) {
+        setSelectedRequirementTag({
+          _id: props.editData[0].Tagid,
+          name: props.editData[0].Tag,
+        });
       } else {
-          setSelectedRequirementTag({
-        _id: 0,
-        name: "",
-      });
+        setSelectedRequirementTag({
+          _id: 0,
+          name: "",
+        });
       }
-      if (props.editData[0].Type !== undefined) {
-      
-           setSelectedRequirementType({
-        _id: props.editData[0].TypeId,
-        name: props.editData[0].Type,
-      });
+
+      if (props.editData[0].Type !== undefined  && props.editData[0].Type !== null) {
+
+        setSelectedRequirementType({
+          _id: props.editData[0].Type._id,
+          name: props.editData[0].Type.name,
+        });
       } else {
         
         setSelectedRequirementType({
-        _id: 0,
-        name: "",
-      });
+          _id: 0,
+          name: "",
+        });
       }
-      setId(props.editData[0].requirementId);
-      setFormatData();
+        
+        setId(props.editData[0].requirementId);
+      setFormdata();
     }
   }, [
     props.requirementTagArray,
@@ -180,12 +218,11 @@ const AddRequirements = (props) => {
           <FormControl fullWidth>
             <InputLabel id="requirement-group">Tag</InputLabel>
             <Select
-             // required
-             // error={showError && !selectedRequirementTag.name}
+              required
+              error={showError && !selectedRequirementTag.name}
               labelId="requirement-tag"
               id="requirement-tag"
               value={selectedRequirementTag._id}
-              // defaultValue={props.editData[0].Tag}
               onChange={(e) => {
                 handleRequirementTagChange(e);
               }}
@@ -202,8 +239,8 @@ const AddRequirements = (props) => {
           <FormControl fullWidth>
             <InputLabel id="requirement-type">Type</InputLabel>
             <Select
-             // required
-             // error={showError && !selectedRequirementType.name}
+              required
+              error={showError && !selectedRequirementType.name}
               labelId="requirement-type"
               id="requirement-type"
               value={selectedRequirementType._id}
@@ -249,7 +286,7 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !query} //To be chnaged for Query
+           
             id="standard-basic"
             label="Query"
             className="full-width"
@@ -262,7 +299,7 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !assumption} //To be chnaged for Assumption
+          
             id="standard-basic"
             label="Assumption"
             className="full-width"
@@ -275,7 +312,7 @@ const AddRequirements = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={showError && !reply} //To be chnaged for Reply
+           
             id="standard-basic"
             label="Reply"
             className="full-width"
@@ -300,4 +337,4 @@ const AddRequirements = (props) => {
   );
 };
 
-export default AddRequirements;
+export default AddRequirementsPopup;

@@ -1,16 +1,16 @@
-import { Button, Container } from "@material-ui/core";
-import { Box, Grid } from "@material-ui/core";
+import { Button, Container ,Box, Grid } from "@material-ui/core";
+
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { EditOutlined, Add } from "@material-ui/icons";
 import "./estimation-detail.css";
 import { useLocation, Link, useHistory } from "react-router-dom";
-import EstimationService from "./estimation.service";
-import AddRequirements from "./add-requirements-popup";
+import EstimationService from "./EstimationService";
+import AddRequirements from "./AddRequirementsPopup";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { EstimationHeader, ClientProjectHeader } from "./header-element";
 import ResourceCountMatrix from "../ResourceCount/ResourceCount";
-import RequirementService from "../CreateRequirements/requirement.service";
+import RequirementService from "../CreateRequirements/RequirementService";
 import { setResourceMixData } from "../../Redux/resourcemixRedux";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
@@ -28,11 +28,11 @@ import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 import { IoWarningOutline } from "react-icons/io5";
-import { MdOutlineDocumentScanner } from "react-icons/md";
-import { MdOutlineTimeline } from "react-icons/md";
-import { BiExport } from "react-icons/bi";
+import { MdOutlineDocumentScanner, MdOutlineTimeline } from "react-icons/md";
+
+import { BiExport ,BiImport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
-import { BiImport } from "react-icons/bi";
+
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 
@@ -138,18 +138,9 @@ const EstimationDetail = () => {
   };
 
   const openAddAvailableRequirement = () => {
-    // if (requirementHeaderData.length !== 0) {
-
-    // openAddAvailableRequirementFun();
-    // } else {
     getRequirementWithQuery(() => {
       openAddAvailableRequirementFun();
     });
-    // }
-  };
-
-  const closeAddAvailableRequirement = () => {
-    closeAddAvailableRequirementFun();
   };
 
   const openAddAvailableRequirementFun = () => {
@@ -175,9 +166,8 @@ const EstimationDetail = () => {
 
   const getById = () => {
     getBasicDetailById(() => {
-      getRequirementDataById(() => {
-        getRequirementWithQuery(() => {});
-      });
+      getRequirementDataById();
+      getRequirementWithQuery(() => {});
     });
   };
 
@@ -193,7 +183,6 @@ const EstimationDetail = () => {
         })
         .catch((err) => {
           console.log("get EstimationService by id error", err);
-          //callBack();
         });
     } else {
       callBack();
@@ -261,7 +250,7 @@ const EstimationDetail = () => {
     []
   );
 
-  const getRequirementDataById = (callback) => {
+  const getRequirementDataById = () => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
@@ -291,16 +280,12 @@ const EstimationDetail = () => {
           {
             headerName: "Req. Id",
             field: "req_id",
-            //id: 1,
-            //editable: false,
             flex: 1,
             minWidth: 80,
           },
           {
             headerName: "Requirement",
             field: "Requirement",
-            //id: 1,
-            //editable: false,
             flex: 1,
             minWidth: 170,
           },
@@ -308,16 +293,12 @@ const EstimationDetail = () => {
             headerName: "Tag",
             field: "Tag",
             flex: 1,
-            //editable: false,
-            // id: 2,
             minWidth: 170,
           },
           {
             headerName: "Description",
             field: "Description",
             flex: 1,
-            //editable: false,
-            //id: 3,
             minWidth: 170,
           },
         ];
@@ -334,11 +315,9 @@ const EstimationDetail = () => {
         setIsRequirementValid(dataResponse.isReqValid);
 
         setLoader(false);
-        callback();
       })
       .catch((err) => {
         console.log("get EstimationService by id error", err);
-        callback();
       });
   };
 
@@ -354,12 +333,12 @@ const EstimationDetail = () => {
     EstimationService.updateManualCallAttribute(id, body)
       .then((res) => {
         setLoader(false);
-        getRequirementDataById(() => {});
+        getRequirementDataById();
       })
       .catch((err) => {
         setLoader(false);
         console.log("get deleteRequirement by id error", err);
-        getRequirementDataById(() => {});
+        getRequirementDataById();
       });
   };
   function roundToTwo(value) {
@@ -386,12 +365,12 @@ const EstimationDetail = () => {
         .then((res) => {
           setLoader(false);
 
-          getRequirementDataById(() => {});
+          getRequirementDataById();
         })
-        .catch((err) => {
+        .catch((error) => {
           setLoader(false);
-          console.log("get deleteRequirement by id error", err);
-          getRequirementDataById(() => {});
+          console.log("get deleteRequirement by id error", error);
+          getRequirementDataById();
         });
     } else {
       setLoader(false);
@@ -399,7 +378,6 @@ const EstimationDetail = () => {
   };
 
   const deleteRow = async (row) => {
-    // resolve();
     setIsOpenDailog(false);
     setLoader(true);
     EstimationService.deleteRequirement(row.id)
@@ -428,12 +406,12 @@ const EstimationDetail = () => {
       )
         .then((res) => {
           setLoader(false);
-          getRequirementDataById(() => {});
+          getRequirementDataById();
         })
-        .catch((err) => {
+        .catch((catchError) => {
           setLoader(false);
-          console.log("get deleteRequirement by id error", err);
-          getRequirementDataById(() => {});
+          console.log("get deleteRequirement by id error", catchError);
+          getRequirementDataById();
         });
     } else {
       setLoader(false);
@@ -483,7 +461,6 @@ const EstimationDetail = () => {
   const releaseEstimation = (id) => {
     EstimationService.estimationPublish(id)
       .then((res) => {
-        // console.log("Estimation Publish", res.data);
         setOpen({
           open: true,
           severity: "success",
@@ -491,7 +468,6 @@ const EstimationDetail = () => {
         });
       })
       .catch((err) => {
-        // console.log(" Error Estimation Publish", err);
         setOpen({
           open: true,
           severity: "error",
@@ -813,24 +789,6 @@ const EstimationDetail = () => {
       </BorderedContainer>
       <Grid container justifyContent="flex-end" alignItems="center">
         <Grid item style={{ marginRight: "10px" }}>
-          {/* <Link
-            disabled
-            to={{
-              pathname:
-                "/All-Clients/" +
-                clientDetails.clientName +
-                "/" +
-                projectDetails.projectName +
-                "/Estimation-Detail" +
-                "/ResourceMix",
-              state: {
-                clientInfo: clientDetails,
-                projectInfo: projectDetails,
-                estimationHeaderId: estimationId,
-                headerData: headerData,
-              },
-            }}
-          > */}
           <div class="tooltip">
             {estimation_generate_resourcemix && (
               <Button
@@ -870,7 +828,6 @@ const EstimationDetail = () => {
               ""
             )}
           </div>
-          {/* </Link> */}
         </Grid>
         <Grid item style={{ marginRight: "10px" }}>
           <div class="tooltip">
@@ -920,7 +877,6 @@ const EstimationDetail = () => {
               releaseEstimation(estimationId);
             }}
           >
-            {/* <MdOutlineTimeline style={{ fontSize: "18px" }} /> */}
             &nbsp;Estimation Release
           </Button>
         </Grid>

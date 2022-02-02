@@ -8,10 +8,10 @@ import {
 } from "@material-ui/core";
 import { useLocation, useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import AddRequirements from "./add-requirements-popup";
+import AddRequirements from "./AddRequirementsPopup";
 import {ClientProjectHeader,EstimationHeader} from "../estimation-detail/header-element";
 import { RequirementTable} from "./RequirementTable";
-import RequirementService from "./requirement.service";
+import RequirementService from "./ImportExcelRequirementsService";
 import Deletedailog from "./delete-dailog";
 import { MdOpenInBrowser, MdDone } from "react-icons/md";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
@@ -107,13 +107,8 @@ const ImportExcelRequirements = () => {
     setOpenAddRequirementsBox(true);
   };
 
-  const closeAddFun = () => {
-    setOpenAddRequirementsBox(false);
-  };
 
-  const saveAddRequirementsFun = () => {
-    closeAddFun();
-  };
+
 
   const updateAddRequirementsFun = (index, editedData) => {
     var updatedRequirementData = requirementHeaderData;
