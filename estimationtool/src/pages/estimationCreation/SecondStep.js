@@ -24,12 +24,13 @@ const SecondStep = (props) => {
 
   const saveAttribute = useSelector((state) => state.effortAttribute);
   const dispatch = useDispatch();
+
   const [checkboxValues, setCheckboxValues] = useState(null);
   const [attributes, setAttributes] = useState(saveAttribute.data || []);
+
   const [setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
   const [loaderComponent, setLoader] = useLoader();
-
   const getAttribute = () => {
     setLoader(true);
     SecondStepServ.getAllAttribute(
@@ -40,15 +41,15 @@ const SecondStep = (props) => {
         setLoader(false);
 
         let dataResponse = res.data.body;
-        let checkboxValue = {};
+        let checkboxValues = {};
         setAttributes(
           dataResponse.map((ob) => {
-            checkboxValue[ob.attributeName] = ob.selected;
+            checkboxValues[ob.attributeName] = ob.selected;
             return { ...ob, name: ob.attributeName, label: ob.attributeName };
           })
         );
 
-        setCheckboxValues(checkboxValue);
+        setCheckboxValues(checkboxValues);
         const newData = dataResponse
           .filter((ob) => ob.selected)
           .map((ob) => ({
@@ -81,7 +82,6 @@ const SecondStep = (props) => {
 
     SecondStepServ.createAttribute(Data)
       .then((res) => {
-        // console.log("response", res);
         setLoader(false);
 
         setOpen({ open: true, severity: "success", message: res.data.message });
@@ -89,10 +89,6 @@ const SecondStep = (props) => {
         closeDialog();
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         setOpen({
           open: true,
           severity: "error",
@@ -104,8 +100,8 @@ const SecondStep = (props) => {
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const updatedValues = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
-        return { ...obj, selected: checked };
-        
+        const newobj = { ...obj, selected: checked };
+        return newobj;
       } else {
         return obj;
       }
