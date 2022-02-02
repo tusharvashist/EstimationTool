@@ -17,26 +17,19 @@ import CreateProjectDailog from "./create-project.dailog";
 import UpdateProjectDailog from "./update-project.dailog";
 import DeleteProjectDailog from "./delete-project.dailog";
 import AddIcon from "@material-ui/icons/Add";
-import { useHistory } from "react-router-dom";
-// import Link from "@material-ui/core/Link";
-import { useParams, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "./project.css";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import topNav from "../../shared/layout/topnav/topnav";
-import { getMMDDYYYYFormat } from "../../common/dateTools";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 
 function Projects(props) {
   const roleState = useSelector((state) => state.role);
-  let history = useHistory();
 
   const clientid = props.data;
-  const [tableData, setTableData] = useState([]);
-  const [clientDeatils, setClientDeatils] = useState({});
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const [createProjectDailog, setCreateProjectDailog] = useState(false);
   const [editProjectDailog, setEditProjectDailog] = useState(false);
@@ -45,47 +38,58 @@ function Projects(props) {
   const [actionId, setActionId] = useState("");
 
   const [deleteRecordName, setDeleteRecordName] = useState("");
-  const [projectStatus, setProjectStatus] = useState([
+  const [projectStatus] = useState([
     { title: "All", value: "All" },
     { title: "Active", value: false },
     { title: "In-Active", value: true },
   ]);
   const [isOpen, setOpen] = React.useState({});
-
   const [projectByClient, setProjectByClient] = useState(props.listData);
   const [secondProjectByClient, setSecondProjectByClient] = useState();
   const [allProjectByClient, setAllProjectByClient] = useState();
   const [loaderComponent, setLoader] = useLoader();
-  const {projectView, projectCreate, projectUpdate, projectListing, projectDelete} = usePermission();
+  const {
+    projectView,
+    projectCreate,
+    projectUpdate,
+    projectListing,
+    projectDelete,
+  } = usePermission();
 
   const [reload, setReload] = useState(false);
 
   useEffect(() => {
-    // getClientById();
     getAllProjects(clientid);
   }, [clientid, reload]);
+
+  // Get Project Name
+  const getProjectName = (rowData) => {
+    if (projectView) {
+      if (rowData.isDeleted) {
+        return rowData.projectName;
+      } else {
+      return  (<Link
+          to={{
+            pathname:
+              "/All-Clients/" + props.clientName + "/" + rowData.projectName,
+            state: { projectId: rowData._id },
+          }}
+        >
+          {" "}
+          {rowData.projectName}
+        </Link>)
+      }
+    } else {
+      return rowData.projectName;
+    }
+  };
 
   const columns = [
     {
       title: "Project Name",
       field: "projectName",
       render: (rowData) => {
-        return projectView ? rowData.isDeleted ? (
-          <>{rowData.projectName} </>
-        ) : (
-          <Link
-            to={{
-              pathname:
-                "/All-Clients/" + props.clientName + "/" + rowData.projectName,
-              state: { projectId: rowData._id },
-            }}
-          >
-            {" "}
-            {rowData.projectName}
-          </Link>
-        )
-        :
-      <>  {rowData.projectName}</>
+        return getProjectName(rowData);
       },
     },
     { title: "Project Description", field: "projectDescription" },
@@ -127,7 +131,9 @@ function Projects(props) {
       const dropdownEl = secondProjectByClient.filter(
         (el) => el.isDeleted == event.target.value
       );
+      if(dropdownEl) {
       setProjectByClient(dropdownEl);
+      }
     }
   };
 
@@ -156,38 +162,14 @@ function Projects(props) {
     setOpen({});
   };
 
-  // const getAllProject = () => {
-  //   ProjectSer.getAllProject()
-  //     .then((res) => {
-  //       let dataResponce = res.data.body;
-  //     })
-  //     .catch((err) => {
-  //       console.log("Project error", err);
-  //     });
-  // };
-
   //For Rowdata background color according to active state
   const rowBackgroundColor = {
     true: "#eef5e9",
     false: "#fff",
   };
 
-  // const getClientById = () => {
-  //   setLoader(true);
-  //   ProjectSer.getClientById(clientid)
-  //     .then((res) => {
-  //       setLoader(false);
-  //       let dataResponce = res.data.body.projects;
-  //       setTableData([...dataResponce]);
-  //       getAllProjects(clientid);
-  //     })
-  //     .catch((err) => {
-  //       console.log("Project error", err);
-  //     });
-  // };
 
-  const getAllProjects = () => {
-    // const clientId = location.pathname.split("/")[2];
+  const getAllProjects = (clientid) => {
     setLoader(true);
 
     ClientSer.getClientById(clientid)
@@ -195,52 +177,20 @@ function Projects(props) {
         setLoader(false);
 
         let dataResponce = res.data.body;
-        console.log("%%%%" + JSON.stringify(dataResponce));
         setLoader(false);
         setProjectByClient(dataResponce.projects);
-        //const filteredData = dataResponce.projects.filter((el) => el.client == clientid);
         const activeEl = dataResponce.projects.filter(
           (el) => el.isDeleted == false
         );
         setProjectByClient(activeEl);
         setSecondProjectByClient([...dataResponce.projects]);
         setAllProjectByClient([...dataResponce.projects]);
-        // setClientDetails({ ...dataResponce });
-        // setProjectData(dataResponce.projects);
       })
       .catch((err) => {
         console.log("get Client by id error", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
 
-  // const getAllProjects = (clientid) => {
-  //   setLoader(true);
-  //   ProjectSer.getAllProject()
-  //     .then((res) => {
-  //       let dataResponce = res.data.body;
-  //       setLoader(false);
-  //       const filteredData = dataResponce.filter((el) => el.client == clientid);
-  //       const activeEl = filteredData.filter((el) => el.isDeleted == false);
-  //       setProjectByClient(activeEl);
-  //       setSecondProjectByClient([...filteredData]);
-  //       setAllProjectByClient([...filteredData]);
-  //     })
-  //     .catch((err) => {
-  //       // if ((err.response.data = 401) || (err.response.data = 404)) {
-  //       //   let url = "/login";
-  //       //   history.push(url);
-  //       // }
-  //       setOpen({
-  //         open: true,
-  //         severity: "error",
-  //         message: err.response.data.message,
-  //       });
-  //     });
-  // };
 
   const createProject = (projectData) => {
     setLoader(true);
@@ -255,10 +205,6 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         setOpen({
           open: true,
           severity: "error",
@@ -281,10 +227,6 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         setOpen({
           open: true,
           severity: "error",
@@ -307,10 +249,6 @@ function Projects(props) {
         closeFun();
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         setOpen({
           open: true,
           severity: "error",
@@ -334,8 +272,35 @@ function Projects(props) {
     deleteProject();
   };
 
-  //console.log(projectByClient);
-
+  
+  const actions = [
+    (rowData) => 
+    ({
+      icon: "edit",
+      tooltip: "edit client",
+      onClick: (event, data) => {
+        setEditRow({ ...data });
+        setActionId(data.id);
+        openUpdateDailog();
+      },
+      
+      disabled: rowData.isDeleted,
+      hidden: !projectUpdate
+    })
+  ,
+    (rowData) => 
+    ({
+      icon: "delete",
+      tooltip: "delete client",
+      onClick: (event, data) => {
+        setEditRow({ ...data });
+        setActionId(data.id);
+        openDeleteDailog();
+      },
+      disabled: rowData.isDeleted,
+      hidden: !projectDelete
+    })  
+  ];
   const { message, severity, open } = isOpen || {};
 
   return (
@@ -411,7 +376,6 @@ function Projects(props) {
 
           <Grid item>
             {projectCreate && (
-              
               <Button variant="outlined" onClick={openCreateDailog}>
                 {" "}
                 <AddIcon />
@@ -422,67 +386,41 @@ function Projects(props) {
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        {projectListing ? (loaderComponent) ? (
-          loaderComponent
-        ) : (
-          <MaterialTable
-            columns={columns}
-            components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-            }}
-            actions={
-              !roleState.isContributor
-                ? [
-                    (rowData) => ({
-                      icon: "edit",
-                      tooltip: "Edit project",
-                      onClick: (event, rowData) => {
-                        setEditRow({ ...rowData });
-                        setActionId(rowData._id);
-                        openUpdateDailog();
-                      },
-                      disabled: rowData.isDeleted,
-                      hidden: !projectUpdate
-                    }),
-                    (rowData) => ({
-                      icon: "delete",
-                      tooltip: "Delete project",
-                      onClick: (event, rowData) => {
-                        setEditRow({ ...rowData });
-                        setActionId(rowData._id);
-                        setDeleteRecordName(rowData.projectName);
-                        openDeleteDailog();
-                      },
-                      disabled: rowData.isDeleted,
-                      hidden: !projectDelete
-                    }),
-                  ]
-                : false
-            }
-            options={{
-              actionsColumnIndex: -1,
-              sorting: true,
-              search: false,
-              filtering: false,
-              pageSize: 5,
-              paging: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-                color: "#113c91",
-              },
-              rowStyle: (rowData) => {
-                return {
-                  backgroundColor:
-                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
-                };
-              },
-            }}
-            data={projectByClient}
-            title={`Project${props.clients.length > 1 ? "s" : ""}`}
-          />
-        ) : ''}
+        {projectListing && (
+          loaderComponent ? (
+            loaderComponent
+          ) : (
+            <MaterialTable
+              columns={columns}
+              components={{
+                Container: (prop) => <Paper {...prop} elevation={0} />,
+              }}
+              actions={actions}
+              options={{
+                actionsColumnIndex: -1,
+                sorting: true,
+                search: false,
+                filtering: false,
+                pageSize: 5,
+                paging: false,
+                headerStyle: {
+                  backgroundColor: "#e5ebf7",
+                  fontWeight: "bold",
+                  fontSize: "0.9rem",
+                  color: "#113c91",
+                },
+                rowStyle: (rowData) => {
+                  return {
+                    backgroundColor:
+                      rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                  };
+                },
+              }}
+              data={projectByClient}
+              title={`Project${props.clients.length > 1 ? "s" : ""}`}
+            />
+          )
+        )}
       </BorderedContainer>
       {open && (
         <Snackbar

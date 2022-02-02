@@ -6,7 +6,6 @@ import {
   FormGroup,
   FormLabel,
   Grid,
-  InputLabel,
   TextField,
 } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
@@ -14,12 +13,9 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import "./step.css";
 import AddIcon from "@material-ui/icons/Add";
 import AddCalAttributeDialog from "./AddCalAttributeDialog";
-import EditCalAttributeDialog from "./EditCalAttributeDialog";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
-import { setEstimationTypeId } from "../../Redux/basicDetailRedux";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-
 import { useSelector, useDispatch } from "react-redux";
 import { setCalcAttributeData } from "../../Redux/CalcAttributeRedux";
 import useLoader from "../../shared/layout/hooks/useLoader";
@@ -27,34 +23,22 @@ import classes from "./thirdStepStyle.module.css";
 import { useHistory } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 
-const multiSelectFormatter = (list) => {
-  const newArr = list.flat();
-  if (!newArr.length) {
-    return [];
-  }
-  return newArr;
-};
+
 
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
-  const saveCalcAttribute = useSelector((state) => state.calcAttribute);
   const [loaderComponent, setLoader] = useLoader();
-  const history = useHistory();
   const dispatch = useDispatch();
   const [symbolsArr] = useState(["e", "E", "+", "-", "."]);
-
   const [openModal, setOpenModal] = useState(null);
   const [details, setDetails] = useState({});
-
   const [attributes, setAttributes] = useState([]);
-
   const [isOpen, setOpen] = React.useState({});
   const [calAttriValues, setcalAttriValues] = useState(null);
-  const [allCalcValues, setAllCalcValues] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [multiselectOptions, setmultiselectOptions] = useState([]);
-  const [tagData, setTagData] = useState([]);
-  const [multiSelectData, setmultiSelectData] = useState([]);
+
+
   useEffect(() => {
     getCalcAttribute();
     passHeaderId();
@@ -109,10 +93,10 @@ const ThirdStep = (props) => {
 
         let dataResponse = res.data.body;
 
-        let calAttriValues = {};
+        let calAttriValue = {};
         setAttributes(
           dataResponse.map((ob) => {
-            calAttriValues[ob.calcAttributeName] = ob.selected;
+            calAttriValue[ob.calcAttributeName] = ob.selected;
             return {
               ...ob,
               formulaTags: ob.formulaTags || [],
@@ -122,7 +106,7 @@ const ThirdStep = (props) => {
           })
         );
 
-        setcalAttriValues(calAttriValues);
+        setcalAttriValues(calAttriValue);
         updateStore(dataResponse);
       })
       .catch((err) => {
@@ -209,29 +193,14 @@ const ThirdStep = (props) => {
     }
 
     let filterArray = [];
-    let arry = data.formulaTags.map((item) => {
+   data.formulaTags.map((item) => {
       let ob = {
         _id: item.id || item._id,
         name: item.name,
       };
       filterArray.push(ob);
     });
-    // let finalArr = [];
 
-    // if (filterArray.length) {
-    //   const [firstEle] = filterArray;
-    //   if (typeof firstEle === 'string') {
-    //     let arry = multiselectOptions.forEach((ele) => {
-    //       if (data.formulaTags.includes(ele.id)) {
-    //         finalArr.push(ele)
-    //       }
-    //     })
-    //   } else {
-    //     finalArr = [...filterArray];
-    //   }
-    // } else {
-    //   finalArr = [...filterArray];
-    // }
 
     // settting data on the same state where we store all data
     const newData = attributes.map((att) => {
@@ -271,8 +240,8 @@ const ThirdStep = (props) => {
       );
       const newData = attributes.map((obj) => {
         if (obj._id === data._id) {
-          const newobj = { ...obj, [target.name]: target.value };
-          return newobj;
+          return { ...obj, [target.name]: target.value };
+         
         } else {
           return obj;
         }
@@ -285,8 +254,8 @@ const ThirdStep = (props) => {
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
-        const newobj = { ...obj, selected: checked };
-        return newobj;
+        return { ...obj, selected: checked };
+        
       } else {
         return obj;
       }

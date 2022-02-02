@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 /.scannerwork
+/sonar-project.properties
 # testing
 /coverage
 

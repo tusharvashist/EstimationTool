@@ -30,8 +30,6 @@ export default function CreateClientdailog(props) {
   };
 
   const onSubmitForm = (e) => {
-    console.log("e", e);
-    //e && e.preventDefault();
     if (formData.clientName && formData.description && formData.website) {
       setShowError(false);
       props.saveFun(formData);

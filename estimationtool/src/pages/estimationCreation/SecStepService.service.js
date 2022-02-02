@@ -5,7 +5,7 @@ const ClientService = {
     let url = Url.createAttribute;
     return axios.post(url, attributeData);
   },
-  // TODO: estimationHeaderID optional
+  // estimationHeaderID optional
   getAllAttribute: function (id, headerId) {
     let url = Url.createAttribute;
     return axios.get(url + `?esttype=` + id + `&estheaderid=` + headerId);
@@ -22,8 +22,7 @@ const ClientService = {
   createCalAttribute: function (attributeData) {
     let url = Url.saveCalcAttribute;
     return axios.post(url, attributeData);
-  },
-  updateCalculativeAttribute: function () {}
+  }
 
 };
 export default ClientService;

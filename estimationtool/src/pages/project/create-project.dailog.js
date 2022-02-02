@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react';
+import React from 'react';
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import TextField from '@material-ui/core/TextField';
 import { Grid } from "@material-ui/core";
@@ -34,7 +34,6 @@ export default function CreateProjectdailog(props) {
     }
      
     const   onSubmitForm = (e) => {
-        //e && e.preventDefault();
         if(formData.projectName  && formData.domain) {
             setShowError(false);
             props.saveFun(formData)
@@ -44,7 +43,7 @@ export default function CreateProjectdailog(props) {
         }
     }
 
-    const {projectName, projectDescription, domain} = formData
+    const {projectName, domain} = formData
     
     return (
         <CustomizedDialogs 

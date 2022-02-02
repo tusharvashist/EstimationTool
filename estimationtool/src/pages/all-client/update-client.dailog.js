@@ -31,9 +31,7 @@ export default function UpdateClientdailog(props) {
     },
   
     onSubmitForm = (e) => {
-        console.log("e", e)
         const {clientName, description, website} = formData;
-        //e && e.preventDefault();
         if(clientName && description && website) {
             setShowError(false);
             props.saveFun(formData)

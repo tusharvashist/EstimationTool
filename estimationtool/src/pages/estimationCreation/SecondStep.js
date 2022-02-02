@@ -1,14 +1,8 @@
 import {
   Button,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   FormLabel,
   Grid,
-  InputLabel,
-  ListItem,
-  NativeSelect,
-  TextField,
 } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -18,7 +12,6 @@ import AddAttributeEstimation from "../estimationCreation/add-attribute-estimati
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Checkboxes from "../../shared/layout/checkboxes/checkboxes";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-import { useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstAttributeData } from "../../Redux/effortAttributeSaveRedux";
 import useLoader from "../../shared/layout/hooks/useLoader";
@@ -30,17 +23,12 @@ const SecondStep = (props) => {
   }, []);
 
   const saveAttribute = useSelector((state) => state.effortAttribute);
-  const basicDetail = useSelector((state) => state.basicDetail);
-
   const dispatch = useDispatch();
-
   const [checkboxValues, setCheckboxValues] = useState(null);
   const [attributes, setAttributes] = useState(saveAttribute.data || []);
-
-  const [finalIds, setFinalIds] = useState([]);
+  const [setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
   const [loaderComponent, setLoader] = useLoader();
-  const history = useHistory();
 
   const getAttribute = () => {
     setLoader(true);
@@ -52,15 +40,15 @@ const SecondStep = (props) => {
         setLoader(false);
 
         let dataResponse = res.data.body;
-        let checkboxValues = {};
+        let checkboxValue = {};
         setAttributes(
           dataResponse.map((ob) => {
-            checkboxValues[ob.attributeName] = ob.selected;
+            checkboxValue[ob.attributeName] = ob.selected;
             return { ...ob, name: ob.attributeName, label: ob.attributeName };
           })
         );
 
-        setCheckboxValues(checkboxValues);
+        setCheckboxValues(checkboxValue);
         const newData = dataResponse
           .filter((ob) => ob.selected)
           .map((ob) => ({
@@ -72,10 +60,6 @@ const SecondStep = (props) => {
       })
       .catch((err) => {
         console.log("Not getting Attribute", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
 
@@ -120,8 +104,8 @@ const SecondStep = (props) => {
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const updatedValues = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
-        const newobj = { ...obj, selected: checked };
-        return newobj;
+        return { ...obj, selected: checked };
+        
       } else {
         return obj;
       }

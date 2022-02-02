@@ -10,7 +10,6 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
-import EstimationService from "../estimation-detail/estimation.service";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Autocomplete from "@mui/material/Autocomplete";
 
@@ -23,7 +22,7 @@ const AddCalAttributeDialog = (props) => {
   const [showError, setShowError] = useState(false);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [multiselectOptions, setmultiselectOptions] = useState([]);
-  const [selectTagValue, setSelectTagValue] = useState();
+  const [ setSelectTagValue] = useState();
   const [multiTagValue, setMultiSelectTag] = useState();
 
   const [formData, setFormData] = React.useState({
@@ -52,7 +51,10 @@ const AddCalAttributeDialog = (props) => {
         setRequirementTagArray(res.data.body);
         setmultiselectOptions(res.data.body);
       })
-      .catch((err) => {});
+      .catch((err) =>  {
+        console.log("error", err);
+
+      });
   };
 
   // Set Edit Data
@@ -71,7 +73,7 @@ const AddCalAttributeDialog = (props) => {
       let objNew = { ...props.details };
       let filterArray = [];
       if (objNew.formulaTags) {
-        let arry = objNew.formulaTags.map((item) => {
+        objNew.formulaTags.map((item) => {
           let ob = {
             id: item._id,
             name: item.name,
@@ -187,7 +189,7 @@ const AddCalAttributeDialog = (props) => {
       setShowError(true);
     }
   };
-  const { calcAttributeName, unit, calcType, formulaTags, tag } = formData;
+  const { calcAttributeName, unit, calcType, formulaTags } = formData;
 
   return (
     <CustomizedDialogs
@@ -215,24 +217,9 @@ const AddCalAttributeDialog = (props) => {
             value={calcAttributeName}
           />
         </Grid>
-        {/*  <Grid item md={12}>
 
-            <TextField
-              required
-              error={showError && !calcAttributeName}
-              autoFocus
-              id="standard-basic"
-              label="Calculated Attribute Name"
-              className="full-width"
-              onChange={handelCalAttributeName}
-              variant="outlined"
-              disabled={!props.id}
-              value={calcAttributeName}
-            />
-          </Grid> */}
 
         <Grid item xs={12} style={{ margin: "8px 0px" }}>
-          {/* <InputLabel htmlFor="Calculation Type">Calculation Type</InputLabel> */}
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
             <Select
