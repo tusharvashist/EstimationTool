@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import CustomizedDialogs from "../../../shared/ui-view/dailog/dailog";
-import EstimationService from "../estimation.service";
+import EstimationService from "../EstimationService";
 import Snackbar from "../../../shared/layout/snackbar/Snackbar";
 import { useSelector } from "react-redux";
 import useLoader from "../../../shared/layout/hooks/useLoader";

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Button, Grid } from "@material-ui/core";
-import useLoader from "../../shared/layout/hooks/useLoader";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,8 +14,7 @@ import { makeStyles, createStyles } from "@mui/styles";
 import DeleteForever from "@material-ui/icons/DeleteForever";
 
 export const RequirementTable = (props) => {
-  const [loaderComponent, setLoader] = useLoader(false);
-  const [requirementHeader, setSummaryHeaderArray] = useState([
+  const requirementHeader = [
     { headerName: "Req. Id", field: "req_id", width: 80 },
     { headerName: "Requirement", field: "Requirement", width: 170 },
     { headerName: "Description", field: "Description", width: 200 },
@@ -25,14 +23,13 @@ export const RequirementTable = (props) => {
     { headerName: "Query", field: "Query", width: 200 },
     { headerName: "Assumption", field: "Assumption", width: 200 },
     { headerName: "Reply", field: "Reply", width: 200 },
-  ]);
+  ];
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
 
   const [selectedRequirements, setSelectedRequirements] = useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
-  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
   const [available, setAvailable] = useState(["EPIC", "FEATURE", "STORY"]);
 
   useEffect(() => {
@@ -40,22 +37,6 @@ export const RequirementTable = (props) => {
     setFilterRequirementHeaderData([...props.requirementHeaderData]);
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
-
-  const openAddRequirement = () => {
-    openAddFun();
-  };
-
-  const openAddFun = () => {
-    setOpenAddRequirementsBox(true);
-  };
-
-  const closeAddFun = () => {
-    setOpenAddRequirementsBox(false);
-  };
-
-  const saveAddRequirementsFun = () => {
-    closeAddFun();
-  };
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -113,10 +94,7 @@ export const RequirementTable = (props) => {
     props.deleteAction(selectedRequirements);
   };
   return (
-    <>
-      {loaderComponent ? (
-        loaderComponent
-      ) : (
+
         <>
           <div className="addReqTableHeader">
             <Grid container>
@@ -189,16 +167,13 @@ export const RequirementTable = (props) => {
               onSelectionModelChange={(rows) => {
                 console.log("onSelectionModelChange: ", rows);
                 setSelectedRequirements(rows);
-                //if (props.isDeleteButton === false) {
-                  props.handleCheckBoxClicked(rows);
-                //}
+                props.handleCheckBoxClicked(rows);
               }}
               selectionModel={selectedRequirements}
             />
           </div>
         </>
-      )}
-    </>
+      
   );
 };
 
@@ -217,7 +192,6 @@ export const RequirementTablePopup = (props) => {
       >
         <RequirementTable
           requirementHeaderData={props.requirementHeaderData}
-          openEditRequirement={() => {}}
           isEditable={false}
           selection={true}
           requirementTypeArray={props.requirementTypeArray}

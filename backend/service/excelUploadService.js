@@ -33,7 +33,8 @@ const readExcelRecords = (projectId, allProjectRequirement,tags,type, workbook, 
       sheetNo = sheetNo + 1;
     
     var index = -1;
-    var totalRecordExecuted = 0;
+      var totalRecordExecuted = 0;
+      var headerAddress = {};
     worksheet._rows.forEach((row) => {
   
         index = index + 1;
@@ -44,7 +45,7 @@ const readExcelRecords = (projectId, allProjectRequirement,tags,type, workbook, 
           }
 
         } else {
-        if (isValidRow(row)) {
+        if (isValidRow(row ,headerAddress)) {
           var record = getRecords(projectId, allProjectRequirement,tags,type, index, row, headerAddress)
           record_list.push(record);
         }
@@ -114,7 +115,7 @@ const getHeaderAddress = (row) => {
   return headerAddress;
 };
 
-const isValidRow = (row) => {
+const isValidRow = (row,headerAddress) => {
   var isValid = false;
   row._cells.forEach((cell) => {
     var isOnCorrectCell = false;
@@ -141,7 +142,6 @@ const isValidRow = (row) => {
               isOnCorrectCell = true;
              break;
             default:
-             isOnCorrectCell = false;
             break;
           }
 if(isOnCorrectCell === true){
@@ -190,7 +190,6 @@ const getTagTypeId = (tag_list, title) => {
 };
 
 const isDuplicate = (record_list) => {
-  var isAvailable = false;
   var mainList = record_list;
   var subList = record_list;
   mainList.forEach((record) => {
@@ -267,20 +266,19 @@ const getRecords =  (projectId,allProjectRequirement,tags,type, id,row,headerAdd
             break;
           }
         });
-  
+  var findError = 0;
   if (record.Requirement.length == 0) {
-  //  var findError = record.Error.find(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT);
-    var findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT) > -1 );
+      findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT) > -1 );
     console.log("findError: ", findError);
-    if (findError == false) {
+    if (!findError ) {
      record.Error.push(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_REQUIREMENT);
       }
   }
 
   if (record.Description.length == 0) {
-    var findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description) > -1 );
+     findError = (record.Error.indexOf(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description) > -1 );
     console.log("findError: ", findError);
-       if (findError == false) {
+       if (!findError ) {
          record.Error.push(constant.excelUploadMessage.REQUIREMENT_NOTFOUND_Description);
       }
   }
@@ -296,15 +294,14 @@ const recordSummary =  (action,records) => {
           }
         });
    
-      var summary = {
-        "noOfRecords": records.length,
-        "noOfError": numberOfError,
-        "noOfModification": 0,
-        "noOfRecordsInserted": 0 ,
-        "noOfModification": 0,
-        "action":action
-        }
-  return summary;
+  return {
+    "noOfRecords": records.length,
+    "noOfError": numberOfError,
+    "noOfModification": 0,
+    "noOfRecordsInserted": 0,
+    "action": action
+  };
+  
 };
 
 const columName = (_address) =>{
@@ -322,7 +319,7 @@ const updateRecordsValidation = (onSave, projectId, allProjectRequirement, tags,
         isDeleted = true;
       }
     }
-    if (isDeleted == false) {
+    if (!isDeleted) {
       index = index + 1;
       var record = updatedRowRecord(projectId, allProjectRequirement, tags, type, index, row)
       record_list.push(record);
@@ -411,10 +408,10 @@ module.exports.updateRecord = async (projectId,payLoad) => {
     var tags = await RequirementRepository.getTags();
     var type = await RequirementRepository.getTypes();
     var updatedRecord = payLoad.updated;
-    var original = payLoad.original;
+   
      let excelImportStatus = { ...constant.importRequirementStatus };
     var response = validateRecord(false, projectId, excelImportStatus.updateData , allProjectRequirement, tags, type, updatedRecord);
-  //  response.requirementSummary.noOfModification = getNoUpdatedRecords(original,response.featureList)
+
   return formatMongoData(response);
   } catch (err) {
     throw new Error(err);
@@ -422,7 +419,7 @@ module.exports.updateRecord = async (projectId,payLoad) => {
 };
 const getNoUpdatedRecords = (original, updatedRecord) => {
   let result = original.filter(o1 => updatedRecord.some(o2 => o1.id === o2.id));
-  //const results = original.filter(({ value: id1 }) => !updatedRecord.some(({ value: id2 }) => id2 === id1));
+
   return result.count;
 }
 const validateRecord = (onSave , projectId, status, allProjectRequirement,tags,type, recordList) => {
@@ -479,7 +476,6 @@ module.exports.validateSave = async (projectId,estHeaderId,recordList) => {
         await RequirementRepository.bulkInsertQueryAssumption(queryAssumptionList);
       }
     
-     // response.requirementSummary = result;
 
   
       response.requirementSummary.noOfRecordsInserted = result.nInserted;

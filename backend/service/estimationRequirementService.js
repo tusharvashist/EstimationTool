@@ -19,7 +19,7 @@ module.exports.create = async (serviceData) => {
     );
 
     if (requirement !== false) {
-      let queryAssumption = await RequirementRepository.createQueryAssumption(
+       await RequirementRepository.createQueryAssumption(
         requirement._id,
         serviceData
       );
@@ -86,16 +86,12 @@ module.exports.getRequirementWithQuery = async ({ id }) => {
 
     return formatMongoData(response);
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
 };
 
 module.exports.getUnpairedRequirementEstimation = async (query) => {
   try {
-    // if (!mongoose.Types.ObjectId(id)) {
-    //   throw new Error(constant.requirementMessage.INVALID_ID);
-    // }
     var requirementList = await RequirementRepository.getRequirementWithQuery(
       query.projectId
     );
@@ -109,58 +105,19 @@ module.exports.getUnpairedRequirementEstimation = async (query) => {
 
     return formatMongoData(response);
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
 };
-/*
- var bulk = EstRequirementData.collection.initializeUnorderedBulkOp();
-    serviceDataArray.data.forEach(async (serviceData) => {
-      let estRequirementData = new EstRequirementData({ ...serviceData });
-      let result = bulk
-        .find({
-          ESTAttributeID: estRequirementData.ESTAttributeID,
-          ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
-        })
-        .upsert()
-        .updateOne(
-          {
-            $set: {
-              ESTAttributeID: estRequirementData.ESTAttributeID,
-              ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
-              ESTData: estRequirementData.ESTData,
-            },
-          },
-          { upsert: true, new: true }
-      );
-      estHeader = serviceData.ESTHeaderID;
-    });
 
-    const result = await bulk.execute();
-    if (estHeader.length !== 0) {
-      //Update EstHeader for UpdatedBy
-      const estHeaderModel = await EstHeaderModel.findById({
-        _id: estHeader,
-      });
-      if (estHeaderModel.length == 0) {
-        estHeaderModel.updatedBy = global.loginId;
-        estHeaderModel.save();
-      }
-    }
-     */
 
 module.exports.updateManualCallAttribute = async (id, updateInfo) => {
   try {
-    // if (!mongoose.Types.ObjectId(id)) {
-    //   throw new Error(constant.requirementMessage.INVALID_ID);
-    // }
-    var bulk =
-      EstimationHeaderAttributeCalc.collection.initializeUnorderedBulkOp();
+    var bulk = EstimationHeaderAttributeCalc.collection.initializeUnorderedBulkOp();
     updateInfo.forEach(async (serviceData) => {
       let manualCallAttribute = new EstimationHeaderAttributeCalc({
         ...serviceData,
       });
-      let result = bulk
+       bulk
         .find({
           _id: manualCallAttribute._id,
         })
@@ -179,18 +136,9 @@ module.exports.updateManualCallAttribute = async (id, updateInfo) => {
     });
 
     const result = await bulk.execute();
-    // let requirement = await EstimationHeaderAttributeCalc.findOneAndUpdate(
-    //         { _id: id },
-    //         updateInfo,
-    //         { new: true }
-    //       );
-    //       if (!requirement) {
-    //         throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
-    //       }
 
     return formatMongoData(result);
   } catch (err) {
-    ////console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
   }
 };
@@ -226,7 +174,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
             throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
           }
 
-          let queryAssumption = await RequirementRepository.updateQuery(
+           await RequirementRepository.updateQuery(
             requirement._id,
             updateInfo
           );
@@ -245,26 +193,23 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
         throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
       }
 
-      let queryAssumption = await RequirementRepository.updateQuery(
+       await RequirementRepository.updateQuery(
         requirement._id,
         updateInfo
       );
     }
   } catch (err) {
-    //console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
   }
 };
 
 module.exports.updateRequirementData = async (serviceDataArray) => {
   try {
-    //console.log("Update Starts");
     var estHeader = "";
-    var length = 0;
     var bulk = EstRequirementData.collection.initializeUnorderedBulkOp();
     serviceDataArray.data.forEach(async (serviceData) => {
       let estRequirementData = new EstRequirementData({ ...serviceData });
-      let result = bulk
+       bulk
         .find({
           ESTAttributeID: estRequirementData.ESTAttributeID,
           ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
@@ -284,7 +229,7 @@ module.exports.updateRequirementData = async (serviceDataArray) => {
       estHeader = serviceData.ESTHeaderID;
     });
 
-    const result = await bulk.execute();
+    await bulk.execute();
     if (estHeader.length !== 0) {
       //Update EstHeader for UpdatedBy
       const estHeaderModel = await EstHeaderModel.findById({
@@ -295,10 +240,7 @@ module.exports.updateRequirementData = async (serviceDataArray) => {
         estHeaderModel.save();
       }
     }
-
-    //console.log("Update End");
   } catch (err) {
-    // //console.log("something went wrong: service > RequirmentData ", err);
     throw new Error(err);
   }
 };
@@ -311,16 +253,8 @@ module.exports.deleteRequirementData = async (id) => {
     if (!estHeaderRequirement) {
       throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
     }
-    //Update EstHeader for UpdatedBy
-    // const estHeaderModel = await EstHeaderModel.findById({
-    //   _id: serviceData.estHeader,
-    // });
-    // estHeaderModel.updatedBy = global.loginId;
-    // estHeaderModel.save();
-
     return formatMongoData(estHeaderRequirement);
   } catch (err) {
-    // //console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
   }
 };
@@ -343,24 +277,18 @@ module.exports.allRequirementDelete = async (id) => {
 
 module.exports.deleteSelectedRequirement = async (id,requirementList ) => {
   try {
-
-    var queryAssumptionResponse = await RequirementRepository.deleteRequirementQueryAssumption(requirementList);
+    await RequirementRepository.deleteRequirementQueryAssumption(requirementList);
     var ProjectRequirementResponse = await RequirementRepository.deleteSelectedProjectRequirement(requirementList);
-
      return formatMongoData(ProjectRequirementResponse);
   } catch (err) {
     throw new Error(err);
   }
 };
 
-class sumOfKey extends Array {
-  sum(key) {
-    return this.reduce((a, b) => a + (b[key] || 0), 0);
-  }
-}
+
 
 const getEstBasicDetail = async (id) => {
-  let estimations = await EstHeaderModel.findById({ _id: id })
+  return await EstHeaderModel.findById({ _id: id })
     .populate({
       path: "projectId",
       populate: { path: "client" },
@@ -369,7 +297,7 @@ const getEstBasicDetail = async (id) => {
       path: "estTypeId",
       populate: { path: "reqTypeValidation" },
     });
-  return estimations;
+  
 };
 
 module.exports.getById = async ({ id }) => {
@@ -388,10 +316,8 @@ module.exports.getById = async ({ id }) => {
     let estimations = await getEstBasicDetail(id);
 
     response.basicDetails = estimations;
-    //console.log("GetByID Ends");
     return formatMongoData(response);
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
 };
@@ -424,9 +350,6 @@ module.exports.getRequirementData = async ({ id }) => {
 
     let response = { ...constant.requirementResponse };
     var contingency = await RequirementRepository.getContingency(id);
-
-    //var callAttribute = await RequirementRepository.getAttributesCalAttributesTotal(id, contingency);
-    // console.log("CallAttribute: ",callAttribute);
     var contingencySuffix = " Contingency";
     var estHeaderRequirement =
       await RequirementRepository.getEstHeaderRequirementWithContingency(id);
@@ -439,15 +362,6 @@ module.exports.getRequirementData = async ({ id }) => {
       contingencySuffix
     );
 
-    // //1
-    // let estHeaderModelTotal = await EstHeaderModel.updateOne(
-    //   { _id: id },
-    //   { totalCost: GrandTotal }
-    // );
-    // if (!estHeaderModelTotal) {
-    //   // throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND)
-    // }
-
     response.tagSummaryHeader = await getTagSummaryHeader(id);
     response.tagSummaryData =
       await RequirementRepository.tagWiseRequirementList(
@@ -456,15 +370,13 @@ module.exports.getRequirementData = async ({ id }) => {
         contingencySuffix
       );
     var tagTotal = response.tagSummaryData[response.tagSummaryData.length - 1];
-    // console.log("tagTotal: ", tagTotal);
     response.summaryCalData =
       await RequirementRepository.getCalculativeAttributes(
         id,
         contingency,
         contingencySuffix
       );
-    // console.log("summaryCalData: ", response.summaryCalData);
-
+    
     var projectTotal = {
       id: 1,
       calcType: "percentage",
@@ -534,7 +446,6 @@ module.exports.getRequirementData = async ({ id }) => {
 
     return formatMongoData(response);
   } catch (err) {
-    console.log("something went wrong: service > GetEstimation data", err);
     throw new Error(err);
   }
 };
@@ -547,7 +458,6 @@ async function getRequirementList(
   var arrayRequirement = [];
   estHeaderRequirement.forEach((item, i) => {
     if (item.isDeleted === false) {
-      var field = item.requirement.title;
 
       var tag = "";
       var tagid = 0;
@@ -583,16 +493,16 @@ async function getRequirementList(
           item.requirement.queryassumptions[0].assumption;
         requirement["Reply"] = item.requirement.queryassumptions[0].reply;
       }
-      item.estRequirementData.forEach((item, i) => {
-        if (item.ESTData !== undefined && item.ESTData !== null) {
+      item.estRequirementData.forEach((estRequirementItem, index) => {
+        if (estRequirementItem.ESTData !== undefined && estRequirementItem.ESTData !== null) {
           if (
-            item.ESTAttributeID !== undefined &&
-            item.ESTAttributeID !== null
+            estRequirementItem.ESTAttributeID !== undefined &&
+            estRequirementItem.ESTAttributeID !== null
           ) {
-            requirement[item.ESTAttributeID._id] = item.ESTData;
+            requirement[estRequirementItem.ESTAttributeID._id] = estRequirementItem.ESTData;
             if (contingency > 0) {
-              requirement[item.ESTAttributeID._id + contingencySuffix] =
-                item.ESTDataContingency;
+              requirement[estRequirementItem.ESTAttributeID._id + contingencySuffix] =
+                estRequirementItem.ESTDataContingency;
             }
           }
         }
@@ -603,9 +513,7 @@ async function getRequirementList(
 
   return arrayRequirement;
 }
-function roundToTwo(value) {
-  return value.toFixed(2);
-}
+
 
 async function getTagSummaryHeader(estHeaderId) {
   var contingency = await RequirementRepository.getContingency(estHeaderId);

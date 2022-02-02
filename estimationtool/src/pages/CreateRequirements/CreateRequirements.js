@@ -3,10 +3,10 @@ import { Button, Grid,Container } from "@material-ui/core";
 import { useLocation ,Link } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import AddIcon from "@material-ui/icons/Add";
-import AddRequirements from "../estimation-detail/add-requirements-popup";
+import AddRequirements from "../estimation-detail/AddRequirementsPopup";
 import { ClientProjectHeader } from "../estimation-detail/header-element";
 import { RequirementTable} from "./RequirementTable"
-import  RequirementService from "./requirement.service"
+import  RequirementService from "./RequirementService"
 import Deletedailog from "./delete-dailog"
 import { BiImport } from "react-icons/bi";
 
@@ -43,7 +43,7 @@ const CreateRequirements = () => {
   
 
   const openEditRequirement = (event, rowData) => {
-    let row = Object.assign({},rowData) //rowData.valueOf();
+    let row = Object.assign({},rowData) 
     if (row.Type !== null && row.Typeid !== null) {
       var Type = {
         _id: row.Typeid,
@@ -56,16 +56,6 @@ const CreateRequirements = () => {
     setEditData([row]);
     openFun();
   };
-
-  //   const openEditRequirement = React.useCallback(
-  //   (id) => () => {
-  //     setTimeout(() => {
-  //       setEditData([id.row]);
-  //       openFun();
-  //     });
-  //   },
-  //   []
-  // );
 
   const openFun = () => {
     setOpenEditConfigurationBox(true);

@@ -4,7 +4,7 @@ import FileDownload from "js-file-download";
 
 var FormData = require('form-data');
 
-const RequirementService = {
+const ImportExcelRequirementsService = {
     
     getTagsType: function () {
         let url = Url.getRequirementTag + "/get/TagsType" ;
@@ -52,4 +52,4 @@ const RequirementService = {
   },
 }
 
-export default RequirementService;
+export default ImportExcelRequirementsService;

@@ -1,46 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Button, Grid, Box } from "@material-ui/core";
-import useLoader from "../../shared/layout/hooks/useLoader";
-import Checkbox from "@mui/material/Checkbox";
 import "./Requirements.css";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import { BiErrorAlt, BiCheckCircle } from "react-icons/bi";
 import { ImSigma } from "react-icons/im";
 import { VscTools } from "react-icons/vsc";
-import { MdOutlineFileDownloadDone } from "react-icons/md";
+import { MdOutlineFileDownloadDone  } from "react-icons/md";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
-
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import {
   DataGrid,
-  GridToolbarContainer,
-  GridToolbarColumnsButton,
-  GridActionsCellItem,
-  GridToolbarFilterButton,
-  GridToolbarExport,
-  GridToolbarDensitySelector,
-  GridToolbar,
 } from "@mui/x-data-grid";
-import { makeStyles, createStyles } from "@mui/styles";
-import Pagination from "@mui/material/Pagination";
-import { ClassNames } from "@emotion/react";
-import { dark } from "@material-ui/core/styles/createPalette";
 import PropTypes from "prop-types";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import StarIcon from "@mui/icons-material/Star";
-
-import { MdPlaylistAdd, MdEditNote } from "react-icons/md";
-
-import { BiErrorCircle } from "react-icons/bi";
-import { AiOutlineNumber } from "react-icons/ai";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import EditIcon from "@mui/icons-material/Edit";
-
-import { MdOpenInBrowser, MdDone } from "react-icons/md";
 import { AiOutlineDeleteRow } from "react-icons/ai";
 
 function CustomFooterStatusComponent(props) {
@@ -63,8 +35,7 @@ CustomFooterStatusComponent.propTypes = {
 export const RequirementTable = (props) => {
   const classes = useTableStyle();
   const [pageSize, setPageSize] = React.useState(10);
-  const [loaderComponent, setLoader] = useLoader(false);
-  const [requirementHeader, setSummaryHeaderArray] = useState([
+  const requirementHeader = [
     { headerName: "S.R No.", field: "id", width: 70 },
     {
       headerName: "Error",
@@ -83,33 +54,17 @@ export const RequirementTable = (props) => {
     { headerName: "Query", field: "Query", width: 200 },
     { headerName: "Assumption", field: "Assumption", width: 200 },
     { headerName: "Reply", field: "Reply", width: 200 },
-  ]);
+  ];
 
   const [requirementHeaderDataFilter, setFilterRequirementHeaderData] =
     useState([]);
   const [requirementHeaderData, setRequirementHeaderData] = useState([]);
-  const [openAddRequirementsBox, setOpenAddRequirementsBox] = useState(false);
-  const [requirementSummary, setRequirementSummary] = useState({
-    noOfRecords: 0,
-    noOfError: 0,
-    noOfModification: 0,
-    noOfRecordsInserted: 0,
-  });
+
   useEffect(() => {
     setRequirementHeaderData([...props.requirementHeaderData]);
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
 
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
 
   const deleteSelected = () => {
     if (requirementHeaderDataFilter.length !== 0) {
@@ -118,21 +73,7 @@ export const RequirementTable = (props) => {
     }
   };
 
-  console.log("requirementHeaderDataFilter: ", requirementHeaderDataFilter);
-
-  function CustomToolbar() {
-    return (
-      <GridToolbarContainer>
-        <GridToolbarColumnsButton />
-      </GridToolbarContainer>
-    );
-  }
-
   return (
-    <>
-      {loaderComponent ? (
-        loaderComponent
-      ) : (
         <>
           <div>
               <Grid container className="importFormRowContainer">
@@ -225,8 +166,6 @@ export const RequirementTable = (props) => {
             </div>
           </div>
         </>
-      )}
-    </>
   );
 };
 
@@ -246,7 +185,6 @@ export const RequirementTablePopup = (props) => {
         <RequirementTable
           requirementHeaderData={props.requirementHeaderData}
           requirementSummary={props.requirementSummary}
-          openEditRequirement={() => {}}
           isEditable={false}
           selection={true}
           requirementTypeArray={props.requirementTypeArray}
