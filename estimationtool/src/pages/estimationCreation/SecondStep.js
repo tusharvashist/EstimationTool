@@ -100,8 +100,8 @@ const SecondStep = (props) => {
   const updateCheckboxes = ({ checkConfig, data: { name, checked } }) => {
     const updatedValues = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
-        const newobj = { ...obj, selected: checked };
-        return newobj;
+        return { ...obj, selected: checked };
+       
       } else {
         return obj;
       }
