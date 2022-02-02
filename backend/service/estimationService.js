@@ -669,12 +669,9 @@ function getRequirementList(
       var requirement = {
         Requirement: item.requirement.title,
         Description: item.requirement.description,
-        Tagname: item.requirement.tag.name,
-        Tagid: item.requirement.tag._id,
-        Typename: item.requirement.type.name,
-        Typeid: item.requirement.type._id,
+        Tagname: item.requirement.tag.name || '',
+        Typename: item.requirement.type.name || '',
         requirementId: item.requirement._id,
-        _id: item._id,
       };
 
       let newReqArr = item.estRequirementData.map((item) => {

@@ -42,11 +42,30 @@ const CreateRequirements = () => {
   }
   
 
- const openEditRequirement = (event, rowData) => {
-    setEditData([rowData]);
+  const openEditRequirement = (event, rowData) => {
+    let row = Object.assign({},rowData) //rowData.valueOf();
+    if (row.Type !== null && row.Typeid !== null) {
+      var Type = {
+        _id: row.Typeid,
+        name: row.Type,
+      };
+      row.Type = Type;
+
+    }
+    
+    setEditData([row]);
     openFun();
   };
 
+  //   const openEditRequirement = React.useCallback(
+  //   (id) => () => {
+  //     setTimeout(() => {
+  //       setEditData([id.row]);
+  //       openFun();
+  //     });
+  //   },
+  //   []
+  // );
 
   const openFun = () => {
     setOpenEditConfigurationBox(true);

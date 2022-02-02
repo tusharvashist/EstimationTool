@@ -57,11 +57,18 @@ const AddRequirements = (props) => {
     if (
       requirementTitle &&
       requirementDescription &&
-      selectedRequirementType &&
-      selectedRequirementTag
+      selectedRequirementType.name &&
+      selectedRequirementTag.name
     ) {
-      setShowError(false);
-      callAPI();
+
+      if (selectedRequirementType.name.length && selectedRequirementTag.name.length) {
+        setShowError(false);
+        callAPI();
+      } else {
+        
+        setShowError(true);
+      }
+      
     } else {
       setShowError(true);
     }
@@ -185,11 +192,11 @@ const AddRequirements = (props) => {
       //   name: props.editData[0].Tag,
       // });
       //setSelectedRequirementType(props.editData[0].Type);
-      if (props.editData[0].Type !== undefined) {
+      if (props.editData[0].Type !== undefined  && props.editData[0].Type !== null) {
       // setSelectedRequirementType(props.editData[0].Type);
         setSelectedRequirementType({
-          _id: props.editData[0].Typeid,
-          name: props.editData[0].Type,
+          _id: props.editData[0].Type._id,
+          name: props.editData[0].Type.name,
         });
       } else {
         
@@ -234,7 +241,6 @@ const AddRequirements = (props) => {
               labelId="requirement-tag"
               id="requirement-tag"
               value={selectedRequirementTag._id}
-              // defaultValue={props.editData[0].Tag}
               onChange={(e) => {
                 handleRequirementTagChange(e);
               }}
