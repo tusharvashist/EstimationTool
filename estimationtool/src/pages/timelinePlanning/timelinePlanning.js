@@ -1,7 +1,7 @@
-import { Button, Container, Box, Grid } from "@material-ui/core";
+import { Button, Container, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import {
   EstimationHeader,
@@ -12,7 +12,7 @@ import TimelinePlanningService from "./timelinePlanning.service";
 import styleClasses from "../ResourceMix/resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import ResourceCountService from "../ResourceCount/resourcecount.service";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
 import { BiExport } from "react-icons/bi";
 
@@ -39,22 +39,21 @@ const TimelinePlanning = () => {
   const [openExport, setOpenExport] = useState(false);
 
   useEffect(() => {
-    getResourceCountData(estimationId);
+    getResourceCountData();
   }, [estimationId]);
 
-  const getResourceCountData = (estimationHeaderId) => {
-    ResourceCountService.getResourceCount(estimationHeaderId)
+  const getResourceCountData = () => {
+    ResourceCountService.getResourceCount(estimationId)
       .then((res) => {
-        getAllResourceMixData(estimationId);
+        getAllResourceMixData();
       })
       .catch((err) => {});
   };
 
-  const getAllResourceMixData = (estimationId) => {
+  const getAllResourceMixData = () => {
     setLoader(true);
     TimelinePlanningService.getTimelinePlanningData(estimationId) //619e3ddb8c705cf78e273c02
       .then((res) => {
-        console.log("mixdata", res);
         setLoader(false);
         const mixData = res.data.body.resourceMixData;
         const weeks =

@@ -6,6 +6,7 @@
 /estimationtool-sso/node_modules/
 /.pnp
 .pnp.js
+estimationtool/sonar-project.properties
 
 /backend/.scannerwork
 

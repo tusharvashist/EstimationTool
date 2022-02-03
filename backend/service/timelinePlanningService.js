@@ -18,7 +18,6 @@ module.exports.getTimelinePlanning = async ({ id }) => {
       var priceTotal = 0;
       var margin = 0;
       var marginPercent = 0;
-      var weeks = [];
       costTotal = getSumFromObjects(queryResult,"costcal");
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);

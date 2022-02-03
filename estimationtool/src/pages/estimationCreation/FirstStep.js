@@ -2,9 +2,7 @@ import {
   FormControl,
   Grid,
   InputLabel,
-  ListItem,
   MenuItem,
-  NativeSelect,
   Select,
   TextField,
 } from "@material-ui/core";
@@ -13,7 +11,6 @@ import React, {
   useState,
   useEffect,
   forwardRef,
-  useRef,
   useImperativeHandle,
 } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -33,14 +30,10 @@ import {
 } from "../../Redux/basicDetailRedux";
 import estimationServices from "../allestimation/allestimation.service";
 import useLoader from "../../shared/layout/hooks/useLoader";
-import { useHistory } from "react-router-dom";
-import { width } from "@material-ui/system";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
-
 import MultiLocationSelection from "./MultiLocationSelction";
 
 const FirstStep = forwardRef((props, ref) => {
-  const history = useHistory();
   const basicDetailRedux = useSelector((state) => state.basicDetail);
   const dispatch = useDispatch();
   const [characterCount, setCharacterCount] = useState(250);
@@ -97,13 +90,11 @@ const FirstStep = forwardRef((props, ref) => {
   // get estimation basic info
   const getEstimationBasicInfo = () => {
     let estHeaderId = props.estimationHeaderId;
-    // console.log("props Estimation Header Id: " + "::" + estHeaderId);
     if (estHeaderId) {
       localStorage.setItem("estimationHeaderId", estHeaderId);
       dispatch(setEstimationHeaderId(estHeaderId));
     }
     if (!estHeaderId) {
-      // localStorage.setItem("estimationHeaderId", estHeaderId);
       return;
     }
     setLoader(true);
@@ -156,7 +147,6 @@ const FirstStep = forwardRef((props, ref) => {
 
   // get the Estimation Type dropdown selected value
   const getEstimationDropDownValue = (event) => {
-    //console.log("this is an selected value", event);
     let etId = event.target.value; //estimation type object
     dispatch(setEstimationTypeId(etId));
     setIsEstimationTypeInvalid(false);
@@ -222,7 +212,6 @@ const FirstStep = forwardRef((props, ref) => {
 
   // get the Effort Unit value from selected dropdown
   const getEffortUnitDropDownValue = (event) => {
-    //console.log("this is an selected value", event);
     let effortUnit = event.target.value; //effort unit type object
     dispatch(setEfforUnit(effortUnit));
     setIsEffortUnitInvalid(effortUnit === "");
