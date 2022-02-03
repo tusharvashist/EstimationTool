@@ -33,3 +33,5 @@ yarn-error.log*
         .vscode/
         ../estimationtool/.vscode/settings.json
         ../estimationtool/yarn.lock
+
+./estimationtool/sonar-project.properties

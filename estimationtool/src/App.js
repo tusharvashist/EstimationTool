@@ -3,14 +3,7 @@ import "./App.css";
 import Login from "./login/login";
 import Layout from "./shared/layout/layout";
 import CheckRequests from "./common/checkRequests";
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-  Redirect,
-  HashRouter,
-  useHistory,
-} from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import history from "./common/history";
 
 function App() {
