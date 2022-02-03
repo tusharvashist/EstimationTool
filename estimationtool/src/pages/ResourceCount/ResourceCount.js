@@ -134,11 +134,12 @@ const ResourceCountMatrix = (props) => {
             value={rowdata.row.skillsId}
             //   label={technologySkills.skill
           >
-            {technologyList.map((item) => (
-              <MenuItem key={item.skill} value={item.id}>
-                {item.skill}
-              </MenuItem>
-            ))}
+            {technologyList &&
+              technologyList.map((item) => (
+                <MenuItem key={item.skill} value={item.id}>
+                  {item.skill}
+                </MenuItem>
+              ))}
           </Select>
         );
       },
