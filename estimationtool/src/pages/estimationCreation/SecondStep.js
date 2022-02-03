@@ -28,7 +28,7 @@ const SecondStep = (props) => {
   const [checkboxValues, setCheckboxValues] = useState(null);
   const [attributes, setAttributes] = useState(saveAttribute.data || []);
 
-  const [setFinalIds] = useState([]);
+  const [finalIds,setFinalIds] = useState([]);
   const [isOpen, setOpen] = React.useState({});
   const [loaderComponent, setLoader] = useLoader();
   const getAttribute = () => {
@@ -101,7 +101,7 @@ const SecondStep = (props) => {
     const updatedValues = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
         return { ...obj, selected: checked };
-       
+        
       } else {
         return obj;
       }

@@ -14,7 +14,7 @@ import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
 import ThirdStep from "./ThirdStep";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import estimationServices from "../allestimation/allestimation.service";
 import "./EstimationCreation.css";
@@ -74,7 +74,6 @@ const EstimationCreation = (props) => {
     setOpen({});
   };
   const childRef = useRef();
-  // const secondChildRef = useRef();
 
   const isStepOptional = (step) => {
     return step === null;
@@ -84,12 +83,6 @@ const EstimationCreation = (props) => {
     return skipped.has(step);
   };
 
-  // useEffect(() => {
-  //   setLocation(location);
-  //   //setEstimationHeaderId(estionHeaderId)
-  //   //console.log("prop est id:"+location1.state.estimationHeaderId )
-  //   //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
-  // }, [clientInfo]);
 
   useEffect(() => {
     setLocation(location);
@@ -104,7 +97,6 @@ const EstimationCreation = (props) => {
       setActiveStep(1);
     }
 
-    //localStorage.setItem("estimationHeaderId", location1.state.estimationHeaderId);
   }, location1.state.estimationHeaderId);
 
   // save Estimation Basic detail data to post request to generating estimation header APi
@@ -119,23 +111,20 @@ const EstimationCreation = (props) => {
         setNewEstimationHeaderId(dataResponce._id);
         dispatch(setEstimationHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
-        //TODO:// show response and move next step
+        // show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
-        console.log("save estimation header detail error : ", err);
         setOpen({
           open: true,
           severity: "error",
           message: err.response.data.message,
         });
-        //childRef.current.showError(err);
       });
   };
 
   // update estimation basic detals Api call
   const updateEstimationBasicDetail = (reqData) => {
-    console.log("this is running");
     setLoader(true);
 
     estimationServices
@@ -149,17 +138,15 @@ const EstimationCreation = (props) => {
         dispatch(setEstimationHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
 
-        //TODO:// show response and move next step
+        // show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
-        console.log("Update estimation header detail error : ", err.response);
         setOpen({
           open: true,
           severity: "error",
           message: err.response.data.message,
         });
-        //childRef.current.showError(err);
       });
   };
 
@@ -179,8 +166,6 @@ const EstimationCreation = (props) => {
     if (effortAttributeSave.data.length !== 0) {
       createSaveEffortAttribute(getEffortAttributeRequestPayload());
     } else {
-      // childRef.current.showError("Please fill all mandatory fields");
-
       setOpen({
         open: true,
         severity: "error",
@@ -211,8 +196,6 @@ const EstimationCreation = (props) => {
             message: err.response.data.message,
           });
         }
-        // console.log("save estimation header detail error : ", err);
-        //childRef.current.showError(err);
       });
   };
   // save effort Attribute data
@@ -226,16 +209,10 @@ const EstimationCreation = (props) => {
 
         let dataResponce = res.data.body;
         setNewEstimationHeaderId(dataResponce._id);
-        //TODO:// show response and move next step
+        // show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
-        // console.log("save estimation header detail error : ", err);
-        // childRef.current.showError(err);
       });
   };
 
@@ -279,7 +256,6 @@ const EstimationCreation = (props) => {
         ? updateEstimationBasicDetail(getRequestPayload())
         : createEstimationBasicDetail(getRequestPayload());
     } else {
-      console.log("Please fill all mandatory fields");
       childRef.current.showError("Please fill all mandatory fields");
     }
   };
@@ -314,17 +290,12 @@ const EstimationCreation = (props) => {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
-    //TODO: handle edit basic detail API & error
+    // handle edit basic detail API & error
     if (activeStep == 0) {
       handleBasicDetailSaveUpdate();
     } else if (activeStep == 1) {
       handleSaveEffortAttribute();
     }
-    // else if (activeStep == 2) {
-    // } else {
-    //   //setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    // }
-    // setSkipped(newSkipped);
     return;
   };
 

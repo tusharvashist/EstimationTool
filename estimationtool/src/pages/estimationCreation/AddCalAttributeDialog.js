@@ -10,7 +10,6 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
-import EstimationService from "../estimation-detail/EstimationService";
 import SecondStepServ from "../estimationCreation/SecStepService.service";
 import Autocomplete from "@mui/material/Autocomplete";
 
@@ -23,7 +22,7 @@ const AddCalAttributeDialog = (props) => {
   const [showError, setShowError] = useState(false);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [multiselectOptions, setmultiselectOptions] = useState([]);
-  const [ setSelectTagValue] = useState();
+  const [selectTagValue, setSelectTagValue] = useState();
   const [multiTagValue, setMultiSelectTag] = useState();
 
   const [formData, setFormData] = React.useState({
@@ -52,10 +51,7 @@ const AddCalAttributeDialog = (props) => {
         setRequirementTagArray(res.data.body);
         setmultiselectOptions(res.data.body);
       })
-      .catch((err) =>  {
-        console.log("error", err);
-
-      });
+      .catch((err) => {});
   };
 
   // Set Edit Data
@@ -74,7 +70,7 @@ const AddCalAttributeDialog = (props) => {
       let objNew = { ...props.details };
       let filterArray = [];
       if (objNew.formulaTags) {
-        objNew.formulaTags.map((item) => {
+        let arry = objNew.formulaTags.map((item) => {
           let ob = {
             id: item._id,
             name: item.name,
@@ -218,9 +214,10 @@ const AddCalAttributeDialog = (props) => {
             value={calcAttributeName}
           />
         </Grid>
-
+   
 
         <Grid item xs={12} style={{ margin: "8px 0px" }}>
+         
           <FormControl className={classes.formControl}>
             <InputLabel> Tag</InputLabel>
             <Select

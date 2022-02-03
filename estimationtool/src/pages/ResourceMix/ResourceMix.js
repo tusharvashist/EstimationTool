@@ -1,8 +1,7 @@
-import { Button, Container } from "@material-ui/core";
-import { Box, Grid } from "@material-ui/core";
+import { Button, Container, Grid } from "@material-ui/core";
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import {
   EstimationHeader,
@@ -13,7 +12,7 @@ import ResourceMixService from "./ResourceMix.service";
 import styleClasses from "./resourcemix.module.css";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import ResourceCountService from "../ResourceCount/resourcecount.service";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { BiExport } from "react-icons/bi";
 import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
 import usePermission from "../../shared/layout/hooks/usePermissions";
@@ -44,18 +43,18 @@ const RequirementMix = () => {
     usePermission();
 
   useEffect(() => {
-    getResourceCountData(estimationId);
+    getResourceCountData();
   }, [estimationId]);
 
-  const getResourceCountData = (estimationHeaderId) => {
-    ResourceCountService.getResourceCount(estimationHeaderId)
+  const getResourceCountData = () => {
+    ResourceCountService.getResourceCount(estimationId)
       .then((res) => {
-        getAllResourceMixData(estimationId);
+        getAllResourceMixData();
       })
       .catch((err) => {});
   };
 
-  const getAllResourceMixData = (estimationId) => {
+  const getAllResourceMixData = () => {
     setLoader(true);
     ResourceMixService.getResourceMixData(estimationId) //619e3ddb8c705cf78e273c02
       .then((res) => {
@@ -67,31 +66,11 @@ const RequirementMix = () => {
             allocationPercent: el.resourceMix.allocationPercent,
             resourceRole: el.resourceMix.role.resourceRole,
             attributeName: el.attributeName || null,
-            // estCalId: el.attributeSkill.attributeName || null,
             cost: el.costcal,
             price: el.pricecal,
             costrate: el.resourceMix.role.cost,
             pricerate: el.resourceMix.role.price,
           };
-          // if (!el.attributeSkill.calcAttributeName) {
-          //   return {
-          //     id: i + 1,
-          //     allocationPercent: el.resourceMix.allocationPercent,
-          //     resourceRole: el.resourceMix.role.resourceRole,
-          //     attributeName: el.attributeSkill.attributeName,
-          //     cost: el.costcal,
-          //     price: el.pricecal,
-          //   };
-          // } else {
-          //   return {
-          //     id: i + 1,
-          //     allocationPercent: el.resourceMix.allocationPercent,
-          //     resourceRole: el.resourceMix.role.resourceRole,
-          //     calcAttributeName: el.attributeSkill.calcAttributeName,
-          //     cost: el.costcal,
-          //     price: el.pricecal,
-          //   };
-          // }
         });
         console.log(objArr);
         setResourceMixList(objArr);
@@ -171,7 +150,6 @@ const RequirementMix = () => {
       width: 160,
     },
   ];
-  // console.log(resourceMixList, totalMargin);
 
   return (
     <div className="estimation-detail-cover">

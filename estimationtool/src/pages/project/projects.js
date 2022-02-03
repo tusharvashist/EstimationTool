@@ -68,16 +68,18 @@ function Projects(props) {
       if (rowData.isDeleted) {
         return rowData.projectName;
       } else {
-      return  (<Link
-          to={{
-            pathname:
-              "/All-Clients/" + props.clientName + "/" + rowData.projectName,
-            state: { projectId: rowData._id },
-          }}
-        >
-          {" "}
-          {rowData.projectName}
-        </Link>)
+        return (
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" + props.clientName + "/" + rowData.projectName,
+              state: { projectId: rowData._id },
+            }}
+          >
+            {" "}
+            {rowData.projectName}
+          </Link>
+        );
       }
     } else {
       return rowData.projectName;
@@ -128,11 +130,13 @@ function Projects(props) {
     if (event.target.value == "All") {
       setProjectByClient(allProjectByClient);
     } else {
-      const dropdownEl = secondProjectByClient.filter(
-        (el) => el.isDeleted == event.target.value
-      );
-      if(dropdownEl) {
-      setProjectByClient(dropdownEl);
+      if (secondProjectByClient) {
+        const dropdownEl = secondProjectByClient.filter(
+          (el) => el.isDeleted == event.target.value
+        );
+        if (dropdownEl) {
+          setProjectByClient(dropdownEl);
+        }
       }
     }
   };
@@ -168,7 +172,6 @@ function Projects(props) {
     false: "#fff",
   };
 
-
   const getAllProjects = (clientid) => {
     setLoader(true);
 
@@ -190,7 +193,6 @@ function Projects(props) {
         console.log("get Client by id error", err);
       });
   };
-
 
   const createProject = (projectData) => {
     setLoader(true);
@@ -272,10 +274,8 @@ function Projects(props) {
     deleteProject();
   };
 
-  
   const actions = [
-    (rowData) => 
-    ({
+    (rowData) => ({
       icon: "edit",
       tooltip: "edit client",
       onClick: (event, data) => {
@@ -283,13 +283,11 @@ function Projects(props) {
         setActionId(data.id);
         openUpdateDailog();
       },
-      
+
       disabled: rowData.isDeleted,
-      hidden: !projectUpdate
-    })
-  ,
-    (rowData) => 
-    ({
+      hidden: !projectUpdate,
+    }),
+    (rowData) => ({
       icon: "delete",
       tooltip: "delete client",
       onClick: (event, data) => {
@@ -298,8 +296,8 @@ function Projects(props) {
         openDeleteDailog();
       },
       disabled: rowData.isDeleted,
-      hidden: !projectDelete
-    })  
+      hidden: !projectDelete,
+    }),
   ];
   const { message, severity, open } = isOpen || {};
 
@@ -386,8 +384,8 @@ function Projects(props) {
         </Grid>
       </Box>
       <BorderedContainer className="full-width no-rl-margin">
-        {projectListing && (
-          loaderComponent ? (
+        {projectListing &&
+          (loaderComponent ? (
             loaderComponent
           ) : (
             <MaterialTable
@@ -419,8 +417,7 @@ function Projects(props) {
               data={projectByClient}
               title={`Project${props.clients.length > 1 ? "s" : ""}`}
             />
-          )
-        )}
+          ))}
       </BorderedContainer>
       {open && (
         <Snackbar

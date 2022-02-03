@@ -1,5 +1,4 @@
 const constant = require("../constant");
-//const estResourcePlanning = require("../database/models/estResourcePlanning");
 const ResourceMixRepository = require("../repository/estResourceMixRepository.js")
 const mongoose = require("mongoose");
 const { formatMongoData } = require("../helper/dbhelper")
@@ -19,7 +18,6 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
       var priceTotal = 0;
       var margin = 0;
       var marginPercent = 0;
-      var weeks = [];
       costTotal = getSumFromObjects(queryResult,"costcal");
       priceTotal = getSumFromObjects(queryResult,"pricecal");
       margin = calculateMargin(priceTotal,costTotal);
