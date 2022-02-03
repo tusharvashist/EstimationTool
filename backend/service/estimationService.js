@@ -1,5 +1,4 @@
 const constant = require("../constant");
-//const Estimation = require("../database/models/estimationModel")
 const EstimationHeader = require("../database/models/estHeaderModel");
 const EstimationTemplateModel = require("../database/models/estimationTemplateModel");
 const ProjectModel = require("../database/models/projectModel");
@@ -19,56 +18,6 @@ const EstResourceCountServ = require("../service/estimationResourceCountService"
 const EstTempServ = require("../service/estimationTemplateService");
 const EstHeaderModel = require("../database/models/estHeaderModel");
 
-// module.exports.createEstimation = async(serviceData)=>{
-//   try{
-//     let estimation = new Estimation({...serviceData})
-//     let result =  await estimation.save();
-//     return formatMongoData(result)
-//   }catch(err){
-//     console.log("something went wrong: service > createEstimation ", err);
-//     throw new Error(err)
-//   }
-// }
-
-// module.exports.getAllEstimation = async({skip = 0,limit = 10})=>{
-//     try{
-//       let estimations = await Estimation.find({}).skip(parseInt(skip)).limit(parseInt(limit));
-//       return formatMongoData(estimations)
-//     }catch(err){
-//       console.log("something went wrong: service > createEstimation ", err);
-//       throw new Error(err)
-//     }
-// }
-
-// module.exports.getAllEstimationById = async({id})=>{
-//     try{
-//       if(!mongoose.Types.ObjectId(id)){
-//         throw new Error(constant.estimationMessage.INVALID_ID)
-//       }
-//       let estimation = await Estimation.findById(id)
-//       if(!estimation){
-//           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
-//       }
-//       return formatMongoData(estimation)
-//     }catch(err){
-//       console.log("something went wrong: service > createEstimation ", err);
-//       throw new Error(err)
-//     }
-// }
-
-// module.exports.estimationUpdate = async({id,updateInfo})=>{
-//     try{
-
-//       let estimation = await Estimation.findOneAndUpdate({_id:id},updateInfo,{new:true});
-//       if(!estimation){
-//           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND)
-//       }
-//       return formatMongoData(estimation)
-//     }catch(err){
-//       console.log("something went wrong: service > createEstimation ", err);
-//       throw new Error(err)
-//     }
-// }
 
 module.exports.estimationDelete = async ({ id }) => {
   try {
@@ -90,7 +39,7 @@ module.exports.estimationDelete = async ({ id }) => {
 module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
   try {
     let estimations = await EstimationHeader.find({ isDeleted: false })
-      //TODO: Please do not remove below liine , will implement this when implement permission based things
+      //Please do not remove below liine , will implement this when implement permission based things
       //.or([{createdBy: global.loginId}, {updatedBy: global.loginId }])
       .populate({
         path: "projectId",
@@ -180,16 +129,16 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
         throw new Error(constant.estimationMessage.ESTIMATION_NAME_UNIQUE);
       }
     }
-    let estimation = await EstimationHeader.findOneAndUpdate(
+    let estimations = await EstimationHeader.findOneAndUpdate(
       { _id: id },
       updatedInfo,
       { new: true }
     );
-    if (!estimation) {
+    if (!estimations) {
       throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
     }
 
-    return formatMongoData(estimation);
+    return formatMongoData(estimations);
   } catch (err) {
     console.log(
       "something went wrong: service > Update Estimation Header ",
@@ -205,9 +154,7 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
     console.log(".>>>>>>....>>>>>>>." + serviceData);
     //Remove All Attributes from Estimation Header
-    let estimationHeaderAtrributeCalc = new EstimationHeaderAtrribute({
-      serviceData,
-    });
+   
     if (serviceData) {
       let estimation = await EstimationHeader.findById(
         serviceData[0].estHeaderId
@@ -217,12 +164,12 @@ module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
         estimation.updatedBy = global.loginId;
         estimation.save();
       }
-      let resultdelete = await EstimationHeaderAtrribute.deleteMany({
+      await EstimationHeaderAtrribute.deleteMany({
         estHeaderId: serviceData[0].estHeaderId,
       });
       let result = await EstimationHeaderAtrribute.insertMany(
         serviceData,
-        (forceServerObjectId = true)
+        forceServerObjectId = true
       );
 
       return formatMongoData(result);
@@ -347,7 +294,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
           (x) => x.estCalcId == element.estCalcId
         );
         if (checkexists.length == 0) {
-          let resultdelete = await EstimationHeaderAtrributeCalc.deleteOne({
+         await EstimationHeaderAtrributeCalc.deleteOne({
             estHeaderId: serviceData[0].estHeaderId,
             estCalcId: element.estCalcId,
           });
@@ -362,7 +309,7 @@ module.exports.createEstimationHeaderAtrributeCalc = async (serviceData) => {
         let estcalcdata = new EstimationHeaderAtrributeCalc({
           ...element,
         });
-        let result = bulk
+        bulk
           .find({
             estHeaderId: mongoose.Types.ObjectId(serviceData[0].estHeaderId),
             estCalcId: mongoose.Types.ObjectId(element.estCalcId),
@@ -499,25 +446,10 @@ module.exports.estimationHeaderAtrributeCalcDelete = async ({ id }) => {
 
 
 
-const replaceEmptyKeys = (arr) => {
-  let newArr = arr.map((o) => updateKeys(o));
-  // return newArr
-  return newArr.filter((v)=>Object.keys(v).length !== 0)
-};
-
-const updateKeys = (obj) => {
-  const finalObj = {};
-  for (let oKey in obj) {
-    if (!obj[oKey]) {
-      finalObj[oKey] = "Not Found";
-    }
-  }
-  return { ...finalObj };
-};
-
 // Release estimation
 
 module.exports.ReleaseEstimation = async (req) => {
+  // common error array
   const errorArray = {
     requirementError: [],
     resourceCountAllocationError: "",
@@ -526,16 +458,13 @@ module.exports.ReleaseEstimation = async (req) => {
   };
   let response = { ...constant.publishMessage };
   var estheaderId = req.estimationHeaderId;
-  // console.log("estheaderId", estheaderId);
-  var estheaderid = req.estimationHeaderId;
 
-  // const estheaderid = id;
-  const obj = { skip: 0, limit: 10 };
   try {
     let errorString = [];
+    // Find Estimation Data for the given header id
     let estimation = await EstimationHeader.findById(estheaderId);
-    // console.log("estimation", estimation);
     if (estimation) {
+      // check whether it is already published or not
       if (estimation.publishDate) {
         return {message:" Estimation Already Published ", publishDate:estimation.publishDate};
       } else {
@@ -543,11 +472,11 @@ module.exports.ReleaseEstimation = async (req) => {
           estheaderId
         );
         var contingencySuffix = " Contingency";
+        // Get requirement details
         var estHeaderRequirement =
           await RequirementRepository.getEstHeaderRequirementWithContingency(
             estheaderId
           );
-        // console.log("estHeaderRequirement", JSON.stringify(estHeaderRequirement));
 
         if (estHeaderRequirement.length != 0) {
           response.requirementList = await getRequirementList(
@@ -558,7 +487,6 @@ module.exports.ReleaseEstimation = async (req) => {
           const validatedrequirement = replaceEmptyKeys(
             response.requirementList
           );
-          // console.log("validatedrequirement",validatedrequirement)
 
           if (validatedrequirement.length != 0) {
             errorArray.requirementError = [...validatedrequirement];
@@ -568,6 +496,7 @@ module.exports.ReleaseEstimation = async (req) => {
           throw new Error('Add data to this Estimation')
         }
 
+        // Get Manual data
         response.summaryCalData =
         await RequirementRepository.getCalculativeAttributes(
           estheaderId,
@@ -579,10 +508,12 @@ module.exports.ReleaseEstimation = async (req) => {
          throw new Error(getManualData.msg)
         }
 
+        // Get Resource Count Data
+
         var resourceCount = await EstResourceCountServ.getResourceCount({
           estheaderid
         });
-        // console.log("resourceCount",resourceCount);
+
         if (resourceCount.length != 0) {
 
         var valError = getValidationError(resourceCount);
@@ -595,7 +526,6 @@ module.exports.ReleaseEstimation = async (req) => {
         throw new Error('Allocate Resource First')
 
       }
-        // console.log("valError",valError);
         var getResCountData = replaceEmptyKeys(test(resourceCount));
        
         if (getResCountData.length != 0) {
@@ -603,6 +533,7 @@ module.exports.ReleaseEstimation = async (req) => {
 
         }
     
+        // Get basic details to check the SWAG, EPIC and ROM
         let estimations = await getEstBasicDetail(estheaderId);
 
         response.basicDetails = estimations;
@@ -651,7 +582,6 @@ module.exports.ReleaseEstimation = async (req) => {
       return { message: "No Estimation Found" };
     }
   } catch (err) {
-    // console.log("err", err);
     throw new Error(err);
   }
 };
@@ -665,7 +595,7 @@ function getRequirementList(
   var arrayRequirement = [];
   estHeaderRequirement.forEach((item, i) => {
     if (item.isDeleted === false) {
-      var field = item.requirement.title;
+      
       var requirement = {
         Requirement: item.requirement.title,
         Description: item.requirement.description,
@@ -676,9 +606,9 @@ function getRequirementList(
         _id: item._id,
       };
 
-      let newReqArr = item.estRequirementData.map((item) => {
+      item.estRequirementData.map((data) => {
        let newObj = {...requirement,
-        ESTData:item.ESTData == null ? null : item.ESTData
+        ESTData:data.ESTData == null ? null : data.ESTData
        };
        arrayRequirement.push(newObj);
       });
@@ -712,7 +642,7 @@ const checkValidation = (validationList, requirementList) => {
 // basic detail for estimation
 
 const getEstBasicDetail = async (id) => {
-  let estimations = await EstHeaderModel.findById({ _id: id })
+  return await EstHeaderModel.findById({ _id: id })
     .populate({
       path: "projectId",
       populate: { path: "client" },
@@ -721,16 +651,14 @@ const getEstBasicDetail = async (id) => {
       path: "estTypeId",
       populate: { path: "reqTypeValidation" },
     });
-  return estimations;
+  
 };
 
 // selected item for resource count
 const getValidationError = (show) => {
   const validation = show.filter(item => 
-    item.validationerror == true
+    item.validationerror === true
   )
-  // var { validationerror } = show;
-  // console.log('validation',validation)
   if (validation.length != 0) {  
     return {msg: "Please assign role count Properply"};
   } else {
@@ -738,6 +666,7 @@ const getValidationError = (show) => {
   }
 };
 
+// Resource Count data
 function test(arr) {
   const data = [];
   arr.map((item) => {
@@ -748,7 +677,6 @@ function test(arr) {
         skills: item.skills,
         skillsId: item.skillsId,
       };
-      // console.log("resource",resource)
       data.push(resource);
       return resource;
     }
@@ -756,7 +684,7 @@ function test(arr) {
   return data;
 }
 
-
+// Check whether manual hai record or not
 
 function checkManualField (data) {
 
@@ -767,3 +695,22 @@ return {msg:'Please Enter Manual Calculative Attributes Effort'}
   return {msg:''}
 }
 }
+
+// Simply get keys
+
+
+const replaceEmptyKeys = (arr) => {
+  let newArr = arr.map((o) => updateKeys(o));
+  // return newArr
+  return newArr.filter((v)=>Object.keys(v).length !== 0)
+};
+
+const updateKeys = (obj) => {
+  const finalObj = {};
+  for (let oKey in obj) {
+    if (!obj[oKey]) {
+      finalObj[oKey] = "Not Found";
+    }
+  }
+  return { ...finalObj };
+};

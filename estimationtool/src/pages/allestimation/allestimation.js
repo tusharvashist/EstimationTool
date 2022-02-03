@@ -6,12 +6,13 @@ import { Link } from "react-router-dom";
 import {  Paper } from "@material-ui/core";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import useLoader from "../../shared/layout/hooks/useLoader";
+import { useHistory } from "react-router-dom";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 function Home() {
-  const [tableData, setTableData] = useState([]); 
-  const [ setIsOpenDailog] = useState(false);
+  const [tableData, setTableData] = useState([]);
   const [loaderComponent, setLoader] = useLoader();
   const {clientView, projectView, estimationView} = usePermission();
+  const [isOpenDailog, setIsOpenDailog] = useState(false);
 
   useEffect(() => {
     setLoader(true);
@@ -23,10 +24,12 @@ function Home() {
           return;
         }
       }
+      // console.log("dataResponce", res.data.body);
       setTableData([...dataResponce]);
     }
 
     ).catch((err) => {
+    
 
     });
   }, []);
@@ -172,7 +175,7 @@ function Home() {
       field: "estDescription",
       render: (rowData) => {
         return (estimationView ? checkStepDes(rowData) : rowData.estDescription);
- 
+      
       },
       width: "15%",
     },
@@ -216,7 +219,14 @@ function Home() {
       },
     },
     { title: "Last update", field: "updatedAt", type: "date" },
-  ]; 
+  ]; //
+  const openfn = () => {
+    setIsOpenDailog(true);
+  };
+
+  const closefn = () => {
+    setIsOpenDailog(false);
+  };
 
   return (
     <BorderedContainer>
