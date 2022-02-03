@@ -84,9 +84,10 @@ module.exports.projectUpdate = async ({ id, updateInfo }) => {
       { client: updateInfo.client }
     );
     updateInfo.updatedBy = global.loginId;
+    let project;
     if (findProject.length != 0) {
       if (findProject.length == 1 && String(findProject[0]._id) == id) {
-        let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
+        project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
           new: true,
         });
         if (!project) {
@@ -98,7 +99,7 @@ module.exports.projectUpdate = async ({ id, updateInfo }) => {
       }
     }
 
-    let project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
+    project = await Project.findOneAndUpdate({ _id: id }, updateInfo, {
       new: true,
     });
     if (!project) {

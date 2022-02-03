@@ -123,12 +123,6 @@ module.exports.testUser = async (emailID, pass) => {
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
     }
-
-    // const isValid = await bcrypt.compare(pass, user.password);
-    // if (!isValid) {
-    //   throw new Error(constant.userMessage.INVALID_PASS);
-    // }
-
     var token = jwt.sign(
       { id: user._id },
       process.env.SECRET_KEY || "py-estimation#$#",
