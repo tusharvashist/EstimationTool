@@ -5,13 +5,11 @@ import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import { BiErrorAlt, BiCheckCircle } from "react-icons/bi";
 import { ImSigma } from "react-icons/im";
 import { VscTools } from "react-icons/vsc";
-import { MdOutlineFileDownloadDone  } from "react-icons/md";
+import { MdOutlineFileDownloadDone } from "react-icons/md";
 import Tooltip, { tooltipClasses } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
-import {
-  DataGrid,
-} from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import PropTypes from "prop-types";
 import { AiOutlineDeleteRow } from "react-icons/ai";
 
@@ -65,7 +63,6 @@ export const RequirementTable = (props) => {
     console.log("useEffect");
   }, [props.requirementHeaderData, props.requirementTypeArray]);
 
-
   const deleteSelected = () => {
     if (requirementHeaderDataFilter.length !== 0) {
       props.deleteSelected(requirementHeaderDataFilter);
@@ -74,98 +71,102 @@ export const RequirementTable = (props) => {
   };
 
   return (
-        <>
-          <div>
-              <Grid container className="importFormRowContainer">
-                <Grid item xs={8} className="importFormRow"></Grid>
-                <Grid item xs={4} className="importFormRow_Button">
-                  <Button onClick={deleteSelected}  disabled={requirementHeaderDataFilter.length !== 0  ? false : true}   variant="outlined">
-                    <AiOutlineDeleteRow style={{ fontSize: "20px" }} />
-                    &nbsp;{" "}
-                    {`Remove Selected Requirement${
-                      requirementHeaderDataFilter.length > 1 ? "s" : ""
-                    }`}
-                  </Button>
-                </Grid>
-              </Grid>
-            
-            <div style={{ height: 400, width: "100%" }}>
-              <DataGrid
-                className={`${classes.root} ${classes.dataGrid}`}
-                rows={requirementHeaderData}
-                columns={requirementHeader}
-                hideFooterPagination={false}
-                pageSize={pageSize}
-                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                rowsPerPageOptions={[10, 20, 50]}
-                pagination
-                disableSelectionOnClick
-                checkboxSelection={props.selection}
-                onRowClick={(params, event) => {
-                  if (props.isEditable) {
-                    props.openEditRequirement(event, params.row);
-                  }
-                }}
-                onSelectionModelChange={(rows) => {
-                  console.log("onSelectionModelChange: ", rows);
-                  setFilterRequirementHeaderData(rows);
-                }}
-                selectionModel={requirementHeaderDataFilter} //
-              />
-            </div>
-            <div style={{ width: "100%" }}>
-              {requirementHeaderData.length !== 0 ? (
-                <Box
-                  className="import-report"
-                  sx={{ padding: "10px", display: "flex" }}
-                >
-                  <p className="report report_total">
-                    <ImSigma style={{ fontSize: "18px" }} />
-                    &nbsp;Total records:&nbsp;
-                    <span className="report_item">
-                      {props.requirementSummary.noOfRecords}
-                    </span>
-                  </p>
-                  {props.requirementSummary.noOfError !== 0 ? (
-                    <p className="report report_error">
-                      <BiErrorAlt style={{ fontSize: "18px" }} />
-                      &nbsp;No of error:&nbsp;
-                      <span className="report_item">
-                        {props.requirementSummary.noOfError}
-                      </span>
-                    </p>
-                  ) : null}
-                  {props.requirementSummary.noOfModification !== 0 ? (
-                    <p className="report report_modify">
-                      <VscTools style={{ fontSize: "18px" }} />
-                      &nbsp;No of modification:&nbsp;
-                      <span className="report_item">
-                        {props.requirementSummary.noOfModification}
-                      </span>
-                    </p>
-                  ) : null}
-                  {props.requirementSummary.action === 4 ? (
-                    <p className="report report_error">
-                      <BiErrorAlt style={{ fontSize: "18px" }} />
-                      &nbsp;Please fix the error and try again !&nbsp;
-                      <span className="report_item"></span>
-                    </p>
-                  ) : null}
-                  {props.requirementSummary.noOfRecordsInserted !== 0 ? (
-                    <p className="report report_add">
-                      <MdOutlineFileDownloadDone style={{ fontSize: "18px" }} />
-                      &nbsp;Excel file has been successfully imported. Number of
-                      records inserted:&nbsp;
-                      <span className="report_item">
-                        {props.requirementSummary.noOfRecordsInserted}
-                      </span>
-                    </p>
-                  ) : null}
-                </Box>
+    <>
+      <div>
+        <Grid container className="importFormRowContainer">
+          <Grid item xs={8} className="importFormRow"></Grid>
+          <Grid item xs={4} className="importFormRow_Button">
+            <Button
+              onClick={deleteSelected}
+              disabled={requirementHeaderDataFilter.length !== 0 ? false : true}
+              variant="outlined"
+            >
+              <AiOutlineDeleteRow style={{ fontSize: "20px" }} />
+              &nbsp;{" "}
+              {`Remove Selected Requirement${
+                requirementHeaderDataFilter.length > 1 ? "s" : ""
+              }`}
+            </Button>
+          </Grid>
+        </Grid>
+
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            className={`${classes.root} ${classes.dataGrid}`}
+            rows={requirementHeaderData}
+            columns={requirementHeader}
+            hideFooterPagination={false}
+            pageSize={pageSize}
+            onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+            rowsPerPageOptions={[10, 20, 50]}
+            pagination
+            disableSelectionOnClick
+            checkboxSelection={props.selection}
+            onRowClick={(params, event) => {
+              if (props.isEditable) {
+                props.openEditRequirement(event, params.row);
+              }
+            }}
+            onSelectionModelChange={(rows) => {
+              console.log("onSelectionModelChange: ", rows);
+              setFilterRequirementHeaderData(rows);
+            }}
+            selectionModel={requirementHeaderDataFilter} //
+          />
+        </div>
+        <div style={{ width: "100%" }}>
+          {requirementHeaderData.length !== 0 ? (
+            <Box
+              className="import-report"
+              sx={{ padding: "10px", display: "flex" }}
+            >
+              <p className="report report_total">
+                <ImSigma style={{ fontSize: "18px" }} />
+                &nbsp;Total records:&nbsp;
+                <span className="report_item">
+                  {props.requirementSummary.noOfRecords}
+                </span>
+              </p>
+              {props.requirementSummary.noOfError !== 0 ? (
+                <p className="report report_error">
+                  <BiErrorAlt style={{ fontSize: "18px" }} />
+                  &nbsp;No of error:&nbsp;
+                  <span className="report_item">
+                    {props.requirementSummary.noOfError}
+                  </span>
+                </p>
               ) : null}
-            </div>
-          </div>
-        </>
+              {props.requirementSummary.noOfModification !== 0 ? (
+                <p className="report report_modify">
+                  <VscTools style={{ fontSize: "18px" }} />
+                  &nbsp;No of modification:&nbsp;
+                  <span className="report_item">
+                    {props.requirementSummary.noOfModification}
+                  </span>
+                </p>
+              ) : null}
+              {props.requirementSummary.action === 4 ? (
+                <p className="report report_error">
+                  <BiErrorAlt style={{ fontSize: "18px" }} />
+                  &nbsp;Please fix the error and try again !&nbsp;
+                  <span className="report_item"></span>
+                </p>
+              ) : null}
+              {props.requirementSummary.noOfRecordsInserted !== 0 ? (
+                <p className="report report_add">
+                  <MdOutlineFileDownloadDone style={{ fontSize: "18px" }} />
+                  &nbsp;Excel file has been successfully imported. Number of
+                  records inserted:&nbsp;
+                  <span className="report_item">
+                    {props.requirementSummary.noOfRecordsInserted}
+                  </span>
+                </p>
+              ) : null}
+            </Box>
+          ) : null}
+        </div>
+      </div>
+    </>
   );
 };
 
@@ -195,9 +196,9 @@ export const RequirementTablePopup = (props) => {
   );
 };
 
-export const ErrorComponent = (props) => {
-  const HtmlTooltip = styled(({ className, ...props }) => (
-    <Tooltip {...props} classes={{ popper: className }} />
+export const ErrorComponent = (errProps) => {
+  const HtmlTooltip = styled(({ className, ...tooltipProps }) => (
+    <Tooltip {...tooltipProps} classes={{ popper: className }} />
   ))(({ theme }) => ({
     [`& .${tooltipClasses.tooltip}`]: {
       backgroundColor: "#f5f5f9",
@@ -212,14 +213,14 @@ export const ErrorComponent = (props) => {
     },
   }));
 
-  return props.row.Error.length === 0 ? (
+  return errProps.row.Error.length === 0 ? (
     <BiCheckCircle style={{ color: "green" }} />
   ) : (
     <HtmlTooltip
       title={
         <React.Fragment>
           <ul>
-            {props.row.Error.map((err, i) => (
+            {errProps.row.Error.map((err, i) => (
               <li key={i + 1}>{err}</li>
             ))}
           </ul>

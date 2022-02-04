@@ -17,7 +17,7 @@ import BorderedContainer from "../shared/ui-view/borderedContainer/BorderedConta
 
 import { USER_PERMISSIONS } from "../shared/ui-view/constant/enum";
 import logo from "./img/logo.png";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   setEmail,
   setFirstName,
@@ -75,8 +75,6 @@ export default function Login(props) {
     }
     for (let userP in USER_PERMISSIONS) {
       finalPermissions[USER_PERMISSIONS[userP]] = !!permissionObj[userP];
-      // finalPermissions[USER_PERMISSIONS[userP]] = true;
-
     }
 
     return { ...finalPermissions };
@@ -87,7 +85,7 @@ export default function Login(props) {
     isShowSpinner ? setIsShowSpinner(false) : setIsShowSpinner(true);
     LoginSer.login(user)
       .then(async (res) => {
-        let result = await res;
+        let result = res;
         await AuthSer.login(result.data.body);
         dispatch(setEmail(result.data.body.email));
         dispatch(setFirstName(result.data.body.firstName));
@@ -114,10 +112,6 @@ export default function Login(props) {
       })
       .catch((err) => {
         setIsShowSpinner(false);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
         autoHideMsZ();
       });
   };
@@ -140,12 +134,7 @@ export default function Login(props) {
           justify="center"
           alignItems="center"
           className="bg-mask"
-        >
-          {/* <div className="promo-box"> 
-                        <h1 className="title"> Estimation Tool</h1> 
-                        <p className="sub-title">The Scalable Path Project estimator. A tool that's flexible enough to help you estimate costs.</p>
-                    </div> */}
-        </Grid>
+        ></Grid>
       </Grid>
       <Grid
         item

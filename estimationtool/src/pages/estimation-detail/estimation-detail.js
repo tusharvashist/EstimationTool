@@ -1,4 +1,4 @@
-import { Button, Container ,Box, Grid } from "@material-ui/core";
+import { Button, Container, Box, Grid } from "@material-ui/core";
 
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -30,7 +30,7 @@ import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 import { IoWarningOutline } from "react-icons/io5";
 import { MdOutlineDocumentScanner, MdOutlineTimeline } from "react-icons/md";
 
-import { BiExport ,BiImport } from "react-icons/bi";
+import { BiExport, BiImport } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
@@ -44,7 +44,6 @@ const EstimationDetail = () => {
   const dispatch = useDispatch();
   const {
     estimation_generate_timeline,
-    estimation_export_resourcemix,
     estimation_generate_resourcemix,
     estimationAttributeData,
     estimation_calc_attribute_data,

@@ -311,7 +311,7 @@ const FirstStep = forwardRef((props, ref) => {
                 label="Tentative Timeline (Weeks)*"
                 variant="outlined"
                 type={"number"}
-                InputProps={{ inputProps: { min: 1, max: 3, maxLength: 3 } }}
+                InputProps={{ inputProps: { min: 1, maxLength: 3 } }}
                 error={isTentativeTimelineInvalid}
                 helperText={
                   isTentativeTimelineInvalid

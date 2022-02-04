@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import ResourceCountService from "./resourcecount.service";
-import PropTypes from "prop-types";
 import { styled } from "@mui/material/styles";
 import RadioGroup, { useRadioGroup } from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -42,7 +41,9 @@ const RoleEditItem = (props) => {
         setRoleData(res.data.body);
         console.log("res1", res);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   let obj = {
@@ -68,7 +69,6 @@ const RoleEditItem = (props) => {
 
     ResourceCountService.updateResourceRole(obj)
       .then((res) => {
-        // setOpen({ open: true, severity: "success", message: res.data.message });
         props.handleEditChange();
         getResourceMasterRoleData(props.rowEditData._id);
         setValue(!value);
@@ -124,8 +124,8 @@ const RoleEditItem = (props) => {
       });
   };
 
-  const StyledFormControlLabel = styled((props) => (
-    <FormControlLabel {...props} />
+  const StyledFormControlLabel = styled((styleProp) => (
+    <FormControlLabel {...styleProp} />
   ))(({ theme, checked }) => ({
     ".MuiFormControlLabel-label": checked && {
       color: "#61dafb",
