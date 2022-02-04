@@ -98,6 +98,8 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       constant.excelSheetName.RESOURCE_MIX
     );
 
+    // set column width
+    worksheet.properties.defaultColWidth = 20;
     let countRowData = await estimationResourceCountService.getResourceCount(
       newPayload
     );

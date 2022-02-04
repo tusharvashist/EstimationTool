@@ -40,5 +40,5 @@ module.exports.getResourceMixPlanning = async ({ id }) => {
   }
 
   function calculateMarginPercentage(margin,priceTotal){
-      return ((margin/priceTotal)*100).toFixed(2);
+    return isNaN(((margin/priceTotal)*100).toFixed(2)) ? 0 : ((margin/priceTotal)*100).toFixed(2);
   }

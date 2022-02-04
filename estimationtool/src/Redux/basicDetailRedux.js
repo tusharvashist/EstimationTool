@@ -11,7 +11,7 @@ export const basicDetailSlice = createSlice({
     estimationHeaderId: "",
     estimationTentativeTimeline: "",
     estimationContingency: "",
-    estimationLocations: "",
+    estimationLocations: [],
   },
   reducers: {
     setEstimationName: (state, estimationName) => {
