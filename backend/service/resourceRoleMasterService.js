@@ -57,7 +57,7 @@ module.exports.getAllResources = async ({ resourceCountId }) => {
         },
       },
     ]);
-    let rescount = await EstResourceCount.findById(resourceCountId);
+    let rescount = await EstResourceCount.findById(ObjectId(resourceCountId));
     let estheader = await EstimationHeader.findById(rescount.estHeaderId);
 
     let masterResource = await resourceRoleMasterModel

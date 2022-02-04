@@ -79,9 +79,13 @@ const ResourceCountMatrix = (props) => {
       .then((res) => {
         setLoader(false);
         setResouceCountData(res.data.body);
+        if(res.data.body.length > 0){
         props.errorFunction(
           res.data.body.some((el) => el.validationerror === true)
         );
+        }else{
+         props.errorFunction(true);
+        }
       })
       .catch((err) => {});
   };
@@ -247,7 +251,7 @@ const ResourceCountMatrix = (props) => {
                 </>
               )}
               <div style={{ height: 300, width: "100%" }}>
-                {estimation_resourcecount_edit && resouceCountData.length && (
+              {estimation_resourcecount_edit && resouceCountData.length ? (
                   <DataGrid
                     sx={{
                       "& .MuiDataGrid-cell:hover": {
@@ -280,7 +284,9 @@ const ResourceCountMatrix = (props) => {
                       `error--${params.row.validationerror}`
                     }
                   />
-                )}
+                  ) : 
+                  <h5 className="no-recrd">No Records available</h5>
+                  }
               </div>
 
               {/* <div className="resource-cont-costing">

@@ -18,6 +18,11 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     let estHeaderRequirement =
       await RequirementRepository.getAttributesCalAttributesTotal(estheaderid);
 
+      estHeaderRequirement.EstimationAttributes = 
+      estHeaderRequirement.EstimationAttributes.filter((item) => item.Total > 0);
+      estHeaderRequirement.EstimationCalcAttributes = 
+      estHeaderRequirement.EstimationCalcAttributes.filter((item) => item.Total > 0);
+
     //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
     let rescountList = await EstResourceCount.find({
       estHeaderId: ObjectId(estheaderid),
@@ -37,13 +42,23 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
         });
+         // remove resource allocation
+        let deleted = await EstResourcePlanning.deleteMany({
+        estHeaderId: ObjectId(estheaderid),
+        estAttributeId: element.estAttributeId,
+         });
       }
-
+        
       if (element.estCalcId != undefined && checkcalcexists.length == 0) {
         await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
         });
+         // remove resource allocation
+         let deleted = await EstResourcePlanning.deleteMany({
+          estHeaderId: ObjectId(estheaderid),
+          estCalcId: element.estCalcId,
+      });
       }
     });
 
