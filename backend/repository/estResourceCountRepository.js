@@ -3,6 +3,9 @@ const { ObjectId } = require("mongodb");
 const EstResourceCount = require("../database/models/estResourceCount");
 const mongoose = require("mongoose");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
+const resourceRoleMasterModel = require("../database/models/resourceRoleMaster");
+const estResourcePlanningModel = require("../database/models/estResourcePlanning");
+const EstimationHeader = require("../database/models/estHeaderModel");
 
 module.exports.getEstResourceCountByAttrId = async (
   estAttributeId,
@@ -147,4 +150,90 @@ module.exports.getResourceMixData = async (estheaderid) => {
       },
     },
   ]);
+};
+
+module.exports.GetMasterResourceByLocation = async (techSkillId, estheader) => {
+  let masterResource = await resourceRoleMasterModel
+    .aggregate([
+      {
+        $lookup: {
+          from: "locationmasters",
+          localField: "location",
+          foreignField: "_id",
+          as: "location",
+        },
+      },
+      {
+        $unwind: {
+          path: "$location",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "techskillmasters",
+          localField: "techskill",
+          foreignField: "_id",
+          as: "techskill",
+        },
+      },
+      {
+        $unwind: {
+          path: "$techskill",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          "techskill._id": techSkillId,
+        },
+      },
+    ])
+    .addFields({ count: 0, defaultAdjusted: false });
+
+  return masterResource.filter((resource) =>
+    estheader.locations.some(
+      (loc) => String(resource.location._id) === String(loc)
+    )
+  );
+};
+
+module.exports.GetResourceCountResourceData = async (resourceCountId) => {
+  let planResource = await estResourcePlanningModel.aggregate([
+    {
+      $match: {
+        estResourceCountID: mongoose.Types.ObjectId(resourceCountId),
+      },
+    },
+    {
+      $group: {
+        _id: {
+          resourceRoleID: "$resourceRoleID",
+          defaultAdjusted: "$defaultAdjusted",
+        },
+        count: {
+          $sum: 1,
+        },
+      },
+    },
+  ]);
+  let rescount = await EstResourceCount.findById(ObjectId(resourceCountId));
+  let estheader = await EstimationHeader.findById(rescount.estHeaderId);
+
+  let filteredresource = await this.GetMasterResourceByLocation(
+    rescount.techSkill,
+    estheader
+  );
+
+  filteredresource.forEach((element) => {
+    let exists = planResource.filter(
+      (x) => String(x._id.resourceRoleID) == String(element._id)
+    );
+    if (exists.length > 0) {
+      element.defaultAdjusted = exists[0]._id.defaultAdjusted;
+      element.count = exists[0].count;
+    }
+  });
+
+  return filteredresource;
 };

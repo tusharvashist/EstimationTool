@@ -18,10 +18,14 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     let estHeaderRequirement =
       await RequirementRepository.getAttributesCalAttributesTotal(estheaderid);
 
-      estHeaderRequirement.EstimationAttributes = 
-      estHeaderRequirement.EstimationAttributes.filter((item) => item.Total > 0);
-      estHeaderRequirement.EstimationCalcAttributes = 
-      estHeaderRequirement.EstimationCalcAttributes.filter((item) => item.Total > 0);
+    estHeaderRequirement.EstimationAttributes =
+      estHeaderRequirement.EstimationAttributes.filter(
+        (item) => item.Total > 0
+      );
+    estHeaderRequirement.EstimationCalcAttributes =
+      estHeaderRequirement.EstimationCalcAttributes.filter(
+        (item) => item.Total > 0
+      );
 
     //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
     let rescountList = await EstResourceCount.find({
@@ -42,23 +46,23 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
         });
-         // remove resource allocation
+        // remove resource allocation
         let deleted = await EstResourcePlanning.deleteMany({
-        estHeaderId: ObjectId(estheaderid),
-        estAttributeId: element.estAttributeId,
-         });
+          estHeaderId: ObjectId(estheaderid),
+          estAttributeId: element.estAttributeId,
+        });
       }
-        
+
       if (element.estCalcId != undefined && checkcalcexists.length == 0) {
         await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
         });
-         // remove resource allocation
-         let deleted = await EstResourcePlanning.deleteMany({
+        // remove resource allocation
+        let deleted = await EstResourcePlanning.deleteMany({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
-      });
+        });
       }
     });
 
@@ -165,28 +169,12 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     },
   ]);
 
-  let data = await ResourceCountRepository.getResourceMixData(estheaderid);
-
-  data.forEach(async (element) => {
-    let exists = {};
-    if (element.estAttributeId) {
-      exists = result.filter(
-        (x) => String(x.estAttributeId) == String(element.estAttributeId)
-      );
-      if (exists.length > 0) {
-        exists[0]["rolecount"].push(element);
-      }
-    } else if (element.estCalcId) {
-      exists = result.filter(
-        (x) => String(x.estCalcId) == String(element.estCalcId)
-      );
-      if (exists.length > 0) {
-        exists[0]["rolecount"].push(element);
-      }
+  for (let element of result) {
+    //Add Role master data in RoleCount
+    if (String(element.skillsId).length > 0) {
+      element.rolecount =
+        await ResourceCountRepository.GetResourceCountResourceData(element._id);
     }
-  });
-
-  result.forEach(async (element) => {
     if (element.rolecount.length > 0) {
       var count = element.rolecount
         .map((resplan) => resplan.count)
@@ -198,7 +186,7 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     } else {
       element.validationerror = true;
     }
-  });
+  }
 
   return result;
 };
@@ -301,8 +289,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
       this.SetAllocationPercent(mincount, estResourcePlanning);
-      await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
-      return estResourcePlanning.save();
+      estResourcePlanning.save();
     } else if (updatedInfo.qty < 0) {
       let deleted = await EstResourcePlanning.findOneAndDelete({
         $and: [
@@ -319,11 +306,12 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
             rescount?.resourceCount
         );
       }
-      await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
-      return deleted;
     }
     //Update only defaultAdjusted flag
     await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
+    return await ResourceCountRepository.GetResourceCountResourceData(
+      updatedInfo.estResourceCountID
+    );
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Planning",
