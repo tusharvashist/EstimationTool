@@ -219,8 +219,9 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
         $and: [filter],
       });
     }
-
-    return formatMongoData(result);
+    return await ResourceCountRepository.GetResourceCountResourceData(
+      rescount.estResourceCountID
+    );
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Count Technology ",
