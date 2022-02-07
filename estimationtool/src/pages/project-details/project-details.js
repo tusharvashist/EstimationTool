@@ -13,8 +13,6 @@ import ProjectEstimationsGridView from "../project/project-estimations";
 import "./project-details.css";
 import { useLocation } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import { useHistory } from "react-router-dom";
-import ArrowUpwardOutlinedIcon from "@mui/icons-material/ArrowUpwardOutlined";
 import { Link } from "react-router-dom";
 import AddIcon from "@material-ui/icons/Add";
 import { useSelector, useDispatch } from "react-redux";
@@ -33,8 +31,6 @@ import Header from "../../shared/layout/Header/Header";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 import { BiImport } from "react-icons/bi";
 export default function ClientDetails(props) {
-  const history = useHistory();
-  const roleState = useSelector((state) => state.role);
   const projectState = useSelector((state) => state.project);
   const {
     estimationCreate,
@@ -55,23 +51,6 @@ export default function ClientDetails(props) {
     projectId = projectState.projectId;
   }
 
-  // let projectIdForFun;
-
-  // const checkUrl = () => {
-  //   if (location.state == undefined) {
-  //     console.log("comeback");
-  //     // console.log(location);
-  //     if (pastProjectId !== undefined) {
-  //       projectIdForFun = pastProjectId[0];
-  //     } else {
-  //     }
-
-  //     // console.log(projectIdForFun);
-  //     console.log("pastProjectId----", pastProjectId[0]);
-  //   } else {
-  //     projectIdForFun = location.state.projectId;
-  //   }
-  // };
 
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
@@ -83,12 +62,7 @@ export default function ClientDetails(props) {
     projectDescription: "",
     businessDomain: "",
   });
-  const [headerData, setHeaderData] = useState({
-    clientName: "",
-    projectName: "",
-    website: "",
-    domain: "",
-  });
+
   const [tableDataWithoutFilter, setTableDataWithoutFilter] = useState([]);
   const [tableData, setTableData] = useState([]);
 
@@ -110,24 +84,12 @@ export default function ClientDetails(props) {
         );
       })
       .catch((err) => {
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
+
         console.log("get Client by id error", err);
       });
   };
 
-  const updateHeaderData = (clientName, projectName, website, domain) => {
-    setHeaderData({
-      clientName: clientName,
-      projectName: projectName,
-      website: website,
-      domain: domain,
-    });
-  };
-
-  const [projectStatus, setProjectStatus] = useState([
+  const [projectStatus] = useState([
     { title: "All" },
     { title: "Active" },
     { title: "In-Active" },
@@ -138,10 +100,8 @@ export default function ClientDetails(props) {
       case "Active":
         return tableDataWithoutFilter.filter((op) => op.isDeleted === false);
       case "In-Active":
-        // console.log("set In- Active data ");
         return tableDataWithoutFilter.filter((op) => op.isDeleted === true);
       default:
-        // console.log("set default data ");
         return tableDataWithoutFilter;
     }
   };

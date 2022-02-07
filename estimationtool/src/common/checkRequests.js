@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import history from "./history";
 import AuthSer from "../shared/service/auth";
@@ -6,7 +6,7 @@ import AuthSer from "../shared/service/auth";
 const checkRequests = (Wrapped) => {
   function CheckRequests(props) {
     console.log(props);
-    //useEffect(() => {
+
     axios.interceptors.response.use(
       function (response) {
         // Do something with response data
@@ -19,7 +19,6 @@ const checkRequests = (Wrapped) => {
             console.log("bad request");
             break;
           case 503:
-            //props.history.push("/503"); //we will redirect user into 503 page
             break;
           case 401:
             console.log("401 JWT expired");

@@ -22,7 +22,7 @@ const ReqCounter = require("../database/models/reqCounter");
 module.exports.createRequirement = async (serviceData) => {
   let countId = await getNextSequenceValue("req_id",1);
   let projectRequirement = new ProjectRequirement({ ...serviceData, req_id:countId });
-  let requirementId = "";
+
   const findRecord = await ProjectRequirement.find(
     { title: projectRequirement.title },
     { project: projectRequirement.project }
@@ -32,8 +32,7 @@ module.exports.createRequirement = async (serviceData) => {
    
     return false;
   } else {
-    let result = await projectRequirement.save();
-    return result;
+    return await projectRequirement.save();
   }
 };
 
@@ -67,7 +66,7 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
   try {
     var counter = await getNextSequenceValue("req_id", 1);
     var updatedCounter = counter;
-    var bulk = ProjectRequirement.collection.initializeOrderedBulkOp();
+    var bulk_projectRequirementInsert = ProjectRequirement.collection.initializeOrderedBulkOp();
     requirementList.forEach(async (requirement,i) => {
       //mongoose.Types.ObjectId(serviceData),
       var type = '';
@@ -80,7 +79,7 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
       }
       updatedCounter = counter+i;
 
-      let result = bulk.insert({
+      bulk_projectRequirementInsert.insert({
           title: requirement.Requirement,
           description: requirement.Description,
           project: projectId._id,
@@ -89,7 +88,7 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
           req_id: updatedCounter,
       });      
     });
-    const result = await bulk.execute();
+    const result = await bulk_projectRequirementInsert.execute();
     if(result){
       await getNextSequenceValue("req_id", requirementList.length-1);
     }
@@ -106,7 +105,7 @@ module.exports.bulkInsertQueryAssumption = async (
 ) => {
    try {
      if(requirementList.length >0){
-    var bulk = QueryAssumptionModel.collection.initializeUnorderedBulkOp();
+    var bulk_queryAssumptionModel = QueryAssumptionModel.collection.initializeUnorderedBulkOp();
     requirementList.forEach(async (requirement) => {
      
       var projectRequirement = '';
@@ -114,7 +113,7 @@ module.exports.bulkInsertQueryAssumption = async (
           projectRequirement = mongoose.Types.ObjectId(requirement._id);
       }
 
-      let result = bulk.insert({
+      bulk_queryAssumptionModel.insert({
           query: requirement.Query,
           assumption: requirement.Assumption,
           reply: requirement.Reply,
@@ -122,7 +121,7 @@ module.exports.bulkInsertQueryAssumption = async (
       });
       
     });
-    const result = await bulk.execute();
+    const result = await bulk_queryAssumptionModel.execute();
     return formatMongoData(result);
   }
   } catch (err) {
@@ -139,20 +138,19 @@ module.exports.isRequirementAvailable = async (projectId,title) => {
 
   if (findRecord.length != 0) {
     return  true;
-  } else {
+  } 
     return false;
-  }
 };
 
 
 
 module.exports.getAllProjectRequirement = async (projectId) => {
 
-  const findRecord = await ProjectRequirement.find(
+  return await ProjectRequirement.find(
     { project: projectId }
   );
 
-    return  findRecord;
+    
 
 };
 
@@ -177,9 +175,9 @@ module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
     estHeader: estHeaderModel._id,
     isDeleted: false,
   });
-  let result_estHeaderRequirement = await estHeaderRequirement.save();
+  return await estHeaderRequirement.save();
 
-  return result_estHeaderRequirement;
+  
 };
 
 module.exports.mapHeaderToMultipleRequirement = async (
@@ -194,7 +192,7 @@ module.exports.mapHeaderToMultipleRequirement = async (
 
   var index = 0;
   var resultArray = [];
-  var result = await serviceDataArray.forEach(async (serviceData) => {
+  await serviceDataArray.forEach(async (serviceData) => {
     const record = await EstHeaderRequirement.find({
       requirement: mongoose.Types.ObjectId(serviceData),
       estHeader: mongoose.Types.ObjectId(estHeaderId),
@@ -219,8 +217,7 @@ module.exports.mapHeaderToMultipleRequirement = async (
 module.exports.updateQuery = async (projectRequirementId, serviceData) => {
   const findRecord = await QueryAssumptionModel.find(
     { projectRequirement: projectRequirementId }
-    //{ query: serviceData.query }
-  );
+   );
   if (findRecord.length !== 0) {
     var newQuery = {
       query: serviceData.query,
@@ -228,19 +225,19 @@ module.exports.updateQuery = async (projectRequirementId, serviceData) => {
       reply: serviceData.reply,
     };
 
-    let queryAssumptionModel = await QueryAssumptionModel.findOneAndUpdate(
+    return await QueryAssumptionModel.findOneAndUpdate(
       { projectRequirement: projectRequirementId  },
       newQuery,
       { new: true }
     );
 
-    return queryAssumptionModel;
+    
   } else {
 
         let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
     queryAssumptionModel.projectRequirement = projectRequirementId;
-    let result = await queryAssumptionModel.save();
-    return result;
+    return await queryAssumptionModel.save();
+    
   }
 };
 
@@ -255,8 +252,8 @@ module.exports.createQueryAssumption = async (
   if (findRecord.length == 0) {
     let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
     queryAssumptionModel.projectRequirement = projectRequirementId;
-    let result = await queryAssumptionModel.save();
-    return result;
+    return await queryAssumptionModel.save();
+    
   } else {
     return findRecord[0];
   }
@@ -286,23 +283,20 @@ module.exports.getUnpairedRequirementEstimation = async (
   requirementList,
   estHeader
 ) => {
-  //  var requirementList = await getRequirementWithQuery(projectId);
+  
   var unpairedRequirement = [];
   var index = 0;
 
   var result = await EstHeaderRequirement.find({ estHeader: estHeader });
 
-  var temp = requirementList.forEach((element) => {
+  requirementList.forEach((element) => {
     const found = result.find(
       ({ requirement }) => String(requirement) === String(element._id)
     );
     if (!found) {
       unpairedRequirement.push(element);
     }
-    // if (index == (requirementList.length - 1)) {
-
-    //callback(unpairedRequirement);
-    //}
+    
     index = index + 1;
   });
   return unpairedRequirement;
@@ -313,7 +307,7 @@ module.exports.getContingency = async (estHeaderId) => {
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
     return estimations.contingency;
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
+    
     throw new Error(err);
   }
 };
@@ -321,16 +315,13 @@ module.exports.getContingency = async (estHeaderId) => {
 module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
   try {
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
-    // console.log(estimations);
-    //if (estimations.length != 0) {
+   
     var requirementData = await requirementDataForEstHeader(estHeaderId);
-    //}
-    //  console.log("requirement: ", requirementData);
+    
     requirementData.forEach((requirementElement) => {
-      //   console.log("--------------");
-      // console.log("---",requirementElement);
+      
       requirementElement.estRequirementData.forEach((estRequirement) => {
-        //   console.log("estRequirementData: ",estRequirement);
+        
         if (
           estRequirement.ESTData !== undefined &&
           estRequirement.ESTData !== 0
@@ -342,12 +333,12 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
         } else {
           estRequirement["ESTDataContingency"] = 0;
         }
-        // console.log(estRequirement);
+        
       });
     });
     return requirementData;
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
+   
     throw new Error(err);
   }
 };
@@ -373,7 +364,7 @@ module.exports.tagWiseRequirementList = async (
           id: tags._id._id,
           tag: tags._id.name,
         };
-        tags.estRequirementData.forEach((tag, i) => {
+        tags.estRequirementData.forEach((tag, index) => {
           if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
             // Normal Attribute
             if (
@@ -462,15 +453,15 @@ module.exports.tagWiseRequirementList = async (
 
     return tagSummaryDataArray;
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
+   
     console.log(err.stack);
     throw new Error(err);
   }
 };
 
-module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
+module.exports.getCalculativeAttributes = async (estHeaderId, estHeaderContingency) => {
   try {
-    var tagsTotal = await getTagsTotal(estHeaderId, contingency);
+    var tagsTotal = await getTagsTotal(estHeaderId, estHeaderContingency);
     var estimationCalAtt = await getEstimationCalculativeAttributes(
       estHeaderId
     );
@@ -478,17 +469,20 @@ module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
     var contingency = estimations.contingency;
     estimationCalAtt.forEach((calAtt, i) => {
+      var calculative = "";
+      var totalContingency = 0;
+      var summaryCalculated = {};
       if (calAtt.calcType === "percentage") {
-        var calculative =
+         calculative =
           calAtt.calcAttributeName + " " + calAtt.unit + " % of ";
         var totalValue = 0;
-        calAtt.formulaTags.forEach((formula, i) => {
+        calAtt.formulaTags.forEach((formula, tagIndex) => {
           var coma = ",";
           if (i == calAtt.formulaTags.length - 1) {
             coma = "";
           }
           calculative = calculative + " " + formula.name + coma;
-          tagsTotal.forEach((summaryTag, i) => {
+          tagsTotal.forEach((summaryTag, index) => {
             if (summaryTag.tag === formula.name) {
               if (summaryTag.total !== undefined && summaryTag.total !== null) {
                 totalValue = totalValue + summaryTag.total;
@@ -498,10 +492,10 @@ module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
         });
 
         totalValue = (totalValue * calAtt.unit) / 100;
-        var totalContingency = totalValue + (totalValue * contingency) / 100;
+        totalContingency = totalValue + (totalValue * contingency) / 100;
         totalValue = roundToTwo(totalValue);
         totalContingency = roundToTwo(totalContingency);
-        var summaryCalculated = {
+         summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
           Effort: totalValue,
@@ -510,13 +504,13 @@ module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
         };
         summaryCalculatedAttArray.push(summaryCalculated);
       } else {
-        var calculative = calAtt.calcAttributeName + "(Manual)";
+         calculative = calAtt.calcAttributeName + "(Manual)";
         var conti = (calAtt.value * contingency) / 100;
-        var totalContingency = parseInt(calAtt.value) + conti;
+        totalContingency = parseInt(calAtt.value) + conti;
 
         totalContingency = roundToTwo(totalContingency);
 
-        var summaryCalculated = {
+        summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
           calculative: calculative,
@@ -528,14 +522,14 @@ module.exports.getCalculativeAttributes = async (estHeaderId, contingency) => {
     });
     return summaryCalculatedAttArray;
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
+    
     console.log(err.stack);
     throw new Error(err);
   }
 };
 
 async function getEstimationCalculativeAttributes(estHeaderId) {
-  let estHeaderRequirement = await EstimationHeaderAttributeCalc.aggregate([
+  return await EstimationHeaderAttributeCalc.aggregate([
     {
       $match: {
         estHeaderId: ObjectId(estHeaderId),
@@ -551,7 +545,7 @@ async function getEstimationCalculativeAttributes(estHeaderId) {
     },
   ]);
 
-  return estHeaderRequirement;
+  
 }
 
 async function getTagsTotal(estHeaderId, contingency) {
@@ -568,7 +562,7 @@ async function getTagsTotal(estHeaderId, contingency) {
           id: tags._id._id,
           tag: tags._id.name,
         };
-        tags.estRequirementData.forEach((tag, i) => {
+        tags.estRequirementData.forEach((tag, index) => {
           if (tag.ESTAttributeID !== undefined && tag.ESTAttributeID !== null) {
             if (
               tagObject["total"] !== undefined &&
@@ -596,30 +590,19 @@ async function getTagsTotal(estHeaderId, contingency) {
 
     return tagSummaryDataArray;
   } catch (err) {
-    //console.log("something went wrong: service > GetEstimation data", err);
+    
     console.log(err.stack);
     throw new Error(err);
   }
 }
 
-//Resource Count
-//       _id: "618b8f4b6259f87257bc2201",
-//       calcAttribute: " ",
-//       calcAttributeName: "QA",
-//       Total: 85,
-// function roundToTwo(value) {
-//    var multiplier = Math.pow(10, 2);
-
-//     return (Math.round(value * multiplier) / multiplier);
-// }
-
 function roundToTwo(value) {
   return Number(Number(value).toFixed(2));
 }
 
-async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
+async function getCalcAttrTotalResourceCount(estHeaderId, estHeaderContingency) {
   try {
-    var tagsTotal = await getTagsTotal(estHeaderId, contingency);
+    var tagsTotal = await getTagsTotal(estHeaderId, estHeaderContingency);
     var estimationCalAtt = await getEstimationCalculativeAttributes(
       estHeaderId
     );
@@ -629,10 +612,12 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
     var unit = estimations.effortUnit;
 
     estimationCalAtt.forEach((calAtt, i) => {
+      var totalContingency = 0;
+      var summaryCalculated = {};
       if (calAtt.calcType === "percentage") {
         var totalValue = 0;
-        calAtt.formulaTags.forEach((formula, i) => {
-          tagsTotal.forEach((summaryTag, i) => {
+        calAtt.formulaTags.forEach((formula, index) => {
+          tagsTotal.forEach((summaryTag, tagIndex) => {
             if (summaryTag.tag === formula.name) {
               if (
                 summaryTag.total !== undefined &&
@@ -646,7 +631,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
         });
 
         totalValue = (totalValue * calAtt.unit) / 100;
-        var totalContingency = totalValue + (totalValue * contingency) / 100;
+         totalContingency = totalValue + (totalValue * contingency) / 100;
         totalValue = roundToTwo(totalValue);
         totalContingency = roundToTwo(totalContingency);
         if (isNaN(totalValue)) {
@@ -656,7 +641,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
           totalContingency = 0;
         }
         totalContingency = unitWiseHours(unit, totalContingency);
-        var summaryCalculated = {
+         summaryCalculated = {
           _id: calAtt._id,
           calcType: calAtt.calcType,
           calcAttribute: calAtt.calcAttribute,
@@ -666,7 +651,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
         summaryCalculatedAttArray.push(summaryCalculated);
       } else {
         var conti = (calAtt.value * contingency) / 100;
-        var totalContingency = parseInt(calAtt.value) + conti;
+        totalContingency = parseInt(calAtt.value) + conti;
         totalContingency = roundToTwo(totalContingency);
 
         if (isNaN(totalContingency)) {
@@ -674,7 +659,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, contingency) {
         }
 
         totalContingency = unitWiseHours(unit, totalContingency);
-        var summaryCalculated = {
+         summaryCalculated = {
           _id: calAtt._id,
           calcType: calAtt.calcType,
           calcAttribute: calAtt.calcAttribute,
@@ -774,7 +759,7 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
     estHeaderId: estHeaderId,
   });
 
-  var EstimationAttributes = [];
+  var EstimationAttributesList = [];
   estHeaderRequirement.forEach((attribute, i) => {
     if (attribute._id !== undefined && attribute._id !== null) {
       var resourceCount = attribute._id;
@@ -805,7 +790,7 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
         }
       }
 
-      EstimationAttributes.push(resourceCount);
+      EstimationAttributesList.push(resourceCount);
     }
   });
   var EstimationCalcAttributes = await getCalcAttrTotalResourceCount(
@@ -813,15 +798,15 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
     contingency
   );
 
-  var resourceCount = {
+  var resourceCountObject = {
     estHeaderId: estHeaderId,
-    EstimationAttributes: EstimationAttributes,
+    EstimationAttributes: EstimationAttributesList,
     EstimationCalcAttributes: EstimationCalcAttributes,
   };
 
 
-  console.log("ResourceCount :", resourceCount);
-  return resourceCount;
+  console.log("ResourceCount :", resourceCountObject);
+  return resourceCountObject;
 };
 
 function unitWiseHours(unit, value) {
@@ -846,7 +831,7 @@ module.exports.getEstHeaderRequirement = async (estHeaderId) => {
 };
 
 async function requirementDataForEstHeader(estHeaderId) {
-  let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+  return await EstHeaderRequirement.aggregate([
     {
       $match: {
         estHeader: ObjectId(estHeaderId),
@@ -962,13 +947,13 @@ async function requirementDataForEstHeader(estHeaderId) {
       },
     },
   ]);
-  return estHeaderRequirement;
 }
+
 module.exports.getTagWiseRequirementForEstHeader = async (estHeaderId) => {
   return queryTagWiseRequirementForEstHeader(estHeaderId);
 };
 async function queryTagWiseRequirementForEstHeader(estHeaderId) {
-  let estHeaderRequirement = await EstHeaderRequirement.aggregate([
+  return await EstHeaderRequirement.aggregate([
     {
       $match: {
         estHeader: ObjectId(estHeaderId),
@@ -1090,7 +1075,7 @@ async function queryTagWiseRequirementForEstHeader(estHeaderId) {
       },
     },
   ]);
-  return estHeaderRequirement;
+  
 }
 module.exports.getRequirementWithQuery = async (projectId) => {
   let projectRequirement = await ProjectRequirement.aggregate([
@@ -1207,7 +1192,7 @@ module.exports.getRequirementWithQuery = async (projectId) => {
 
 module.exports.numberOfEstimationInProject = async (projectId) => {
 
-  let estHeaderModel = await EstHeaderModel.aggregate(
+  return await EstHeaderModel.aggregate(
     [
       {
         $match: {
@@ -1226,7 +1211,6 @@ module.exports.numberOfEstimationInProject = async (projectId) => {
     ]
   );
   
-  return estHeaderModel;
 };
 
 
@@ -1244,7 +1228,7 @@ module.exports.deleteAllRequirements = async (projectId) => {
 
 module.exports.deleteRequirementQueryAssumption = async (requirementList ) => {
 
-  var batch = QueryAssumptionModel.collection.initializeOrderedBulkOp();
+  var batch_find_queryAssumptionModel = QueryAssumptionModel.collection.initializeOrderedBulkOp();
   
     requirementList.forEach( (requirementId,i) => {
       var projectRequirementId = '';
@@ -1252,13 +1236,13 @@ module.exports.deleteRequirementQueryAssumption = async (requirementList ) => {
           projectRequirementId = mongoose.Types.ObjectId(requirementId);
       }
 
-        let result = batch.find({
+        batch_find_queryAssumptionModel.find({
           projectRequirement: projectRequirementId,
        }).delete();      
            
     });
-  const result = await batch.execute(function (err, result) {
-    console.log(result);
+  const result = await batch_find_queryAssumptionModel.execute(function (err, result2) {
+    console.log(result2);
    });
   
     return formatMongoData(result);
@@ -1268,7 +1252,7 @@ module.exports.deleteRequirementQueryAssumption = async (requirementList ) => {
 
 module.exports.deleteSelectedProjectRequirement = async (requirementList ) => {
 
-  var bulk = ProjectRequirement.collection.initializeUnorderedBulkOp();
+  var bulk_projectRequirement = ProjectRequirement.collection.initializeUnorderedBulkOp();
   
     requirementList.forEach(async (requirementId,i) => {
       var projectRequirementId = '';
@@ -1276,21 +1260,18 @@ module.exports.deleteSelectedProjectRequirement = async (requirementList ) => {
           projectRequirementId = mongoose.Types.ObjectId(requirementId);
       }
          
-      bulk.find({
+      bulk_projectRequirement.find({
           _id: projectRequirementId,
       }).delete(); 
 
     });
   
-    const result = await bulk.execute(function (err, result) {
-    console.log(result);
+    const result = await bulk_projectRequirement.execute(function (err, result2) {
+    console.log(result2);
     });
   
     return formatMongoData(result);
 };
-
-
-
 
  async function getNextSequenceValue(sequenceName, increment){
   let sequenceDocument =  await ReqCounter.findOneAndUpdate({key: sequenceName },

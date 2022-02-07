@@ -5,7 +5,6 @@ const dbconnection = require("./database/connection");
 const swaggerUi = require("swagger-ui-express");
 const yaml = require("yamljs");
 const swaggerDocument = yaml.load("./swagger.yaml");
-//const productionURL = "https://estimationtoolapi.azurewebsites.net/";
 const productionURL = "https://pyramidestimationtool.azurewebsites.net";
 const app = express();
 const PORT = process.env.PORT || 5252;

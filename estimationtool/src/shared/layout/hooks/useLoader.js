@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { Box, CircularProgress } from "@material-ui/core";
 
 const useLoader = ({ ml = 1, size = 32, mr = 2, color = "primary" } = {}) => {

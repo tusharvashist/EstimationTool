@@ -1,16 +1,13 @@
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "../estimation-detail/estimation-detail.css";
 import React, { useState, useEffect } from "react";
-import useLoader from "../../shared/layout/hooks/useLoader";
 import RoleCount from "./RoleCount";
 import { DataGrid } from "@mui/x-data-grid";
 import RoleEditCount from "./RoleEditCount";
-import { Select, MenuItem, FormControl } from "@material-ui/core";
+import { Select, MenuItem } from "@material-ui/core";
 import ReourceCountService from "./resourcecount.service";
 
 import { MdOutlineManageAccounts } from "react-icons/md";
-import { IoPricetagsOutline } from "react-icons/io5";
-import { RiTimerLine, RiTimerFlashLine } from "react-icons/ri";
 import NoRowOverlay from "../../shared/ui-view/NoRowOverlay/NoRowOverlay";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
@@ -18,7 +15,6 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 const ResourceCountMatrix = (props) => {
   const [tableOpen, setTableOpen] = useState(false);
 
-  const popupCount = () => {};
   const [technologyList, setTechnolnogySkills] = useState();
   const [openEditCount, setOpenEditCount] = useState(false);
   const [resouceCountData, setResouceCountData] = useState([]);
@@ -26,7 +22,6 @@ const ResourceCountMatrix = (props) => {
   const [rowEditData, setRowEditData] = useState([]);
   const [reload, setReload] = useState(false);
   const [techError, setTechError] = useState({});
-  const [loaderComponent, setLoader] = useLoader();
 
   const [sortModel, setSortModel] = React.useState([
     {
@@ -37,9 +32,9 @@ const ResourceCountMatrix = (props) => {
   const { estimation_resourcecount_edit } = usePermission();
   useEffect(() => {
     getTechnologySkill();
-    getResourceCountData(estimationHeaderId);
+    getResourceCountData();
 
-    if (tableOpen == true) {
+    if (tableOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "scroll";
@@ -49,51 +44,55 @@ const ResourceCountMatrix = (props) => {
   // Get All Technology Skills
 
   const getTechnologySkill = () => {
-    setLoader(true);
     ReourceCountService.getAllTechnologies()
       .then((res) => {
-        setLoader(false);
-
         setTechnolnogySkills(res.data.body);
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // Get Resource Count
 
-  const getResourceCountData = (estimationHeaderId) => {
+  const getResourceCountData = () => {
     ReourceCountService.getResourceCount(estimationHeaderId)
       .then((res) => {
-        getResourceCountAllData(estimationHeaderId);
+        getResourceCountAllData();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // Get Resource Master Role Data
 
   // Get All Resource Count Data
 
-  const getResourceCountAllData = (estimationHeaderId) => {
-    setLoader(true);
+  const getResourceCountAllData = () => {
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
-        setLoader(false);
         setResouceCountData(res.data.body);
+        if(res.data.body.length > 0){
         props.errorFunction(
           res.data.body.some((el) => el.validationerror === true)
         );
+        }else{
+         props.errorFunction(true);
+        }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const getColumns = ({ onChangeSelect }) => [
+  const getColumns = () => [
     {
       headerName: "Resource Count",
       field: "resourceCount",
       width: 180,
       sorting: false,
       valueFormatter: (params) => {
-        // console.log("resource count params",params)
         const { id } = params,
           { resourceCount } = id || {};
         return resourceCount;
@@ -132,13 +131,13 @@ const ResourceCountMatrix = (props) => {
               })
             }
             value={rowdata.row.skillsId}
-            //   label={technologySkills.skill
           >
-            {technologyList.map((item) => (
-              <MenuItem key={item.skill} value={item.id}>
-                {item.skill}
-              </MenuItem>
-            ))}
+            {technologyList &&
+              technologyList.map((item) => (
+                <MenuItem key={item.skill} value={item.id}>
+                  {item.skill}
+                </MenuItem>
+              ))}
           </Select>
         );
       },
@@ -177,13 +176,13 @@ const ResourceCountMatrix = (props) => {
   };
 
   const handleEditChange = () => {
-    getResourceCountData(estimationHeaderId);
+    getResourceCountData();
     setReload(!reload);
   };
 
   const handleCountTable = () => {
     if (estimationHeaderId) {
-      getResourceCountData(estimationHeaderId);
+      getResourceCountData();
     }
     setTableOpen(!tableOpen);
     if (tableOpen) {
@@ -192,7 +191,6 @@ const ResourceCountMatrix = (props) => {
   };
 
   const onChangeSelect = (e, rowData) => {
-    console.log("selected", e.target.value, rowData);
     const techId = e.target.value;
     const { row } = rowData;
     let req = {
@@ -202,16 +200,15 @@ const ResourceCountMatrix = (props) => {
       estCalcId: row.estCalcId || null,
       estHeaderId: estimationHeaderId,
     };
-    setLoader(true);
 
     ReourceCountService.updateTechnology(req)
       .then((res) => {
-        console.log("update technology", res.data.body);
-        setLoader(false);
         setReload(!reload);
-        getResourceCountData(estimationHeaderId);
+        getResourceCountData();
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   console.log("resouceCountData", resouceCountData);
@@ -246,7 +243,7 @@ const ResourceCountMatrix = (props) => {
                 </>
               )}
               <div style={{ height: 300, width: "100%" }}>
-                {estimation_resourcecount_edit && resouceCountData.length && (
+              {estimation_resourcecount_edit && resouceCountData.length ? (
                   <DataGrid
                     sx={{
                       "& .MuiDataGrid-cell:hover": {
@@ -264,8 +261,7 @@ const ResourceCountMatrix = (props) => {
                       },
                     }}
                     rows={resouceCountData}
-                    // rows={[]}
-                    columns={getColumns({ onChangeSelect })}
+                    columns={getColumns()}
                     pageSize={5}
                     onCellClick={handleCellClick}
                     getRowId={({ _id }) => _id}
@@ -279,14 +275,10 @@ const ResourceCountMatrix = (props) => {
                       `error--${params.row.validationerror}`
                     }
                   />
-                )}
+                  ) : 
+                  <h5 className="no-recrd">No Records available</h5>
+                  }
               </div>
-
-              {/* <div className="resource-cont-costing">
-              <h4 className="inline-cost">Costing: $1000</h4>
-              <h4 className="inline-cost">Expected Timeline: $1000</h4>
-              <h4 className="inline-cost">Actual Timeline: $1000</h4>
-            </div> */}
             </BorderedContainer>
           </div>
         </>

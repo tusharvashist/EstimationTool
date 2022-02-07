@@ -8,7 +8,6 @@ module.exports.getEstResourceCountByAttrId = async (
   estAttributeId,
   estheaderid
 ) => {
-  console.log(estAttributeId, estheaderid);
   return EstResourceCount.findOne({
     estAttributeId: estAttributeId,
     estHeaderId: estheaderid,
@@ -19,7 +18,6 @@ module.exports.getEstResourceCountByCalcAttrId = async (
   estcalcAttributeId,
   estheaderid
 ) => {
-  console.log(estcalcAttributeId, estheaderid);
   return EstResourceCount.findOne({
     estCalcId: estcalcAttributeId,
     estHeaderId: estheaderid,
@@ -27,12 +25,9 @@ module.exports.getEstResourceCountByCalcAttrId = async (
 };
 
 module.exports.getEstResourceCountByHeaderId = async (estheaderid) => {
-  let estHeadercount = await EstResourceCount.find({
+  return EstResourceCount.find({
     estHeaderId: estheaderid,
   });
-  //.populate("estAttributeId estCalcId");
-
-  return estHeadercount;
 };
 
 module.exports.updateResourceCount = async (
@@ -44,12 +39,11 @@ module.exports.updateResourceCount = async (
     resourceCount.Total /
     (global.ResourceWeekHours * estimation.estTentativeTimeline);
 
-  let estHeadercount = EstResourceCount.findOneAndUpdate(
+  return EstResourceCount.findOneAndUpdate(
     { _id: updateResourceCount._id },
     updateResourceCount,
     { new: true }
   );
-  return estHeadercount;
 };
 
 module.exports.createResourceCount = async (
@@ -104,7 +98,7 @@ module.exports.updateCalcAttResourceCount = (
 };
 
 module.exports.getResourceMixData = async (estheaderid) => {
-  let data = await EstResourcePlanning.aggregate([
+  return EstResourcePlanning.aggregate([
     {
       $match: {
         estHeaderId: ObjectId(estheaderid),
@@ -153,6 +147,4 @@ module.exports.getResourceMixData = async (estheaderid) => {
       },
     },
   ]);
-
-  return data;
 };

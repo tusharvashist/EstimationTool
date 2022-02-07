@@ -49,12 +49,3 @@ const store = configureStore({
 });
 
 export default store;
-
-//////////Old
-// export default configureStore({reducer: {
-//   login: loginReducer,
-//   basicDetail: basicDetailReducer,
-//   effortAttribute: effortAttributeSave,
-//   calcAttribute: calcAttributeSave,
-//   role: roleRedux,
-// },});

@@ -43,6 +43,9 @@
 .env {
   font-size: 10px;
   margin: 0;
+  position: fixed;
+  top: 15px;
+  right: 15px;
 }
 .env .env-title {
   font-size: 12px;
@@ -72,9 +75,4 @@
   color: red;
   padding: 0;
   margin: 0;
-}
-.env {
-  position: fixed;
-  top: 15px;
-  right: 15px;
 }

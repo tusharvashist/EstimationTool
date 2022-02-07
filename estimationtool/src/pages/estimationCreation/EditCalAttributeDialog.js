@@ -9,7 +9,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
-import EstimationService from "../estimation-detail/estimation.service";
+import EstimationService from "../estimation-detail/EstimationService";
 import Autocomplete from "@mui/material/Autocomplete";
 
 const useStyles = makeStyles((theme) => ({

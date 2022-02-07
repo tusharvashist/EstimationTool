@@ -17,7 +17,6 @@ export default function AddAttributeEstimations(props) {
       setFormData({ ...newObject });
     },
     onSubmitForm = (e) => {
-      //e && e.preventDefault();
       if (formData.attributeName) {
         setShowError(false);
         props.saveFun({ ...formData });
@@ -26,7 +25,7 @@ export default function AddAttributeEstimations(props) {
       }
     };
 
-  const { attributeName, attributeCode, description } = formData;
+  const { attributeName } = formData;
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}

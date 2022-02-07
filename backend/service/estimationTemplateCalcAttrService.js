@@ -2,11 +2,6 @@ const constant = require("../constant");
 const EstimationTemplateCalcAttr = require("../database/models/estimationTemplateCalcAttrModel");
 const ObjectId = require("mongodb").ObjectId;
 const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
-//const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel")
-// estimationHeaderAtrributeCalc- header plus more
-// estimationHeaderAtrribute
-// EstimationCalcAttr
-
 const EstimationHeaderTemplateCalcAttr = require("../database/models/estimationHeaderAtrributeCalcModel");
 const Client = require("../database/models/clientModel");
 const { formatMongoData } = require("../helper/dbhelper");
@@ -64,8 +59,6 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({
       },
     ]).addFields({ selected: false, value: "" });
     if (estheaderid) {
-      // //TODO formulaTags and tag is to be populated in estAttCalc in find
-
       let estSelAtt = await EstimationHeaderTemplateCalcAttr.find({
         estHeaderId: ObjectId(estheaderid),
       })
@@ -74,31 +67,27 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({
           path: "formulaTags",
         });
 
-      console.log(estSelAtt);
-
-      var index = 0;
-      estAttCalc.forEach((element) => {
-        estSelAtt.forEach((estSelAttElement) => {
-          if (String(estSelAttElement.estCalcId) == String(element._id)) {
-            element.selected = true;
-            element.isFormula = estSelAttElement.isFormula;
-            element.formula = estSelAttElement.formula;
-            element.tag = estSelAttElement.tag;
-            element.calcType = estSelAttElement.calcType;
-            element.formulaTags = estSelAttElement.formulaTags;
-            element.operator = estSelAttElement.operator;
-            element.unit = estSelAttElement.unit;
-            element.description = estSelAttElement.description;
-            element.value = estSelAttElement.value;
-            element.calcAttributeName = estSelAttElement.calcAttributeName;
-          }
-        });
+      estSelAtt.forEach((estSelAttElement) => {
+        let element = estAttCalc.filter(
+          (x) => String(estSelAttElement.estCalcId) == String(x._id)
+        );
+        if (element.length > 0) {
+          element[0].selected = true;
+          element[0].isFormula = estSelAttElement.isFormula;
+          element[0].formula = estSelAttElement.formula;
+          element[0].tag = estSelAttElement.tag;
+          element[0].calcType = estSelAttElement.calcType;
+          element[0].formulaTags = estSelAttElement.formulaTags;
+          element[0].operator = estSelAttElement.operator;
+          element[0].unit = estSelAttElement.unit;
+          element[0].description = estSelAttElement.description;
+          element[0].value = estSelAttElement.value;
+          element[0].calcAttributeName = estSelAttElement.calcAttributeName;
+        }
       });
     }
 
     if (esttype) {
-      //TODO formulaTags and tag is to be populated in estAttCalc in find
-
       let estSelAtt = await EstimationTemplateCalcAttr.find({
         estTypeId: esttype,
       })
@@ -107,13 +96,13 @@ module.exports.getAllEstimationTemplateCalcAttr = async ({
           path: "formulaTags",
         });
 
-      var index = 0;
-      estAttCalc.forEach((element) => {
-        estSelAtt.forEach((estSelAttElement) => {
-          if (String(estSelAttElement.estCalcId) == String(element._id)) {
-            element.selected = true;
-          }
-        });
+      estSelAtt.forEach((estSelAttElement) => {
+        let element = estAttCalc.filter(
+          (x) => String(estSelAttElement.estCalcId) == String(x._id)
+        );
+        if (element.length > 0) {
+          element[0].selected = true;
+        }
       });
 
       return estAttCalc;

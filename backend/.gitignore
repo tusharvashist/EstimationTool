@@ -4,4 +4,5 @@
 /report
 /node_modules
 /.scannerwork
+/sonar-project.properties
 

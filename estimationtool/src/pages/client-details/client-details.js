@@ -1,33 +1,22 @@
 import React, { useState, useEffect } from "react";
 import ClientSer from "./client-details.service";
 import {
-  //   Box,
   FormControl,
   Grid,
-  Hidden,
   InputLabel,
   MenuItem,
   Select,
-  TextField,
 } from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import ProjectView from "../project/projects";
 import { useLocation } from "react-router-dom";
 import "./client-details.css";
-import Dropdown from "../../shared/ui-view/dropdown/dropdown";
 import { useParams, useHistory } from "react-router-dom";
-import ProjectServ from "../project/project.service";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import Header from "../../shared/layout/Header/Header";
 
 export default function ClientDetails(props) {
-  const location = useLocation();
   const history = useHistory();
-  const [clientStatus, setClientStatus] = useState([
-    { title: "All", value: true },
-    { title: "Active", value: false },
-    { title: "In-Active", value: true },
-  ]);
   const [loaderComponent, setLoader] = useLoader();
 
   const params = useParams(),
@@ -65,16 +54,10 @@ export default function ClientDetails(props) {
         );
       })
       .catch((err) => {
-        console.log("get Client by id error", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
 
   const getClientById = () => {
-    // const clientId = location.pathname.split("/")[2];
     setLoader(true);
 
     ClientSer.getClientById(clientId)
@@ -82,21 +65,14 @@ export default function ClientDetails(props) {
         setLoader(false);
 
         let dataResponce = res.data.body;
-        //console.log("%%%%"+ JSON.stringify(dataResponce));
         setClientDetails({ ...dataResponce });
         setProjectData(dataResponce.projects);
       })
       .catch((err) => {
-        console.log("get Client by id error", err);
-        // if ((err.response.data = 401) || (err.response.data = 404)) {
-        //   let url = "/login";
-        //   history.push(url);
-        // }
       });
   };
 
   const getDropDownvalue = (event) => {
-    //console.log("this is an selected value", event.target.value);
 
     const dropdownNameSelected = clients.find(
       (client) => client.clientName === event.target.value
@@ -112,11 +88,9 @@ export default function ClientDetails(props) {
     history.push(`/All-Clients/${obj.clientName}`);
     setClientUrlName(obj.clientName);
     setClientId(cId);
-    // history.replace({ pathname: cId });
   };
 
   console.log("clients", clients);
-  // console.log("clientID", clientId);
 
   return (
     <div className="client-deatils-wrp">

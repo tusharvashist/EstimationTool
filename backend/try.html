@@ -8,18 +8,18 @@
     background: #f3f3f3;
     height: 100%;
   }
-  .brand{
+  .brand {
     color: #7fb75c;
     font-size: 13px;
   }
   .main-content {
-    height:calc(100% - 50px);
+    height: calc(100% - 50px);
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-}
+  }
   .title {
     font-size: 14px;
     font-style: normal;
@@ -33,27 +33,34 @@
     display: flex;
     align-items: center;
   }
-  .server-port{
+  .server-port {
     color: #3ac720;
     font-size: 21px;
     transition: all 1s;
     animation: 700ms blink infinite;
   }
-  .server-msz{
+  .server-msz {
   }
   @keyframes blink {
-  10% {
-    color: transparent;
+    10% {
+      color: transparent;
+    }
+    50% {
+      color: transparent;
+    }
   }
-  50% {
-    color: transparent;
-  }
-}
 </style>
 <div class="wrp">
   <div class="top-nav"><h6 class="brand">Estimation Tool Server</h6></div>
-  <div class="main-content"> 
-      <p class="server-msz">Estimation Tool Node API Server Running on <b> ${process.env.NODE_ENV} </b> port : <span class="server-port">${PORT}</span></p>
-      <img src="https://images.squarespace-cdn.com/content/v1/58d20c79725e25b221549193/1524135572127-95TS4RSNLNS7D5DWORN9/nodejs.png">
+  <div class="main-content">
+    <p class="server-msz">
+      Estimation Tool Node API Server Running on
+      <strong> ${process.env.NODE_ENV} </strong> port :
+      <span class="server-port">${PORT}</span>
+    </p>
+    <img
+      alt=""
+      src="https://images.squarespace-cdn.com/content/v1/58d20c79725e25b221549193/1524135572127-95TS4RSNLNS7D5DWORN9/nodejs.png"
+    />
   </div>
 </div>

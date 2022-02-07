@@ -33,8 +33,7 @@ module.exports.getAllEstmationHeaderLocation = async ({ estHeaderId }) => {
 
 module.exports.getAllLocations = async () => {
   try {
-    let lst = await LocationMaster.find();
-    return lst;
+    return await LocationMaster.find();
   } catch (err) {
     throw new Error(err);
   }

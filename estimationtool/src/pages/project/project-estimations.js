@@ -15,6 +15,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { useSelector } from "react-redux";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import { IoFastFood } from "react-icons/io5";
 
 function ProjectEstimations(props) {
   const roleState = useSelector((state) => state.role);
@@ -27,7 +28,13 @@ function ProjectEstimations(props) {
   const [actionId, setActionId] = useState("");
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
-  const {estimationView, estimationCreate, estimationUpdate, estimationListing, estimationDelete} = usePermission();
+  const {
+    estimationView,
+    estimationCreate,
+    estimationUpdate,
+    estimationListing,
+    estimationDelete,
+  } = usePermission();
 
   useEffect(() => {
     setTableData([...props.tableData1]);
@@ -35,63 +42,59 @@ function ProjectEstimations(props) {
     setProjectDeatils({ ...props.projectInfo });
   }, [props.tableData1]);
   console.log(tableData);
+
+  const Estlink = (augData) => {
+    console.log("sssss", augData);
+    if (clientDeatils && projectDeatils) {
+      return (
+        <Link
+          to={{
+            pathname:
+              "/All-Clients/" +
+              clientDeatils.clientName +
+              "/" +
+              projectDeatils.projectName +
+              "/Estimation-Detail",
+            state: { estId: augData._id },
+          }}
+        >
+          {" "}
+          {augData.estName}
+        </Link>
+      );
+    }
+  };
+
   const checkStep = (data) => {
     if (data.estStep == "3") {
-      return (
-        <Link
-          to={{
-            pathname:
-              "/All-Clients/" +
-              clientDeatils.clientName +
-              "/" +
-              projectDeatils.projectName +
-              "/Estimation-Detail",
-            state: { estId: data._id },
-          }}
-        >
-          {" "}
-          {data.estName}
-        </Link>
-      );
+      return Estlink(data);
     } else if (data.estStep == "2" || data.estStep == "1") {
       return (
-        <Link
-          to={{
-            pathname:
-              "/All-Clients/" +
-              clientDeatils.clientName +
-              "/" +
-              projectDeatils.projectName +
-              "/createEstimate",
-            state: {
-              estimationHeaderId: data._id,
-              clientInfo: clientDeatils,
-              projectInfo: projectDeatils,
-              step: data.estStep,
-            },
-          }}
-        >
-          {" "}
-          {data.estName}
-        </Link>
+        clientDeatils &&
+        projectDeatils && (
+          <Link
+            to={{
+              pathname:
+                "/All-Clients/" +
+                clientDeatils.clientName +
+                "/" +
+                projectDeatils.projectName +
+                "/createEstimate",
+              state: {
+                estimationHeaderId: data._id,
+                clientInfo: clientDeatils,
+                projectInfo: projectDeatils,
+                step: data.estStep,
+              },
+            }}
+          >
+            {" "}
+            {data.estName}
+          </Link>
+        )
       );
     } else if (data.estStep == undefined) {
-      return (
-        <Link
-          to={{
-            pathname:
-              "/All-Clients/" +
-              clientDeatils.clientName +
-              "/" +
-              projectDeatils.projectName +
-              "/Estimation-Detail",
-            state: { estId: data._id },
-          }}
-        >
-          {" "}
-          {data.estName}
-        </Link>
-      );
+      return Estlink(data);
     }
   };
 
@@ -202,66 +205,67 @@ function ProjectEstimations(props) {
         />
       ) : null}
       <BorderedContainer className="no-rl-margin">
-        { estimationListing ?
-        (<MaterialTable
-          columns={columns}
-          components={{
-            Container: (props) => <Paper {...props} elevation={0} />,
-          }}
-          actions={[
-            (rowData) => ({
-              icon: "edit",
-              tooltip: "Edit Estimation",
-              onClick: (event, rowData) => {
-                console.log(event);
-                const el = event.nativeEvent.path[5].childNodes[0].firstChild;
-                el.click();
-                // let url = "/Estimation-Detail";
-                // history.push(url);
-                // setEditRow({ ...rowData });
-                // setActionId(rowData.id);
-                // openUpdateDailog();
+        {estimationListing ? (
+          <MaterialTable
+            columns={columns}
+            components={{
+              Container: (props) => <Paper {...props} elevation={0} />,
+            }}
+            actions={[
+              (rowData) => ({
+                icon: "edit",
+                tooltip: "Edit Estimation",
+                onClick: (event, rowData) => {
+                  console.log(event);
+                  const el = event.nativeEvent.path[5].childNodes[0].firstChild;
+                  el.click();
+                  // let url = "/Estimation-Detail";
+                  // history.push(url);
+                  // setEditRow({ ...rowData });
+                  // setActionId(rowData.id);
+                  // openUpdateDailog();
+                },
+                disabled: rowData.isDeleted,
+              }),
+              (rowData) => ({
+                icon: "delete",
+                tooltip: "Delete Estimation",
+                onClick: (event, rowData) => {
+                  setEditRow({ ...rowData });
+                  setActionId(rowData._id);
+                  console.log("Row : ", rowData._id);
+                  setDeleteRecordName(rowData.estName);
+                  openDeleteDailog();
+                },
+                disabled: rowData.isDeleted,
+                hidden: !estimationDelete,
+              }),
+            ]}
+            options={{
+              actionsColumnIndex: -1,
+              sorting: true,
+              search: false,
+              filtering: false,
+              pageSize: 5,
+              paging: false,
+              headerStyle: {
+                backgroundColor: "#e5ebf7",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
               },
-              disabled: rowData.isDeleted,
-            }),
-            (rowData) => ({
-              icon: "delete",
-              tooltip: "Delete Estimation",
-              onClick: (event, rowData) => {
-                setEditRow({ ...rowData });
-                setActionId(rowData._id);
-                console.log("Row : ", rowData._id);
-                setDeleteRecordName(rowData.estName);
-                openDeleteDailog();
+              rowStyle: (rowData) => {
+                return {
+                  backgroundColor:
+                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
+                };
               },
-              disabled: rowData.isDeleted,
-              hidden: !estimationDelete
-            }),
-          ]}
-          options={{
-            actionsColumnIndex: -1,
-            sorting: true,
-            search: false,
-            filtering: false,
-            pageSize: 5,
-            paging: false,
-            headerStyle: {
-              backgroundColor: "#e5ebf7",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-            },
-            rowStyle: (rowData) => {
-              return {
-                backgroundColor:
-                  rowBackgroundColor[rowData.isDeleted] ?? "#eee",
-              };
-            },
-          }}
-          data={tableData}
-          title="Estimations:"
-        />)
-        : ''
-}
+            }}
+            data={tableData}
+            title="Estimations:"
+          />
+        ) : (
+          ""
+        )}
       </BorderedContainer>
     </div>
   );

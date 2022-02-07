@@ -5,13 +5,12 @@ const constant = require("../constant");
 const validateObjectSchema = (data, schema) => {
   const result = schema.validate(data);
   if (result.error) {
-    const errorDetails = result.error.details.map((value) => {
+    return result.error.details.map((value) => {
       return {
         error: value.message,
         path: value.path,
       };
     });
-    return errorDetails;
   }
   return null;
 };
@@ -45,7 +44,6 @@ module.exports.validateQueryParams = (schema) => {
 module.exports.validateHeadresAuthorization = () => {
   return (req, res, next) => {
     const isError = req.headers.authorization;
-    let responce = { ...constant.defaultResponce };
     if (!isError) {
       return res
         .status(400)

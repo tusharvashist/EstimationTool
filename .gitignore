@@ -6,6 +6,7 @@
 /estimationtool-sso/node_modules/
 /.pnp
 .pnp.js
+estimationtool/sonar-project.properties
 
 /backend/.scannerwork
 
@@ -33,3 +34,5 @@ yarn-error.log*
         .vscode/
         ../estimationtool/.vscode/settings.json
         ../estimationtool/yarn.lock
+
+./estimationtool/sonar-project.properties

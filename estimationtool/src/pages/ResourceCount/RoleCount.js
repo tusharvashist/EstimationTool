@@ -34,7 +34,9 @@ const RoleCount = (props) => {
           setRoleData(res.data.body);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   console.log("count", roleData);

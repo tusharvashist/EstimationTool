@@ -31,7 +31,6 @@ export const basicDetailSlice = createSlice({
     },
     setEstimationHeaderId: (state, estimationHeaderId) => {
       state.estimationHeaderId = estimationHeaderId.payload;
-      //localStorage.setItem('estimationHeaderId', estimationHeaderId.payload);
     },
     setEstimationTentativeTimeline: (state, estimationTentativeTimeline) => {
       state.estimationTentativeTimeline = estimationTentativeTimeline.payload;

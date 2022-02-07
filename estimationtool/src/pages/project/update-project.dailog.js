@@ -32,8 +32,6 @@ export default function UpdateProjectDailog(props) {
     }
 
     const onSubmitForm = (e) => {
-        console.log("e", e)
-        //e && e.preventDefault();
         if (formData.projectName && formData.domain) {
             setShowError(false);
             props.saveFun(formData)
@@ -43,7 +41,7 @@ export default function UpdateProjectDailog(props) {
         }
     }
 
-    const { projectName, projectDescription, domain } = formData
+    const { projectName, domain } = formData
 
     return (
         <CustomizedDialogs
