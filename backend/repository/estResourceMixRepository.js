@@ -35,14 +35,14 @@ const getResourceForAllocationQuery = async (estId) => {
     ]
   ])
 
-  await updateAllocation(result);
+   await updateAllocation(result);
 }
 
 const updateAllocation = async (result) => {
-  result.forEach(async (item) => {
+    for(let item of result) {
     let adjustmentDone = false;
     let allocationDone = 0;
-    item.resourceMix.forEach(async (resource) => {
+      for(let resource of item.resourceMix) {
       if(resource.defaultAdjusted && !adjustmentDone){
         try{
           adjustmentDone = true;
@@ -65,8 +65,10 @@ const updateAllocation = async (result) => {
           allocationDone = allocationDone - 1;
         }  
       }
-    })
-  })
+    }
+    //)
+  }
+  //)
 }
 
 const getFractionValue = (count) => {
