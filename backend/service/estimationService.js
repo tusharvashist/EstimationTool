@@ -458,6 +458,7 @@ module.exports.ReleaseEstimation = async (req) => {
   };
   let response = { ...constant.publishMessage };
   var estheaderId = req.estimationHeaderId;
+  var estheaderid = req.estimationHeaderId;
 
   try {
     let errorString = [];
@@ -503,16 +504,18 @@ module.exports.ReleaseEstimation = async (req) => {
           contingency,
           contingencySuffix
         );
-        const getManualData = checkManualField(response.summaryCalData)
-        if (getManualData.msg != '') {
-         throw new Error(getManualData.msg)
-        }
+        //  To check Manual field
+        checkManualField(response.summaryCalData)
+        // if (getManualData.msg != '') {
+        //  throw new Error(getManualData.msg)
+        // }
 
         // Get Resource Count Data
 
         var resourceCount = await EstResourceCountServ.getResourceCount({
           estheaderid
         });
+
 
         if (resourceCount.length != 0) {
 
@@ -690,10 +693,8 @@ function checkManualField (data) {
 
   const arr = data.filter(item => item.calcType == 'manual')
 if (arr.find(x => x.Effort == undefined)) {
-return {msg:'Please Enter Manual Calculative Attributes Effort'}
-} else {
-  return {msg:''}
-}
+  throw new Error('Please Enter Manual Calculative Attributes Effort')
+} 
 }
 
 // Simply get keys
