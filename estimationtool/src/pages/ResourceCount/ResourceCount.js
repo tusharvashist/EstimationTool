@@ -20,7 +20,7 @@ const ResourceCountMatrix = (props) => {
   const [resouceCountData, setResouceCountData] = useState([]);
   const [estimationHeaderId, setestimationHeaderId] = useState(props.data);
   const [rowEditData, setRowEditData] = useState([]);
-  const [reload, setReload] = useState(false);
+
   const [techError, setTechError] = useState({});
 
   const [sortModel, setSortModel] = React.useState([
@@ -73,12 +73,12 @@ const ResourceCountMatrix = (props) => {
     ReourceCountService.getResourceCountAll(estimationHeaderId)
       .then((res) => {
         setResouceCountData(res.data.body);
-        if(res.data.body.length > 0){
-        props.errorFunction(
-          res.data.body.some((el) => el.validationerror === true)
-        );
-        }else{
-         props.errorFunction(true);
+        if (res.data.body.length > 0) {
+          props.errorFunction(
+            res.data.body.some((el) => el.validationerror === true)
+          );
+        } else {
+          props.errorFunction(true);
         }
       })
       .catch((err) => {
@@ -147,12 +147,11 @@ const ResourceCountMatrix = (props) => {
       field: "role",
       sorting: false,
       width: 300,
-      renderCell: (params) => <RoleCount {...params} reload={reload} />,
+      renderCell: (params) => <RoleCount {...params} />,
     },
   ];
 
   function handleCellClick(param) {
-    console.log("param", param);
     if (param.row.skills) {
       if (param.field === "role" && !openEditCount) {
         setRowEditData(param.row);
@@ -175,9 +174,14 @@ const ResourceCountMatrix = (props) => {
     setOpenEditCount(false);
   };
 
-  const handleEditChange = () => {
-    getResourceCountData();
-    setReload(!reload);
+  const handleEditChange = (newRolecount, resourceId) => {
+    let newResourceCountData = resouceCountData.map((stateRow) => {
+      if (stateRow._id === resourceId) {
+        stateRow.rolecount = newRolecount;
+      }
+      return stateRow;
+    });
+    setResouceCountData(newResourceCountData);
   };
 
   const handleCountTable = () => {
@@ -201,17 +205,27 @@ const ResourceCountMatrix = (props) => {
       estHeaderId: estimationHeaderId,
     };
 
+    console.log("onchange", techId, row);
+
     ReourceCountService.updateTechnology(req)
       .then((res) => {
-        setReload(!reload);
-        getResourceCountData();
+        console.log("onchange techres", res);
+        let newResourceCountData = resouceCountData.map((stateRow) => {
+          console.log("onchange stateRow techId", stateRow, techId);
+          if (stateRow._id === row._id) {
+            stateRow.rolecount = res.data.body;
+            stateRow.skillsId = techId;
+          }
+          return stateRow;
+        });
+        setResouceCountData(newResourceCountData);
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  console.log("resouceCountData", resouceCountData);
+  console.log("onchange resouceCountData", resouceCountData);
 
   const handleClose = () => {
     setTechError({});
@@ -234,16 +248,17 @@ const ResourceCountMatrix = (props) => {
                     onClick={() => closeEditHandler()}
                   ></div>
 
-                  {estimation_resourcecount_edit && (
-                    <RoleEditCount
-                      rowEditData={rowEditData}
-                      handleEditChange={handleEditChange}
-                    />
-                  )}
+                  {estimation_resourcecount_edit &&
+                    rowEditData.rolecount.length > 0 && (
+                      <RoleEditCount
+                        rowEditData={rowEditData}
+                        handleEditChange={handleEditChange}
+                      />
+                    )}
                 </>
               )}
               <div style={{ height: 300, width: "100%" }}>
-              {estimation_resourcecount_edit && resouceCountData.length ? (
+                {estimation_resourcecount_edit && resouceCountData.length ? (
                   <DataGrid
                     sx={{
                       "& .MuiDataGrid-cell:hover": {
@@ -275,9 +290,9 @@ const ResourceCountMatrix = (props) => {
                       `error--${params.row.validationerror}`
                     }
                   />
-                  ) : 
+                ) : (
                   <h5 className="no-recrd">No Records available</h5>
-                  }
+                )}
               </div>
             </BorderedContainer>
           </div>

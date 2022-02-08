@@ -7,6 +7,7 @@ import Radio from "@mui/material/Radio";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const RoleEditItem = (props) => {
+  console.log("edit", props);
   const [isOpen, setOpen] = React.useState({});
   const [disabledState, setDisabledState] = useState(false);
 
@@ -19,8 +20,26 @@ const RoleEditItem = (props) => {
   const [adjustedTrueRole, setAdjustedTrueRole] = useState("");
 
   useEffect(() => {
-    getResourceMasterRoleData(props.rowEditData._id);
-  }, [props.rowEditData, value]);
+    // getResourceMasterRoleData(props.rowEditData._id);
+    setResourceCountData();
+  }, [props]);
+
+  const setResourceCountData = () => {
+    let id = "";
+    let check = false;
+    props.rowEditData.rolecount.forEach((el, i) => {
+      if (el.defaultAdjusted) {
+        setAdjustedTrueRole(el._id);
+        check = true;
+      }
+    });
+    if (!check) {
+      props.rowEditData.rolecount[0].defaultAdjusted = true;
+      setAdjustedTrueRole(props.rowEditData.rolecount[0]._id);
+    }
+    console.log("edit this");
+    setRoleData(props.rowEditData.rolecount);
+  };
 
   const getResourceMasterRoleData = async (resourceCountId) => {
     await ResourceCountService.getResourceMasterRole(resourceCountId)
@@ -69,9 +88,10 @@ const RoleEditItem = (props) => {
 
     ResourceCountService.updateResourceRole(obj)
       .then((res) => {
-        props.handleEditChange();
-        getResourceMasterRoleData(props.rowEditData._id);
-        setValue(!value);
+        console.log("edit res update", res.data.body);
+        props.handleEditChange(res.data.body, props.rowEditData._id);
+        // getResourceMasterRoleData(props.rowEditData._id);
+        // setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
@@ -104,12 +124,12 @@ const RoleEditItem = (props) => {
 
     ResourceCountService.updateResourceRole(obj)
       .then((res) => {
-        console.log(res);
+        console.log("edit dec res", res);
         setDisabledState(false);
 
-        props.handleEditChange();
-        getResourceMasterRoleData(props.rowEditData._id);
-        setValue(!value);
+        props.handleEditChange(res.data.body, props.rowEditData._id);
+        // getResourceMasterRoleData(props.rowEditData._id);
+        // setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);
