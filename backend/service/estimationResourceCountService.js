@@ -220,7 +220,7 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
       });
     }
     return await ResourceCountRepository.GetResourceCountResourceData(
-      rescount.estResourceCountID
+      String(rescount._id)
     );
   } catch (err) {
     console.log(
