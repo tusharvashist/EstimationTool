@@ -116,31 +116,28 @@ const ResourceCountMatrix = (props) => {
       field: "techskills",
       width: 200,
       sorting: false,
-      renderCell: (rowdata) => {
-        console.log("rowdata technology", rowdata);
-        return (
-          <Select
-            style={{ width: "100%" }}
-            onChange={(e) => onChangeSelect(e, rowdata)}
-            onMouseEnter={(e) =>
-              rowdata.row.rolecount.length !== 0 &&
-              setTechError({
-                open: true,
-                severity: "warning",
-                message: `All resource count planning of ${rowdata.row.attributeName} with ${rowdata.row.skills} will be removed, if technology is changed`,
-              })
-            }
-            value={rowdata.row.skillsId}
-          >
-            {technologyList &&
-              technologyList.map((item) => (
-                <MenuItem key={item.skill} value={item.id}>
-                  {item.skill}
-                </MenuItem>
-              ))}
-          </Select>
-        );
-      },
+      renderCell: (rowdata) => (
+        <Select
+          style={{ width: "100%" }}
+          onChange={(e) => onChangeSelect(e, rowdata)}
+          onMouseEnter={(e) =>
+            rowdata.row.rolecount.length !== 0 &&
+            setTechError({
+              open: true,
+              severity: "warning",
+              message: `All resource count planning of ${rowdata.row.attributeName} with ${rowdata.row.skills} will be removed, if technology is changed`,
+            })
+          }
+          value={rowdata.row.skillsId}
+        >
+          {technologyList &&
+            technologyList.map((item) => (
+              <MenuItem key={item.skill} value={item.id}>
+                {item.skill}
+              </MenuItem>
+            ))}
+        </Select>
+      ),
     },
     {
       headerName: "Role",
