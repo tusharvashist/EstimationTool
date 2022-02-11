@@ -18,6 +18,7 @@ import usePermission from "../../shared/layout/hooks/usePermissions";
 import { IoFastFood } from "react-icons/io5";
 
 function ProjectEstimations(props) {
+  console.log("tableData1", props);
   const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState();
   const [clientDeatils, setClientDeatils] = useState({});
@@ -103,7 +104,9 @@ function ProjectEstimations(props) {
       title: "Estimation Name",
       field: "estName",
       render: (rowData) => {
-        return estimationView ? checkStep(rowData) : rowData.estName;
+        return estimationView && !rowData.isDeleted
+          ? checkStep(rowData)
+          : rowData.estName;
         // <Link
         //   to={{
         //     pathname:

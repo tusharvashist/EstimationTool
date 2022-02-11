@@ -51,7 +51,6 @@ export default function ClientDetails(props) {
     projectId = projectState.projectId;
   }
 
-
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
     description: "",
@@ -84,7 +83,6 @@ export default function ClientDetails(props) {
         );
       })
       .catch((err) => {
-
         console.log("get Client by id error", err);
       });
   };
