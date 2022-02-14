@@ -23,11 +23,23 @@ module.exports.createRequirement = async (serviceData) => {
   let countId = await getNextSequenceValue("req_id",1);
   let projectRequirement = new ProjectRequirement({ ...serviceData, req_id:countId });
 
-  const findRecord = await ProjectRequirement.find(
-    { title: projectRequirement.title },
-    { project: projectRequirement.project }
+  console.log("projectRequirement : ",projectRequirement.project._id, "title: ", projectRequirement.title );
+
+  // const findRecord = await ProjectRequirement.find(
+  //   { title: projectRequirement.title },
+  //   { project: projectRequirement.project._id }
+  // );
+
+  const findRecord = await ProjectRequirement.aggregate(
+    [{
+      $match: {
+          title: projectRequirement.title ,
+          project: projectRequirement.project._id 
+      }
+    }]
   );
 
+  console.log("findRecord : ", findRecord);
   if (findRecord.length != 0) {
    
     return false;

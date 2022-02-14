@@ -15,6 +15,8 @@ import RequirementService from "./ImportExcelRequirementsService";
 import Deletedailog from "./delete-dailog";
 import { MdOpenInBrowser, MdDone } from "react-icons/md";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { FilePicker } from 'react-file-picker'
+
 
 const ImportExcelRequirements = () => {
   const history = useHistory();
@@ -244,13 +246,13 @@ const ImportExcelRequirements = () => {
   };
 
   const handleFileUpload = (e) => {
-    const { files } = e.target;
-    if (files && files.length) {
-      const filename = files[0].name;
+    const files = e;
+    if (files && files.size) {
+      const filename = files.name;
       var parts = filename.split(".");
-      const fileType = parts[parts.length - 1];
+      const fileType = parts[parts.size - 1];
       console.log("fileType", fileType); //ex: zip, rar, jpg, svg etc.
-      setSelectedFile(files[0]);
+      setSelectedFile(files);
       setIsFilePicked(true);
       setBrowseFileLbl("");
       setSelectedFileName(filename);
@@ -316,12 +318,14 @@ const ImportExcelRequirements = () => {
         <Grid container className="importFormRowContainer">
           <Grid item xs={8} className="importFormRow">
             <span>Import Requirements: </span>
-            <input
+            
+          
+            {/* <input
               style={{ display: "none" }}
               ref={inputFile}
               onChange={handleFileUpload}
               type="file"
-            />
+            /> */}
             <TextField
               className="importFormRow_input"
               label={browseFileLbl}
@@ -330,10 +334,24 @@ const ImportExcelRequirements = () => {
             />
           </Grid>
           <Grid item xs={4} className="importFormRow_Button">
-            <Button onClick={browseFile} variant="outlined">
+            <FilePicker
+              extensions={['xlsx']}
+              onChange={(FileObject) => {
+                handleFileUpload(FileObject)
+              }}
+              onError={(errMsg) => {
+                handleFileUpload(errMsg)
+              }}
+  >
+    <Button  variant="outlined">
               <MdOpenInBrowser style={{ fontSize: "20px" }} />
               &nbsp; Browse
-            </Button>
+      </Button>
+  </FilePicker>
+            {/* <Button onClick={browseFile} variant="outlined">
+              <MdOpenInBrowser style={{ fontSize: "20px" }} />
+              &nbsp; Browse
+            </Button> */}
             <Button
               disabled={selectedFileName ? false : true}
               onClick={handleSubmission}

@@ -8,6 +8,7 @@ const EstResourceCount = require("../database/models/estResourceCount");
 const { ObjectId } = require("mongodb");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const { string } = require("joi");
+const { result } = require("lodash");
 
 module.exports.generateResourceCount = async ({ estheaderid }) => {
   try {
@@ -309,9 +310,9 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       }
     }
     //Update only defaultAdjusted flag
-    await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
-    return await ResourceCountRepository.GetResourceCountResourceData(
-      updatedInfo.estResourceCountID
+    return await SetResourceDefaultAdjusted(
+      filter,
+      updatedInfo.defaultAdjusted
     );
   } catch (err) {
     console.log(
@@ -368,4 +369,10 @@ module.exports.SetAllocationPercent = (mincount, estResourcePlanning) => {
     default:
       estResourcePlanning.allocationPercent = 100;
   }
+};
+
+module.exports.GetResourceCountRoleData = async ({ estResourceCountID }) => {
+  return ResourceCountRepository.GetResourceCountResourceData(
+    estResourceCountID
+  );
 };
