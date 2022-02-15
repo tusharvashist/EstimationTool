@@ -259,6 +259,14 @@ const ImportExcelRequirements = () => {
     }
   };
 
+  const handleFileUploadError = (errMsg) => {
+     setOpen({
+          open: true,
+          severity: "error",
+          message: errMsg,
+        });
+  }
+
   console.log("RequirementSummary ====", requirementSummary);
 
   return (
@@ -318,14 +326,7 @@ const ImportExcelRequirements = () => {
         <Grid container className="importFormRowContainer">
           <Grid item xs={8} className="importFormRow">
             <span>Import Requirements: </span>
-            
-          
-            {/* <input
-              style={{ display: "none" }}
-              ref={inputFile}
-              onChange={handleFileUpload}
-              type="file"
-            /> */}
+           
             <TextField
               className="importFormRow_input"
               label={browseFileLbl}
@@ -337,10 +338,10 @@ const ImportExcelRequirements = () => {
             <FilePicker
               extensions={['xlsx']}
               onChange={(FileObject) => {
-                handleFileUpload(FileObject)
+                handleFileUpload(FileObject);
               }}
               onError={(errMsg) => {
-                handleFileUpload(errMsg)
+                handleFileUploadError(errMsg);
               }}
   >
     <Button  variant="outlined">
@@ -348,10 +349,7 @@ const ImportExcelRequirements = () => {
               &nbsp; Browse
       </Button>
   </FilePicker>
-            {/* <Button onClick={browseFile} variant="outlined">
-              <MdOpenInBrowser style={{ fontSize: "20px" }} />
-              &nbsp; Browse
-            </Button> */}
+         
             <Button
               disabled={selectedFileName ? false : true}
               onClick={handleSubmission}
