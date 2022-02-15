@@ -87,14 +87,19 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then((res) => {
-        console.log("edit res update", res.data.body);
-        props.handleEditChange(res.data.body, props.rowEditData._id);
+      .then(() => {
+        ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
+          .then((countRes) => {
+            props.handleEditChange(countRes.data.body, props.rowEditData._id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
         // getResourceMasterRoleData(props.rowEditData._id);
         // setValue(!value);
       })
       .catch((err) => {
-        if (!err.response.data.message) console.log(err);
+        if (err.response === undefined) console.log(err);
         else {
           setDisabledState(true);
           setOpen({
@@ -123,11 +128,15 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then((res) => {
-        console.log("edit dec res", res);
+      .then(() => {
         setDisabledState(false);
-
-        props.handleEditChange(res.data.body, props.rowEditData._id);
+        ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
+          .then((countRes) => {
+            props.handleEditChange(countRes.data.body, props.rowEditData._id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
         // getResourceMasterRoleData(props.rowEditData._id);
         // setValue(!value);
       })

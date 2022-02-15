@@ -34,6 +34,7 @@ const Url = {
   getAllExportData: `${process.env.REACT_APP_URL}export`,
   getReport: `${process.env.REACT_APP_URL}report`,
   releaseEstimation: `${process.env.REACT_APP_URL}estimation/releaseEstimation`,
-  getEstimationLocation: `${process.env.REACT_APP_URL}location/estimation`
+  getEstimationLocation: `${process.env.REACT_APP_URL}location/estimation`,
+  getResourceRoleCountOnUpdate: `${process.env.REACT_APP_URL}resource/rolecount`,
 };
 export default Url;
