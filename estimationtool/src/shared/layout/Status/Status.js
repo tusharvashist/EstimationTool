@@ -12,9 +12,9 @@ const Status = (props) => {
       </div>
       <div className={classes.right_content}>
         <div className={classes.cta_tagline}>
-          Create new version for any edits
+          {props.data}
         </div>
-        <button className={classes.status_button}>
+        <button className={classes.status_button} onClick={props.onClickButton}>
           <FiCheck /> Create
         </button>
       </div>

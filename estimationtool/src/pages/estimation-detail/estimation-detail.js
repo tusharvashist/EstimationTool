@@ -2,7 +2,7 @@ import { Button, Container, Box, Grid } from "@material-ui/core";
 
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { EditOutlined, Add } from "@material-ui/icons";
+import { EditOutlined, Add, TramOutlined } from "@material-ui/icons";
 import "./estimation-detail.css";
 import { useLocation, Link, useHistory } from "react-router-dom";
 import EstimationService from "./EstimationService";
@@ -79,6 +79,7 @@ const EstimationDetail = () => {
     effortUnit: "",
     totalCost: 0,
     estTypeId: {},
+    publishDate: null,
   });
   const [requirementDataArray, setRequirementDataArray] = useState([]);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
@@ -107,6 +108,7 @@ const EstimationDetail = () => {
   });
 
   const [openExport, setOpenExport] = useState(false);
+  const [isEstimationReleased, setIsEstimationReleased] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -169,6 +171,7 @@ const EstimationDetail = () => {
       getRequirementDataById();
       getRequirementWithQuery(() => {});
     });
+  
   };
 
   const getRequirementWithQuery = (callBack) => {
@@ -198,6 +201,10 @@ const EstimationDetail = () => {
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
         setLoader(false);
+        //
+        let releaseStatus = res.data.body.basicDetails.publishDate != null;
+        //console.log("Release status "+ releaseStatus);
+        setIsEstimationReleased(releaseStatus);
         if (location.state !== undefined) {
           let obj = {
             client: res.data.body.basicDetails.projectId.client,
@@ -254,13 +261,15 @@ const EstimationDetail = () => {
     EstimationService.getRequirementDataById(estimationId)
       .then((res) => {
         let dataResponse = res.data.body;
-
+        let isReleased = dataResponse.basicDetails.publishDate != null;
+       // setIsEstimationReleased(isReleased);
         var estHeaderAttribute = [
           {
             field: "action",
             type: "actions",
             headerName: "Actions",
             minWidth: 80,
+            hide: isReleased,
             getActions: (params) => [
               <>
                 <GridActionsCellItem
@@ -275,7 +284,7 @@ const EstimationDetail = () => {
                   onClick={openEditRequirement(params)}
                 />
               </>,
-            ],
+            ] 
           },
           {
             headerName: "Req. Id",
@@ -343,6 +352,12 @@ const EstimationDetail = () => {
   };
   function roundToTwo(value) {
     return Number(Number(value).toFixed(2));
+  }
+
+  function isPublishDateAvailable(publishedDate){
+    let status = headerData.publishDate != null
+    console.log("&&"+status);
+    return status;
   }
 
   const updateAttributeValue = async () => {
@@ -461,11 +476,20 @@ const EstimationDetail = () => {
   const releaseEstimation = (id) => {
     EstimationService.estimationPublish(id)
       .then((res) => {
-        setOpen({
-          open: true,
-          severity: "success",
-          message: res.data.message,
-        });
+        try{
+          setIsEstimationReleased(true);
+          getRequirementDataById();
+          setOpen({
+            open: true,
+            severity: "success",
+            message: res.data.message,
+           });
+          //set publish date current date for instand reflection 
+          //headerData.publishDate = new Date().format('m-d-Y h:i:s');
+          //console.log("date after release  Res"+ headerData.publishDate);
+          } catch (exception){
+            console.log(exception);
+        }
       })
       .catch((err) => {
         setOpen({
@@ -482,12 +506,18 @@ const EstimationDetail = () => {
 
   const exportFun = () => {};
 
+  const handleCreateNewVersionClick = () => {
+    
+  }
+
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
 
   return (
     <div className="estimation-detail-cover">
-      <Status />
+      {isEstimationReleased ? 
+      (<Status data={"Create new version for any edits"}
+       onClickButton={handleCreateNewVersionClick}/>) : null}
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
         openExport={openExport}
@@ -501,11 +531,13 @@ const EstimationDetail = () => {
       {/*========= JSX- Export Estimation in Report - END ========= */}
       {/* ----------------- */}
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
+      { !isEstimationReleased ? (
       <ResourceCountMatrix
         data={estimationId}
         errorFunction={handleCountError}
         countError={countError}
-      />
+      /> ) : null
+      }
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
@@ -578,7 +610,7 @@ const EstimationDetail = () => {
                 &nbsp;Export in Excel
               </Button>
             )}
-            <Link
+            { !isEstimationReleased ? <Link
               to={{
                 pathname:
                   "/All-Clients/" +
@@ -594,18 +626,21 @@ const EstimationDetail = () => {
               }}
             >
               {estimationConfiguation && (
-                <Button variant="outlined" className="estimation-detail-button">
+                <Button 
+                  variant="outlined" 
+                  className="estimation-detail-button"
+                  >
                   <EditOutlined style={{ fontSize: "18px" }} />
                   &nbsp;Edit Configuration
                 </Button>
               )}
-            </Link>
+            </Link> : null}
           </Grid>
         </Grid>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <EstimationHeader data={headerData} />
-      <Container>
+      { !isEstimationReleased ? <Container>
         <Grid container>
           <Grid item class="multi-button-grid">
             <Link
@@ -623,7 +658,10 @@ const EstimationDetail = () => {
                 },
               }}
             >
-              <Button style={{ marginRight: "15px" }} variant="outlined">
+              <Button 
+                style={{ marginRight: "15px" }} 
+                variant="outlined"
+                >
                 <BiImport style={{ fontSize: "20px" }} />
                 &nbsp; Import Requirements
               </Button>
@@ -633,6 +671,7 @@ const EstimationDetail = () => {
                 variant="outlined"
                 className="estimation-detail-button"
                 onClick={openAddAvailableRequirement}
+               
               >
                 {" "}
                 <Add style={{ fontSize: "18px" }} />
@@ -644,6 +683,7 @@ const EstimationDetail = () => {
                 variant="outlined"
                 className="estimation-detail-button"
                 onClick={openAddRequirement}
+               
               >
                 {" "}
                 <Add style={{ fontSize: "18px" }} />
@@ -652,7 +692,7 @@ const EstimationDetail = () => {
             )}
           </Grid>
         </Grid>
-      </Container>
+      </Container> : null }
       <BorderedContainer>
         {loaderComponent ? (
           loaderComponent
@@ -695,7 +735,9 @@ const EstimationDetail = () => {
                 components={{
                   Toolbar: CustomToolbar,
                 }}
-                isCellEditable={() => estimationAttributeData}
+                isCellEditable={
+                  () => estimationAttributeData && !isEstimationReleased
+                }
               />
             </div>
           </div>
@@ -774,7 +816,7 @@ const EstimationDetail = () => {
               }}
               onRowEditStop={updateManualCallAttributeValue}
               onEditRowsModelChange={handleEditManualCallAttChange}
-              isCellEditable={(params) => params.row.calcType === "manual"}
+              isCellEditable={(params) => params.row.calcType === "manual" && !isEstimationReleased}
               getCellClassName={(params) => {
                 return (
                   (params.colDef.field === "Effort" && "darkbg") ||
@@ -878,7 +920,7 @@ const EstimationDetail = () => {
               releaseEstimation(estimationId);
             }}
           >
-            &nbsp;Estimation Release
+            &nbsp;{ isEstimationReleased ? 'Estimation Released' : 'Estimation Release'}
           </Button>
         </Grid>
       </Grid>
