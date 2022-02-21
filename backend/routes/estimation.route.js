@@ -145,6 +145,11 @@ router.post("/releaseEstimation/",
     estimationController.releaseEstimation
 );
 
+router.get("/versioningEstimation/:id",
+    tokenValidation.validateToken,
+    estimationController.versioningEstimation
+);
+
 module.exports = router;
 
 

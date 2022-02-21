@@ -77,6 +77,7 @@ module.exports = {
     ESTIMATION_UPDATE: "Estimation update successfully",
     ESTIMATION_DELETE: "Estimation delete successfully",
     ESTIMATION_NAME_UNIQUE: "Estimation name should be unique",
+    ESTIMATION_VERSION_CREATED: "Estimation Version created successfully",
   },
   requirementTagMessage: {
     REQUIREMENTTAG_FETCH: "All requirement tag fetch successfully",
