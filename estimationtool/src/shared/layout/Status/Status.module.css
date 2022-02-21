@@ -1,0 +1,39 @@
+.statusbackground {
+  background: #bdf7bd;
+  border: 1px solid #8ad48a;
+  border-radius: 2px;
+  padding: 8px 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  font-size: 14px;
+  color: #205f20;
+  margin: 10px 0;
+}
+
+.left_content {
+  display: flex;
+  align-content: center;
+}
+
+.message {
+  padding-left: 8px;
+}
+
+.right_content {
+  align-self: flex-end;
+  display: flex;
+  justify-content: flex-end;
+  align-content: center;
+}
+
+.cta_tagline {
+  padding-right: 8px;
+}
+
+.status_button {
+  padding: 2px 4px;
+  background-color: transparent;
+  border-radius: 2px;
+  border: 1px solid #205f20;
+}

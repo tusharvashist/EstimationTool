@@ -35,6 +35,7 @@ import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import Status from "../../shared/layout/Status/Status";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -486,6 +487,7 @@ const EstimationDetail = () => {
 
   return (
     <div className="estimation-detail-cover">
+      <Status />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
         openExport={openExport}
