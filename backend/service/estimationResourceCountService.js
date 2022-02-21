@@ -8,7 +8,7 @@ const EstResourceCount = require("../database/models/estResourceCount");
 const { ObjectId } = require("mongodb");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const { string } = require("joi");
-const { result } = require("lodash");
+//const { result } = require("lodash");
 
 module.exports.generateResourceCount = async ({ estheaderid }) => {
   try {
@@ -48,7 +48,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           estAttributeId: element.estAttributeId,
         });
         // remove resource allocation
-        let deleted = await EstResourcePlanning.deleteMany({
+        await EstResourcePlanning.deleteMany({
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
         });
@@ -60,7 +60,7 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           estCalcId: element.estCalcId,
         });
         // remove resource allocation
-        let deleted = await EstResourcePlanning.deleteMany({
+        await EstResourcePlanning.deleteMany({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
         });
@@ -74,10 +74,9 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       if (element.Total == 0) {
         return;
       }
-      let resourceCount = (
+      let resourceCount =
         element.Total /
-        (global.ResourceWeekHours * estimation.estTentativeTimeline)
-      ).toFixed(2);
+        (global.ResourceWeekHours * estimation.estTentativeTimeline); //.toFixed(2);
 
       bulk
         .find({
@@ -100,10 +99,9 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       if (element.Total == 0) {
         return;
       }
-      let resourceCount = (
+      let resourceCount =
         element.Total /
-        (global.ResourceWeekHours * estimation.estTentativeTimeline)
-      ).toFixed(2);
+        (global.ResourceWeekHours * estimation.estTentativeTimeline); //.toFixed(2);
 
       bulk
         .find({

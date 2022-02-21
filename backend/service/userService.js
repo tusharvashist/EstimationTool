@@ -115,6 +115,22 @@ module.exports.login = async (req) => {
   }
 };
 
+module.exports.getAllUserByName = async ({ search }) => {
+  try {
+    let regex = new RegExp(search, "i");
+    return await userModel.find({
+      $or: [
+        { firstName: { $regex: regex } },
+        { lastName: { $regex: regex } },
+        { email: { $regex: regex } },
+      ],
+    });
+  } catch (err) {
+    console.log("something went wrong: service > user service ", err);
+    throw new Error(err);
+  }
+};
+
 module.exports.testUser = async (emailID, pass) => {
   try {
     const users = await userModel.find({ email: emailID });

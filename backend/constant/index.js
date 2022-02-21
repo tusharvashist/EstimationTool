@@ -19,7 +19,7 @@ module.exports = {
     importFile: 1,
     updateData: 2,
     insertSuccess: 3,
-    insertFail : 4,
+    insertFail: 4,
   },
 
   requirementResponse: {
@@ -65,6 +65,7 @@ module.exports = {
     LOGIN_SUCCESS: "Login successfully",
     USER_NOT_FOUND: "User not found",
     INVALID_PASS: "Invalid password",
+    FETCH_USER: "User founds",
   },
   estimationMessage: {
     ESTIMATION_CREATED: "Estimation created successfully",

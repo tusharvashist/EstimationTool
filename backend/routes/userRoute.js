@@ -17,4 +17,10 @@ router.post("/login",
 joiSchemaValidation.validateHeadresAuthorization(),
 userController.login
 );
+
+router.get(
+  "/getusers",
+  joiSchemaValidation.validateHeadresAuthorization(),
+  userController.getAllUserByName
+);
 module.exports = router;
