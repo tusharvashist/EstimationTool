@@ -77,15 +77,26 @@ export default function ClientDetails(props) {
         let dataResponse = res.data.body;
         setProjectDetails({ ...dataResponse });
         setClientDetails({ ...dataResponse.client });
+        var index = 1;
+        dataResponse.estimates.forEach(estimate => {
+          estimate["id"] = index;
+          index = index + 1;
+        });
+
+  console.log("dataResponse.estimates ======== : ", dataResponse.estimates);
         setTableDataWithoutFilter([...dataResponse.estimates]);
-        setTableData(
-          dataResponse.estimates.filter((el) => el.isDeleted === false)
-        );
+        // setTableData(
+        //   dataResponse.estimates.filter((el) => el.isDeleted === false)
+        // );
+        setTableData([...dataResponse.estimates]);
       })
       .catch((err) => {
         console.log("get Client by id error", err);
       });
   };
+  console.log("tableDataWithoutFilter ======== : ", tableDataWithoutFilter);
+  console.log("tableData ======== : ", tableData);
+
 
   const [projectStatus] = useState([
     { title: "All" },

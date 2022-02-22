@@ -1,6 +1,8 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
+
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import EstimationService from "../estimationCreation/estimation.service";
 import { Box, Grid, Paper } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -16,8 +18,13 @@ import { useSelector } from "react-redux";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 import { IoFastFood } from "react-icons/io5";
+import { DataGrid ,GridActionsCellItem} from "@mui/x-data-grid";
+import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
+import { BiShare } from "react-icons/bi";
+import EditIcon from "@mui/icons-material/Edit";
 
 function ProjectEstimations(props) {
+    const classes = useTableStyle();
   console.log("tableData1", props);
   const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState();
@@ -42,7 +49,7 @@ function ProjectEstimations(props) {
     setClientDeatils({ ...props.clientInfo });
     setProjectDeatils({ ...props.projectInfo });
   }, [props.tableData1]);
-  console.log(tableData);
+  console.log("tableData :XxXX  ",tableData);
 
   const Estlink = (augData) => {
     console.log("sssss", augData);
@@ -101,8 +108,8 @@ function ProjectEstimations(props) {
 
   const columns = [
     {
-      title: "Estimation Name",
-      field: "estName",
+      headerName: "Estimation Name",
+      field: "estName", width: 300,
       render: (rowData) => {
         return estimationView && !rowData.isDeleted
           ? checkStep(rowData)
@@ -123,14 +130,14 @@ function ProjectEstimations(props) {
         // </Link>
       },
     },
-    { title: "Estimation Type", field: "estTypeId.estType" },
-    { title: "Estimation Description", field: "estDescription" },
-    { title: "Total Cost($)", field: "totalCost" },
-    { title: "No of Persons", field: "manCount" },
-
+    { headerName: "Estimation Type", field: "estTypeId.estType" , width: 100},
+    { headerName: "Estimation Description", field: "estDescription" ,width: 200},
+    { headerName: "Total Cost($)", field: "totalCost" },
+    { headerName: "No of Persons", field: "manCount" },
     {
-      title: "Last Modified By",
+      headerName: "Last Modified By",
       field: "lastmodify",
+      width: 150,
       type: "date",
       render: (dataRow) =>
         dataRow.updatedBy ? (
@@ -146,9 +153,34 @@ function ProjectEstimations(props) {
             updatedAt={dataRow.createdAt}
           />
         ),
-    },
+    }, {
+            field: "action",
+            type: "actions",
+            headerName: "Actions",
+            minWidth: 80,
+            getActions: (params) => [
+              <>
+                 <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="Delete"
+                
+                />
+                
+                 <Box sx={{ width: "20px" }} className="estimation-detail-box" />
+               <GridActionsCellItem
+                  icon={<DeleteIcon />}
+                  label="Delete"
+                  onClick={() => { openDeleteDailog(params) }}
+
+                 
+                />
+              </>,
+            ],
+          },
   ];
 
+
+ 
   const openFun = (name) => {
     setIsOpenDailog(true);
     setDeleteEstimationDailog(true);
@@ -162,7 +194,13 @@ function ProjectEstimations(props) {
 
   const openUpdateDailog = () => {};
 
-  const openDeleteDailog = () => {
+  const openDeleteDailog = (params) => {
+
+             //openFun(params)
+    setEditRow({ ...params.row });
+    setActionId(params.row._id);
+    console.log("Row : ", params.row._id);
+    setDeleteRecordName(params.row.estName);
     openFun();
   };
 
@@ -207,68 +245,66 @@ function ProjectEstimations(props) {
           cancelTitle="Cancel"
         />
       ) : null}
+      
       <BorderedContainer className="no-rl-margin">
+        <Grid container>
+                <Grid item className="multi-button-grid">
+                  {/* <Link
+                    to={{
+                      pathname:
+                        "/All-Clients/" +
+                        clientDetails.clientName +
+                        "/" +
+                        projectDetails.projectName +
+                        "/ImportExcelRequirements",
+                      state: {
+                        clientInfo: clientDetails,
+                        projectInfo: projectDetails,
+                        estimationHeaderId: "",
+                      },
+                    }}
+                  > */}
+                      <Button
+                        style={{ marginRight: "15px" }}
+                        variant="outlined"
+                      >
+                        {" "}
+                        <BiShare style={{ fontSize: "20px" }} />
+                        &nbsp; Share
+                      </Button>
+            {/* </Link> */}
+          </Grid>
+          </Grid>
+       <div style={{ height: 400, width: "100%" }}>
         {estimationListing ? (
-          <MaterialTable
+
+          <DataGrid
+            className={`${classes.root} ${classes.dataGrid}`}
+            rows={tableData}
             columns={columns}
-            components={{
-              Container: (props) => <Paper {...props} elevation={0} />,
-            }}
-            actions={[
-              (rowData) => ({
-                icon: "edit",
-                tooltip: "Edit Estimation",
-                onClick: (event, rowData) => {
-                  console.log(event);
-                  const el = event.nativeEvent.path[5].childNodes[0].firstChild;
-                  el.click();
-                  // let url = "/Estimation-Detail";
-                  // history.push(url);
-                  // setEditRow({ ...rowData });
-                  // setActionId(rowData.id);
-                  // openUpdateDailog();
-                },
-                disabled: rowData.isDeleted,
-              }),
-              (rowData) => ({
-                icon: "delete",
-                tooltip: "Delete Estimation",
-                onClick: (event, rowData) => {
-                  setEditRow({ ...rowData });
-                  setActionId(rowData._id);
-                  console.log("Row : ", rowData._id);
-                  setDeleteRecordName(rowData.estName);
-                  openDeleteDailog();
-                },
-                disabled: rowData.isDeleted,
-                hidden: !estimationDelete,
-              }),
-            ]}
-            options={{
-              actionsColumnIndex: -1,
-              sorting: true,
-              search: false,
-              filtering: false,
-              pageSize: 5,
-              paging: false,
-              headerStyle: {
-                backgroundColor: "#e5ebf7",
-                fontWeight: "bold",
-                fontSize: "0.9rem",
-              },
-              rowStyle: (rowData) => {
-                return {
-                  backgroundColor:
-                    rowBackgroundColor[rowData.isDeleted] ?? "#eee",
-                };
-              },
-            }}
-            data={tableData}
-            title="Estimations:"
+            hideFooterPagination={false}
+            pageSize={5}
+            rowsPerPageOptions={[10, 20, 50]}
+            checkboxSelection
+            disableSelectionOnClick
           />
+
+
+
+
+
+
+          
         ) : (
           ""
-        )}
+        )
+        
+        }
+     
+     </div>
+     
+     
+     
       </BorderedContainer>
     </div>
   );
