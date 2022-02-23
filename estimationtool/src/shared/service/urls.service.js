@@ -36,5 +36,6 @@ const Url = {
   releaseEstimation: `${process.env.REACT_APP_URL}estimation/releaseEstimation`,
   getEstimationLocation: `${process.env.REACT_APP_URL}location/estimation`,
   getResourceRoleCountOnUpdate: `${process.env.REACT_APP_URL}resource/rolecount`,
+  createNewerEstimationVersion: `${process.env.REACT_APP_URL}estimation/versioningEstimation`
 };
 export default Url;

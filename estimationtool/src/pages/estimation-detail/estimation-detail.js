@@ -14,6 +14,7 @@ import RequirementService from "../CreateRequirements/RequirementService";
 import { setResourceMixData } from "../../Redux/resourcemixRedux";
 
 import { RequirementTablePopup } from "../CreateRequirements/RequirementTable";
+
 import {
   DataGrid,
   GridActionsCellItem,
@@ -36,6 +37,9 @@ import { ExportEstimationPopup } from "./Export/ExportEstimation";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 import Status from "../../shared/layout/Status/Status";
+import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
+import { CreateEstimationVersion } from "../CreateVersion/CreateEstimationVersion";
+
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -262,7 +266,7 @@ const EstimationDetail = () => {
       .then((res) => {
         let dataResponse = res.data.body;
         let isReleased = dataResponse.basicDetails.publishDate != null;
-       // setIsEstimationReleased(isReleased);
+        setIsEstimationReleased(isReleased);
         var estHeaderAttribute = [
           {
             field: "action",
@@ -507,16 +511,46 @@ const EstimationDetail = () => {
   const exportFun = () => {};
 
   const handleCreateNewVersionClick = () => {
-    
+    setIsOpenDailog(true);
   }
 
+  const createNewVersion = async (estId) => {
+    setIsOpenDailog(false);
+    setLoader(true);
+    EstimationService.getNewVersionOfEstimation(estId)
+      .then((res) => {
+        setLoader(false);
+        console.log("Newer Version Data: "+ JSON.stringify(res));
+        let newEstHeaderObj = res.data.body;
+        // estimationId update the value for this Id and reload the page
+        //TODO: assign new version id once the API implementation is done
+        //estimationId = newEstHeaderObj.id;
+        estimationId = newEstHeaderObj.estheaderParentid;
+        //estimationId = "620ffc6a461cfa6686f320b1";
+        setOpen({
+          open: true,
+          severity: "success",
+          message: res.data.message,
+         });
+        getById();
+      })
+      .catch((err) => {
+        console.log("Error in creating version", err);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: 'Something went wrong',
+        });
+        getById();
+      });
+  };
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
 
   return (
     <div className="estimation-detail-cover">
       {isEstimationReleased ? 
-      (<Status data={"Create new version for any edits"}
+      (<Status data={"Continue editing with newer version"}
        onClickButton={handleCreateNewVersionClick}/>) : null}
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
@@ -598,6 +632,20 @@ const EstimationDetail = () => {
           selection={false}
           requirementTypeArray={requirementTypeArray}
           handleCheckBoxClicked={handleCheckBoxClicked}
+        />
+      ) : null}
+
+      {isOpenDailog === true ? (
+        <CreateEstimationVersion
+          isOpen={isOpenDailog}
+          openF={openFun}
+          closeF={closeDeletePopup}
+          title="Create Estimation New Version"
+          message={'Are you sure want to create new estimation version?'}
+          data={estimationId}
+          okAction={createNewVersion}
+          oktitle="Ok"
+          cancelTitle="Cancel"
         />
       ) : null}
 
@@ -856,7 +904,7 @@ const EstimationDetail = () => {
                 }
               >
                 <MdOutlineDocumentScanner style={{ fontSize: "18px" }} />
-                &nbsp;Generate Resource Mix
+                &nbsp;{ isEstimationReleased ? 'Resource Mix' : 'Generate Resource Mix'}
               </Button>
             )}
             {countError ? (
@@ -897,7 +945,7 @@ const EstimationDetail = () => {
                 }
               >
                 <MdOutlineTimeline style={{ fontSize: "18px" }} />
-                &nbsp;Generate Timeline Plan
+                &nbsp;{ isEstimationReleased ? 'Timeline Plan' : 'Generate Timeline Plan'}
               </Button>
             )}
             {countError ? (
@@ -913,6 +961,7 @@ const EstimationDetail = () => {
             )}
           </div>
         </Grid>
+        { !isEstimationReleased ? 
         <Grid item style={{ marginRight: "10px" }}>
           <Button
             variant="outlined"
@@ -920,9 +969,10 @@ const EstimationDetail = () => {
               releaseEstimation(estimationId);
             }}
           >
-            &nbsp;{ isEstimationReleased ? 'Estimation Released' : 'Estimation Release'}
+            &nbsp;Estimation Release
           </Button>
         </Grid>
+           : null }
       </Grid>
       <Snackbar
         isOpen={open}
