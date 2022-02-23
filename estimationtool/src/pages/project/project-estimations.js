@@ -192,18 +192,18 @@ function ProjectEstimations(props) {
       field: "lastmodify",
       width: 150,
       type: "date",
-      render: (dataRow) =>
-        dataRow.updatedBy ? (
+      renderCell: (dataRow) =>
+        dataRow.row.updatedBy ? (
           <UpdatedBy
-            firstName={dataRow.updatedBy.firstName}
-            lastName={dataRow.updatedBy.lastName}
-            updatedAt={dataRow.updatedBy.updatedAt}
+            firstName={dataRow.row.updatedBy.firstName}
+            lastName={dataRow.row.updatedBy.lastName}
+            updatedAt={dataRow.row.updatedBy.updatedAt}
           />
         ) : (
           <UpdatedBy
-            firstName="Daniel"
-            lastName="Neblet"
-            updatedAt={dataRow.createdAt}
+            firstName=""
+            lastName=""
+            updatedAt={dataRow.row.createdAt}
           />
         ),
     }, {
