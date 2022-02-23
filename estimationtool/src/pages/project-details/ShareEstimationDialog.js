@@ -9,14 +9,13 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-
-
-
+import ShareEstimateDialogService from "./ShareEstimateDialogService";
 
 const ShareEstimationDialog = (props) => {
 
-  const [selectedEstimation, setSelectedEstimation] = useState([]);
+  const [selectedEstimation, setSelectedEstimation] = useState();
   
+  const [roleMasterList, setRoleMasterList] = useState();
   const top100Films = [
     { title: "The Shawshank Redemption", year: 1994 },
     { title: "The Godfather", year: 1972 },
@@ -29,18 +28,42 @@ const ShareEstimationDialog = (props) => {
 
 
 useEffect(() => {
-  setSelectedEstimation({ ...props.selectedEstimation });
-}, [props.selectedEstimation ]);
+  setSelectedEstimation(props.selectedEstimation);
+  getRole();
+}, [props.selectedEstimation]);
   
+  
+  
+  
+  const getRole = () => {
+    ShareEstimateDialogService.getRole()
+      .then((res) => {
+        let roleList = res.data.body;
+        setRoleMasterList(roleList);
+         console.log("get Client by id error", roleList);
+      })
+      .catch((err) => {
+        console.log("get Client by id error", err);
+      });
+  };
   
   
   console.log("selectedEstimation : ", selectedEstimation);
-
-
+  
   const handleChipClick = () => { };
-  const handleChipDelete = () => {};
+  
+  const handleChipDelete = (item) => {
+    var temp = selectedEstimation;
+    setSelectedEstimation(temp.filter((el) => el.id !== item.id))
+    if (selectedEstimation.length === 1) {
+      props.closeF();
+    }
+  };
+
   const [roles, setRoles] = React.useState([]);
-  const handleRoleChange = (event) => { setRoles(event.target.value); };
+  const handleRoleChange = (event) => {
+    setRoles(event.target.value);
+  };
 
   return (
     <CustomizedDialogs
@@ -54,13 +77,17 @@ useEffect(() => {
     >
       <Grid container>
         <Grid item xs={12}>
+          <Grid item>Estimations</Grid>
           <Grid item>
-      <Chip
-                label="Clickable Deletable"
+            {selectedEstimation !== undefined ? selectedEstimation.map((item) => { 
+            return (<Chip
+              label={item.estName}
                 variant="outlined"
                 onClick={handleChipClick}
-                onDelete={handleChipDelete}
-              />
+              onDelete={() => { handleChipDelete(item) }}
+              />)
+            }) : ""}
+      
           </Grid>
         </Grid>
         <Grid item xs={12}>
@@ -73,11 +100,15 @@ useEffect(() => {
                 id="demo-simple-select"
                 value={roles}
                 label="Roles"
-                onChange={handleRoleChange}
+                onChange={(e) => {
+                handleRoleChange(e);
+              }}
               >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                
+                {roleMasterList !== undefined ? roleMasterList.map((item) => { 
+                  return (<MenuItem value={item._id}>{item.roleName}</MenuItem>)
+            }) : ""}
+               
               </Select>
             </FormControl>
           </Box>
