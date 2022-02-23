@@ -17,12 +17,9 @@ const EstRequirementServ = require("../service/estimationRequirementService");
 const EstResourceCountServ = require("../service/estimationResourceCountService");
 const EstTempServ = require("../service/estimationTemplateService");
 const EstHeaderModel = require("../database/models/estHeaderModel");
-const EstimationCalcAttr = require("../database/models/estimationCalcAttrModel");
 const EstResourceCount = require("../database/models/estResourceCount");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const EstRequirementData = require("../database/models/estRequirementData");
-const dbconnection = require("../database/connection");
-const { MongoClient } = require('mongodb');
 
 const { result } = require("lodash");
 
@@ -83,7 +80,6 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
 module.exports.createEstimationHeader = async (serviceData) => {
   try {
     let estimation = new EstimationHeader({ ...serviceData });
-    console.log(estimation);
     estimation.estStep = "1";
     estimation.createdBy = global.loginId;
     const findRecord = await EstimationHeader.find({
@@ -602,50 +598,55 @@ module.exports.ReleaseEstimation = async (req) => {
 module.exports.versioningEstimation = async ({ id }) => {
   try {
     const parentEstimation = await EstimationHeader.findById( { _id: id } );
-    parentEstimation.publishDate = parentEstimation.publishDate == undefined ? '' : parentEstimation.publishDate;
-    parentEstimation.isDeleted = parentEstimation.isDeleted == undefined ? '' : parentEstimation.isDeleted;
-    console.log(`parentEstimation.publishDate: ${parentEstimation.publishDate}`);
-    
-    if (parentEstimation && (parentEstimation.publishDate != null && parentEstimation.publishDate != '')
-     && (parentEstimation.isDeleted != null && parentEstimation.isDeleted == false)) {
+    if(parentEstimation){
+      parentEstimation.publishDate = parentEstimation.publishDate == undefined ? '' : parentEstimation.publishDate;
+      parentEstimation.isDeleted = parentEstimation.isDeleted == undefined ? '' : parentEstimation.isDeleted;
+      console.log(`parentEstimation.publishDate: ${parentEstimation.publishDate}`);
       
-      let createVersionEstPayload = prepreVersionEstHeaderdto(parentEstimation);
-      createVersionEstPayload.estheaderParentid = parentEstimation._id;
-      createVersionEstPayload.publishDate = null;
-      //TODO Verify Request Version and new Version
-      let versionNo = parentEstimation.estVersionno && parentEstimation.estVersionno >0 ? parentEstimation.estVersionno + 1 : 1;
-      createVersionEstPayload.estVersionno = versionNo;
-      
-      //estheaders
-      const versionEstimationResult =  await this.createVersionEstimationHeader(createVersionEstPayload);
-      let newVersionEstHeaderId = versionEstimationResult._id;
-      
-      if(newVersionEstHeaderId){
-
-        let estimation = await EstimationHeader.updateOne(
-          { _id: id },
-          { isDeleted: true, updatedBy: global.loginId }
-        );
-
-        console.log(`newVersionEstHeaderId: ${newVersionEstHeaderId}`);
-        //estheaderrequirements
-        await this.createEstHeaderRequirements(id, newVersionEstHeaderId);
+      if ((parentEstimation.publishDate != null && parentEstimation.publishDate != '')
+      && (parentEstimation.isDeleted != null && parentEstimation.isDeleted == false)) {
         
-        //estimationheaderattributecalcs
-        await this.createEstHeaderAttrCalcs(id, newVersionEstHeaderId);
+        let createVersionEstPayload = prepreVersionEstHeaderdto(parentEstimation);
+        createVersionEstPayload.estheaderParentid = parentEstimation._id;
+        createVersionEstPayload.publishDate = null;
+        //TODO Verify Request Version and new Version
+        let versionNo = parentEstimation.estVersionno && parentEstimation.estVersionno >0 ? parentEstimation.estVersionno + 1 : 1;
+        createVersionEstPayload.estVersionno = versionNo;
+        
+        //estheaders
+        const versionEstimationResult =  await this.createVersionEstimationHeader(createVersionEstPayload);
+        let newVersionEstHeaderId = versionEstimationResult._id;
+        
+        if(newVersionEstHeaderId){
 
-        //estHeaderAttributes
-        await this.createEstHeaderAttributes(id, newVersionEstHeaderId);
+          let estimation = await EstimationHeader.updateOne(
+            { _id: id },
+            { isDeleted: true, updatedBy: global.loginId }
+          );
 
-        //estresourcecounts
-        await this.createEstResourceCounts(id, newVersionEstHeaderId);
+          console.log(`newVersionEstHeaderId: ${newVersionEstHeaderId}`);
+          //estheaderrequirements
+          await this.createEstHeaderRequirements(id, newVersionEstHeaderId);
+          
+          //estimationheaderattributecalcs
+          await this.createEstHeaderAttrCalcs(id, newVersionEstHeaderId);
 
+          //estHeaderAttributes
+          await this.createEstHeaderAttributes(id, newVersionEstHeaderId);
+
+          //estresourcecounts
+          await this.createEstResourceCounts(id, newVersionEstHeaderId);
+
+        }
+
+        return formatMongoData(versionEstimationResult);
+      }else{
+        console.log("Selected Estimation not Published or Deactivate. Can not create Version for this estimation ");
+        throw new Error('Selected Estimation not Published or deactivate. Can not create Version for this estimation');
       }
-
-      return formatMongoData(versionEstimationResult);
     }else{
-      console.log("Selected Estimation not Published or Deactivate. Can not create Version for this estimation ");
-      throw new Error('Selected Estimation not Published or deactivate. Can not create Version for this estimation');
+      console.log("Selected Estimation not Found. Can not create Version for this estimation ");
+      throw new Error('Selected Estimation not Found. Can not create Version for this estimation');
     }
   } catch (err) {
     console.log("something went wrong: service > versioningEstimation ", err);
