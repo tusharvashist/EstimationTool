@@ -101,6 +101,9 @@ app.use("/api/v1/location", require("./routes/location.route"));
 //----------- Sharing
 app.use("/api/v1/share", require("./routes/shareData.route"));
 
+//------------Email Send 
+app.use("/api/v1/sendmail", require("./routes/email.route"));
+
 //----------- API Documentation
 if (process.env.NODE_ENV != "production") {
   envName = "Locally";
