@@ -1,5 +1,4 @@
 import React from "react";
-import React from "react";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import classes from "./Status.module.css";
 import { FiCheck } from "react-icons/fi";
