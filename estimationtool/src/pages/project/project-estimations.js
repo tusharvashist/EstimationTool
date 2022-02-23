@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 import usePermission from "../../shared/layout/hooks/usePermissions";
 import { IoFastFood } from "react-icons/io5";
-import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem ,GridRowParams} from "@mui/x-data-grid";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import { BiShare } from "react-icons/bi";
 import EditIcon from "@mui/icons-material/Edit";
@@ -368,12 +368,18 @@ function ProjectEstimations(props) {
             hideFooterPagination={false}
             pageSize={5}
             rowsPerPageOptions={[10, 20, 50]}
-            checkboxSelection
+              checkboxSelection
+             isRowSelectable={(params) => params.row.isDeleted === false}
             disableSelectionOnClick
             onSelectionModelChange={(rows) => {
-              console.log("onSelectionModelChange: ", rows);
-              setSelectedEstimation(rows);
+              var selectedItem = []
+              rows.forEach((item) => { 
+                console.log("onSelectionModelChange: item", item);
+                selectedItem.push(...tableData.filter((el) => el.id === item))
+              });
+              setSelectedEstimation(selectedItem);
             }}
+              
           />
         ) : (
           ""
