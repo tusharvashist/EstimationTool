@@ -1,17 +1,21 @@
 import MaterialTable from "material-table";
 import React, { useState, useEffect } from "react";
 import ProjectSer from "./project.service";
-
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import EstimationService from "../estimationCreation/estimation.service";
-import { Box, Grid, Paper } from "@material-ui/core";
+import {
+  Box,
+  Grid,
+  Select,
+  FormControl,
+  InputLabel,
+  MenuItem} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import "./project.css";
 import DeleteProjectdailog from "./delete-project.dailog";
-
 import { useHistory } from "react-router-dom";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import { useSelector } from "react-redux";
@@ -24,14 +28,54 @@ import { BiShare } from "react-icons/bi";
 import EditIcon from "@mui/icons-material/Edit";
 import ShareEstimationDialog from "../project-details/ShareEstimationDialog";
 
+function DeleteButton(props) {
+  if (props.params.row.isDeleted){
+    return (
+      <GridActionsCellItem
+        icon={<DeleteIcon />}
+        label="Delete"
+        onClick={() => { props.openDeleteDailog(props.params) }}
+        disabled
+      />
+
+    );
+  }else {
+    return (
+      <GridActionsCellItem
+        icon={<DeleteIcon />}
+        label="Delete"
+        onClick={() => { props.openDeleteDailog(props.params) }}
+      />
+    );
+}
+}
+
+function EditButton(props) {
+  if (props.params.row.isDeleted){
+    return (
+      <GridActionsCellItem
+        icon={<EditIcon />}
+        label="Delete"
+        disabled
+      />
+    );
+  }else {
+    return (
+      <GridActionsCellItem
+        icon={<EditIcon />}
+        label="Delete"
+      />
+    );
+  }
+}
+
 function ProjectEstimations(props) {
   const classes = useTableStyle();
-  console.log("tableData1", props);
   const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState();
+  const [selectedEstimation, setSelectedEstimation] = useState();
   const [clientDeatils, setClientDeatils] = useState({});
   const [projectDeatils, setProjectDeatils] = useState();
-
   const [isOpenDailog, setIsOpenDailog] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [editRow, setEditRow] = useState({});
@@ -45,6 +89,12 @@ function ProjectEstimations(props) {
     estimationListing,
     estimationDelete,
   } = usePermission();
+
+  const [projectStatus] = useState([
+    { title: "All" },
+    { title: "Active" },
+    { title: "In-Active" },
+  ]);
 
   useEffect(() => {
     setTableData([...props.tableData1]);
@@ -113,9 +163,9 @@ function ProjectEstimations(props) {
       headerName: "Estimation Name",
       field: "estName",
       width: 300,
-      render: (rowData) => {
-        return estimationView && !rowData.isDeleted
-          ? checkStep(rowData)
+      renderCell: (rowData) => {
+        return estimationView && !rowData.row.isDeleted
+          ? checkStep(rowData.row)
           : rowData.estName;
         // <Link
         //   to={{
@@ -133,12 +183,8 @@ function ProjectEstimations(props) {
         // </Link>
       },
     },
-    { headerName: "Estimation Type", field: "estTypeId.estType", width: 100 },
-    {
-      headerName: "Estimation Description",
-      field: "estDescription",
-      width: 200,
-    },
+    { headerName: "Estimation Type", field: "estType" , width: 100},
+    { headerName: "Estimation Description", field: "estDescription" ,width: 200},
     { headerName: "Total Cost($)", field: "totalCost" },
     { headerName: "No of Persons", field: "manCount" },
     {
@@ -160,27 +206,34 @@ function ProjectEstimations(props) {
             updatedAt={dataRow.createdAt}
           />
         ),
-    },
-    {
-      field: "action",
-      type: "actions",
-      headerName: "Actions",
-      minWidth: 80,
-      getActions: (params) => [
-        <>
-          <GridActionsCellItem icon={<EditIcon />} label="Delete" />
-
-          <Box sx={{ width: "20px" }} className="estimation-detail-box" />
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={() => {
-              openDeleteDailog(params);
-            }}
-          />
-        </>,
-      ],
-    },
+    }, {
+            field: "action",
+            type: "actions",
+            headerName: "Actions",
+            minWidth: 80,
+            getActions: (params) => [
+              <>
+                
+                 <Box sx={{ width: "5px" }} className="estimation-detail-box" />
+                 {/* <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="Delete"
+                /> */}
+                 <EditButton params={params} openDeleteDailog={ openDeleteDailog}/>
+                
+                <Box sx={{ width: "5px" }} className="estimation-detail-box" />
+                
+                <DeleteButton params={params} openDeleteDailog={ openDeleteDailog}/>
+               {/* <GridActionsCellItem
+                  icon={<DeleteIcon />}
+                  label="Delete"
+                  onClick={() => { openDeleteDailog(params) }}
+                  
+                /> */}
+                 <Box sx={{ width: "5px" }} className="estimation-detail-box" />
+              </>,
+            ],
+          },
   ];
 
   const openFun = (name) => {
@@ -197,7 +250,6 @@ function ProjectEstimations(props) {
   const openUpdateDailog = () => {};
 
   const openDeleteDailog = (params) => {
-    //openFun(params)
     setEditRow({ ...params.row });
     setActionId(params.row._id);
     console.log("Row : ", params.row._id);
@@ -241,8 +293,6 @@ function ProjectEstimations(props) {
     openShareFun();
   };
 
-  console.log(clientDeatils, projectDeatils, tableData);
-
   return (
     <div className="all-project-wrap">
       <ShareEstimationDialog
@@ -253,6 +303,7 @@ function ProjectEstimations(props) {
         oktitle="Share"
         saveFun={shareEstimation}
         cancelTitle="Cancel"
+        selectedEstimation={ selectedEstimation}
       />
       {deleteEstimationDailog === true && isOpenDailog === true ? (
         <DeleteProjectdailog
@@ -271,51 +322,64 @@ function ProjectEstimations(props) {
       ) : null}
 
       <BorderedContainer className="no-rl-margin">
-        <Grid container>
-          <Grid item className="multi-button-grid">
-            {/* <Link
-                    to={{
-                      pathname:
-                        "/All-Clients/" +
-                        clientDetails.clientName +
-                        "/" +
-                        projectDetails.projectName +
-                        "/ImportExcelRequirements",
-                      state: {
-                        clientInfo: clientDetails,
-                        projectInfo: projectDetails,
-                        estimationHeaderId: "",
-                      },
-                    }}
-                  > */}
+        <Grid container justify="space-between" alignItems="right">
+           <Box sx={{ width: 200 }}>
+              <FormControl width="300px">
+                <InputLabel id="client-simple-select">
+                  Estimation Status{" "}
+                </InputLabel>
+
+                <Select
+                  labelId="client-simple-select"
+                  id="client-simple-select"
+                  value={projectStatus.title}
+                  label={projectStatus.title}
+                  defaultValue={"Active"}
+                  onChange={props.getDropDownvalue}
+                >
+                  {projectStatus.map((item) => (
+                    <MenuItem key={item.title} value={item.title}>
+                      {item.title}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+          </Box>
+          <Box >
             <Button
-              style={{ marginRight: "15px" }}
+                        style={{ marginRight: "15px" }}
               variant="outlined"
-              onClick={handleShareClick}
-            >
-              {" "}
-              <BiShare style={{ fontSize: "20px" }} />
-              &nbsp; Share
+               onClick={() => { openShareFun() }}
+                      >
+                        {" "}
+                        <BiShare style={{ fontSize: "20px" }} />
+                        &nbsp; Share
             </Button>
-            {/* </Link> */}
-          </Grid>
+            </Box>
+      
         </Grid>
-        <div style={{ height: 400, width: "100%" }}>
-          {estimationListing ? (
-            <DataGrid
-              className={`${classes.root} ${classes.dataGrid}`}
-              rows={tableData}
-              columns={columns}
-              hideFooterPagination={false}
-              pageSize={5}
-              rowsPerPageOptions={[10, 20, 50]}
-              checkboxSelection
-              disableSelectionOnClick
-            />
-          ) : (
-            ""
-          )}
-        </div>
+         <Box sx={{ width: "5px", height:"20px" }} className="estimation-detail-box" />
+       <div style={{ height: 400, width: "100%" }}>
+        {estimationListing ? (
+          <DataGrid
+            className={`${classes.root} ${classes.dataGrid}`}
+            rows={tableData}
+            columns={columns}
+            hideFooterPagination={false}
+            pageSize={5}
+            rowsPerPageOptions={[10, 20, 50]}
+            checkboxSelection
+            disableSelectionOnClick
+            onSelectionModelChange={(rows) => {
+              console.log("onSelectionModelChange: ", rows);
+              setSelectedEstimation(rows);
+            }}
+          />
+        ) : (
+          ""
+        )
+        }
+     </div>
       </BorderedContainer>
     </div>
   );
