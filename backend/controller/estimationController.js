@@ -285,29 +285,11 @@ module.exports.versioningEstimation = async (req, res) => {
   let responce = { ...constant.defaultResponce };
   console.log('versioningEstimation - Controller');
   try {
-    const responceFromVersioningEstimation = {
-      estheaderParentid: '620f49cceaa2127c9b68ddeb',
-      estVersionno: 3,
-      projectId: "620f3cb9eaa2127c9b68dd74",     
-      estName: 'SWAG-Primerica_inc-ACCOUNTS_RMC_APP',
-      estTypeId: "617905a132d2f4e12f49d3d8",     
-      estDescription: 'Creating RMC Estimation',
-      effortUnit: 'Day',
-      manCount: 0,
-      contingency: 50,
-      totalCost: 0,
-      estCalcColumns: 'NA',
-      estColumns: 'NA',
-      isDeleted: false,
-      estStep: '3',
-      estTentativeTimeline: 5,
-      publishDate: null,
-      locations: [ "61e6525e8179903f41564bb7" ], 
-      id: "62132817099dc57a230f4370"
-    };
-
-    //await estimationHeaderAtrributeSer.versioningEstimation( req.params );
-    console.log()
+    const responceFromVersioningEstimation =
+      await estimationHeaderAtrributeSer.versioningEstimation(
+        req.params
+      );
+    console.log('Version estimation created successfully');
     responce.status = 200;
     responce.message = constant.estimationMessage.ESTIMATION_VERSION_CREATED;
     responce.body = responceFromVersioningEstimation;
@@ -316,4 +298,3 @@ module.exports.versioningEstimation = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
-
