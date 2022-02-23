@@ -327,4 +327,13 @@ module.exports = {
     PUBLISH_VALIDATION: "Validation failed",
     PUBLISH_CREATE: "Estimation published successfully",
   },
+  emailSettings: {
+    SENDGRID_API_KEY: "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",
+    EMAIL_STATUS: "true",
+    FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
+  },
+  emailType:{
+    ESTIMATION:"Estimation"
+  }
+
 };
