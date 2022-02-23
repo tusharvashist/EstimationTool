@@ -63,7 +63,17 @@ module.exports.roleDelete = async ({ id }) => {
     }
     return formatMongoData(role);
   } catch (err) {
-    console.log("something went wrong: service > roleservice ", err);
+    console.log("something went wrong: service > Role service ", err);
+    throw new Error(err);
+  }
+};
+
+module.exports.getAllSharingRole = async () => {
+  try {
+    let role = await Role.find({ seq: { $gte: 3 } });
+    return formatMongoData(role);
+  } catch (err) {
+    console.log("something went wrong: service > Role Master Service ", err);
     throw new Error(err);
   }
 };

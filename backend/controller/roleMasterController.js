@@ -43,6 +43,19 @@ module.exports.getAllRole = async (req, res) => {
     return res.status(responce.status).send(responce);
 }
 
+module.exports.getAllSharingRole = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responceFromRoleSer = await roleSer.getAllSharingRole();
+    responce.status = 200;
+    responce.message = constant.roleMessage.ROLE_FETCH;
+    responce.body = responceFromRoleSer;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};
+
 //----------------- Update Role
 module.exports.roleUpdate = async (req, res) => {
     let responce = { ...constant.defaultResponce };
