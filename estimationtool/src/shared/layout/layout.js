@@ -20,6 +20,7 @@ import CreateRequirements from "../../pages/CreateRequirements/CreateRequirement
 import ImportExcelRequirements from "../../pages/ImportExcelRequirements/ImportExcelRequirements";
 import ResourceMix from "../../pages/ResourceMix/ResourceMix";
 import TimeLinePlanning from "../../pages/timelinePlanning/timelinePlanning";
+import ApplicationAssumptions from "../../pages/Assumptions/ApplicationAssumptions";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -124,6 +125,9 @@ export default class Layout extends Component {
                     path="/All-Clients/:clientName/:projectid/Estimation-Detail/TimelinePlanning"
                   >
                     <TimeLinePlanning />
+                  </Route>
+                  <Route exact path="/Assumptions">
+                    <ApplicationAssumptions />
                   </Route>
                 </Switch>
               </Grid>
