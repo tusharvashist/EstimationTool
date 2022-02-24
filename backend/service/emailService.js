@@ -22,26 +22,33 @@ function splitString(string){
     return string.split(',');
 }
 function  getEmailTemplate(templateData) {
-      // if (templateData.mialType.toLowerCase() == constant.emailType.ESTIMATION.toLowerCase()) {
+      // if (templateData.mailType.toLowerCase() == constant.emailType.ESTIMATION.toLowerCase()) {
     var html = `<!DOCTYPE html>
             <html>
             <body>
-            <h1>Hi ${templateData.clientName},</h1>
-            <p>Welcome to the ${templateData.projectName}</p>
-            <table >
-                <tr>
-                    <td><b>Estimation Name:</b> ${templateData.estimationName}</td>
-                    <td colspan="2"></td>
-                    <td><b>Assigned Role:</b> ${templateData.assignedRole}</td>
-                </tr>
+            <p>Hi ${templateData.senderName},</h4>
+            <p>${templateData.ownerName} has shared the following estimation with you. Please check with the below shared details and start contributing.</p>
+            <table border="0" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Project Name</th>
+                        <th>Estimation Name</th>
+                        <th>Assigned Role</th>
+                        <th>Estimation Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="text-align:center">
+                        <td>${templateData.clientName}</td>
+                        <td>${templateData.projectName}</td>
+                        <td>${templateData.estimationName}</td>
+                        <td>${templateData.assignedRole}</td>
+                        <td><a style="background-color: #04AA6D!important;border-radius: 5px;font-size: 12px;font-family: 'Source Sans Pro', sans-serif;padding: 6px 18px;color: #FFFFFF;text-decoration: none;" href="${templateData.estimationLink}" target="_blank">Get Estimation</a></td>
+                    </tr>
+                </tbody>
             </table>
-            <p style="float:right">
-            <a style="background-color: #04AA6D!important;border-radius: 5px;font-size: 17px;font-family: 'Source Sans Pro', sans-serif;padding: 6px 18px;color: #FFFFFF;" href="${templateData.estimationLink}" target="_blank">Get Estimation »</a>
-            </p>
-            <a>
-              <img src="https://pyramidcore.pyramidci.com/Security/images/login-header.jpg" alt="HTML tutorial" style="width:200px;height:200px;border:0">
-            </a>
-            <br/><br/><br/><br/><br/>
+            <br/><br/><br/><br/>
             <p>
                 <b>
                     <i>

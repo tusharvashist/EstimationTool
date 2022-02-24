@@ -35,6 +35,7 @@ module.exports = {
     tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
     isReqValid: { err: [], isValid: true },
+    estimationVersions: [],
   },
 
   requirementListResponse: {
