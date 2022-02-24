@@ -1,4 +1,13 @@
-import { Button, Container, Box, Grid, FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
+import {
+  Button,
+  Container,
+  Box,
+  Grid,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
 
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -39,7 +48,6 @@ import usePermission from "../../shared/layout/hooks/usePermissions";
 import Status from "../../shared/layout/Status/Status";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import { CreateEstimationVersion } from "../CreateVersion/CreateEstimationVersion";
-
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -114,7 +122,7 @@ const EstimationDetail = () => {
   const [openExport, setOpenExport] = useState(false);
   const [isEstimationReleased, setIsEstimationReleased] = useState(false);
   const [estVersions, setEstimationVersions] = useState([]);
-  const [currentSelctedVersion, setCurrentSelectedVersion] = useState({});
+  const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -177,7 +185,6 @@ const EstimationDetail = () => {
       getRequirementDataById();
       getRequirementWithQuery(() => {});
     });
-  
   };
 
   const getRequirementWithQuery = (callBack) => {
@@ -197,9 +204,9 @@ const EstimationDetail = () => {
       callBack();
     }
   };
-  const getBasicDetailById = (calback) => {
+  const getBasicDetailById = async (calback) => {
     setLoader(true);
-    EstimationService.getById(estimationId)
+    await EstimationService.getById(estimationId)
       .then((res) => {
         setHeaderData({ ...res.data.body.basicDetails });
         setProjectDetails({ ...res.data.body.basicDetails.projectId });
@@ -212,10 +219,10 @@ const EstimationDetail = () => {
         let releaseStatus = res.data.body.basicDetails.publishDate != null;
         //console.log("Release status "+ releaseStatus);
         setIsEstimationReleased(releaseStatus);
-       // setCurrentVersion(res.data.body.basicDetails._id);
-        console.log("Set Current : "+  JSON.stringify(estVersions));
+        // setCurrentVersion(res.data.body.basicDetails._id);
+        console.log("Set Current : " + JSON.stringify(estVersions));
 
-        setCurrentSelectedVersion({...res.data.body.basicDetails});
+        setCurrentSelectedVersion({ ...res.data.body.basicDetails });
         if (location.state !== undefined) {
           let obj = {
             client: res.data.body.basicDetails.projectId.client,
@@ -295,7 +302,7 @@ const EstimationDetail = () => {
                   onClick={openEditRequirement(params)}
                 />
               </>,
-            ] 
+            ],
           },
           {
             headerName: "Req. Id",
@@ -365,9 +372,9 @@ const EstimationDetail = () => {
     return Number(Number(value).toFixed(2));
   }
 
-  function isPublishDateAvailable(publishedDate){
-    let status = headerData.publishDate != null
-    console.log("&&"+status);
+  function isPublishDateAvailable(publishedDate) {
+    let status = headerData.publishDate != null;
+    console.log("&&" + status);
     return status;
   }
 
@@ -487,19 +494,19 @@ const EstimationDetail = () => {
   const releaseEstimation = (id) => {
     EstimationService.estimationPublish(id)
       .then((res) => {
-        try{
+        try {
           setIsEstimationReleased(true);
           getRequirementDataById();
           setOpen({
             open: true,
             severity: "success",
             message: res.data.message,
-           });
-          //set publish date current date for instand reflection 
+          });
+          //set publish date current date for instand reflection
           //headerData.publishDate = new Date().format('m-d-Y h:i:s');
           //console.log("date after release  Res"+ headerData.publishDate);
-          } catch (exception){
-            console.log(exception);
+        } catch (exception) {
+          console.log(exception);
         }
       })
       .catch((err) => {
@@ -519,7 +526,7 @@ const EstimationDetail = () => {
 
   const handleCreateNewVersionClick = () => {
     setIsOpenDailog(true);
-  }
+  };
 
   const createNewVersion = async (estId) => {
     setIsOpenDailog(false);
@@ -527,7 +534,7 @@ const EstimationDetail = () => {
     EstimationService.getNewVersionOfEstimation(estId)
       .then((res) => {
         setLoader(false);
-        console.log("Newer Version Data: "+ JSON.stringify(res));
+        console.log("Newer Version Data: " + JSON.stringify(res));
         let newEstHeaderObj = res.data.body;
         // estimationId update the value for this Id and reload the page
         //TODO: assign new version id once the API implementation is done
@@ -538,7 +545,7 @@ const EstimationDetail = () => {
           open: true,
           severity: "success",
           message: res.data.message,
-         });
+        });
         getById();
       })
       .catch((err) => {
@@ -546,7 +553,7 @@ const EstimationDetail = () => {
         setOpen({
           open: true,
           severity: "error",
-          message: 'Something went wrong',
+          message: "Something went wrong",
         });
         getById();
       });
@@ -554,32 +561,41 @@ const EstimationDetail = () => {
 
   // get the Estimation Version dropdown selected value
   const getEstimationVersionDropDownValue = (event) => {
-    console.log("Selected Version: "+ event);
+    // console.log("Selected Version: " + event.target.value);
     let etId = event.target.value; //estimation version object
     //event.target._id
     //setCurrentSelectedVersion(currentSelctedVersion);
-    if(currentSelctedVersion && currentSelctedVersion._id != etId){
+    if (currentSelctedVersion && currentSelctedVersion._id != etId) {
       estimationId = etId;
       getById();
     }
   };
 
   const setCurrentVersion = (currentEstId) => {
-    console.log("ALl Versions : "+  JSON.stringify(estVersions));
-   const selectedVersion = estVersions.find((estVersion) => estVersion._id === currentEstId);
-   console.log("Filtered Current Versions : "+  JSON.stringify(selectedVersion));
+    console.log("ALl Versions : " + JSON.stringify(estVersions));
+    const selectedVersion = estVersions.find(
+      (estVersion) => estVersion._id === currentEstId
+    );
+    console.log(
+      "Filtered Current Versions : " + JSON.stringify(selectedVersion)
+    );
 
-   setCurrentSelectedVersion(selectedVersion);
-   console.log("current selected version"+ JSON.stringify(selectedVersion));
-  }
+    setCurrentSelectedVersion(selectedVersion);
+    console.log("current selected version" + JSON.stringify(selectedVersion));
+  };
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
+  console.log("selected currentSelctedVersion", currentSelctedVersion);
+  console.log("selected estVersions", estVersions);
 
   return (
     <div className="estimation-detail-cover">
-      {isEstimationReleased ? 
-      (<Status data={"Continue editing with newer version"}
-       onClickButton={handleCreateNewVersionClick}/>) : null}
+      {isEstimationReleased ? (
+        <Status
+          data={"Continue editing with newer version"}
+          onClickButton={handleCreateNewVersionClick}
+        />
+      ) : null}
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
         openExport={openExport}
@@ -593,13 +609,13 @@ const EstimationDetail = () => {
       {/*========= JSX- Export Estimation in Report - END ========= */}
       {/* ----------------- */}
       {/*========= JSX- Resource Count Pop up and table - START ========= */}
-      { !isEstimationReleased ? (
-      <ResourceCountMatrix
-        data={estimationId}
-        errorFunction={handleCountError}
-        countError={countError}
-      /> ) : null
-      }
+      {!isEstimationReleased ? (
+        <ResourceCountMatrix
+          data={estimationId}
+          errorFunction={handleCountError}
+          countError={countError}
+        />
+      ) : null}
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}
       {openEditConfigurationBox ? (
         <AddRequirements
@@ -669,7 +685,7 @@ const EstimationDetail = () => {
           openF={openFun}
           closeF={closeDeletePopup}
           title="Create Estimation New Version"
-          message={'Are you sure want to create new estimation version?'}
+          message={"Are you sure want to create new estimation version?"}
           data={estimationId}
           okAction={createNewVersion}
           oktitle="Ok"
@@ -679,29 +695,32 @@ const EstimationDetail = () => {
 
       <Container>
         <Grid container>
-        <Grid item xs={0.8} style={{ margin: "8px 0px" }}>
-              <div className="field-width">
-                <FormControl >
-                <InputLabel variant="standard" htmlFor="uncontrolled-native">
-                  </InputLabel>
+          <Grid item xs={0.8} style={{ margin: "8px 0px" }}>
+            <div className="field-width">
+              {estVersions.length > 0 && currentSelctedVersion != undefined ? (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Version</InputLabel>
                   <Select
-                    labelId="estimation-version-label"
-                    id="estimation-version-select"
-                    onChange={(e) => {
-                      console.log("Slect EVENT"+ e);
-                      getEstimationVersionDropDownValue(e);
-                    }}
-                    value={currentSelctedVersion && currentSelctedVersion._id}
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={currentSelctedVersion._id}
+                    label="Version"
+                    onChange={getEstimationVersionDropDownValue}
                   >
-                    {estVersions.map((item) => (
-                      <MenuItem key={item.estVersionno} value={item._id} >
-                        {`v-${item.estVersionno}`}
-                      </MenuItem>
-                    ))}
+                    {estVersions.map((item) => {
+                      return (
+                        <MenuItem key={item._id} value={item._id}>
+                          v-{item.estVersionno}
+                        </MenuItem>
+                      );
+                    })}
                   </Select>
                 </FormControl>
-              </div>
-            </Grid>
+              ) : (
+                ""
+              )}
+            </div>
+          </Grid>
           <Grid item className="multi-button-grid">
             {estimation_export_excel && (
               <Button variant="outlined" onClick={openExportEstimation}>
@@ -709,89 +728,88 @@ const EstimationDetail = () => {
                 &nbsp;Export in Excel
               </Button>
             )}
-            { !isEstimationReleased ? <Link
-              to={{
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/createEstimate",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: estimationId,
-                },
-              }}
-            >
-              {estimationConfiguation && (
-                <Button 
-                  variant="outlined" 
-                  className="estimation-detail-button"
+            {!isEstimationReleased ? (
+              <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/createEstimate",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: estimationId,
+                  },
+                }}
+              >
+                {estimationConfiguation && (
+                  <Button
+                    variant="outlined"
+                    className="estimation-detail-button"
                   >
-                  <EditOutlined style={{ fontSize: "18px" }} />
-                  &nbsp;Edit Configuration
-                </Button>
-              )}
-            </Link> : null}
+                    <EditOutlined style={{ fontSize: "18px" }} />
+                    &nbsp;Edit Configuration
+                  </Button>
+                )}
+              </Link>
+            ) : null}
           </Grid>
         </Grid>
       </Container>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <EstimationHeader data={headerData} />
-      { !isEstimationReleased ? <Container>
-        <Grid container>
-          <Grid item class="multi-button-grid">
-            <Link
-              to={{
-                pathname:
-                  "/All-Clients/" +
-                  clientDetails.clientName +
-                  "/" +
-                  projectDetails.projectName +
-                  "/ImportExcelRequirements",
-                state: {
-                  clientInfo: clientDetails,
-                  projectInfo: projectDetails,
-                  estimationHeaderId: headerData,
-                },
-              }}
-            >
-              <Button 
-                style={{ marginRight: "15px" }} 
-                variant="outlined"
+      {!isEstimationReleased ? (
+        <Container>
+          <Grid container>
+            <Grid item class="multi-button-grid">
+              <Link
+                to={{
+                  pathname:
+                    "/All-Clients/" +
+                    clientDetails.clientName +
+                    "/" +
+                    projectDetails.projectName +
+                    "/ImportExcelRequirements",
+                  state: {
+                    clientInfo: clientDetails,
+                    projectInfo: projectDetails,
+                    estimationHeaderId: headerData,
+                  },
+                }}
+              >
+                <Button style={{ marginRight: "15px" }} variant="outlined">
+                  <BiImport style={{ fontSize: "20px" }} />
+                  &nbsp; Import Requirements
+                </Button>
+              </Link>
+              {estimation_requirement_add && (
+                <Button
+                  variant="outlined"
+                  className="estimation-detail-button"
+                  onClick={openAddAvailableRequirement}
                 >
-                <BiImport style={{ fontSize: "20px" }} />
-                &nbsp; Import Requirements
-              </Button>
-            </Link>
-            {estimation_requirement_add && (
-              <Button
-                variant="outlined"
-                className="estimation-detail-button"
-                onClick={openAddAvailableRequirement}
-               
-              >
-                {" "}
-                <Add style={{ fontSize: "18px" }} />
-                &nbsp;Include Project Requirements
-              </Button>
-            )}
-            {estimation_requirement_add && (
-              <Button
-                variant="outlined"
-                className="estimation-detail-button"
-                onClick={openAddRequirement}
-               
-              >
-                {" "}
-                <Add style={{ fontSize: "18px" }} />
-                &nbsp;Create New Requirements
-              </Button>
-            )}
+                  {" "}
+                  <Add style={{ fontSize: "18px" }} />
+                  &nbsp;Include Project Requirements
+                </Button>
+              )}
+              {estimation_requirement_add && (
+                <Button
+                  variant="outlined"
+                  className="estimation-detail-button"
+                  onClick={openAddRequirement}
+                >
+                  {" "}
+                  <Add style={{ fontSize: "18px" }} />
+                  &nbsp;Create New Requirements
+                </Button>
+              )}
+            </Grid>
           </Grid>
-        </Grid>
-      </Container> : null }
+        </Container>
+      ) : null}
       <BorderedContainer>
         {loaderComponent ? (
           loaderComponent
@@ -834,8 +852,8 @@ const EstimationDetail = () => {
                 components={{
                   Toolbar: CustomToolbar,
                 }}
-                isCellEditable={
-                  () => estimationAttributeData && !isEstimationReleased
+                isCellEditable={() =>
+                  estimationAttributeData && !isEstimationReleased
                 }
               />
             </div>
@@ -915,7 +933,9 @@ const EstimationDetail = () => {
               }}
               onRowEditStop={updateManualCallAttributeValue}
               onEditRowsModelChange={handleEditManualCallAttChange}
-              isCellEditable={(params) => params.row.calcType === "manual" && !isEstimationReleased}
+              isCellEditable={(params) =>
+                params.row.calcType === "manual" && !isEstimationReleased
+              }
               getCellClassName={(params) => {
                 return (
                   (params.colDef.field === "Effort" && "darkbg") ||
@@ -955,7 +975,10 @@ const EstimationDetail = () => {
                 }
               >
                 <MdOutlineDocumentScanner style={{ fontSize: "18px" }} />
-                &nbsp;{ isEstimationReleased ? 'Resource Mix' : 'Generate Resource Mix'}
+                &nbsp;
+                {isEstimationReleased
+                  ? "Resource Mix"
+                  : "Generate Resource Mix"}
               </Button>
             )}
             {countError ? (
@@ -996,7 +1019,10 @@ const EstimationDetail = () => {
                 }
               >
                 <MdOutlineTimeline style={{ fontSize: "18px" }} />
-                &nbsp;{ isEstimationReleased ? 'Timeline Plan' : 'Generate Timeline Plan'}
+                &nbsp;
+                {isEstimationReleased
+                  ? "Timeline Plan"
+                  : "Generate Timeline Plan"}
               </Button>
             )}
             {countError ? (
@@ -1012,18 +1038,18 @@ const EstimationDetail = () => {
             )}
           </div>
         </Grid>
-        { !isEstimationReleased ? 
-        <Grid item style={{ marginRight: "10px" }}>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              releaseEstimation(estimationId);
-            }}
-          >
-            &nbsp;Estimation Release
-          </Button>
-        </Grid>
-           : null }
+        {!isEstimationReleased ? (
+          <Grid item style={{ marginRight: "10px" }}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                releaseEstimation(estimationId);
+              }}
+            >
+              &nbsp;Estimation Release
+            </Button>
+          </Grid>
+        ) : null}
       </Grid>
       <Snackbar
         isOpen={open}
