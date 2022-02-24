@@ -4,6 +4,7 @@ module.exports.sendMail = Joi.object({
     to: Joi.string(),
     subject: Joi.string(),
     bodyData: {
+        senderName: Joi.string(),
         ownerName: Joi.string(),
         clientName: Joi.string(),
         projectName: Joi.string(),
