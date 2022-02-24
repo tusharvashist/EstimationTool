@@ -981,7 +981,7 @@ const EstimationDetail = () => {
                   : "Generate Resource Mix"}
               </Button>
             )}
-            {countError ? (
+            {countError && !isEstimationReleased ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
                   <IoWarningOutline className="icon-warning" />
@@ -1025,7 +1025,7 @@ const EstimationDetail = () => {
                   : "Generate Timeline Plan"}
               </Button>
             )}
-            {countError ? (
+            {countError && !isEstimationReleased ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
                   <IoWarningOutline className="icon-warning" />
