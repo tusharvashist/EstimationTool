@@ -138,6 +138,18 @@ module.exports = {
     CLIENT_DELETE: "Client delete successfully",
     DUPLICATE_CLIENT: "Client already exist with given name.",
   },
+  assumption: {
+    ASSUMPTION_CREATED: "Assumption created successfully",
+    ASSUMPTION_ERROR: "Assumption create fail",
+    ASSUMPTION_FETCH: "All assumption fetch successfully",
+    ASSUMPTION_Tag_FETCH: "All assumption tags fetch successfully",
+    ASSUMPTION_GET_ERROR: "All assumption featch error",
+    ASSUMPTION_NOT_FOUND: "Assumption not found",
+    INVALID_ID: "Invalid id",
+    ASSUMPTION_UPDATE: "Assumption update successfully",
+    ASSUMPTION_DELETE: "Assumption delete successfully",
+    DUPLICATE_ASSUMPTION: "Assumption already exist with given name.",
+  },
   estimationHeaderAtrributeMessage: {
     estimationHeaderAtrribute_CREATED:
       "estimationHeaderAtrribute created successfully",
