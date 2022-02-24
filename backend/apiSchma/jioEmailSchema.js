@@ -1,15 +1,16 @@
 const Joi = require("joi");
 
 module.exports.sendMail = Joi.object({
-    to:Joi.string(),
-    subject:Joi.string(), 
-    bodyData:{
-        clientName :Joi.string(), 
-        projectName:Joi.string(), 
-        estimationName:Joi.string(),
-        estimationLink:Joi.string(),
-        assignedRole:Joi.string(),
-        mialType:Joi.string(),
-    }, 
-    isFileAttached :Joi.bool(), 
+    to: Joi.string(),
+    subject: Joi.string(),
+    bodyData: {
+        ownerName: Joi.string(),
+        clientName: Joi.string(),
+        projectName: Joi.string(),
+        estimationName: Joi.string(),
+        estimationLink: Joi.string(),
+        assignedRole: Joi.string(),
+        mailType: Joi.string(),
+    },
+    isFileAttached: Joi.bool(),
 })
