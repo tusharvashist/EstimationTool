@@ -4,11 +4,11 @@ const { Schema } = require('mongoose');
 const tagSchema = new mongoose.Schema({
     assumption: String,
     isDeleted: Boolean,
-    assumptionTag: [
+    assumptionTag: 
       {
         type: Schema.Types.ObjectId,
         ref: "assumptionTag",
-      },],
+      },
 }, {
     timestamps: true,
     toObject: {
