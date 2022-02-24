@@ -1,4 +1,4 @@
-import { Button, Container, Box, Grid } from "@material-ui/core";
+import { Button, Container, Box, Grid, FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
 
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
@@ -113,6 +113,8 @@ const EstimationDetail = () => {
 
   const [openExport, setOpenExport] = useState(false);
   const [isEstimationReleased, setIsEstimationReleased] = useState(false);
+  const [estVersions, setEstimationVersions] = useState([]);
+  const [currentSelctedVersion, setCurrentSelectedVersion] = useState({});
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -205,10 +207,15 @@ const EstimationDetail = () => {
         setRequirementTagArray([...res.data.body.requirementTag]);
         setRequirementTypeArray([...res.data.body.requirementType]);
         setLoader(false);
+        setEstimationVersions([...res.data.body.estimationVersions]);
         //
         let releaseStatus = res.data.body.basicDetails.publishDate != null;
         //console.log("Release status "+ releaseStatus);
         setIsEstimationReleased(releaseStatus);
+       // setCurrentVersion(res.data.body.basicDetails._id);
+        console.log("Set Current : "+  JSON.stringify(estVersions));
+
+        setCurrentSelectedVersion({...res.data.body.basicDetails});
         if (location.state !== undefined) {
           let obj = {
             client: res.data.body.basicDetails.projectId.client,
@@ -524,8 +531,8 @@ const EstimationDetail = () => {
         let newEstHeaderObj = res.data.body;
         // estimationId update the value for this Id and reload the page
         //TODO: assign new version id once the API implementation is done
-        //estimationId = newEstHeaderObj.id;
-        estimationId = newEstHeaderObj.estheaderParentid;
+        estimationId = newEstHeaderObj._id;
+        //estimationId = newEstHeaderObj.estheaderParentid;
         //estimationId = "620ffc6a461cfa6686f320b1";
         setOpen({
           open: true,
@@ -544,6 +551,27 @@ const EstimationDetail = () => {
         getById();
       });
   };
+
+  // get the Estimation Version dropdown selected value
+  const getEstimationVersionDropDownValue = (event) => {
+    console.log("Selected Version: "+ event);
+    let etId = event.target.value; //estimation version object
+    //event.target._id
+    //setCurrentSelectedVersion(currentSelctedVersion);
+    if(currentSelctedVersion && currentSelctedVersion._id != etId){
+      estimationId = etId;
+      getById();
+    }
+  };
+
+  const setCurrentVersion = (currentEstId) => {
+    console.log("ALl Versions : "+  JSON.stringify(estVersions));
+   const selectedVersion = estVersions.find((estVersion) => estVersion._id === currentEstId);
+   console.log("Filtered Current Versions : "+  JSON.stringify(selectedVersion));
+
+   setCurrentSelectedVersion(selectedVersion);
+   console.log("current selected version"+ JSON.stringify(selectedVersion));
+  }
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
 
@@ -651,6 +679,29 @@ const EstimationDetail = () => {
 
       <Container>
         <Grid container>
+        <Grid item xs={0.8} style={{ margin: "8px 0px" }}>
+              <div className="field-width">
+                <FormControl >
+                <InputLabel variant="standard" htmlFor="uncontrolled-native">
+                  </InputLabel>
+                  <Select
+                    labelId="estimation-version-label"
+                    id="estimation-version-select"
+                    onChange={(e) => {
+                      console.log("Slect EVENT"+ e);
+                      getEstimationVersionDropDownValue(e);
+                    }}
+                    value={currentSelctedVersion && currentSelctedVersion._id}
+                  >
+                    {estVersions.map((item) => (
+                      <MenuItem key={item.estVersionno} value={item._id} >
+                        {`v-${item.estVersionno}`}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+            </Grid>
           <Grid item className="multi-button-grid">
             {estimation_export_excel && (
               <Button variant="outlined" onClick={openExportEstimation}>
@@ -883,7 +934,7 @@ const EstimationDetail = () => {
           <div class="tooltip">
             {estimation_generate_resourcemix && (
               <Button
-                disabled={countError}
+                disabled={countError && !isEstimationReleased}
                 variant="outlined"
                 onClick={() =>
                   history.push({
@@ -924,7 +975,7 @@ const EstimationDetail = () => {
           <div class="tooltip">
             {estimation_generate_timeline && (
               <Button
-                disabled={countError}
+                disabled={countError && !isEstimationReleased}
                 variant="outlined"
                 onClick={() =>
                   history.push({

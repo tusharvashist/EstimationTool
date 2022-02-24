@@ -300,6 +300,12 @@ const getEstBasicDetail = async (id) => {
   
 };
 
+const getAllVersions = async (estimationName) => {
+  let resp = await EstHeaderModel.find({ estName: estimationName }).sort({estVersionno: 1});
+  console.log("Versions:" + resp);
+  return resp;  
+};
+
 module.exports.getById = async ({ id }) => {
   try {
     if (!mongoose.Types.ObjectId(id)) {
@@ -314,8 +320,11 @@ module.exports.getById = async ({ id }) => {
     response.requirementTag = await RequirementRepository.getTags();
     //5
     let estimations = await getEstBasicDetail(id);
-
     response.basicDetails = estimations;
+    //6 
+    let verions = await getAllVersions(estimations.estName);
+    response.estimationVersions = verions;
+    
     return formatMongoData(response);
   } catch (err) {
     throw new Error(err);
