@@ -334,7 +334,8 @@ module.exports = {
     FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
   },
   emailType:{
-    ESTIMATION:"Estimation"
+    ESTIMATION:"Estimation",
+    ESTIMATION_SUBJECT:"Estimation Shared with you"
   }
 
 };
