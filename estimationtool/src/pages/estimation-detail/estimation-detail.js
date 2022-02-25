@@ -582,6 +582,7 @@ const EstimationDetail = () => {
     //setCurrentSelectedVersion(currentSelctedVersion);
     if (currentSelctedVersion && currentSelctedVersion._id != etId) {
       estimationId = etId;
+      dispatch(setEstHeaderId(location.state.estId));
       getById();
     }
   };
