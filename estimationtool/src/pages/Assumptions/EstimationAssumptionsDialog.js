@@ -1,35 +1,49 @@
 import React from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
-import FormLabel from "@mui/material/FormLabel";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
-import Checkbox from "@mui/material/Checkbox";
+import Select from "@mui/material/Select";
+import Grid from "@mui/material/Grid";
+import { DataGrid } from "@mui/x-data-grid";
+import { makeStyles, createStyles } from "@mui/styles";
 
 const EstimationAssumptionsDialog = (props) => {
   const popSubmitHandler = () => {};
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: false,
-  });
+  const [categories, setCategories] = React.useState(["a", "b", "c"]);
 
-  const handleChange = (event) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
+  const handleCategoriesChange = (event) => {
+    setCategories(event.target.value);
   };
 
-  const { gilad, jason, antoine } = state;
-  const error = [gilad, jason, antoine].filter((v) => v).length !== 2;
+  const rows = [
+    { id: 1, col1: "Hello", col2: "World" },
+    { id: 2, col1: "DataGridPro", col2: "is Awesome" },
+    { id: 3, col1: "MUI", col2: "is Amazing" },
+  ];
+
+  const columns = [
+    { field: "col1", headerName: "Column 1", width: 350 },
+    { field: "col2", headerName: "Column 2", width: 150 },
+  ];
+
+  const useStyles = makeStyles((theme) =>
+    createStyles({
+      root: {
+        "& .MuiDataGrid-columnHeaderWrapper": {
+          backgroundColor: "rgb(229, 235, 247)",
+        },
+      },
+    })
+  );
+
+  const classes = useStyles();
 
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}
-      openFun={props.openImportAssumptionsPopup}
-      closeFun={props.closeImportAssumptionsPopup}
+      openFun={props.openFun}
+      closeFun={props.closeFun}
       title={props.title}
       oktitle={props.oktitle}
       cancelTitle={props.cancelTitle}
@@ -37,47 +51,35 @@ const EstimationAssumptionsDialog = (props) => {
       width={"sm"}
       buttonType="submit"
     >
-      <div>
-        <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
-          <FormLabel component="legend">Assumptions</FormLabel>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={gilad}
-                  onChange={handleChange}
-                  name="gilad"
-                />
-              }
-              label="Gilad Gray"
+      <Grid container>
+        <Grid item xs={3}>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">Categories</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={categories}
+              label="Categories"
+              onChange={handleCategoriesChange}
+            >
+              {categories.map((el) => (
+                <MenuItem value={el}>{el}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid item xs={12} style={{ paddingTop: "10px" }}>
+          <div style={{ height: 300, width: "100%" }}>
+            <DataGrid
+              className={classes.root}
+              rows={rows}
+              columns={columns}
+              checkboxSelection={true}
             />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={jason}
-                  onChange={handleChange}
-                  name="jason"
-                />
-              }
-              label="Jason Killian"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={antoine}
-                  onChange={handleChange}
-                  name="antoine"
-                />
-              }
-              label="Antoine Llorca"
-            />
-          </FormGroup>
-          <FormHelperText>
-            Please click "save" to add assumption in estimation. Once estimation
-            is released assumptions will not be changed
-          </FormHelperText>
-        </FormControl>
-      </div>
+          </div>
+        </Grid>
+      </Grid>
     </CustomizedDialogs>
   );
 };

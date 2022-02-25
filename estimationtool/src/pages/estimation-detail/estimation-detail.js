@@ -613,8 +613,8 @@ const EstimationDetail = () => {
       ) : null}
       <EstimationAssumptionsDialog
         isOpen={isOpenImportAssumptions}
-        openF={openImportAssumptionsPopup}
-        closeF={closeImportAssumptionsPopup}
+        openFun={openImportAssumptionsPopup}
+        closeFun={closeImportAssumptionsPopup}
         title="Import Assumptions"
         oktitle="Save"
         cancelTitle="Cancel"
