@@ -68,11 +68,11 @@ const EstimationDetail = () => {
   } = usePermission();
   const [isOpen, setOpen] = React.useState({});
   let estimationId;
-  if (location.state !== undefined) {
+  if (estimationHeaderId.estHeaderId) {
+    estimationId = estimationHeaderId.estHeaderId;
+  } else if (location.state !== undefined) {
     estimationId = location.state.estId;
     dispatch(setEstHeaderId(location.state.estId));
-  } else {
-    estimationId = estimationHeaderId.estHeaderId;
   }
 
   const [clientDetails, setClientDetails] = useState({
@@ -582,7 +582,7 @@ const EstimationDetail = () => {
     //setCurrentSelectedVersion(currentSelctedVersion);
     if (currentSelctedVersion && currentSelctedVersion._id != etId) {
       estimationId = etId;
-      dispatch(setEstHeaderId(location.state.estId));
+      dispatch(setEstHeaderId(estimationId));
       getById();
     }
   };
