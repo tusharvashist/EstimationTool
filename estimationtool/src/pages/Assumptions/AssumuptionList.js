@@ -1,6 +1,13 @@
 import React from "react";
 import { RiPencilLine } from "react-icons/ri";
 import classes from "./applicationAssumptions.module.css";
+import { Grid } from "@material-ui/core";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@material-ui/core/Button";
+import { GrAdd } from "react-icons/gr";
 
 const AssumuptionList = (props) => {
   return (
@@ -21,10 +28,10 @@ const AssumuptionList = (props) => {
                 <Select
                   id="demo-simple-select"
                   value={singleAssumption.assumptionTag.id}
-                  onChange={handleCategoryChange}
+                  onChange={props.handleCategoryChange}
                   disabled
                 >
-                  {categories.map((category) => (
+                  {props.categories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
                       {category.name}
                     </MenuItem>
@@ -57,7 +64,6 @@ const AssumuptionList = (props) => {
           </Grid>
         </div>
       ))}
-      ;
     </>
   );
 };

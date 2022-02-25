@@ -123,7 +123,11 @@ const ApplicationAssumptions = () => {
         </Grid>
       </BorderedContainer>
       <BorderedContainer>
-        <AssumuptionList assumptions={assumptions} />
+        <AssumuptionList
+          assumptions={assumptions}
+          handleCategoryChange={handleCategoryChange}
+          categories={categories}
+        />
       </BorderedContainer>
       <Snackbar
         isOpen={open}
