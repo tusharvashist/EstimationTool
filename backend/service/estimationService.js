@@ -613,8 +613,12 @@ module.exports.versioningEstimation = async ({ id }) => {
         
         //Creating new version of Estimation and updating bellow details
         let createVersionEstPayload = prepareVersionEstHeaderdto(parentEstimation);
-        createVersionEstPayload.estheaderParentid = parentEstimation._id.toString();
+        createVersionEstPayload.estheaderParentid = parentEstimation.estheaderParentid.toString();
         createVersionEstPayload.publishDate = null;
+        
+        //Version logic should be change when we allow to create version of deactivated estimation
+        //const estimationList = EstimationHeader.find({estheaderParentid: parentEstimation.estheaderParentid})
+        //should calculate version number as [estimationList.size + 1]
         let versionNo = parentEstimation.estVersionno && parentEstimation.estVersionno >0 ? parentEstimation.estVersionno + 1 : 1;
         createVersionEstPayload.estVersionno = versionNo;
         
