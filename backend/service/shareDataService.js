@@ -20,6 +20,8 @@ module.exports.createShareData = async (serviceData) => {
           typeName: "E",
         });
         await sharedata.save();
+        //send mail...
+        callSendMailService(estimation.id);
       }
     }
   } catch (err) {
@@ -28,6 +30,27 @@ module.exports.createShareData = async (serviceData) => {
   }
 };
 
+callSendMailService=({estimationId})=>{
+  //Prepare the email data
+  const estimationData=GetSharingData(estimationId);
+  const data = {
+    to: estimationData.shareuser.email,
+    subject: constant.emailType.ESTIMATION_SUBJECT,
+    bodyData: {
+      senderName: `${estimationData.shareuser.firstName} ${estimationData.shareuser.lastName}`,
+      ownerName: `${estimationData.owneruser.firstName} ${estimationData.owneruser.firstName}`,
+      clientName: "TYC",
+      projectName: "TYC_Client",
+      estimationName: estimationData.estimation.estName,
+      estimationLink: "http://localhost:3000/All-Clients/BioIQ/BioIQ%20healtcare%20Applications/uid?13432/estHeaderId?123456709",
+      assignedRole: estimationData.sharingrole.roleName,
+      mialType: constant.emailType.ESTIMATION
+    },
+    isFileAttached: false
+  }
+  //Call service method
+  emsilService.sendEmail(data);
+}
 module.exports.GetSharingData = async ({ estimationId }) => {
   try {
     return await ShareDataModel.aggregate([
