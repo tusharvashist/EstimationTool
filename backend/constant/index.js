@@ -346,8 +346,10 @@ module.exports = {
     EMAIL_STATUS: "true",
     FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
   },
-  emailType: {
-    ESTIMATION: "Estimation",
+
+  emailType:{
+    ESTIMATION:"Estimation",
+    ESTIMATION_SUBJECT:"Estimation Shared with you"
   },
   SharingMessage: {
     Sharing_ERROR: "Sharing creation fails",
@@ -359,4 +361,5 @@ module.exports = {
     Sharing_UPDATE: "Estimation Sharing updated successfully",
     Sharing_DELETE: "Estimation Sharing deleted successfully",
   },
+
 };
