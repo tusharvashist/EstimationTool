@@ -128,66 +128,75 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
 };
 
 module.exports.getResourceCount = async ({ estheaderid }) => {
-  let result = await EstResourceCount.aggregate([
-    {
-      $match: {
-        estHeaderId: mongoose.Types.ObjectId(estheaderid),
+  try {
+    let result = await EstResourceCount.aggregate([
+      {
+        $match: {
+          estHeaderId: mongoose.Types.ObjectId(estheaderid),
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "techskillmasters",
-        localField: "techSkill",
-        foreignField: "_id",
-        as: "skills",
+      {
+        $lookup: {
+          from: "techskillmasters",
+          localField: "techSkill",
+          foreignField: "_id",
+          as: "skills",
+        },
       },
-    },
-    {
-      $unwind: {
-        path: "$skills",
-        preserveNullAndEmptyArrays: true,
+      {
+        $unwind: {
+          path: "$skills",
+          preserveNullAndEmptyArrays: true,
+        },
       },
-    },
-    {
-      $project: {
-        _id: "$_id",
-        resourceCount: "$resourceCount",
-        estAttributeId: "$estAttributeId",
-        estHeaderId: "$estHeaderId",
-        estCalcId: "$estCalcId",
-        attributeName: "$attributeName",
-        skills: "$skills.skill",
-        skillsId: "$skills._id",
+      {
+        $project: {
+          _id: "$_id",
+          resourceCount: "$resourceCount",
+          estAttributeId: "$estAttributeId",
+          estHeaderId: "$estHeaderId",
+          estCalcId: "$estCalcId",
+          attributeName: "$attributeName",
+          skills: "$skills.skill",
+          skillsId: "$skills._id",
+        },
       },
-    },
-    {
-      $addFields: {
-        rolecount: [],
-        validationerror: false,
+      {
+        $addFields: {
+          rolecount: [],
+          validationerror: false,
+        },
       },
-    },
-  ]);
+    ]);
 
-  for (let element of result) {
-    //Add Role master data in RoleCount
-    if (String(element.skillsId).length > 0) {
-      element.rolecount =
-        await ResourceCountRepository.GetResourceCountResourceData(element._id);
-    }
-    if (element.rolecount.length > 0) {
-      var count = element.rolecount
-        .map((resplan) => resplan.count)
-        .reduce((acc, resplan) => resplan + acc);
-      let maxcount = Math.ceil(element?.resourceCount);
-      if (maxcount != count) {
+    for (let element of result) {
+      //Add Role master data in RoleCount
+      if (
+        element.skillsId != undefined &&
+        String(element.skillsId).length > 0
+      ) {
+        element.rolecount =
+          await ResourceCountRepository.GetResourceCountResourceData(
+            element._id
+          );
+      }
+      if (element.rolecount.length > 0) {
+        var count = element.rolecount
+          .map((resplan) => resplan.count)
+          .reduce((acc, resplan) => resplan + acc);
+        let maxcount = Math.ceil(element?.resourceCount);
+        if (maxcount != count) {
+          element.validationerror = true;
+        }
+      } else {
         element.validationerror = true;
       }
-    } else {
-      element.validationerror = true;
     }
-  }
 
-  return result;
+    return result;
+  } catch (err) {
+    throw new Error(err);
+  }
 };
 
 module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
