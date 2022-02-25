@@ -194,7 +194,7 @@ const EstimationDetail = () => {
     if (projectDetails._id.length !== 0) {
       RequirementService.getUnpairedRequirementEstimation(
         projectDetails._id,
-        headerData._id
+        estimationId
       )
         .then((res) => {
           setRequirementHeaderData([...res.data.body.featureList]);
@@ -546,7 +546,7 @@ const EstimationDetail = () => {
   const createNewVersion = async (estId) => {
     setIsOpenDailog(false);
     setLoader(true);
-    EstimationService.getNewVersionOfEstimation(estId)
+    EstimationService.getNewVersionOfEstimation(estimationId)
       .then((res) => {
         setLoader(false);
         console.log("Newer Version Data: " + JSON.stringify(res));
