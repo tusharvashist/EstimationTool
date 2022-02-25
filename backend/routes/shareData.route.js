@@ -5,12 +5,17 @@ const joiSchemaValidation = require("../middleware/joiSchemaValidation");
 const joiModuleTokenSchema = require("../apiSchma/joiModuleTokenSchema");
 const tokenValidation = require("../middleware/tokenValidationJwt");
 
-//----- Create Module-----------
+//----- Create Sharing-----------
 router.post(
   "/",
   tokenValidation.validateToken,
   shareDataController.createShareData
 );
 
+router.get(
+  "/",
+  tokenValidation.validateToken,
+  shareDataController.GetSharingData
+);
 
 module.exports = router;

@@ -328,12 +328,22 @@ module.exports = {
     PUBLISH_CREATE: "Estimation published successfully",
   },
   emailSettings: {
-    SENDGRID_API_KEY: "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",
+    SENDGRID_API_KEY:
+      "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",
     EMAIL_STATUS: "true",
     FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
   },
-  emailType:{
-    ESTIMATION:"Estimation"
-  }
-
+  emailType: {
+    ESTIMATION: "Estimation",
+  },
+  SharingMessage: {
+    Sharing_ERROR: "Sharing creation fails",
+    Sharing_CREATED: "Estimation Shared successfully",
+    Sharing_FETCH: "All Estimation Sharing fetch successfully",
+    Sharing_GET_ERROR: "All Estimation Sharing fetching error",
+    Sharing_NOT_FOUND: "Estimation Sharing not found",
+    INVALID_ID: "Invalid id",
+    Sharing_UPDATE: "Estimation Sharing updated successfully",
+    Sharing_DELETE: "Estimation Sharing deleted successfully",
+  },
 };

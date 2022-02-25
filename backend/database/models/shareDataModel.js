@@ -4,7 +4,7 @@ const { Schema } = require("mongoose");
 
 const shareDataModel = new mongoose.Schema(
   {
-    typeId: { type: Schema.Types.ObjectId },
+    typeId: { type: Schema.Types.ObjectId, ref: "EstHeader" },
     typeName: String,
     roleId: {
       type: Schema.Types.ObjectId,

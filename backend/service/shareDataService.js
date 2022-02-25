@@ -17,11 +17,99 @@ module.exports.createShareData = async (serviceData) => {
         await ShareDataModel.deleteMany({
           typeId: estimation.id,
           shareUserId: user.id,
-          typeName: "E"
+          typeName: "E",
         });
         await sharedata.save();
       }
     }
+  } catch (err) {
+    console.log("something went wrong: service > Sharing Data Service ", err);
+    throw new Error(err);
+  }
+};
+
+module.exports.GetSharingData = async ({ estimationId }) => {
+  try {
+    return await ShareDataModel.aggregate([
+      {
+        $match: {
+          typeId: mongoose.Types.ObjectId(estimationId),
+          typeName: "E",
+          ownerUserId: mongoose.Types.ObjectId(global.loginId),
+        },
+      },
+      {
+        $lookup: {
+          from: "estheaders",
+          localField: "typeId",
+          foreignField: "_id",
+          as: "estimation",
+        },
+      },
+      {
+        $lookup: {
+          from: "rolemasters",
+          localField: "roleId",
+          foreignField: "_id",
+          as: "sharingrole",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "ownerUserId",
+          foreignField: "_id",
+          as: "owneruser",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "shareUserId",
+          foreignField: "_id",
+          as: "shareuser",
+        },
+      },
+      {
+        $unwind: {
+          path: "$estimation",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$sharingrole",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$owneruser",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$shareuser",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          estimation: 1,
+          sharingrole: 1,
+          owneruser: 1,
+          shareuser: 1,
+          createdAt: 1,
+        },
+      },
+      {
+        $project: {
+          "owneruser.password": 0,
+          "shareuser.password": 0,
+        },
+      },
+    ]);
   } catch (err) {
     console.log("something went wrong: service > Sharing Data Service ", err);
     throw new Error(err);
