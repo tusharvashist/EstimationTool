@@ -20,6 +20,7 @@ const EstHeaderModel = require("../database/models/estHeaderModel");
 const EstResourceCount = require("../database/models/estResourceCount");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const EstRequirementData = require("../database/models/estRequirementData");
+const VersionEstRollback = require("../database/models/versionEstRollback");
 
 const { result } = require("lodash");
 
@@ -157,7 +158,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
 //============================EstimationHeaderAtrribute=======================================================
 module.exports.createEstimationHeaderAtrribute = async (serviceData) => {
   try {
-    console.log(".>>>>>>....>>>>>>>." + serviceData);
+    
     //Remove All Attributes from Estimation Header
    
     if (serviceData) {
@@ -596,71 +597,78 @@ module.exports.ReleaseEstimation = async (req) => {
 
 //Versioning Estimation
 module.exports.versioningEstimation = async ({ id }) => {
+  const versionEstRollback = new VersionEstRollback();
   try {
-    const parentEstimation = await EstimationHeader.findById( { _id: id } );
+    
+    versionEstRollback.estheaderParentid = await convertStringToObject(id);
+    const parentEstimation = await EstimationHeader.findById( versionEstRollback.estheaderParentid);
+    
     if(parentEstimation){
       parentEstimation.publishDate = parentEstimation.publishDate == undefined ? '' : parentEstimation.publishDate;
       parentEstimation.isDeleted = parentEstimation.isDeleted == undefined ? '' : parentEstimation.isDeleted;
-      console.log(`parentEstimation.publishDate: ${parentEstimation.publishDate}`);
+      
       
       if ((parentEstimation.publishDate != null && parentEstimation.publishDate != '')
       && (parentEstimation.isDeleted != null && parentEstimation.isDeleted == false)) {
         
-        let createVersionEstPayload = prepreVersionEstHeaderdto(parentEstimation);
-        createVersionEstPayload.estheaderParentid = parentEstimation._id;
+        //Creating new version of Estimation and updating bellow details
+        let createVersionEstPayload = prepareVersionEstHeaderdto(parentEstimation);
+        createVersionEstPayload.estheaderParentid = parentEstimation.estheaderParentid.toString();
         createVersionEstPayload.publishDate = null;
-        //TODO Verify Request Version and new Version
+        
+        //Version logic should be change when we allow to create version of deactivated estimation
+        //const estimationList = EstimationHeader.find({estheaderParentid: parentEstimation.estheaderParentid})
+        //should calculate version number as [estimationList.size + 1]
         let versionNo = parentEstimation.estVersionno && parentEstimation.estVersionno >0 ? parentEstimation.estVersionno + 1 : 1;
         createVersionEstPayload.estVersionno = versionNo;
         
         //estheaders
         const versionEstimationResult =  await this.createVersionEstimationHeader(createVersionEstPayload);
-        let newVersionEstHeaderId = versionEstimationResult._id;
         
-        if(newVersionEstHeaderId){
+        if(versionEstimationResult){
+
+          versionEstRollback.newEstHeaderId = convertStringToObject(versionEstimationResult._id);
+          
+          //estheaderrequirements
+          await this.createEstHeaderRequirements(versionEstRollback);
+
+          //estimationheaderattributecalcs
+          await this.createEstHeaderAttrCalcs(versionEstRollback);
+
+          //estHeaderAttributes
+          await this.createEstHeaderAttributes(versionEstRollback);
+
+          //estresourcecounts
+          await this.createEstResourceCounts(versionEstRollback);
 
           let estimation = await EstimationHeader.updateOne(
             { _id: id },
-            { isDeleted: true, updatedBy: global.loginId }
+            { isDeleted: true, estheaderParentid: id, updatedBy: global.loginId }
           );
 
-          console.log(`newVersionEstHeaderId: ${newVersionEstHeaderId}`);
-          //estheaderrequirements
-          await this.createEstHeaderRequirements(id, newVersionEstHeaderId);
-          
-          //estimationheaderattributecalcs
-          await this.createEstHeaderAttrCalcs(id, newVersionEstHeaderId);
-
-          //estHeaderAttributes
-          await this.createEstHeaderAttributes(id, newVersionEstHeaderId);
-
-          //estresourcecounts
-          await this.createEstResourceCounts(id, newVersionEstHeaderId);
-
+          //throw new Error('test');
         }
-
         return formatMongoData(versionEstimationResult);
       }else{
-        console.log("Selected Estimation not Published or Deactivate. Can not create Version for this estimation ");
-        throw new Error('Selected Estimation not Published or deactivate. Can not create Version for this estimation');
+        throw new Error('Selected Estimation not Published or deactivated. Can not create Version for this estimation');
       }
     }else{
-      console.log("Selected Estimation not Found. Can not create Version for this estimation ");
       throw new Error('Selected Estimation not Found. Can not create Version for this estimation');
     }
   } catch (err) {
-    console.log("something went wrong: service > versioningEstimation ", err);
-    //TODO for Rollback or delete if something happens
+    //Rollback or delete if something happens
+    console.log(err);
+    this.callVersionEstRollBack(versionEstRollback);
     throw new Error(err);
   }
 };
 
-module.exports.createVersionEstimationHeader = async (serviceData, session) => {
+module.exports.createVersionEstimationHeader = async (serviceData) => {
   try {
     let estimation = new EstimationHeader(serviceData);
     estimation.createdBy = global.loginId;
-      
-    let result = estimation.save().then( async (res, err) => {
+    
+    let result = await estimation.save().then( async (res, err) => {
       //added estHeader to projectmasters
       const projectModel = await ProjectModel.findById({
         _id: res.projectId,
@@ -670,69 +678,71 @@ module.exports.createVersionEstimationHeader = async (serviceData, session) => {
       return res;
     })
 
-    console.log('Version Estimation Requirement Datas Created Successfully 1');
+    console.log('Version Estimation Header Created Successfully 1');
     return formatMongoData(result);
   } catch (err) {
-    console.log("something went wrong: service > createVersionEstimationHeader ",err);
+    console.log(err);
     throw new Error(err);
   }
 };
 
-module.exports.createEstHeaderRequirements = async (currentEstimationHeaderId, newEstimationHeaderId) => {
+module.exports.createEstHeaderRequirements = async (versionEstRollback) => {
+  
   try {
-    const currentEstHeaderRequirements = await EstHeaderRequirement.find({ estHeader: currentEstimationHeaderId });
+    const currentEstHeaderRequirements = await EstHeaderRequirement.find({ estHeader: versionEstRollback.estheaderParentid });
     if(currentEstHeaderRequirements){
-      currentEstHeaderRequirements.forEach( async (currentEstHeaderRequirement) => {
+      for(const currentEstHeaderRequirement of currentEstHeaderRequirements) {
 
         let estHeaderRequirement = new EstHeaderRequirement({ 
           requirement: currentEstHeaderRequirement.requirement,
-          estHeader: newEstimationHeaderId,
+          estHeader: versionEstRollback.newEstHeaderId,
           isDeleted: false,
         });
        await estHeaderRequirement.save().then(async (res, err) =>{
-          await this.createEstRequirementDatas(currentEstHeaderRequirement._id, res._id, newEstimationHeaderId);
+        versionEstRollback.estHeaderRequirementIds.push(convertStringToObject(res._id));
+          await this.createEstRequirementDatas(currentEstHeaderRequirement._id, res._id, versionEstRollback);
         });
-      });
+      }
       console.log('Version Estimation Header Requirements Created Successfully 2');
     }
   } catch (err) {
-    console.log("something went wrong: service > createEstHeaderRequirements ",err);
     throw new Error(err);
   }
 };
 
-module.exports.createEstRequirementDatas = async (estHeaderRequirementID, newRequirementId, newEstimationHeaderId) => {
+module.exports.createEstRequirementDatas = async (estHeaderRequirementID, newRequirementId, versionEstRollback) => {
   
   try {
     const parentEstRequirementDatas = await EstRequirementData.find({ ESTHeaderRequirementID: estHeaderRequirementID});
     if(parentEstRequirementDatas){
-      parentEstRequirementDatas.forEach( async (parentEstRequirementData) => {
+      for (const parentEstRequirementData of parentEstRequirementDatas) {
         
         const createEstRequirementDataPayLoad = new EstRequirementData();
         createEstRequirementDataPayLoad.ESTAttributeID = parentEstRequirementData.ESTAttributeID;
         createEstRequirementDataPayLoad.ESTHeaderRequirementID = newRequirementId;
         if(parentEstRequirementData.ESTHeaderID){
-          createEstRequirementDataPayLoad.ESTHeaderID = newEstimationHeaderId;
+          createEstRequirementDataPayLoad.ESTHeaderID = versionEstRollback.newEstHeaderId;
         }
         createEstRequirementDataPayLoad.ESTData = parentEstRequirementData.ESTData;
-        await createEstRequirementDataPayLoad.save();
-      });
+        await createEstRequirementDataPayLoad.save().then(async (res, err) => {
+          versionEstRollback.estHeaderRequirementDatasIds.push(convertStringToObject(res._id));
+        });
+      }
       console.log('Version Estimation Requirement Datas Created Successfully 3');
     }
   } catch (err) {
-    console.log("something went wrong: service > createEstRequirementDatas ",err);
     throw new Error(err);
   }
 };
 
-module.exports.createEstHeaderAttrCalcs = async(parentEstHeaderId, newVersionEstHeaderId) => {
-  var estHeaderAttrResponse = [];
+module.exports.createEstHeaderAttrCalcs = async(versionEstRollback) => {
+  
   try{
-      let parentEstHeaderAttrs = await EstimationHeaderAtrributeCalc.find({ estHeaderId: parentEstHeaderId });
+      let parentEstHeaderAttrs = await EstimationHeaderAtrributeCalc.find({ estHeaderId: versionEstRollback.estheaderParentid });
      if(parentEstHeaderAttrs){
-        parentEstHeaderAttrs.forEach(async (parentEstHeaderAttr) => {
+        for(const parentEstHeaderAttr of parentEstHeaderAttrs) {
           const estHeaderAttrPayLoad = new EstimationHeaderAtrributeCalc();
-          estHeaderAttrPayLoad.estHeaderId = newVersionEstHeaderId;
+          estHeaderAttrPayLoad.estHeaderId = versionEstRollback.newEstHeaderId;
           estHeaderAttrPayLoad.estCalcId = parentEstHeaderAttr.estCalcId;
           estHeaderAttrPayLoad.calcAttribute = parentEstHeaderAttr.calcAttribute;
           estHeaderAttrPayLoad.calcAttributeName = parentEstHeaderAttr.calcAttributeName;
@@ -745,85 +755,89 @@ module.exports.createEstHeaderAttrCalcs = async(parentEstHeaderId, newVersionEst
           estHeaderAttrPayLoad.calcType = parentEstHeaderAttr.calcType;
           estHeaderAttrPayLoad.tag = parentEstHeaderAttr.tag;
           estHeaderAttrPayLoad.formulaTags = parentEstHeaderAttr.formulaTags;
-          await estHeaderAttrPayLoad.save();
-        });
+          await estHeaderAttrPayLoad.save().then( async (res, err) => {
+            versionEstRollback.estHeaderAttrCalcIds.push(convertStringToObject(res._id));
+          });
+        }
         console.log('Version Estimation Header Attr Calc Created Successfully 4');
      }
     } catch (err) {
-      console.log("something went wrong: service > createEstHeaderAttrCalcs ",err);
       throw new Error(err);
     }
 };
 
-module.exports.createEstHeaderAttributes = async(parentEstHeaderId, resultEstimationHeaderId) => {
+module.exports.createEstHeaderAttributes = async(versionEstRollback) => {
+  
   try {
     //estHeaderAttributes
-      let parentEstHeaderAttrs = await EstimationHeaderAtrribute.find({estHeaderId: parentEstHeaderId});
+      let parentEstHeaderAttrs = await EstimationHeaderAtrribute.find({estHeaderId: versionEstRollback.estheaderParentid});
       if(parentEstHeaderAttrs){
-        parentEstHeaderAttrs.forEach(async (parentEstHeaderAttr) => {
+        for(const parentEstHeaderAttr of parentEstHeaderAttrs) {
           const newEstHeaderAttrPayLoad = new EstimationHeaderAtrribute();
-          newEstHeaderAttrPayLoad.estHeaderId = resultEstimationHeaderId;
+          newEstHeaderAttrPayLoad.estHeaderId = versionEstRollback.newEstHeaderId;
           newEstHeaderAttrPayLoad.estAttributeId = parentEstHeaderAttr.estAttributeId;
-          await newEstHeaderAttrPayLoad.save();
-        })
+          await newEstHeaderAttrPayLoad.save().then( async (res, err) => {
+            versionEstRollback.estHeaderAttrIds.push(convertStringToObject(res._id));
+          });
+        }
         console.log('Version Estimation Header Attr Created Successfully 5');
       }
   } catch (err) {
-    console.log("something went wrong: service > createEstHeaderAttributes ",err);
     throw new Error(err);
   }
 };
 
-module.exports.createEstResourceCounts = async(parentEstHeaderId, newEstiHeaderId) => {
+module.exports.createEstResourceCounts = async(versionEstRollback) => {
+  
   try {
     //estHeaderAttributes
-      let parentEstResourceCounts = await EstResourceCount.find({estHeaderId: parentEstHeaderId});
+      let parentEstResourceCounts = await EstResourceCount.find({estHeaderId: versionEstRollback.estheaderParentid});
       if(parentEstResourceCounts){
-        parentEstResourceCounts.forEach(async (parentEstResourceCount) => {
-          console.log(`parentEstResourceCounts: ${parentEstResourceCount._id}`);
-          console.log(parentEstResourceCount);
+        for(const parentEstResourceCount of parentEstResourceCounts ) {
           const newEstResourceCountPayLoad = new EstResourceCount();
           newEstResourceCountPayLoad.estAttributeId = parentEstResourceCount.estAttributeId;
-          newEstResourceCountPayLoad.estHeaderId = newEstiHeaderId;
+          newEstResourceCountPayLoad.estHeaderId = versionEstRollback.newEstHeaderId;
           newEstResourceCountPayLoad.estCalcId = parentEstResourceCount.estCalcId;
           newEstResourceCountPayLoad.attributeName = parentEstResourceCount.attributeName;
           newEstResourceCountPayLoad.resourceCount = parentEstResourceCount.resourceCount;
           newEstResourceCountPayLoad.techSkill = parentEstResourceCount.techSkill;
           await newEstResourceCountPayLoad.save().then(async (res, err) => {
+            versionEstRollback.estResourceCountIds.push(convertStringToObject(res._id));
             //estresourcePlannings
-            await this.createEstResourcePlannings(res._id, parentEstResourceCount._id, parentEstHeaderId, newEstiHeaderId);
+            await this.createEstResourcePlannings(res._id, parentEstResourceCount._id, versionEstRollback);
           });
-        })
+        }
         console.log('Version Estimation Resoiurce Count Created Successfully 6');
       }
   } catch (err) {
-    console.log("something went wrong: service > createEstResourceCounts ",err);
     throw new Error(err);
   }
 };
 
-module.exports.createEstResourcePlannings = async(newResouceCoundId, parentEstResourceCountId, parentEstHeaderId, newEstiHeaderId) => {
+module.exports.createEstResourcePlannings = async(newResouceCoundId, parentEstResourceCountId, versionEstRollback) => {
+  
   try {
     //createEstResourcePlannings
-      let parentEstResourcePlannings = await EstResourcePlanning.find({estHeaderId: parentEstHeaderId, estResourceCountID: parentEstResourceCountId});
+      let parentEstResourcePlannings = await EstResourcePlanning.find({estHeaderId: versionEstRollback.estheaderParentid, estResourceCountID: parentEstResourceCountId});
       if(parentEstResourcePlannings){
-        parentEstResourcePlannings.forEach(async (parentEstResourcePlannings) => {
+        for(const parentEstResourcePlanning of parentEstResourcePlannings) {
           const newEstResourcePlanningsPayLoad = new EstResourcePlanning();
           newEstResourcePlanningsPayLoad.estResourceCountID = newResouceCoundId;
-          newEstResourcePlanningsPayLoad.estHeaderId = newEstiHeaderId;
-          newEstResourcePlanningsPayLoad.resourceRoleID = parentEstResourcePlannings.resourceRoleID;
-          newEstResourcePlanningsPayLoad.estAttributeId = parentEstResourcePlannings.estAttributeId;
-          newEstResourcePlanningsPayLoad.estCalcId = parentEstResourcePlannings.estCalcId;
-          newEstResourcePlanningsPayLoad.cost = parentEstResourcePlannings.cost;
-          newEstResourcePlanningsPayLoad.currency = parentEstResourcePlannings.currency;
-          newEstResourcePlanningsPayLoad.allocationPercent = parentEstResourcePlannings.allocationPercent;
-          newEstResourcePlanningsPayLoad.defaultAdjusted = parentEstResourcePlannings.defaultAdjusted;
-          await newEstResourcePlanningsPayLoad.save()
-        })
+          newEstResourcePlanningsPayLoad.estHeaderId = versionEstRollback.newEstHeaderId;
+          newEstResourcePlanningsPayLoad.resourceRoleID = parentEstResourcePlanning.resourceRoleID;
+          newEstResourcePlanningsPayLoad.estAttributeId = parentEstResourcePlanning.estAttributeId;
+          newEstResourcePlanningsPayLoad.estCalcId = parentEstResourcePlanning.estCalcId;
+          newEstResourcePlanningsPayLoad.cost = parentEstResourcePlanning.cost;
+          newEstResourcePlanningsPayLoad.currency = parentEstResourcePlanning.currency;
+          newEstResourcePlanningsPayLoad.allocationPercent = parentEstResourcePlanning.allocationPercent;
+          newEstResourcePlanningsPayLoad.defaultAdjusted = parentEstResourcePlanning.defaultAdjusted;
+          await newEstResourcePlanningsPayLoad.save().then(async (res, err) => {
+            versionEstRollback.estResourcePlanningIds.push(convertStringToObject(res._id));
+          });
+        }
         console.log('Version Estimation Resource Planning Created Successfully 7');
       }
   } catch (err) {
-    console.log("something went wrong: service > createEstResourcePlannings ",err);
     throw new Error(err,'createEstResourcePlannings');
   }
 };
@@ -956,7 +970,7 @@ const updateKeys = (obj) => {
   return { ...finalObj };
 };
 
-const prepreVersionEstHeaderdto = (parentEstimation) =>{
+const prepareVersionEstHeaderdto = (parentEstimation) =>{
   let estimation = new EstimationHeader();
   estimation.estheaderParentid = parentEstimation.estheaderParentid;
   estimation.estVersionno = parentEstimation.estVersionno;
@@ -977,3 +991,59 @@ const prepreVersionEstHeaderdto = (parentEstimation) =>{
   estimation.locations = parentEstimation.locations;
   return estimation;
 };
+
+module.exports.callVersionEstRollBack = async (versionEstRollback) =>{
+  
+  if(versionEstRollback){
+    
+    if(versionEstRollback.estResourcePlanningIds){
+      for(const estResourcePlanningId of versionEstRollback.estResourcePlanningIds){
+        await EstResourcePlanning.findByIdAndDelete(estResourcePlanningId);
+      }
+    }
+    if(versionEstRollback.estResourceCountIds){
+      for(const estResourceCountId of versionEstRollback.estResourceCountIds){
+        await EstResourceCount.findByIdAndDelete(estResourceCountId);
+      }
+    }
+    if(versionEstRollback.estHeaderAttrIds){
+      for(const estHeaderAttrId of versionEstRollback.estHeaderAttrIds){
+        await EstimationHeaderAtrribute.findByIdAndDelete(estHeaderAttrId);
+      }
+    }
+    if(versionEstRollback.estHeaderAttrCalcIds){
+      for(const estHeaderAttrCalcId of versionEstRollback.estHeaderAttrCalcIds){
+        await EstimationHeaderAtrributeCalc.findByIdAndDelete(estHeaderAttrCalcId);
+      }
+    }
+    if(versionEstRollback.estHeaderRequirementDatasIds){
+      for(const estHeaderRequirementDatasId of versionEstRollback.estHeaderRequirementDatasIds){
+        await EstRequirementData.findByIdAndDelete(estHeaderRequirementDatasId);
+      }
+    }
+    if(versionEstRollback.estHeaderRequirementIds){
+      for(const estHeaderRequirementId of versionEstRollback.estHeaderRequirementIds){
+        await EstHeaderRequirement.findByIdAndDelete(estHeaderRequirementId);
+      }
+    }
+    
+    if(versionEstRollback.newEstHeaderId){
+      
+      await EstimationHeader.findById(versionEstRollback.newEstHeaderId ).then( async (res, err) =>{
+        
+        ProjectModel.findByIdAndUpdate(res.projectId, { $pull: { 'estimates': versionEstRollback.newEstHeaderId } }, function (err, res) {});
+      });
+      
+      EstimationHeader.findByIdAndUpdate( versionEstRollback.estheaderParentid ,
+        { isDeleted: false, estheaderParentid: -1, updatedBy: global.loginId }, function (err, res) {});
+      
+      await EstimationHeader.findByIdAndDelete(versionEstRollback.newEstHeaderId );
+      
+      console.log('Data Rollbacked Successfully!');
+    }
+}
+}
+
+const convertStringToObject = (id) =>{
+  return mongoose.Types.ObjectId(id);
+}

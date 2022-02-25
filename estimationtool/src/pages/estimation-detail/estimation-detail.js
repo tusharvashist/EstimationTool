@@ -48,6 +48,8 @@ import usePermission from "../../shared/layout/hooks/usePermissions";
 import Status from "../../shared/layout/Status/Status";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import { CreateEstimationVersion } from "../CreateVersion/CreateEstimationVersion";
+import { HiOutlineLightBulb } from "react-icons/hi";
+import EstimationAssumptionsDialog from "../Assumptions/EstimationAssumptionsDialog";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -66,11 +68,11 @@ const EstimationDetail = () => {
   } = usePermission();
   const [isOpen, setOpen] = React.useState({});
   let estimationId;
-  if (location.state !== undefined) {
+  if (estimationHeaderId.estHeaderId) {
+    estimationId = estimationHeaderId.estHeaderId;
+  } else if (location.state !== undefined) {
     estimationId = location.state.estId;
     dispatch(setEstHeaderId(location.state.estId));
-  } else {
-    estimationId = estimationHeaderId.estHeaderId;
   }
 
   const [clientDetails, setClientDetails] = useState({
@@ -123,6 +125,7 @@ const EstimationDetail = () => {
   const [isEstimationReleased, setIsEstimationReleased] = useState(false);
   const [estVersions, setEstimationVersions] = useState([]);
   const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
+  const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -191,7 +194,7 @@ const EstimationDetail = () => {
     if (projectDetails._id.length !== 0) {
       RequirementService.getUnpairedRequirementEstimation(
         projectDetails._id,
-        headerData._id
+        estimationId
       )
         .then((res) => {
           setRequirementHeaderData([...res.data.body.featureList]);
@@ -528,10 +531,22 @@ const EstimationDetail = () => {
     setIsOpenDailog(true);
   };
 
+  const openImportAssumptions = () => {
+    openImportAssumptionsPopup();
+  };
+
+  const openImportAssumptionsPopup = () => {
+    setIsOpenImportAssumptions(true);
+  };
+
+  const closeImportAssumptionsPopup = () => {
+    setIsOpenImportAssumptions(false);
+  };
+
   const createNewVersion = async (estId) => {
     setIsOpenDailog(false);
     setLoader(true);
-    EstimationService.getNewVersionOfEstimation(estId)
+    EstimationService.getNewVersionOfEstimation(estimationId)
       .then((res) => {
         setLoader(false);
         console.log("Newer Version Data: " + JSON.stringify(res));
@@ -567,6 +582,7 @@ const EstimationDetail = () => {
     //setCurrentSelectedVersion(currentSelctedVersion);
     if (currentSelctedVersion && currentSelctedVersion._id != etId) {
       estimationId = etId;
+      dispatch(setEstHeaderId(estimationId));
       getById();
     }
   };
@@ -596,6 +612,14 @@ const EstimationDetail = () => {
           onClickButton={handleCreateNewVersionClick}
         />
       ) : null}
+      <EstimationAssumptionsDialog
+        isOpen={isOpenImportAssumptions}
+        openFun={openImportAssumptionsPopup}
+        closeFun={closeImportAssumptionsPopup}
+        title="Import Assumptions"
+        oktitle="Save"
+        cancelTitle="Cancel"
+      />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
         openExport={openExport}
@@ -695,7 +719,7 @@ const EstimationDetail = () => {
 
       <Container>
         <Grid container>
-          <Grid item xs={0.8} style={{ margin: "8px 0px" }}>
+          <Grid item xs={1} style={{ margin: "8px 0px" }}>
             <div className="field-width">
               {estVersions.length > 0 && currentSelctedVersion != undefined ? (
                 <FormControl fullWidth>
@@ -721,7 +745,11 @@ const EstimationDetail = () => {
               )}
             </div>
           </Grid>
-          <Grid item className="multi-button-grid">
+          <Grid xs={11} item className="multi-button-grid">
+            <Button variant="outlined" onClick={openImportAssumptions}>
+              <HiOutlineLightBulb className="link-icon" />
+              &nbsp;Include Assumptions
+            </Button>
             {estimation_export_excel && (
               <Button variant="outlined" onClick={openExportEstimation}>
                 <BiExport style={{ fontSize: "18px" }} />
@@ -981,7 +1009,7 @@ const EstimationDetail = () => {
                   : "Generate Resource Mix"}
               </Button>
             )}
-            {countError ? (
+            {countError && !isEstimationReleased ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
                   <IoWarningOutline className="icon-warning" />
@@ -1025,7 +1053,7 @@ const EstimationDetail = () => {
                   : "Generate Timeline Plan"}
               </Button>
             )}
-            {countError ? (
+            {countError && !isEstimationReleased ? (
               <span class="tooltiptext">
                 <div className="icon-cover">
                   <IoWarningOutline className="icon-warning" />

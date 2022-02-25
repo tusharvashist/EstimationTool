@@ -64,37 +64,160 @@ const ApplicationAssumptions = () => {
         </Grid>
       </BorderedContainer>
       <BorderedContainer>
-        <Grid container spacing={2}>
-          <Grid item xs={10} className={classes.gridItem}>
-            <TextField
-              id="outlined-basic"
-              label="Outlined"
-              variant="outlined"
-            />
+        <div>
+          <Grid container spacing={2}>
+            <Grid item xs={7} className={classes.gridItem}>
+              <TextField
+                id="outlined-basic"
+                label="Outlined"
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={3} className={classes.gridItem}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Categories
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={categories[0]}
+                  label="Categories"
+                  onChange={handleCategoryChange}
+                >
+                  {categories.map((category) => (
+                    <MenuItem value={category}>{category}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid
+              item
+              xs={1}
+              className={classes.gridItem}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              <Button variant="outlined">
+                <RiPencilLine />
+              </Button>
+            </Grid>
+            <Grid
+              item
+              className={classes.gridItem}
+              xs={1}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              <Button variant="outlined">
+                <GrAdd />
+              </Button>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            xs={1}
-            className={classes.gridItem}
-            justifyContent="center"
-            alignItems="stretch"
-          >
-            <Button variant="outlined">
-              <RiPencilLine />
-            </Button>
+        </div>
+        <div>
+          <Grid container spacing={2}>
+            <Grid item xs={7} className={classes.gridItem}>
+              <TextField
+                id="outlined-basic"
+                label="Outlined"
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={3} className={classes.gridItem}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Categories
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={categories[0]}
+                  label="Categories"
+                  onChange={handleCategoryChange}
+                >
+                  {categories.map((category) => (
+                    <MenuItem value={category}>{category}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid
+              item
+              xs={1}
+              className={classes.gridItem}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              <Button variant="outlined">
+                <RiPencilLine />
+              </Button>
+            </Grid>
+            <Grid
+              item
+              className={classes.gridItem}
+              xs={1}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              <Button variant="outlined">
+                <GrAdd />
+              </Button>
+            </Grid>
           </Grid>
-          <Grid
-            item
-            className={classes.gridItem}
-            xs={1}
-            justifyContent="center"
-            alignItems="stretch"
-          >
-            <Button variant="outlined">
-              <GrAdd />
-            </Button>
+        </div>
+        <div>
+          <Grid container spacing={2}>
+            <Grid item xs={7} className={classes.gridItem}>
+              <TextField
+                disabled
+                id="outlined-basic"
+                label="Outlined"
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={3} className={classes.gridItem}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">
+                  Categories
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={categories[0]}
+                  label="Categories"
+                  onChange={handleCategoryChange}
+                >
+                  {categories.map((category) => (
+                    <MenuItem value={category}>{category}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid
+              item
+              xs={1}
+              className={classes.gridItem}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              <Button variant="outlined">
+                <RiPencilLine />
+              </Button>
+            </Grid>
+            <Grid
+              item
+              className={classes.gridItem}
+              xs={1}
+              justifyContent="center"
+              alignItems="stretch"
+            >
+              <Button variant="outlined">
+                <GrAdd />
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
+        </div>
       </BorderedContainer>
     </>
   );
