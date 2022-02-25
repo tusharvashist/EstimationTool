@@ -4,8 +4,10 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import HomeIcon from "@material-ui/icons/Home";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import { IoPeopleOutline, IoHomeOutline } from "react-icons/io5";
 import "./sidebar.css";
 import { withRouter } from "react-router";
+import { HiOutlineLightBulb } from "react-icons/hi";
 
 const Sidebarv2 = (props) => {
   const { history } = props;
@@ -32,6 +34,16 @@ const Sidebarv2 = (props) => {
     history.push("/All-Clients");
   };
 
+  const assumptionClick = () => {
+    const listitem = document.getElementsByClassName("listitem");
+    const listArr = Array.from(listitem);
+    listArr.forEach((el) => el.classList.remove("active"));
+
+    const dashboradbutton = document.getElementById("assumption");
+    dashboradbutton.classList.add("active");
+    history.push("/Assumptions");
+  };
+
   return (
     <div className="sidebar-bg  h-100">
       <List
@@ -48,7 +60,7 @@ const Sidebarv2 = (props) => {
           onClick={dashboardClick}
         >
           <ListItemIcon>
-            <HomeIcon className="link-icon" />
+            <IoHomeOutline className="link-icon" />
           </ListItemIcon>
           <span>&nbsp;Dashboard</span>
         </ListItem>
@@ -61,9 +73,21 @@ const Sidebarv2 = (props) => {
           onClick={clientClick}
         >
           <ListItemIcon>
-            <AssignmentIndIcon className="link-icon" />
+            <IoPeopleOutline className="link-icon" />
           </ListItemIcon>
           <span>&nbsp;Clients</span>
+        </ListItem>
+        <ListItem
+          button
+          id="assumption"
+          className="listitem"
+          activeClassName="active"
+          onClick={assumptionClick}
+        >
+          <ListItemIcon>
+            <HiOutlineLightBulb className="link-icon" />
+          </ListItemIcon>
+          <span>&nbsp;Assumptions</span>
         </ListItem>
       </List>
     </div>
