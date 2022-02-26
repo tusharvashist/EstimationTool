@@ -300,8 +300,8 @@ const getEstBasicDetail = async (id) => {
   
 };
 
-const getAllVersions = async (estimationName) => {
-  let resp = await EstHeaderModel.find({ estName: estimationName }).sort({estVersionno: 1});
+const getAllVersions = async (parentEstId) => {
+  let resp = await EstHeaderModel.find({ estheaderParentid: parentEstId }).sort({estVersionno: 1});
   console.log("Versions:" + resp);
   return resp;  
 };
@@ -322,7 +322,7 @@ module.exports.getById = async ({ id }) => {
     let estimations = await getEstBasicDetail(id);
     response.basicDetails = estimations;
     //6 
-    let verions = await getAllVersions(estimations.estName);
+    let verions = await getAllVersions(estimations.estheaderParentid);
     response.estimationVersions = verions;
     
     return formatMongoData(response);
