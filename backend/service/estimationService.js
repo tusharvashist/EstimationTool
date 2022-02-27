@@ -102,7 +102,7 @@ module.exports.createEstimationHeader = async (serviceData) => {
         {new: true}
       );
      
-    return formatMongoData(result);
+    return formatMongoData(updateRec);
   } catch (err) {
     console.log(
       "something went wrong: service > createEstimation Header ",
@@ -120,7 +120,7 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
     }
 
     const findRecord = await EstimationHeader.find({
-      estName: updatedInfo.estName,isDeleted: false
+      estName: updatedInfo.estName, isDeleted: false 
     });
     updatedInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
@@ -133,7 +133,8 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
             effortUnit: updatedInfo.effortUnit,
             estTentativeTimeline: updatedInfo.estTentativeTimeline,
             locations: updatedInfo.locations,
-            contingency: updatedInfo.contingency,    
+            contingency: updatedInfo.contingency,
+            updatedBy: global.loginId,   
           }
         );
         if (!estimation) {
