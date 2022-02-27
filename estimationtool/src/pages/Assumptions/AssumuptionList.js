@@ -12,20 +12,23 @@ import { useState } from "react";
 
 const AssumuptionList = (props) => {
   const [editState, setEditState] = useState(false);
+  const [clickId, setClickId] = useState("");
+
   const handleEditClick = (e) => {
+    setClickId(e.currentTarget.id);
     setEditState(true);
   };
   return (
     <>
       {props.assumptions.map((singleAssumption) => (
-        <div className="assumption-container">
+        <div key={singleAssumption.id} className="assumption-container">
           <Grid container spacing={2}>
             <Grid item xs={7} className={classes.gridItem}>
               <TextField
                 id="outlined-basic"
                 variant="outlined"
                 value={singleAssumption.assumption}
-                disabled={!editState}
+                disabled={clickId === singleAssumption.id ? false : true}
               />
             </Grid>
             <Grid item xs={3} className={classes.gridItem}>
@@ -34,7 +37,7 @@ const AssumuptionList = (props) => {
                   id="demo-simple-select"
                   value={singleAssumption.assumptionTag.id}
                   onChange={props.handleCategoryChange}
-                  disabled={!editState}
+                  disabled={clickId === singleAssumption.id ? false : true}
                 >
                   {props.categories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
@@ -51,7 +54,12 @@ const AssumuptionList = (props) => {
               justifyContent="center"
               alignItems="stretch"
             >
-              <Button variant="outlined" onClick={handleEditClick}>
+              <Button
+                variant="outlined"
+                onClick={handleEditClick}
+                id={singleAssumption.id}
+                disabled={clickId === singleAssumption.id ? true : false}
+              >
                 <RiPencilLine />
               </Button>
             </Grid>
@@ -61,9 +69,11 @@ const AssumuptionList = (props) => {
               xs={1}
               justifyContent="center"
               alignItems="stretch"
-              disabled={!editState}
             >
-              <Button variant="outlined">
+              <Button
+                variant="outlined"
+                disabled={clickId === singleAssumption.id ? false : true}
+              >
                 <GrAdd />
               </Button>
             </Grid>
