@@ -8,8 +8,13 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@material-ui/core/Button";
 import { GrAdd } from "react-icons/gr";
+import { useState } from "react";
 
 const AssumuptionList = (props) => {
+  const [editState, setEditState] = useState(false);
+  const handleEditClick = (e) => {
+    setEditState(true);
+  };
   return (
     <>
       {props.assumptions.map((singleAssumption) => (
@@ -20,7 +25,7 @@ const AssumuptionList = (props) => {
                 id="outlined-basic"
                 variant="outlined"
                 value={singleAssumption.assumption}
-                disabled
+                disabled={!editState}
               />
             </Grid>
             <Grid item xs={3} className={classes.gridItem}>
@@ -29,7 +34,7 @@ const AssumuptionList = (props) => {
                   id="demo-simple-select"
                   value={singleAssumption.assumptionTag.id}
                   onChange={props.handleCategoryChange}
-                  disabled
+                  disabled={!editState}
                 >
                   {props.categories.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
@@ -46,7 +51,7 @@ const AssumuptionList = (props) => {
               justifyContent="center"
               alignItems="stretch"
             >
-              <Button variant="outlined">
+              <Button variant="outlined" onClick={handleEditClick}>
                 <RiPencilLine />
               </Button>
             </Grid>
@@ -56,6 +61,7 @@ const AssumuptionList = (props) => {
               xs={1}
               justifyContent="center"
               alignItems="stretch"
+              disabled={!editState}
             >
               <Button variant="outlined">
                 <GrAdd />
