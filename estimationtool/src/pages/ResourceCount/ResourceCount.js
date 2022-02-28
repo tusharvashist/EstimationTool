@@ -39,7 +39,7 @@ const ResourceCountMatrix = (props) => {
     } else {
       document.body.style.overflow = "scroll";
     }
-  }, [tableOpen, props.refreshCount]);
+  }, [tableOpen, props]);
 
   // Get All Technology Skills
 
