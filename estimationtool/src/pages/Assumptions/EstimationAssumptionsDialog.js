@@ -1,4 +1,4 @@
-import React ,{ useEffect, useState }  from "react";
+import React, { useEffect, useState } from "react";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
@@ -9,31 +9,25 @@ import { DataGrid } from "@mui/x-data-grid";
 import { makeStyles, createStyles } from "@mui/styles";
 import assumptionService from "./assumpion.service";
 
-
 const EstimationAssumptionsDialog = (props) => {
-  
-  
   const [assumptions, setAssumptions] = useState([]);
 
   const [selectedAssumptions, setSelectedAssumptions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
 
-
-    useEffect(() => {
-    importAllAssumptions();
+  useEffect(() => {
+    // importAllAssumptions();
     importAllAssumptionTags();
-    }, []);
-  
-  
+  }, []);
+
   const importAllAssumptionTags = async () => {
     let result = await assumptionService.importAllAssumptionTags();
     setCategories(result.data.body);
     setSelectedCategory(result.data.body[0].id);
   };
 
-
-  const popSubmitHandler = () => { };
+  const popSubmitHandler = () => {};
 
   // const handleCategoriesChange = (event) => {
   //   setCategories(event.target.value);
@@ -44,24 +38,25 @@ const EstimationAssumptionsDialog = (props) => {
   };
 
   const importAllAssumptions = async () => {
-    let result = await assumptionService.getLinkAssumptionWithEstimation("6215b5646b458553c13a81e4");
-     var index = 1;
-        result.data.body.assumption.forEach(estimate => {
-          estimate["id"] = index;
-          index = index + 1;
-        });
+    let result = await assumptionService.getLinkAssumptionWithEstimation(
+      "6215b5646b458553c13a81e4"
+    );
+    var index = 1;
+    result.data.body.assumption.forEach((estimate) => {
+      estimate["id"] = index;
+      index = index + 1;
+    });
     console.log(result.data.body.assumption);
 
-
-    setSelectedAssumptions(...result.data.body.assumption.filter((el) => el.selected === true))
+    setSelectedAssumptions(
+      ...result.data.body.assumption.filter((el) => el.selected === true)
+    );
     setAssumptions(result.data.body.assumption);
   };
 
-
   console.log("assumptions: ", assumptions);
-  
- console.log("selectedAssumptions: ",selectedAssumptions);
 
+  console.log("selectedAssumptions: ", selectedAssumptions);
 
   const rows = [
     { id: 1, col1: "Hello", col2: "World" },
@@ -72,10 +67,12 @@ const EstimationAssumptionsDialog = (props) => {
   const columns = [
     { field: "assumption", headerName: "Assumption", width: 350 },
     {
-      field: "assumptionTag", headerName: "Tag", width: 150,
-     renderCell: (rowData) => {
+      field: "assumptionTag",
+      headerName: "Tag",
+      width: 150,
+      renderCell: (rowData) => {
         return rowData.row.assumptionTag.name;
-      }
+      },
     },
   ];
 
@@ -114,11 +111,11 @@ const EstimationAssumptionsDialog = (props) => {
               label="Categories"
               onChange={handleCategoriesChange}
             >
-             {categories.map((category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.name}
-                  </MenuItem>
-                ))}
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
