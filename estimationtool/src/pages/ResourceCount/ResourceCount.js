@@ -1,16 +1,16 @@
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import "../estimation-detail/estimation-detail.css";
 import React, { useState, useEffect } from "react";
-import RoleCount from "./RoleCount";
-import { DataGrid } from "@mui/x-data-grid";
+
 import RoleEditCount from "./RoleEditCount";
-import { Select, MenuItem } from "@material-ui/core";
+
 import ReourceCountService from "./resourcecount.service";
 
 import { MdOutlineManageAccounts } from "react-icons/md";
-import NoRowOverlay from "../../shared/ui-view/NoRowOverlay/NoRowOverlay";
+
 import usePermission from "../../shared/layout/hooks/usePermissions";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import ResourceCountGrid from "./ResourceCountGrid";
 
 const ResourceCountMatrix = (props) => {
   const [tableOpen, setTableOpen] = useState(false);
@@ -86,70 +86,9 @@ const ResourceCountMatrix = (props) => {
       });
   };
 
-  const getColumns = () => [
-    {
-      headerName: "Resource Count",
-      field: "resourceCount",
-      width: 180,
-      sorting: false,
-      valueFormatter: (params) => {
-        const { id } = params,
-          { resourceCount } = id || {};
-        return resourceCount;
-      },
-    },
-    {
-      headerName: "Skills(Effort & summary Attribute)",
-      field: "skill",
-      width: 200,
-      sorting: false,
-      renderCell: (rowData) => {
-        console.log("Skills params", rowData);
-        const { row } = rowData,
-          { calcAttributeName = "" } = row || {},
-          { attributeName = "" } = row || {};
-        return attributeName || calcAttributeName;
-      },
-    },
-    {
-      headerName: "Technologies",
-      field: "techskills",
-      width: 200,
-      sorting: false,
-      renderCell: (rowdata) => (
-        <Select
-          style={{ width: "100%" }}
-          onChange={(e) => onChangeSelect(e, rowdata)}
-          onMouseEnter={(e) =>
-            rowdata.row.rolecount.length !== 0 &&
-            setTechError({
-              open: true,
-              severity: "warning",
-              message: `All resource count planning of ${rowdata.row.attributeName} with ${rowdata.row.skills} will be removed, if technology is changed`,
-            })
-          }
-          value={rowdata.row.skillsId}
-        >
-          {technologyList &&
-            technologyList.map((item) => (
-              <MenuItem key={item.skill} value={item.id}>
-                {item.skill}
-              </MenuItem>
-            ))}
-        </Select>
-      ),
-    },
-    {
-      headerName: "Role",
-      field: "role",
-      sorting: false,
-      width: 300,
-      renderCell: (params) => <RoleCount {...params} />,
-    },
-  ];
-
   function handleCellClick(param) {
-    if (param.row.skills) {
+    console.log("technology", param);
+    if (param.row.skillsId) {
       if (param.field === "role" && !openEditCount) {
         setRowEditData(param.row);
         setOpenEditCount(true);
@@ -202,13 +141,9 @@ const ResourceCountMatrix = (props) => {
       estHeaderId: estimationHeaderId,
     };
 
-    console.log("onchange", techId, row);
-
     ReourceCountService.updateTechnology(req)
       .then((res) => {
-        console.log("onchange techres", res);
         let newResourceCountData = resouceCountData.map((stateRow) => {
-          console.log("onchange stateRow techId", stateRow, techId);
           if (stateRow._id === row._id) {
             stateRow.rolecount = res.data.body;
             stateRow.skillsId = techId;
@@ -254,43 +189,16 @@ const ResourceCountMatrix = (props) => {
                     )}
                 </>
               )}
-              <div style={{ height: 300, width: "100%" }}>
-                {estimation_resourcecount_edit && resouceCountData.length ? (
-                  <DataGrid
-                    sx={{
-                      "& .MuiDataGrid-cell:hover": {
-                        background: "none",
-                      },
-                      "& .error--true .MuiDataGrid-row:hover": {
-                        background: "rgba(255, 0, 0, 0.2)",
-                      },
-                      "& .css-6aw94i-MuiDataGrid-root .MuiDataGrid-row.Mui-selected":
-                        {
-                          backgroundColor: "none",
-                        },
-                      "& .css-wivjjc-MuiDataGrid-root .MuiDataGrid-row:hover": {
-                        backgroundColor: "none",
-                      },
-                    }}
-                    rows={resouceCountData}
-                    columns={getColumns()}
-                    pageSize={5}
-                    onCellClick={handleCellClick}
-                    getRowId={({ _id }) => _id}
-                    key="_id"
-                    sortModel={sortModel}
-                    onSortModelChange={(model) => setSortModel(model)}
-                    components={{
-                      NoRowsOverlay: NoRowOverlay,
-                    }}
-                    getRowClassName={(params) =>
-                      `error--${params.row.validationerror}`
-                    }
-                  />
-                ) : (
-                  <h5 className="no-recrd">No Records available</h5>
-                )}
-              </div>
+              <ResourceCountGrid
+                estimation_resourcecount_edit={estimation_resourcecount_edit}
+                resouceCountData={resouceCountData}
+                handleCellClick={handleCellClick}
+                sortModel={sortModel}
+                setSortModel={setSortModel}
+                onChangeSelect={onChangeSelect}
+                setTechError={setTechError}
+                technologyList={technologyList}
+              />
             </BorderedContainer>
           </div>
         </>
