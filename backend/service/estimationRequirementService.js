@@ -11,6 +11,8 @@ const RequirementRepository = require("../repository/requirementRepository");
 
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
 const { defaultResponce } = require("../constant");
+const ShareDataModel = require("../database/models/shareDataModel");
+const userService = require("../service/userService");
 
 module.exports.create = async (serviceData) => {
   try {
@@ -322,7 +324,7 @@ module.exports.getById = async ({ id }) => {
     response.estimationVersions = verions;
 
     //7
-    response.estimationSharePermission = [];
+    response.estimationSharePermission = await getEstimationPermission(id);
 
     return formatMongoData(response);
   } catch (err) {
@@ -656,4 +658,12 @@ async function getEstHeaderAttribute(estHeaderId) {
 
 function roundToTwo(value) {
   return Number(Number(value).toFixed(2));
+}
+
+async function getEstimationPermission(estHeaderId) {
+  let sharedata = await ShareDataModel.findOne({
+    typeId: estHeaderId,
+    shareUserId: global.loginId,
+  });
+  return userService.getEstimationRolePermission(sharedata?.roleId);
 }

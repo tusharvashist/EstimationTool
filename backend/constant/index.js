@@ -36,7 +36,7 @@ module.exports = {
     estHeaderCalculatedAttribute: [],
     isReqValid: { err: [], isValid: true },
     estimationVersions: [],
-    estimationSharePermission: [],
+    estimationSharePermission: {},
   },
 
   requirementListResponse: {
