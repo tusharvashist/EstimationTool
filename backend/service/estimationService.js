@@ -96,7 +96,13 @@ module.exports.createEstimationHeader = async (serviceData) => {
     projectModel.estimates.push(estimation);
     await projectModel.save();
 
-    return formatMongoData(result);
+   let updateRec = await EstimationHeader.findOneAndUpdate(
+        { _id: result._id },
+        {estheaderParentid: result._id},
+        {new: true}
+      );
+     
+    return formatMongoData(updateRec);
   } catch (err) {
     console.log(
       "something went wrong: service > createEstimation Header ",
@@ -114,16 +120,21 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
     }
 
     const findRecord = await EstimationHeader.find({
-      estName: updatedInfo.estName,
+      estName: updatedInfo.estName, isDeleted: false 
     });
     updatedInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
       if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
         let estimation = await EstimationHeader.findOneAndUpdate(
           { _id: id },
-          updatedInfo,
-          {
-            new: true,
+          {estName: updatedInfo.estName,
+            estTypeId: updatedInfo.estTypeId,
+            estDescription: updatedInfo.estDescription,
+            effortUnit: updatedInfo.effortUnit,
+            estTentativeTimeline: updatedInfo.estTentativeTimeline,
+            locations: updatedInfo.locations,
+            contingency: updatedInfo.contingency,
+            updatedBy: global.loginId,   
           }
         );
         if (!estimation) {

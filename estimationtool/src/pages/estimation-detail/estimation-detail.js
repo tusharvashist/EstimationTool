@@ -120,9 +120,10 @@ const EstimationDetail = () => {
   const [isRequirementValid, setIsRequirementValid] = useState({
     isValid: true,
   });
-
+  const [isVersionDialogOpen, setIsVersionDialogOpen] = useState(false);
   const [openExport, setOpenExport] = useState(false);
   const [isEstimationReleased, setIsEstimationReleased] = useState(false);
+  const [isEstDeactivated, setIsEstDeactivated] = useState(false); 
   const [estVersions, setEstimationVersions] = useState([]);
   const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
   const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
@@ -147,6 +148,13 @@ const EstimationDetail = () => {
     setOpenEditConfigurationBox(false);
   };
 
+  const openVersionDialogFun = () => {
+    setIsVersionDialogOpen(true);
+  };
+
+  const closeVersionDialogFun = () => {
+    setIsVersionDialogOpen(false);
+  };  
   const saveEditConfigFun = () => {
     closeFun();
     getById();
@@ -220,11 +228,10 @@ const EstimationDetail = () => {
         setEstimationVersions([...res.data.body.estimationVersions]);
         //
         let releaseStatus = res.data.body.basicDetails.publishDate != null;
-        //console.log("Release status "+ releaseStatus);
+        let isDeleted = res.data.body.basicDetails.isDeleted;
+        //console.log("Release status "+ releaseStatus+ " **"+isDeleted);
         setIsEstimationReleased(releaseStatus);
-        // setCurrentVersion(res.data.body.basicDetails._id);
-        console.log("Set Current : " + JSON.stringify(estVersions));
-
+        setIsEstDeactivated(isDeleted);
         setCurrentSelectedVersion({ ...res.data.body.basicDetails });
         if (location.state !== undefined) {
           let obj = {
@@ -528,7 +535,7 @@ const EstimationDetail = () => {
   const exportFun = () => {};
 
   const handleCreateNewVersionClick = () => {
-    setIsOpenDailog(true);
+    setIsVersionDialogOpen(true);
   };
 
   const openImportAssumptions = () => {
@@ -544,18 +551,14 @@ const EstimationDetail = () => {
   };
 
   const createNewVersion = async (estId) => {
-    setIsOpenDailog(false);
+    setIsVersionDialogOpen(false);
     setLoader(true);
     EstimationService.getNewVersionOfEstimation(estimationId)
       .then((res) => {
         setLoader(false);
-        console.log("Newer Version Data: " + JSON.stringify(res));
         let newEstHeaderObj = res.data.body;
         // estimationId update the value for this Id and reload the page
-        //TODO: assign new version id once the API implementation is done
         estimationId = newEstHeaderObj._id;
-        //estimationId = newEstHeaderObj.estheaderParentid;
-        //estimationId = "620ffc6a461cfa6686f320b1";
         setOpen({
           open: true,
           severity: "success",
@@ -576,10 +579,8 @@ const EstimationDetail = () => {
 
   // get the Estimation Version dropdown selected value
   const getEstimationVersionDropDownValue = (event) => {
-    // console.log("Selected Version: " + event.target.value);
     let etId = event.target.value; //estimation version object
-    //event.target._id
-    //setCurrentSelectedVersion(currentSelctedVersion);
+    dispatch(setEstHeaderId(etId));
     if (currentSelctedVersion && currentSelctedVersion._id != etId) {
       estimationId = etId;
       dispatch(setEstHeaderId(estimationId));
@@ -587,18 +588,6 @@ const EstimationDetail = () => {
     }
   };
 
-  const setCurrentVersion = (currentEstId) => {
-    console.log("ALl Versions : " + JSON.stringify(estVersions));
-    const selectedVersion = estVersions.find(
-      (estVersion) => estVersion._id === currentEstId
-    );
-    console.log(
-      "Filtered Current Versions : " + JSON.stringify(selectedVersion)
-    );
-
-    setCurrentSelectedVersion(selectedVersion);
-    console.log("current selected version" + JSON.stringify(selectedVersion));
-  };
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
   console.log("selected currentSelctedVersion", currentSelctedVersion);
@@ -606,7 +595,7 @@ const EstimationDetail = () => {
 
   return (
     <div className="estimation-detail-cover">
-      {isEstimationReleased ? (
+      {isEstimationReleased && !isEstDeactivated ? (
         <Status
           data={"Continue editing with newer version"}
           onClickButton={handleCreateNewVersionClick}
@@ -703,11 +692,11 @@ const EstimationDetail = () => {
         />
       ) : null}
 
-      {isOpenDailog === true ? (
+      {isVersionDialogOpen === true ? (
         <CreateEstimationVersion
-          isOpen={isOpenDailog}
-          openF={openFun}
-          closeF={closeDeletePopup}
+          isOpen={isVersionDialogOpen}
+          openF={openVersionDialogFun}
+          closeF={closeVersionDialogFun}
           title="Create Estimation New Version"
           message={"Are you sure want to create new estimation version?"}
           data={estimationId}

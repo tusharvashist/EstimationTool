@@ -1,3 +1,7 @@
 .gridItem {
   display: flex;
 }
+
+.assumption-container {
+  padding: 10px 0;
+}
