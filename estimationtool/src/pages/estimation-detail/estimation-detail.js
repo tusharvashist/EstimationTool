@@ -709,126 +709,119 @@ const EstimationDetail = () => {
         />
       ) : null}
 
-      <Container>
-        <Grid container>
-          <Grid item xs={1} style={{ margin: "8px 0px" }}>
-            <div className="field-width">
-              {estVersions.length > 0 && currentSelctedVersion != undefined ? (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Version</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={currentSelctedVersion._id}
-                    label="Version"
-                    onChange={getEstimationVersionDropDownValue}
-                  >
-                    {estVersions.map((item) => {
-                      return (
-                        <MenuItem key={item._id} value={item._id}>
-                          v-{item.estVersionno}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              ) : (
-                ""
-              )}
-            </div>
-          </Grid>
-          <Grid xs={11} item className="multi-button-grid">
-            <Button variant="outlined" onClick={openImportAssumptions}>
-              <HiOutlineLightBulb className="link-icon" />
-              &nbsp;Include Assumptions
-            </Button>
-            {estimation_export_excel && (
-              <Button variant="outlined" onClick={openExportEstimation}>
-                <BiExport style={{ fontSize: "18px" }} />
-                &nbsp;Export in Excel
-              </Button>
+      <Grid container>
+        <Grid item xs={1} style={{ margin: "8px 0" }}>
+          <div>
+            {estVersions.length > 0 && currentSelctedVersion != undefined ? (
+              <FormControl className="versionstyle">
+                <InputLabel id="demo-simple-select-label">Version</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={currentSelctedVersion._id}
+                  label="Version"
+                  onChange={getEstimationVersionDropDownValue}
+                >
+                  {estVersions.map((item) => {
+                    return (
+                      <MenuItem key={item._id} value={item._id}>
+                        v-{item.estVersionno}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            ) : (
+              ""
             )}
-            {!isEstimationReleased ? (
-              <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/createEstimate",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: estimationId,
-                  },
-                }}
-              >
-                {estimationConfiguation && (
-                  <Button
-                    variant="outlined"
-                    className="estimation-detail-button"
-                  >
-                    <EditOutlined style={{ fontSize: "18px" }} />
-                    &nbsp;Edit Configuration
-                  </Button>
-                )}
-              </Link>
-            ) : null}
-          </Grid>
+          </div>
         </Grid>
-      </Container>
+        <Grid xs={11} item className="multi-button-grid">
+          <Button variant="outlined" onClick={openImportAssumptions}>
+            <HiOutlineLightBulb className="link-icon" />
+            &nbsp;Include Assumptions
+          </Button>
+          {estimation_export_excel && (
+            <Button variant="outlined" onClick={openExportEstimation}>
+              <BiExport style={{ fontSize: "18px" }} />
+              &nbsp;Export in Excel
+            </Button>
+          )}
+          {!isEstimationReleased ? (
+            <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/createEstimate",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: estimationId,
+                },
+              }}
+            >
+              {estimationConfiguation && (
+                <Button variant="outlined" className="estimation-detail-button">
+                  <EditOutlined style={{ fontSize: "18px" }} />
+                  &nbsp;Edit Configuration
+                </Button>
+              )}
+            </Link>
+          ) : null}
+        </Grid>
+      </Grid>
       <ClientProjectHeader client={clientDetails} project={projectDetails} />
       <EstimationHeader data={headerData} />
       {!isEstimationReleased ? (
-        <Container>
-          <Grid container>
-            <Grid item class="multi-button-grid">
-              <Link
-                to={{
-                  pathname:
-                    "/All-Clients/" +
-                    clientDetails.clientName +
-                    "/" +
-                    projectDetails.projectName +
-                    "/ImportExcelRequirements",
-                  state: {
-                    clientInfo: clientDetails,
-                    projectInfo: projectDetails,
-                    estimationHeaderId: headerData,
-                  },
-                }}
+        <Grid container>
+          <Grid item class="multi-button-grid">
+            <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  clientDetails.clientName +
+                  "/" +
+                  projectDetails.projectName +
+                  "/ImportExcelRequirements",
+                state: {
+                  clientInfo: clientDetails,
+                  projectInfo: projectDetails,
+                  estimationHeaderId: headerData,
+                },
+              }}
+            >
+              <Button style={{ marginRight: "15px" }} variant="outlined">
+                <BiImport style={{ fontSize: "20px" }} />
+                &nbsp; Import Requirements
+              </Button>
+            </Link>
+            {estimation_requirement_add && (
+              <Button
+                variant="outlined"
+                className="estimation-detail-button"
+                onClick={openAddAvailableRequirement}
               >
-                <Button style={{ marginRight: "15px" }} variant="outlined">
-                  <BiImport style={{ fontSize: "20px" }} />
-                  &nbsp; Import Requirements
-                </Button>
-              </Link>
-              {estimation_requirement_add && (
-                <Button
-                  variant="outlined"
-                  className="estimation-detail-button"
-                  onClick={openAddAvailableRequirement}
-                >
-                  {" "}
-                  <Add style={{ fontSize: "18px" }} />
-                  &nbsp;Include Project Requirements
-                </Button>
-              )}
-              {estimation_requirement_add && (
-                <Button
-                  variant="outlined"
-                  className="estimation-detail-button"
-                  onClick={openAddRequirement}
-                >
-                  {" "}
-                  <Add style={{ fontSize: "18px" }} />
-                  &nbsp;Create New Requirements
-                </Button>
-              )}
-            </Grid>
+                {" "}
+                <Add style={{ fontSize: "18px" }} />
+                &nbsp;Include Project Requirements
+              </Button>
+            )}
+            {estimation_requirement_add && (
+              <Button
+                variant="outlined"
+                className="estimation-detail-button"
+                onClick={openAddRequirement}
+              >
+                {" "}
+                <Add style={{ fontSize: "18px" }} />
+                &nbsp;Create New Requirements
+              </Button>
+            )}
           </Grid>
-        </Container>
+        </Grid>
       ) : null}
       <BorderedContainer>
         {loaderComponent ? (
