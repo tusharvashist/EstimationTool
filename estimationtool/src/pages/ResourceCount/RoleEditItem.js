@@ -87,7 +87,8 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then(() => {
+      .then((updateRes) => {
+        props.handleValidationOnUpdate(updateRes);
         ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
           .then((countRes) => {
             props.handleEditChange(countRes.data.body, props.rowEditData._id);

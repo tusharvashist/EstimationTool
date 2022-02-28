@@ -87,7 +87,6 @@ const ResourceCountMatrix = (props) => {
   };
 
   function handleCellClick(param) {
-    console.log("technology", param);
     if (param.row.skillsId) {
       if (param.field === "role" && !openEditCount) {
         setRowEditData(param.row);
@@ -110,10 +109,22 @@ const ResourceCountMatrix = (props) => {
     setOpenEditCount(false);
   };
 
+  const handleValidationOnUpdate = (update) => {
+    let newResourceCountData = resouceCountData.map((el) => {
+      if (el._id === update.data.body._id) {
+        return { ...el, validationerror: update.data.body.validationerror };
+      } else {
+        return el;
+      }
+    });
+    setResouceCountData(newResourceCountData);
+  };
+
   const handleEditChange = (newRolecount, resourceId) => {
+    console.log("validation", newRolecount, resouceCountData);
     let newResourceCountData = resouceCountData.map((stateRow) => {
       if (stateRow._id === resourceId) {
-        stateRow.rolecount = newRolecount;
+        return { ...stateRow, rolecount: newRolecount };
       }
       return stateRow;
     });
@@ -185,6 +196,7 @@ const ResourceCountMatrix = (props) => {
                       <RoleEditCount
                         rowEditData={rowEditData}
                         handleEditChange={handleEditChange}
+                        handleValidationOnUpdate={handleValidationOnUpdate}
                       />
                     )}
                 </>

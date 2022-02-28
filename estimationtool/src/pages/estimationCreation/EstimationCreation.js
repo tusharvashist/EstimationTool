@@ -22,11 +22,15 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import { useHistory } from "react-router-dom";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { setEstimationHeaderId } from "../../Redux/basicDetailRedux";
+import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 
 const steps = ["Basic Detail", "Effort Attributes", "Calculated Attributes"];
 
 const EstimationCreation = (props) => {
   const basicDetailRedux = useSelector((state) => state.basicDetail);
+  const reduxEstimationHeaderId = useSelector(
+    (state) => state.estimationHeaderId
+  );
   const dispatch = useDispatch();
   const history = useHistory();
   const effortAttributeSave = useSelector((state) => state.effortAttribute);
@@ -83,7 +87,6 @@ const EstimationCreation = (props) => {
     return skipped.has(step);
   };
 
-
   useEffect(() => {
     setLocation(location);
     setNewEstimationHeaderId(estionHeaderId);
@@ -96,7 +99,6 @@ const EstimationCreation = (props) => {
     ) {
       setActiveStep(1);
     }
-
   }, location1.state.estimationHeaderId);
 
   // save Estimation Basic detail data to post request to generating estimation header APi
@@ -108,8 +110,10 @@ const EstimationCreation = (props) => {
         setLoader(false);
 
         let dataResponce = res.data.body;
+
         setNewEstimationHeaderId(dataResponce._id);
         dispatch(setEstimationHeaderId(dataResponce._id));
+        dispatch(setEstHeaderId(dataResponce._id));
         localStorage.setItem("estimationHeaderId", dataResponce._id);
         // show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -118,7 +122,7 @@ const EstimationCreation = (props) => {
         setOpen({
           open: true,
           severity: "error",
-          message: err.response.data.message,
+          message: err.response.data.message || err.message,
         });
       });
   };
@@ -189,11 +193,11 @@ const EstimationCreation = (props) => {
         history.push(finishLocation);
       })
       .catch((err) => {
-        if ((err.response.data.status = 400)) {
+        if (err.response.data.status == 400) {
           setOpen({
             open: true,
             severity: "error",
-            message: err.response.data.message,
+            message: err.response.data.message || err.message,
           });
         }
       });
@@ -212,8 +216,7 @@ const EstimationCreation = (props) => {
         // show response and move next step
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   };
 
   const getEffortAttributeRequestPayload = () => {
