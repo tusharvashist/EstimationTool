@@ -127,6 +127,7 @@ const EstimationDetail = () => {
   const [estVersions, setEstimationVersions] = useState([]);
   const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
   const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
+  const [refreshCount, setRefreshCount] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -407,7 +408,7 @@ const EstimationDetail = () => {
       EstimationService.updateEstRequirementData(editedValueArray)
         .then((res) => {
           setLoader(false);
-
+          setRefreshCount(!refreshCount);
           getRequirementDataById();
         })
         .catch((error) => {
@@ -628,6 +629,7 @@ const EstimationDetail = () => {
           data={estimationId}
           errorFunction={handleCountError}
           countError={countError}
+          refresh={refreshCount}
         />
       ) : null}
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}

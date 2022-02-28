@@ -39,7 +39,7 @@ const ResourceCountMatrix = (props) => {
     } else {
       document.body.style.overflow = "scroll";
     }
-  }, [tableOpen]);
+  }, [tableOpen, props]);
 
   // Get All Technology Skills
 
@@ -87,6 +87,7 @@ const ResourceCountMatrix = (props) => {
   };
 
   function handleCellClick(param) {
+    console.log("onchange resouceCountData param", param);
     if (param.row.skillsId) {
       if (param.field === "role" && !openEditCount) {
         setRowEditData(param.row);
@@ -112,19 +113,18 @@ const ResourceCountMatrix = (props) => {
   const handleValidationOnUpdate = (update) => {
     let newResourceCountData = resouceCountData.map((el) => {
       if (el._id === update.data.body._id) {
-        return { ...el, validationerror: update.data.body.validationerror };
-      } else {
-        return el;
+        el.validationerror = update.data.body.validationerror;
       }
+      return el;
     });
+    props.errorFunction(update.data.body.validationerror);
     setResouceCountData(newResourceCountData);
   };
 
   const handleEditChange = (newRolecount, resourceId) => {
-    console.log("validation", newRolecount, resouceCountData);
     let newResourceCountData = resouceCountData.map((stateRow) => {
       if (stateRow._id === resourceId) {
-        return { ...stateRow, rolecount: newRolecount };
+        stateRow.rolecount = newRolecount;
       }
       return stateRow;
     });
