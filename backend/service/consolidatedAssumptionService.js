@@ -1,6 +1,7 @@
 const { formatMongoData } = require("../helper/dbhelper");
 const mongoose = require("mongoose");
 const RequirementRepository = require("../repository/consolidatedAssumptionRepository");
+const constant = require("../constant");
 
 module.exports.createConsolidatedAssumption = async (serviceData) => {
   try {
@@ -31,6 +32,45 @@ module.exports.getConsolidatedAssumption = async () => {
   } catch (err) {
     console.log(
       "something went wrong: service > ProjectService > getAllProject",
+      err
+    );
+    throw new Error(err);
+  }
+};
+
+
+
+
+
+module.exports.linkAssumptionWithEstimation = async ({ id, updateInfo }) => {
+  try {
+     let assumption = await RequirementRepository.linkAssumptionWithEstimation({ id, updateInfo });
+    return formatMongoData(assumption);
+  } catch (err) {
+    console.log(
+      "something went wrong: service > clientService > clientUpdate ",
+      err
+    );
+    throw new Error(err);
+  }
+};
+
+
+
+module.exports.getLinkAssumptionWithEstimation = async (id) => {
+  try {
+       if (!mongoose.Types.ObjectId(id)) {
+         throw new Error(constant.projectMessage.INVALID_ID);
+        }
+    
+    let assumption = await RequirementRepository.getLinkAssumptionWithEstimation(id);
+    let response = { ...constant.consolidatedAssumption };
+    response.assumption = assumption;
+    return formatMongoData(response);
+    
+  } catch (err) {
+    console.log(
+      "something went wrong: service > clientService > clientUpdate ",
       err
     );
     throw new Error(err);

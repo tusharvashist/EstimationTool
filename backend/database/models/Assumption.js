@@ -8,7 +8,11 @@ const tagSchema = new mongoose.Schema({
       {
         type: Schema.Types.ObjectId,
         ref: "assumptionTag",
-      },
+    },
+    estHeader:[{
+        type: Schema.Types.ObjectId,
+        ref: "EstHeader",
+    },{ unique : true } ]
 }, {
     timestamps: true,
     toObject: {

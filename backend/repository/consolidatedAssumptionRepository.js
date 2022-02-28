@@ -1,7 +1,9 @@
 const constant = require("../constant");
 const Assumption = require("../database/models/Assumption");
 const AssumptionTag = require("../database/models/AssumptionTag");
+const EstHeaderModel = require("../database/models/estHeaderModel");
 const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 
 exports.createConsolidatedAssumption = async (serviceData) => {
   try {
@@ -12,7 +14,7 @@ exports.createConsolidatedAssumption = async (serviceData) => {
       });
     const findRecord = await Assumption.find({ assumption: assumption.assumption });
     if (findRecord.length != 0) {
-      throw new Error(constant.clientMessage.DUPLICATE_CLIENT);
+      throw new Error(constant.assumption.DUPLICATE_ASSUMPTION);
     }
     let result = await assumption.save();
     return result;
@@ -42,6 +44,96 @@ module.exports.getConsolidatedAssumption = async () => {
       "something went wrong: service > ProjectService > getAllProject",
       err
     );
+    throw new Error(err);
+  }
+};
+
+module.exports.linkAssumptionWithEstimation = async ({ id, updateInfo }) => {
+  try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
+    
+    const estHeaderModel = await EstHeaderModel.findById({ _id: id});
+    if (estHeaderModel.length != 0) {
+
+    var bulk_Assumption = Assumption.collection.initializeOrderedBulkOp();
+    updateInfo.assumptionsList.forEach(async (assumptionId, i) => {
+
+      bulk_Assumption.find({ _id: assumptionId }).update(
+        { $set: { assumption: "Pending" } }
+       ); 
+      
+    });
+      
+      // { $push: { estHeader : estHeaderModel } }
+    const result = await bulk_Assumption.execute();
+      return result;
+    }else{
+      throw new Error(constant.assumption.ASSUMPTION_EST_NOT_FOUND);
+    }
+  } catch (err) {
+    console.log( "something went wrong: service > ProjectService > getAllProject", err);
+    throw new Error(err);
+  }
+};
+
+
+
+module.exports.getLinkAssumptionWithEstimation = async ( id ) => {
+    try {
+      
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    } 
+    // return await Assumption.aggregate([{
+    //         $addFields: {
+    //             selected: {
+    //                 $cond: [
+    //                     {
+    //                         $setIsSubset: [[ ObjectId(id)], '$estHeader']
+    //                     },
+    //                 true,
+    //                 false
+    //                 ]
+    //             }
+    //     },
+    // }
+    // ]);
+        
+      
+      
+      return await Assumption.aggregate([
+        {
+          $addFields: {
+            selected: {
+              $cond: [
+                {
+                  $setIsSubset: [[ObjectId(id)],'$estHeader']
+                },
+                true,
+                false
+              ]
+            }
+          }
+        }, {
+          $lookup: {
+              from: 'assumptiontags',
+              localField: 'assumptionTag',
+              foreignField: '_id',
+              as: 'assumptionTag'
+          }
+        }, {
+            $unwind: {
+              path: '$assumptionTag',
+              includeArrayIndex: 'string',
+              preserveNullAndEmptyArrays: false
+          }
+        }
+      ]);
+      
+  } catch (err) {
+    console.log( "something went wrong: service > ProjectService > getAllProject", err);
     throw new Error(err);
   }
 };

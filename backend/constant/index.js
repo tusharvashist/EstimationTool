@@ -4,7 +4,9 @@ module.exports = {
     message: "",
     body: {},
   },
-
+  consolidatedAssumption: {
+  assumption : "",
+},
   requirementExcelHeader: {
     Requirement: "Requirement",
     Description: "Description",
@@ -146,10 +148,12 @@ module.exports = {
     ASSUMPTION_Tag_FETCH: "All assumption tags fetch successfully",
     ASSUMPTION_GET_ERROR: "All assumption featch error",
     ASSUMPTION_NOT_FOUND: "Assumption not found",
+    ASSUMPTION_EST_NOT_FOUND: "Assumption estimation not found",
     INVALID_ID: "Invalid id",
     ASSUMPTION_UPDATE: "Assumption update successfully",
     ASSUMPTION_DELETE: "Assumption delete successfully",
     DUPLICATE_ASSUMPTION: "Assumption already exist with given name.",
+
   },
   estimationHeaderAtrributeMessage: {
     estimationHeaderAtrribute_CREATED:
