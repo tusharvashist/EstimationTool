@@ -665,7 +665,6 @@ module.exports.versioningEstimation = async ({ id }) => {
             { _id: id },
             {
               isDeleted: true,
-              estheaderParentid: id,
               updatedBy: global.loginId,
             }
           );
@@ -1118,7 +1117,7 @@ module.exports.callVersionEstRollBack = async (versionEstRollback) => {
 
       EstimationHeader.findByIdAndUpdate(
         versionEstRollback.estheaderParentid,
-        { isDeleted: false, estheaderParentid: -1, updatedBy: global.loginId },
+        { isDeleted: false, updatedBy: global.loginId },
         function (err, res) {}
       );
 
