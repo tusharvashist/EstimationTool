@@ -15,10 +15,7 @@ import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import AssumuptionList from "./AssumuptionList";
 
 const ApplicationAssumptions = () => {
-  useEffect(() => {
-    importAllAssumptions();
-    importAllAssumptionTags();
-  }, []);
+  const [refresh, setRefresh] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
@@ -30,6 +27,11 @@ const ApplicationAssumptions = () => {
   const [isOpen, setOpen] = React.useState({});
 
   const [assumptionInputError, setAssumptionInputError] = useState(false);
+
+  useEffect(() => {
+    importAllAssumptions();
+    importAllAssumptionTags();
+  }, [refresh]);
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -70,6 +72,10 @@ const ApplicationAssumptions = () => {
         message: "Please enter assumption",
       });
     }
+  };
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
   };
 
   const handleClose = () => {
@@ -128,6 +134,8 @@ const ApplicationAssumptions = () => {
           assumptions={assumptions}
           handleCategoryChange={handleCategoryChange}
           categories={categories}
+          selectedCategory={selectedCategory}
+          handleRefresh={handleRefresh}
         />
       </BorderedContainer>
       <Snackbar

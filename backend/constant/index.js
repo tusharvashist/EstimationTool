@@ -150,6 +150,7 @@ module.exports = {
     ASSUMPTION_UPDATE: "Assumption update successfully",
     ASSUMPTION_DELETE: "Assumption delete successfully",
     DUPLICATE_ASSUMPTION: "Assumption already exist with given name.",
+    UPDATE_ASSUMPTION: "Assumption updated successfully",
   },
   estimationHeaderAtrributeMessage: {
     estimationHeaderAtrribute_CREATED:
@@ -347,9 +348,9 @@ module.exports = {
     FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
   },
 
-  emailType:{
-    ESTIMATION:"Estimation",
-    ESTIMATION_SUBJECT:"Estimation Shared with you"
+  emailType: {
+    ESTIMATION: "Estimation",
+    ESTIMATION_SUBJECT: "Estimation Shared with you",
   },
   SharingMessage: {
     Sharing_ERROR: "Sharing creation fails",
@@ -361,5 +362,4 @@ module.exports = {
     Sharing_UPDATE: "Estimation Sharing updated successfully",
     Sharing_DELETE: "Estimation Sharing deleted successfully",
   },
-
 };

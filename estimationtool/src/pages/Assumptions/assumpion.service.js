@@ -27,6 +27,18 @@ const assumptionService = {
       },
     });
   },
+  updateAssumption: function (assumptionName, assumptionTag, assumptionId) {
+    let url = Url.allAssumptions;
+    return axios({
+      method: "PUT",
+      url,
+      data: {
+        assumptionName,
+        assumptionTag,
+        assumptionId,
+      },
+    });
+  },
 };
 
 export default assumptionService;
