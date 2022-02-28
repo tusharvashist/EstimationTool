@@ -21,6 +21,7 @@ const EstResourceCount = require("../database/models/estResourceCount");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const EstRequirementData = require("../database/models/estRequirementData");
 const VersionEstRollback = require("../database/models/versionEstRollback");
+const ShareDataModel = require("../database/models/shareDataModel");
 
 const { result } = require("lodash");
 
@@ -62,12 +63,16 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
       .sort({ updatedAt: "desc" });
 
     let result = [];
-    estimations.forEach((element) => {
+    for(const element of estimations) {
       if (element.projectId != null && element.projectId.client != null) {
-        result.push(element);
-        //console.log(element)
+        const sharedEst = await ShareDataModel.findOne({typeId: element._id, shareUserId: global.loginId});
+        const createdBy = element.createdBy !=null ? element.createdBy._id : '';
+        const typeId = sharedEst!=null && sharedEst.typeId !=null ? sharedEst.typeId : '';           
+        if(createdBy == global.loginId || (sharedEst!=null && typeId.equals(element._id) && sharedEst.shareUserId == global.loginId)){
+          result.push(element);
+        }
       }
-    });
+    }
 
     return formatMongoData(result);
   } catch (err) {
@@ -665,7 +670,6 @@ module.exports.versioningEstimation = async ({ id }) => {
             { _id: id },
             {
               isDeleted: true,
-              estheaderParentid: id,
               updatedBy: global.loginId,
             }
           );
@@ -1118,7 +1122,7 @@ module.exports.callVersionEstRollBack = async (versionEstRollback) => {
 
       EstimationHeader.findByIdAndUpdate(
         versionEstRollback.estheaderParentid,
-        { isDeleted: false, estheaderParentid: -1, updatedBy: global.loginId },
+        { isDeleted: false, updatedBy: global.loginId },
         function (err, res) {}
       );
 

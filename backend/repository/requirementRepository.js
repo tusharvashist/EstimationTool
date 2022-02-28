@@ -20,36 +20,42 @@ const estimationHeaderAtrributeModel = require("../database/models/estimationHea
 const ReqCounter = require("../database/models/reqCounter");
 
 module.exports.createRequirement = async (serviceData) => {
-  let countId = await getNextSequenceValue("req_id",1);
-  let projectRequirement = new ProjectRequirement({ ...serviceData, req_id:countId });
+  let countId = await getNextSequenceValue("req_id", 1);
+  let projectRequirement = new ProjectRequirement({
+    ...serviceData,
+    req_id: countId,
+  });
 
-  console.log("projectRequirement : ",projectRequirement.project._id, "title: ", projectRequirement.title );
+  console.log(
+    "projectRequirement : ",
+    projectRequirement.project._id,
+    "title: ",
+    projectRequirement.title
+  );
 
   // const findRecord = await ProjectRequirement.find(
   //   { title: projectRequirement.title },
   //   { project: projectRequirement.project._id }
   // );
 
-  const findRecord = await ProjectRequirement.aggregate(
-    [{
+  const findRecord = await ProjectRequirement.aggregate([
+    {
       $match: {
-          title: projectRequirement.title ,
-          project: projectRequirement.project._id 
-      }
-    }]
-  );
+        title: projectRequirement.title,
+        project: projectRequirement.project._id,
+      },
+    },
+  ]);
 
   console.log("findRecord : ", findRecord);
   if (findRecord.length != 0) {
-   
     return false;
   } else {
     return await projectRequirement.save();
   }
 };
 
-
-module.exports.getProjectById = async ( id ) => {
+module.exports.getProjectById = async (id) => {
   try {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.projectMessage.INVALID_ID);
@@ -78,31 +84,32 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
   try {
     var counter = await getNextSequenceValue("req_id", 1);
     var updatedCounter = counter;
-    var bulk_projectRequirementInsert = ProjectRequirement.collection.initializeOrderedBulkOp();
-    requirementList.forEach(async (requirement,i) => {
+    var bulk_projectRequirementInsert =
+      ProjectRequirement.collection.initializeOrderedBulkOp();
+    requirementList.forEach(async (requirement, i) => {
       //mongoose.Types.ObjectId(serviceData),
-      var type = '';
-      var tag = '';
+      var type = "";
+      var tag = "";
       if (requirement.TypeId.length != 0) {
-          type = mongoose.Types.ObjectId(requirement.TypeId);
+        type = mongoose.Types.ObjectId(requirement.TypeId);
       }
-       if (requirement.TagId.length != 0) {
-         tag = mongoose.Types.ObjectId(requirement.TagId);
+      if (requirement.TagId.length != 0) {
+        tag = mongoose.Types.ObjectId(requirement.TagId);
       }
-      updatedCounter = counter+i;
+      updatedCounter = counter + i;
 
       bulk_projectRequirementInsert.insert({
-          title: requirement.Requirement,
-          description: requirement.Description,
-          project: projectId._id,
-          type: type,
-          tag:tag,
-          req_id: updatedCounter,
-      });      
+        title: requirement.Requirement,
+        description: requirement.Description,
+        project: projectId._id,
+        type: type,
+        tag: tag,
+        req_id: updatedCounter,
+      });
     });
     const result = await bulk_projectRequirementInsert.execute();
-    if(result){
-      await getNextSequenceValue("req_id", requirementList.length-1);
+    if (result) {
+      await getNextSequenceValue("req_id", requirementList.length - 1);
     }
     return formatMongoData(result);
   } catch (err) {
@@ -110,60 +117,46 @@ module.exports.createBulkRequirement = async (projectId, requirementList) => {
   }
 };
 
-
-
-module.exports.bulkInsertQueryAssumption = async (
-  requirementList
-) => {
-   try {
-     if(requirementList.length >0){
-    var bulk_queryAssumptionModel = QueryAssumptionModel.collection.initializeUnorderedBulkOp();
-    requirementList.forEach(async (requirement) => {
-     
-      var projectRequirement = '';
-      if (requirement._id.length != 0) {
+module.exports.bulkInsertQueryAssumption = async (requirementList) => {
+  try {
+    if (requirementList.length > 0) {
+      var bulk_queryAssumptionModel =
+        QueryAssumptionModel.collection.initializeUnorderedBulkOp();
+      requirementList.forEach(async (requirement) => {
+        var projectRequirement = "";
+        if (requirement._id.length != 0) {
           projectRequirement = mongoose.Types.ObjectId(requirement._id);
-      }
+        }
 
-      bulk_queryAssumptionModel.insert({
+        bulk_queryAssumptionModel.insert({
           query: requirement.Query,
           assumption: requirement.Assumption,
           reply: requirement.Reply,
           projectRequirement: projectRequirement,
+        });
       });
-      
-    });
-    const result = await bulk_queryAssumptionModel.execute();
-    return formatMongoData(result);
-  }
+      const result = await bulk_queryAssumptionModel.execute();
+      return formatMongoData(result);
+    }
   } catch (err) {
     throw new Error(err);
   }
 };
 
-module.exports.isRequirementAvailable = async (projectId,title) => {
-
+module.exports.isRequirementAvailable = async (projectId, title) => {
   const findRecord = await ProjectRequirement.find(
     { title: title },
     { project: projectId }
   );
 
   if (findRecord.length != 0) {
-    return  true;
-  } 
-    return false;
+    return true;
+  }
+  return false;
 };
 
-
-
 module.exports.getAllProjectRequirement = async (projectId) => {
-
-  return await ProjectRequirement.find(
-    { project: projectId }
-  );
-
-    
-
+  return await ProjectRequirement.find({ project: projectId });
 };
 
 module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
@@ -188,8 +181,6 @@ module.exports.mapHeaderRequirement = async (requirementId, serviceData) => {
     isDeleted: false,
   });
   return await estHeaderRequirement.save();
-
-  
 };
 
 module.exports.mapHeaderToMultipleRequirement = async (
@@ -227,9 +218,9 @@ module.exports.mapHeaderToMultipleRequirement = async (
 };
 
 module.exports.updateQuery = async (projectRequirementId, serviceData) => {
-  const findRecord = await QueryAssumptionModel.find(
-    { projectRequirement: projectRequirementId }
-   );
+  const findRecord = await QueryAssumptionModel.find({
+    projectRequirement: projectRequirementId,
+  });
   if (findRecord.length !== 0) {
     var newQuery = {
       query: serviceData.query,
@@ -238,18 +229,14 @@ module.exports.updateQuery = async (projectRequirementId, serviceData) => {
     };
 
     return await QueryAssumptionModel.findOneAndUpdate(
-      { projectRequirement: projectRequirementId  },
+      { projectRequirement: projectRequirementId },
       newQuery,
       { new: true }
     );
-
-    
   } else {
-
-        let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
+    let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
     queryAssumptionModel.projectRequirement = projectRequirementId;
     return await queryAssumptionModel.save();
-    
   }
 };
 
@@ -265,13 +252,10 @@ module.exports.createQueryAssumption = async (
     let queryAssumptionModel = new QueryAssumptionModel({ ...serviceData });
     queryAssumptionModel.projectRequirement = projectRequirementId;
     return await queryAssumptionModel.save();
-    
   } else {
     return findRecord[0];
   }
 };
-
-
 
 module.exports.getTags = async () => {
   let requirementTag = await RequirementTag.find({}).sort({ name: 1 });
@@ -295,7 +279,6 @@ module.exports.getUnpairedRequirementEstimation = async (
   requirementList,
   estHeader
 ) => {
-  
   var unpairedRequirement = [];
   var index = 0;
 
@@ -308,7 +291,7 @@ module.exports.getUnpairedRequirementEstimation = async (
     if (!found) {
       unpairedRequirement.push(element);
     }
-    
+
     index = index + 1;
   });
   return unpairedRequirement;
@@ -319,7 +302,6 @@ module.exports.getContingency = async (estHeaderId) => {
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
     return estimations.contingency;
   } catch (err) {
-    
     throw new Error(err);
   }
 };
@@ -327,13 +309,11 @@ module.exports.getContingency = async (estHeaderId) => {
 module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
   try {
     let estimations = await EstHeaderModel.findById({ _id: estHeaderId });
-   
+
     var requirementData = await requirementDataForEstHeader(estHeaderId);
-    
+
     requirementData.forEach((requirementElement) => {
-      
       requirementElement.estRequirementData.forEach((estRequirement) => {
-        
         if (
           estRequirement.ESTData !== undefined &&
           estRequirement.ESTData !== 0
@@ -345,12 +325,10 @@ module.exports.getEstHeaderRequirementWithContingency = async (estHeaderId) => {
         } else {
           estRequirement["ESTDataContingency"] = 0;
         }
-        
       });
     });
     return requirementData;
   } catch (err) {
-   
     throw new Error(err);
   }
 };
@@ -465,13 +443,15 @@ module.exports.tagWiseRequirementList = async (
 
     return tagSummaryDataArray;
   } catch (err) {
-   
     console.log(err.stack);
     throw new Error(err);
   }
 };
 
-module.exports.getCalculativeAttributes = async (estHeaderId, estHeaderContingency) => {
+module.exports.getCalculativeAttributes = async (
+  estHeaderId,
+  estHeaderContingency
+) => {
   try {
     var tagsTotal = await getTagsTotal(estHeaderId, estHeaderContingency);
     var estimationCalAtt = await getEstimationCalculativeAttributes(
@@ -485,8 +465,7 @@ module.exports.getCalculativeAttributes = async (estHeaderId, estHeaderContingen
       var totalContingency = 0;
       var summaryCalculated = {};
       if (calAtt.calcType === "percentage") {
-         calculative =
-          calAtt.calcAttributeName + " " + calAtt.unit + " % of ";
+        calculative = calAtt.calcAttributeName + " " + calAtt.unit + " % of ";
         var totalValue = 0;
         calAtt.formulaTags.forEach((formula, tagIndex) => {
           var coma = ",";
@@ -507,7 +486,7 @@ module.exports.getCalculativeAttributes = async (estHeaderId, estHeaderContingen
         totalContingency = totalValue + (totalValue * contingency) / 100;
         totalValue = roundToTwo(totalValue);
         totalContingency = roundToTwo(totalContingency);
-         summaryCalculated = {
+        summaryCalculated = {
           id: calAtt._id,
           calcType: calAtt.calcType,
           Effort: totalValue,
@@ -516,7 +495,7 @@ module.exports.getCalculativeAttributes = async (estHeaderId, estHeaderContingen
         };
         summaryCalculatedAttArray.push(summaryCalculated);
       } else {
-         calculative = calAtt.calcAttributeName + "(Manual)";
+        calculative = calAtt.calcAttributeName + "(Manual)";
         var conti = (calAtt.value * contingency) / 100;
         totalContingency = parseInt(calAtt.value) + conti;
 
@@ -534,7 +513,6 @@ module.exports.getCalculativeAttributes = async (estHeaderId, estHeaderContingen
     });
     return summaryCalculatedAttArray;
   } catch (err) {
-    
     console.log(err.stack);
     throw new Error(err);
   }
@@ -556,8 +534,6 @@ async function getEstimationCalculativeAttributes(estHeaderId) {
       },
     },
   ]);
-
-  
 }
 
 async function getTagsTotal(estHeaderId, contingency) {
@@ -602,7 +578,6 @@ async function getTagsTotal(estHeaderId, contingency) {
 
     return tagSummaryDataArray;
   } catch (err) {
-    
     console.log(err.stack);
     throw new Error(err);
   }
@@ -612,7 +587,10 @@ function roundToTwo(value) {
   return Number(Number(value).toFixed(2));
 }
 
-async function getCalcAttrTotalResourceCount(estHeaderId, estHeaderContingency) {
+async function getCalcAttrTotalResourceCount(
+  estHeaderId,
+  estHeaderContingency
+) {
   try {
     var tagsTotal = await getTagsTotal(estHeaderId, estHeaderContingency);
     var estimationCalAtt = await getEstimationCalculativeAttributes(
@@ -643,7 +621,7 @@ async function getCalcAttrTotalResourceCount(estHeaderId, estHeaderContingency) 
         });
 
         totalValue = (totalValue * calAtt.unit) / 100;
-         totalContingency = totalValue + (totalValue * contingency) / 100;
+        totalContingency = totalValue + (totalValue * contingency) / 100;
         totalValue = roundToTwo(totalValue);
         totalContingency = roundToTwo(totalContingency);
         if (isNaN(totalValue)) {
@@ -653,8 +631,8 @@ async function getCalcAttrTotalResourceCount(estHeaderId, estHeaderContingency) 
           totalContingency = 0;
         }
         totalContingency = unitWiseHours(unit, totalContingency);
-         summaryCalculated = {
-          _id: calAtt._id,
+        summaryCalculated = {
+          _id: calAtt.estCalcId,
           calcType: calAtt.calcType,
           calcAttribute: calAtt.calcAttribute,
           calcAttributeName: calAtt.calcAttributeName,
@@ -671,8 +649,8 @@ async function getCalcAttrTotalResourceCount(estHeaderId, estHeaderContingency) 
         }
 
         totalContingency = unitWiseHours(unit, totalContingency);
-         summaryCalculated = {
-          _id: calAtt._id,
+        summaryCalculated = {
+          _id: calAtt.estCalcId,
           calcType: calAtt.calcType,
           calcAttribute: calAtt.calcAttribute,
           calcAttributeName: calAtt.calcAttributeName,
@@ -815,7 +793,6 @@ module.exports.getAttributesCalAttributesTotal = async (estHeaderId) => {
     EstimationAttributes: EstimationAttributesList,
     EstimationCalcAttributes: EstimationCalcAttributes,
   };
-
 
   console.log("ResourceCount :", resourceCountObject);
   return resourceCountObject;
@@ -1087,7 +1064,6 @@ async function queryTagWiseRequirementForEstHeader(estHeaderId) {
       },
     },
   ]);
-  
 }
 module.exports.getRequirementWithQuery = async (projectId) => {
   let projectRequirement = await ProjectRequirement.aggregate([
@@ -1185,12 +1161,12 @@ module.exports.getRequirementWithQuery = async (projectId) => {
         },
       },
     },
-  
-   {
-    $sort: {
-        req_id: 1
-    }
-}
+
+    {
+      $sort: {
+        req_id: 1,
+      },
+    },
   ]);
 
   if (projectRequirement.length != 0) {
@@ -1200,99 +1176,94 @@ module.exports.getRequirementWithQuery = async (projectId) => {
   }
 };
 
-
-
 module.exports.numberOfEstimationInProject = async (projectId) => {
-
-  return await EstHeaderModel.aggregate(
-    [
-      {
-        $match: {
-          projectId: ObjectId(projectId),
-          isDeleted: false
-        }
+  return await EstHeaderModel.aggregate([
+    {
+      $match: {
+        projectId: ObjectId(projectId),
+        isDeleted: false,
       },
-      {
-        $group: {
-          _id: null,
-          estimationCount: {
-            $sum: 1
-          }
-        }
-      }
-    ]
-  );
-  
+    },
+    {
+      $group: {
+        _id: null,
+        estimationCount: {
+          $sum: 1,
+        },
+      },
+    },
+  ]);
 };
-
 
 module.exports.deleteAllRequirements = async (projectId) => {
+  let deleteResponse = await ProjectRequirement.deleteMany({
+    project: projectId,
+  });
+  if (!deleteResponse) {
+    return new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+  }
+  return formatMongoData(deleteResponse);
+};
 
-   let deleteResponse = await ProjectRequirement.deleteMany({
-      project: projectId,
-    });
-    if (!deleteResponse) {
-      return new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+module.exports.deleteRequirementQueryAssumption = async (requirementList) => {
+  var batch_find_queryAssumptionModel =
+    QueryAssumptionModel.collection.initializeOrderedBulkOp();
+
+  requirementList.forEach((requirementId, i) => {
+    var projectRequirementId = "";
+    if (requirementId.length != 0) {
+      projectRequirementId = mongoose.Types.ObjectId(requirementId);
     }
-    return formatMongoData(deleteResponse);
-};
 
-
-module.exports.deleteRequirementQueryAssumption = async (requirementList ) => {
-
-  var batch_find_queryAssumptionModel = QueryAssumptionModel.collection.initializeOrderedBulkOp();
-  
-    requirementList.forEach( (requirementId,i) => {
-      var projectRequirementId = '';
-      if (requirementId.length != 0) {
-          projectRequirementId = mongoose.Types.ObjectId(requirementId);
-      }
-
-        batch_find_queryAssumptionModel.find({
-          projectRequirement: projectRequirementId,
-       }).delete();      
-           
-    });
-  const result = await batch_find_queryAssumptionModel.execute(function (err, result2) {
+    batch_find_queryAssumptionModel
+      .find({
+        projectRequirement: projectRequirementId,
+      })
+      .delete();
+  });
+  const result = await batch_find_queryAssumptionModel.execute(function (
+    err,
+    result2
+  ) {
     console.log(result2);
-   });
-  
-    return formatMongoData(result);
+  });
+
+  return formatMongoData(result);
 };
 
+module.exports.deleteSelectedProjectRequirement = async (requirementList) => {
+  var bulk_projectRequirement =
+    ProjectRequirement.collection.initializeUnorderedBulkOp();
 
+  requirementList.forEach(async (requirementId, i) => {
+    var projectRequirementId = "";
+    if (requirementId.length != 0) {
+      projectRequirementId = mongoose.Types.ObjectId(requirementId);
+    }
 
-module.exports.deleteSelectedProjectRequirement = async (requirementList ) => {
+    bulk_projectRequirement
+      .find({
+        _id: projectRequirementId,
+      })
+      .delete();
+  });
 
-  var bulk_projectRequirement = ProjectRequirement.collection.initializeUnorderedBulkOp();
-  
-    requirementList.forEach(async (requirementId,i) => {
-      var projectRequirementId = '';
-      if (requirementId.length != 0) {
-          projectRequirementId = mongoose.Types.ObjectId(requirementId);
-      }
-         
-      bulk_projectRequirement.find({
-          _id: projectRequirementId,
-      }).delete(); 
-
-    });
-  
-    const result = await bulk_projectRequirement.execute(function (err, result2) {
+  const result = await bulk_projectRequirement.execute(function (err, result2) {
     console.log(result2);
-    });
-  
-    return formatMongoData(result);
+  });
+
+  return formatMongoData(result);
 };
 
- async function getNextSequenceValue(sequenceName, increment){
-  let sequenceDocument =  await ReqCounter.findOneAndUpdate({key: sequenceName },
-     {$inc:{seq:increment}},
-     {new:true}
+async function getNextSequenceValue(sequenceName, increment) {
+  let sequenceDocument = await ReqCounter.findOneAndUpdate(
+    { key: sequenceName },
+    { $inc: { seq: increment } },
+    { new: true }
   );
-  if(!sequenceDocument){
-   await ReqCounter.create({key:sequenceName, seq:increment});
-  return 1;
+  if (!sequenceDocument) {
+    await ReqCounter.create({ key: sequenceName, seq: increment });
+    return 1;
   }
   return sequenceDocument.seq;
 }

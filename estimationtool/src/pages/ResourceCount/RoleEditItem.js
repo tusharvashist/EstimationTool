@@ -20,7 +20,6 @@ const RoleEditItem = (props) => {
   const [adjustedTrueRole, setAdjustedTrueRole] = useState("");
 
   useEffect(() => {
-    // getResourceMasterRoleData(props.rowEditData._id);
     setResourceCountData();
   }, [props]);
 
@@ -37,7 +36,6 @@ const RoleEditItem = (props) => {
       props.rowEditData.rolecount[0].defaultAdjusted = true;
       setAdjustedTrueRole(props.rowEditData.rolecount[0]._id);
     }
-    console.log("edit this");
     setRoleData(props.rowEditData.rolecount);
   };
 
@@ -87,7 +85,8 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then(() => {
+      .then((updateRes) => {
+        props.handleValidationOnUpdate(updateRes);
         ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
           .then((countRes) => {
             props.handleEditChange(countRes.data.body, props.rowEditData._id);
@@ -95,8 +94,6 @@ const RoleEditItem = (props) => {
           .catch((error) => {
             console.log(error);
           });
-        // getResourceMasterRoleData(props.rowEditData._id);
-        // setValue(!value);
       })
       .catch((err) => {
         if (err.response === undefined) console.log(err);
@@ -128,7 +125,8 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then(() => {
+      .then((updateRes) => {
+        props.handleValidationOnUpdate(updateRes);
         setDisabledState(false);
         ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
           .then((countRes) => {

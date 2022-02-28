@@ -23,8 +23,6 @@ import classes from "./thirdStepStyle.module.css";
 import { useHistory } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 
-
-
 const ThirdStep = (props) => {
   const roleState = useSelector((state) => state.role);
   const [loaderComponent, setLoader] = useLoader();
@@ -37,7 +35,6 @@ const ThirdStep = (props) => {
   const [calAttriValues, setcalAttriValues] = useState(null);
   const [requirementTagArray, setRequirementTagArray] = useState([]);
   const [multiselectOptions, setmultiselectOptions] = useState([]);
-
 
   useEffect(() => {
     getCalcAttribute();
@@ -193,14 +190,13 @@ const ThirdStep = (props) => {
     }
 
     let filterArray = [];
-   data.formulaTags.map((item) => {
+    data.formulaTags.map((item) => {
       let ob = {
         _id: item.id || item._id,
         name: item.name,
       };
       filterArray.push(ob);
     });
-
 
     // settting data on the same state where we store all data
     const newData = attributes.map((att) => {
@@ -241,7 +237,6 @@ const ThirdStep = (props) => {
       const newData = attributes.map((obj) => {
         if (obj._id === data._id) {
           return { ...obj, [target.name]: target.value };
-         
         } else {
           return obj;
         }
@@ -255,7 +250,6 @@ const ThirdStep = (props) => {
     const newData = attributes.map((obj) => {
       if (obj._id === checkConfig._id) {
         return { ...obj, selected: checked };
-        
       } else {
         return obj;
       }

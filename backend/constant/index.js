@@ -38,6 +38,7 @@ module.exports = {
     estHeaderCalculatedAttribute: [],
     isReqValid: { err: [], isValid: true },
     estimationVersions: [],
+    estimationSharePermission: {},
   },
 
   requirementListResponse: {
@@ -351,9 +352,9 @@ module.exports = {
     FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
   },
 
-  emailType:{
-    ESTIMATION:"Estimation",
-    ESTIMATION_SUBJECT:"Estimation Shared with you"
+  emailType: {
+    ESTIMATION: "Estimation",
+    ESTIMATION_SUBJECT: "Estimation Shared with you",
   },
   SharingMessage: {
     Sharing_ERROR: "Sharing creation fails",
@@ -365,5 +366,4 @@ module.exports = {
     Sharing_UPDATE: "Estimation Sharing updated successfully",
     Sharing_DELETE: "Estimation Sharing deleted successfully",
   },
-
 };

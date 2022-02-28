@@ -123,10 +123,11 @@ const EstimationDetail = () => {
   const [isVersionDialogOpen, setIsVersionDialogOpen] = useState(false);
   const [openExport, setOpenExport] = useState(false);
   const [isEstimationReleased, setIsEstimationReleased] = useState(false);
-  const [isEstDeactivated, setIsEstDeactivated] = useState(false); 
+  const [isEstDeactivated, setIsEstDeactivated] = useState(false);
   const [estVersions, setEstimationVersions] = useState([]);
   const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
   const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
+  const [refreshCount, setRefreshCount] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -154,7 +155,7 @@ const EstimationDetail = () => {
 
   const closeVersionDialogFun = () => {
     setIsVersionDialogOpen(false);
-  };  
+  };
   const saveEditConfigFun = () => {
     closeFun();
     getById();
@@ -407,7 +408,7 @@ const EstimationDetail = () => {
       EstimationService.updateEstRequirementData(editedValueArray)
         .then((res) => {
           setLoader(false);
-
+          setRefreshCount(!refreshCount);
           getRequirementDataById();
         })
         .catch((error) => {
@@ -559,6 +560,7 @@ const EstimationDetail = () => {
         let newEstHeaderObj = res.data.body;
         // estimationId update the value for this Id and reload the page
         estimationId = newEstHeaderObj._id;
+        dispatch(setEstHeaderId(newEstHeaderObj._id));
         setOpen({
           open: true,
           severity: "success",
@@ -627,6 +629,7 @@ const EstimationDetail = () => {
           data={estimationId}
           errorFunction={handleCountError}
           countError={countError}
+          refresh={refreshCount}
         />
       ) : null}
       {/* ///========= JSX- Resource Count Pop up and table - END =========/// */}

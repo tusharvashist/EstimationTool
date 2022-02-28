@@ -3,38 +3,37 @@ import React, { useState, useEffect } from "react";
 import "./allestimation.css";
 import AllestimationSer from "./allestimation.service";
 import { Link } from "react-router-dom";
-import {  Paper } from "@material-ui/core";
+import { Paper } from "@material-ui/core";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import useLoader from "../../shared/layout/hooks/useLoader";
 import { useHistory } from "react-router-dom";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import { useSelector, useDispatch } from "react-redux";
+import { setEstHeaderId } from "../../Redux/estimationHeaderId";
+
 function Home() {
+  const dispatch = useDispatch();
   const [tableData, setTableData] = useState([]);
   const [loaderComponent, setLoader] = useLoader();
-  const {clientView, projectView, estimationView} = usePermission();
+  const { clientView, projectView, estimationView } = usePermission();
   const [isOpenDailog, setIsOpenDailog] = useState(false);
 
   useEffect(() => {
     setLoader(true);
-    AllestimationSer.getAllEstimation().then((res) => {
-      setLoader(false);
-      let dataResponce = res.data.body;
-      if (tableData.length !== 0) {
-        if (tableData.id == dataResponce.id) {
-          return;
+    AllestimationSer.getAllEstimation()
+      .then((res) => {
+        setLoader(false);
+        let dataResponce = res.data.body;
+        if (tableData.length !== 0) {
+          if (tableData.id == dataResponce.id) {
+            return;
+          }
         }
-      }
-      // console.log("dataResponce", res.data.body);
-      setTableData([...dataResponce]);
-    }
-
-    ).catch((err) => {
-    
-
-    });
+        // console.log("dataResponce", res.data.body);
+        setTableData([...dataResponce]);
+      })
+      .catch((err) => {});
   }, []);
-
-
 
   const checkStep = (data) => {
     if (data.estStep == "3") {
@@ -49,6 +48,7 @@ function Home() {
               "/Estimation-Detail",
             state: { estId: data.id },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(data.id))}
         >
           {" "}
           {data.estName}
@@ -71,6 +71,7 @@ function Home() {
               step: data.estStep,
             },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(data.id))}
         >
           {" "}
           {data.estName}
@@ -90,6 +91,7 @@ function Home() {
               estId: data.id,
             },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(data.id))}
         >
           {" "}
           {data.estName}
@@ -111,6 +113,7 @@ function Home() {
               "/Estimation-Detail",
             state: { estId: data.id },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(data.id))}
         >
           {" "}
           {data.estDescription}
@@ -133,6 +136,7 @@ function Home() {
               step: data.estStep,
             },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(data.id))}
         >
           {" "}
           {data.estDescription}
@@ -152,6 +156,7 @@ function Home() {
               estId: data.id,
             },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(data.id))}
         >
           {" "}
           {data.estDescription}
@@ -166,16 +171,14 @@ function Home() {
       field: "estName",
       sorting: false,
       render: (rowData) => {
-        return (estimationView ? checkStep(rowData) : rowData.estName);
-
+        return estimationView ? checkStep(rowData) : rowData.estName;
       },
     },
     {
       title: "Estimation Description",
       field: "estDescription",
       render: (rowData) => {
-        return (estimationView ? checkStepDes(rowData) : rowData.estDescription);
-      
+        return estimationView ? checkStepDes(rowData) : rowData.estDescription;
       },
       width: "15%",
     },
@@ -184,8 +187,8 @@ function Home() {
       title: "Client Name",
       field: "projectId.client.clientName",
       render: (rowData) => {
-        return (
-        clientView ? ( <Link
+        return clientView ? (
+          <Link
             to={{
               pathname:
                 "/All-Clients" + "/" + rowData.projectId.client.clientName,
@@ -193,7 +196,9 @@ function Home() {
           >
             {" "}
             {rowData.projectId.client.clientName}
-          </Link> ) : rowData.projectId.client.clientName
+          </Link>
+        ) : (
+          rowData.projectId.client.clientName
         );
       },
     },
@@ -201,8 +206,8 @@ function Home() {
       title: "Project Name",
       field: "projectId.projectName",
       render: (rowData) => {
-        return (
-         projectView ? (<Link
+        return projectView ? (
+          <Link
             to={{
               pathname:
                 "/All-Clients/" +
@@ -214,7 +219,9 @@ function Home() {
           >
             {" "}
             {rowData.projectId.projectName}
-          </Link> ) : rowData.projectId.projectName
+          </Link>
+        ) : (
+          rowData.projectId.projectName
         );
       },
     },
@@ -230,31 +237,34 @@ function Home() {
 
   return (
     <BorderedContainer>
-      {loaderComponent ? loaderComponent : <MaterialTable
-        elevation={0}
-        components={{
-          Container: (props) => <Paper {...props} elevation={0} />,
-        }}
-        columns={columns}
-        options={{
-          actionsColumnIndex: -1,
-          sorting: true,
-          search: false,
-          filtering: false,
-          pageSize: 5,
-          paging: false,
-          headerStyle: {
-            backgroundColor: "#e5ebf7",
-            fontWeight: "bold",
-            fontSize: "0.9rem",
-            color: "#113c91",
-          },
-        }}
-        data={tableData}
-        title={`Recent Estimation${tableData.length > 1 ? "s" : ""}`}
-        style={{ fontSize: "0.9rem" }}
-      />
-      }
+      {loaderComponent ? (
+        loaderComponent
+      ) : (
+        <MaterialTable
+          elevation={0}
+          components={{
+            Container: (props) => <Paper {...props} elevation={0} />,
+          }}
+          columns={columns}
+          options={{
+            actionsColumnIndex: -1,
+            sorting: true,
+            search: false,
+            filtering: false,
+            pageSize: 5,
+            paging: false,
+            headerStyle: {
+              backgroundColor: "#e5ebf7",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+              color: "#113c91",
+            },
+          }}
+          data={tableData}
+          title={`Recent Estimation${tableData.length > 1 ? "s" : ""}`}
+          style={{ fontSize: "0.9rem" }}
+        />
+      )}
     </BorderedContainer>
   );
 }
