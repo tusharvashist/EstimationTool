@@ -13,6 +13,8 @@ const ClientService = {
     let projectId = "/" + projectid;
     return axios.get(url + projectId);
   },
+
+  
   getAllClient: function () {
     let url = Url.allClient;
     return axios.get(url + "?skip=0&limit=10");

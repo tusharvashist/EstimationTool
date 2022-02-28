@@ -3,6 +3,7 @@ const Project = require("../database/models/projectModel");
 const Client = require("../database/models/clientModel");
 const { formatMongoData } = require("../helper/dbhelper");
 const mongoose = require("mongoose");
+const ShareDataModel = require("../database/models/shareDataModel");
 
 module.exports.createProject = async (serviceData) => {
   try {
@@ -61,6 +62,19 @@ module.exports.getProjectById = async ({ id }) => {
         //TODO: Please do not remove below liine , will implement this when implement token based permission things
         //match: { $or: [{createdBy: global.loginId}, {updatedBy: global.loginId}]}
       });
+      const estimatesTemp = project.estimates;
+      let estimates = [];
+      for(const estimate of estimatesTemp) {
+        if(estimate){          
+          const sharedEst = await ShareDataModel.findOne({typeId: estimate._id, shareUserId: global.loginId});
+          const createdBy = estimate.createdBy !=null ? estimate.createdBy._id : '';
+          const typeId = sharedEst!=null && sharedEst.typeId !=null ? sharedEst.typeId : '';           
+          if(createdBy == global.loginId || (sharedEst!=null && typeId.equals(estimate._id) && sharedEst.shareUserId == global.loginId)){
+            estimates.push(estimate);
+          }
+        }
+      }
+      project.estimates = estimates;
     if (!project) {
       throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
     }

@@ -11,30 +11,43 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import ShareEstimateDialogService from "./ShareEstimateDialogService";
 
+const WAIT_INTERVAL = 3000;
+const ENTER_KEY = 13;
+
 const ShareEstimationDialog = (props) => {
 
-  const [selectedEstimation, setSelectedEstimation] = useState();
-  
+  const [selectedEstimation, setSelectedEstimation] = useState();  
   const [roleMasterList, setRoleMasterList] = useState();
-  const top100Films = [
-    { title: "The Shawshank Redemption", year: 1994 },
-    { title: "The Godfather", year: 1972 },
-    { title: "The Godfather: Part II", year: 1974 },
-    { title: "The Dark Knight", year: 2008 },
-    { title: "12 Angry Men", year: 1957 },
-    { title: "Schindler's List", year: 1993 },
-    { title: "Pulp Fiction", year: 1994 },
-  ];
+  const [userList, setUserList] = useState([]);
+  
+  const [searchKeyword, setSearchKeyword] = useState("");
+const [timer, setTimer] = useState([]);
+  useEffect(() => {
+    setSelectedEstimation(props.selectedEstimation);
+    getRole();
+  }, [props.selectedEstimation]);
 
+  const handleChange = (e) => {
+    if (timer !== null) {
+      clearTimeout(timer);
+    }
 
-useEffect(() => {
-  setSelectedEstimation(props.selectedEstimation);
-  getRole();
-}, [props.selectedEstimation]);
+    setSearchKeyword(e.target.value);
+    setTimer( setTimeout(() => { getPCUserDetails() }, WAIT_INTERVAL));
+  };
   
-  
-  
-  
+  const getPCUserDetails = () => {
+    ShareEstimateDialogService.getPCUserDetails(searchKeyword)
+      .then((res) => {
+        let roleList = res.data.body;
+        setUserList(roleList);
+      //   setRoleMasterList(roleList);
+      //    console.log("get Client by id error", roleList);
+      }).catch((err) => {
+        console.log("get Client by id error", err);
+      });
+  };
+
   const getRole = () => {
     ShareEstimateDialogService.getRole()
       .then((res) => {
@@ -47,8 +60,7 @@ useEffect(() => {
       });
   };
   
-  
-  console.log("selectedEstimation : ", selectedEstimation);
+  console.log("selectedEstimation : ", selectedEstimation);  
   
   const handleChipClick = () => { };
   
@@ -118,14 +130,17 @@ useEffect(() => {
           <Autocomplete
             multiple
             id="tags-outlined"
-            options={top100Films}
-            getOptionLabel={(option) => option.title}
+            options={userList}
+            getOptionLabel={(option) => option.EmpFName + " " + option.EmpLName }
             filterSelectedOptions
             renderInput={(params) => (
               <TextField
                 {...params}
                 label="filterSelectedOptions"
                 placeholder="Favorites"
+                onChange={(e) => {
+                handleChange(e);
+              }}
               />
             )}
           />

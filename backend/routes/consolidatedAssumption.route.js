@@ -30,3 +30,19 @@ router.put(
 );
 
 module.exports = router;
+
+//linkAssumptionWithEstimation
+
+router.put(
+  "/mapWithEstimation/:id",
+  tokenValidation.validateToken,
+  consolidatedAssumptionController.linkAssumptionWithEstimation
+);
+
+router.get(
+  "/getLinkAssumptionWithEstimation/:id",
+  tokenValidation.validateToken,
+  consolidatedAssumptionController.getLinkAssumptionWithEstimation
+);
+
+module.exports = router;

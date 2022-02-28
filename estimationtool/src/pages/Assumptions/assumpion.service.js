@@ -16,6 +16,17 @@ const assumptionService = {
       url,
     });
   },
+  getLinkAssumptionWithEstimation: function (estHeaderId) {
+    let url = Url.allAssumptions + "/getLinkAssumptionWithEstimation/" + estHeaderId;
+    return axios({
+      method: "GET",
+      url,
+    });
+  },
+  mapWithEstimation: function (assumptionId, estHeaderId) {
+    let url = Url.allAssumptionsTags + "/mapWithEstimation/" + assumptionId;
+    return axios.put(url, estHeaderId);
+  },
   addAssumption: function (assumption, assumptionTag) {
     let url = Url.allAssumptions;
     return axios({
