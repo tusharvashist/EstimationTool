@@ -180,22 +180,26 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
             element._id
           );
       }
-      if (element.rolecount.length > 0) {
-        var count = element.rolecount
-          .map((resplan) => resplan.count)
-          .reduce((acc, resplan) => resplan + acc);
-        let maxcount = Math.ceil(element?.resourceCount);
-        if (maxcount != count) {
-          element.validationerror = true;
-        }
-      } else {
-        element.validationerror = true;
-      }
+      SetResourceValidation(element);
     }
 
     return result;
   } catch (err) {
     throw new Error(err);
+  }
+
+  function SetResourceValidation(element) {
+    if (element.rolecount.length > 0) {
+      var count = element.rolecount
+        .map((resplan) => resplan.count)
+        .reduce((acc, resplan) => resplan + acc);
+      let maxcount = Math.ceil(element?.resourceCount);
+      if (maxcount != count) {
+        element.validationerror = true;
+      }
+    } else {
+      element.validationerror = true;
+    }
   }
 };
 
@@ -256,7 +260,18 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       };
       groupby = "$estCalcId";
     }
-    let rescount = await EstResourceCount.findOne(filter);
+    //let rescount = await EstResourceCount.findOne(filter);
+    let rescount = await EstResourceCount.aggregate([
+      {
+        $match: filter,
+      },
+      {
+        $addFields: {
+          validationerror: false,
+        },
+      },
+    ]);
+
     if (updatedInfo.qty > 0) {
       //Logic for Resource Count Data check
 
@@ -273,22 +288,22 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
         },
       ]);
 
-      let maxcount = Math.ceil(rescount?.resourceCount);
+      let maxcount = Math.ceil(rescount[0]?.resourceCount);
 
       let totalresource = 0;
       if (mixsum.length > 0) {
         totalresource = mixsum[0].sum;
       }
-      let mincount = rescount.resourceCount - totalresource;
+      let mincount = rescount[0].resourceCount - totalresource;
 
       if (totalresource >= maxcount) {
         //Not To any Add Resource and throw exception
         throw new Error(
           "Resource Planning already done for this resource count " +
-            rescount?.resourceCount
+            rescount[0]?.resourceCount
         );
       }
-
+      if (totalresource + 1 < maxcount) rescount[0].validationerror = true;
       let estResourcePlanning = new EstResourcePlanning();
       estResourcePlanning.defaultAdjusted = updatedInfo.defaultAdjusted;
       estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
@@ -312,15 +327,15 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
         //Not To any Remove Resource and throw exception
         throw new Error(
           "All Resource removed for this resource count data " +
-            rescount?.resourceCount
+            rescount[0]?.resourceCount
         );
       }
+      rescount[0].validationerror = true;
     }
     //Update only defaultAdjusted flag
-    return await SetResourceDefaultAdjusted(
-      filter,
-      updatedInfo.defaultAdjusted
-    );
+    await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
+
+    return rescount[0];
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Planning",

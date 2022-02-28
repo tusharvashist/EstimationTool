@@ -8,16 +8,18 @@ module.exports.createShareData = async (serviceData) => {
     for (let estimation of serviceData.Estimations) {
       for (let user of serviceData.Users) {
         let sharedata = new ShareDataModel({
-          typeId: estimation.id,
+          typeId: mongoose.Types.ObjectId(estimation.id),
           typeName: "E",
-          roleId: serviceData.RoleId,
+          roleId: mongoose.Types.ObjectId(serviceData.RoleId),
           ownerUserId: global.loginId,
-          shareUserId: user.id,
+          shareUserId: mongoose.Types.ObjectId(user.id),
         });
-        await ShareDataModel.deleteMany({
-          typeId: estimation.id,
-          shareUserId: user.id,
-          typeName: "E",
+        await ShareDataModel.deleteOne({
+          $and: [
+            { typeId: mongoose.Types.ObjectId(estimation.id) },
+            { shareUserId: mongoose.Types.ObjectId(user.id) },
+            { typeName: "E" },
+          ],
         });
         await sharedata.save();
       }
