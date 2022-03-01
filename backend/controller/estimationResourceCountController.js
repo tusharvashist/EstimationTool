@@ -45,7 +45,6 @@ module.exports.updateTechnologyResourceCount = async (req, res) => {
   return res.status(responce.status).send(responce);
 };
 
-
 module.exports.updateResourcePlanning = async (req, res) => {
   let responce = { ...constant.defaultResponce };
   try {
@@ -56,6 +55,20 @@ module.exports.updateResourcePlanning = async (req, res) => {
     responce.status = 200;
     responce.message = constant.ResourceCountMessage.ResourceRoleCount_UPDATE;
     responce.body = responceGetByID;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};
+
+module.exports.GetResourceCountRoleData = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responseRole =
+      await estimationResourceCountService.GetResourceCountRoleData(req.query);
+    responce.status = 200;
+    responce.message = constant.ResourceCountMessage.ResourceCount_FETCH;
+    responce.body = responseRole;
   } catch (err) {
     responce.message = err.message;
   }

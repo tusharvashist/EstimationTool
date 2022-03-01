@@ -8,6 +8,7 @@ const EstResourceCount = require("../database/models/estResourceCount");
 const { ObjectId } = require("mongodb");
 const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const { string } = require("joi");
+//const { result } = require("lodash");
 
 module.exports.generateResourceCount = async ({ estheaderid }) => {
   try {
@@ -18,10 +19,14 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
     let estHeaderRequirement =
       await RequirementRepository.getAttributesCalAttributesTotal(estheaderid);
 
-      estHeaderRequirement.EstimationAttributes = 
-      estHeaderRequirement.EstimationAttributes.filter((item) => item.Total > 0);
-      estHeaderRequirement.EstimationCalcAttributes = 
-      estHeaderRequirement.EstimationCalcAttributes.filter((item) => item.Total > 0);
+    estHeaderRequirement.EstimationAttributes =
+      estHeaderRequirement.EstimationAttributes.filter(
+        (item) => item.Total > 0
+      );
+    estHeaderRequirement.EstimationCalcAttributes =
+      estHeaderRequirement.EstimationCalcAttributes.filter(
+        (item) => item.Total > 0
+      );
 
     //Delete All Attribute & Cal Attribute which is not currently in use but saved previously.
     let rescountList = await EstResourceCount.find({
@@ -42,23 +47,23 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
           estHeaderId: ObjectId(estheaderid),
           estAttributeId: element.estAttributeId,
         });
-         // remove resource allocation
-        let deleted = await EstResourcePlanning.deleteMany({
-        estHeaderId: ObjectId(estheaderid),
-        estAttributeId: element.estAttributeId,
-         });
+        // remove resource allocation
+        await EstResourcePlanning.deleteMany({
+          estHeaderId: ObjectId(estheaderid),
+          estAttributeId: element.estAttributeId,
+        });
       }
-        
+
       if (element.estCalcId != undefined && checkcalcexists.length == 0) {
         await EstResourceCount.deleteOne({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
         });
-         // remove resource allocation
-         let deleted = await EstResourcePlanning.deleteMany({
+        // remove resource allocation
+        await EstResourcePlanning.deleteMany({
           estHeaderId: ObjectId(estheaderid),
           estCalcId: element.estCalcId,
-      });
+        });
       }
     });
 
@@ -69,10 +74,9 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       if (element.Total == 0) {
         return;
       }
-      let resourceCount = (
+      let resourceCount =
         element.Total /
-        (global.ResourceWeekHours * estimation.estTentativeTimeline)
-      ).toFixed(2);
+        (global.ResourceWeekHours * estimation.estTentativeTimeline); //.toFixed(2);
 
       bulk
         .find({
@@ -95,10 +99,9 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
       if (element.Total == 0) {
         return;
       }
-      let resourceCount = (
+      let resourceCount =
         element.Total /
-        (global.ResourceWeekHours * estimation.estTentativeTimeline)
-      ).toFixed(2);
+        (global.ResourceWeekHours * estimation.estTentativeTimeline); //.toFixed(2);
 
       bulk
         .find({
@@ -125,68 +128,67 @@ module.exports.generateResourceCount = async ({ estheaderid }) => {
 };
 
 module.exports.getResourceCount = async ({ estheaderid }) => {
-  let result = await EstResourceCount.aggregate([
-    {
-      $match: {
-        estHeaderId: mongoose.Types.ObjectId(estheaderid),
+  try {
+    let result = await EstResourceCount.aggregate([
+      {
+        $match: {
+          estHeaderId: mongoose.Types.ObjectId(estheaderid),
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "techskillmasters",
-        localField: "techSkill",
-        foreignField: "_id",
-        as: "skills",
+      {
+        $lookup: {
+          from: "techskillmasters",
+          localField: "techSkill",
+          foreignField: "_id",
+          as: "skills",
+        },
       },
-    },
-    {
-      $unwind: {
-        path: "$skills",
-        preserveNullAndEmptyArrays: true,
+      {
+        $unwind: {
+          path: "$skills",
+          preserveNullAndEmptyArrays: true,
+        },
       },
-    },
-    {
-      $project: {
-        _id: "$_id",
-        resourceCount: "$resourceCount",
-        estAttributeId: "$estAttributeId",
-        estHeaderId: "$estHeaderId",
-        estCalcId: "$estCalcId",
-        attributeName: "$attributeName",
-        skills: "$skills.skill",
-        skillsId: "$skills._id",
+      {
+        $project: {
+          _id: "$_id",
+          resourceCount: "$resourceCount",
+          estAttributeId: "$estAttributeId",
+          estHeaderId: "$estHeaderId",
+          estCalcId: "$estCalcId",
+          attributeName: "$attributeName",
+          skills: "$skills.skill",
+          skillsId: "$skills._id",
+        },
       },
-    },
-    {
-      $addFields: {
-        rolecount: [],
-        validationerror: false,
+      {
+        $addFields: {
+          rolecount: [],
+          validationerror: false,
+        },
       },
-    },
-  ]);
+    ]);
 
-  let data = await ResourceCountRepository.getResourceMixData(estheaderid);
-
-  data.forEach(async (element) => {
-    let exists = {};
-    if (element.estAttributeId) {
-      exists = result.filter(
-        (x) => String(x.estAttributeId) == String(element.estAttributeId)
-      );
-      if (exists.length > 0) {
-        exists[0]["rolecount"].push(element);
+    for (let element of result) {
+      //Add Role master data in RoleCount
+      if (
+        element.skillsId != undefined &&
+        String(element.skillsId).length > 0
+      ) {
+        element.rolecount =
+          await ResourceCountRepository.GetResourceCountResourceData(
+            element._id
+          );
       }
-    } else if (element.estCalcId) {
-      exists = result.filter(
-        (x) => String(x.estCalcId) == String(element.estCalcId)
-      );
-      if (exists.length > 0) {
-        exists[0]["rolecount"].push(element);
-      }
+      SetResourceValidation(element);
     }
-  });
 
-  result.forEach(async (element) => {
+    return result;
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  function SetResourceValidation(element) {
     if (element.rolecount.length > 0) {
       var count = element.rolecount
         .map((resplan) => resplan.count)
@@ -198,9 +200,7 @@ module.exports.getResourceCount = async ({ estheaderid }) => {
     } else {
       element.validationerror = true;
     }
-  });
-
-  return result;
+  }
 };
 
 module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
@@ -231,8 +231,9 @@ module.exports.updateTechnologyResourceCount = async ({ updatedInfo }) => {
         $and: [filter],
       });
     }
-
-    return formatMongoData(result);
+    return await ResourceCountRepository.GetResourceCountResourceData(
+      String(rescount._id)
+    );
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Count Technology ",
@@ -259,7 +260,18 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       };
       groupby = "$estCalcId";
     }
-    let rescount = await EstResourceCount.findOne(filter);
+    //let rescount = await EstResourceCount.findOne(filter);
+    let rescount = await EstResourceCount.aggregate([
+      {
+        $match: filter,
+      },
+      {
+        $addFields: {
+          validationerror: false,
+        },
+      },
+    ]);
+
     if (updatedInfo.qty > 0) {
       //Logic for Resource Count Data check
 
@@ -276,22 +288,22 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
         },
       ]);
 
-      let maxcount = Math.ceil(rescount?.resourceCount);
+      let maxcount = Math.ceil(rescount[0]?.resourceCount);
 
       let totalresource = 0;
       if (mixsum.length > 0) {
         totalresource = mixsum[0].sum;
       }
-      let mincount = rescount.resourceCount - totalresource;
+      let mincount = rescount[0].resourceCount - totalresource;
 
       if (totalresource >= maxcount) {
         //Not To any Add Resource and throw exception
         throw new Error(
           "Resource Planning already done for this resource count " +
-            rescount?.resourceCount
+            rescount[0]?.resourceCount
         );
       }
-
+      if (totalresource + 1 < maxcount) rescount[0].validationerror = true;
       let estResourcePlanning = new EstResourcePlanning();
       estResourcePlanning.defaultAdjusted = updatedInfo.defaultAdjusted;
       estResourcePlanning.estResourceCountID = updatedInfo.estResourceCountID;
@@ -301,8 +313,7 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
       estResourcePlanning.resourceRoleID = updatedInfo.resourceRoleID;
       //Then check for allocation percentage
       this.SetAllocationPercent(mincount, estResourcePlanning);
-      await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
-      return estResourcePlanning.save();
+      estResourcePlanning.save();
     } else if (updatedInfo.qty < 0) {
       let deleted = await EstResourcePlanning.findOneAndDelete({
         $and: [
@@ -316,14 +327,15 @@ module.exports.updateResourcePlanning = async ({ updatedInfo }) => {
         //Not To any Remove Resource and throw exception
         throw new Error(
           "All Resource removed for this resource count data " +
-            rescount?.resourceCount
+            rescount[0]?.resourceCount
         );
       }
-      await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
-      return deleted;
+      rescount[0].validationerror = true;
     }
     //Update only defaultAdjusted flag
     await SetResourceDefaultAdjusted(filter, updatedInfo.defaultAdjusted);
+
+    return rescount[0];
   } catch (err) {
     console.log(
       "something went wrong: service > Update Resource Planning",
@@ -379,4 +391,10 @@ module.exports.SetAllocationPercent = (mincount, estResourcePlanning) => {
     default:
       estResourcePlanning.allocationPercent = 100;
   }
+};
+
+module.exports.GetResourceCountRoleData = async ({ estResourceCountID }) => {
+  return ResourceCountRepository.GetResourceCountResourceData(
+    estResourceCountID
+  );
 };

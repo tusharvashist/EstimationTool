@@ -6,14 +6,6 @@ const joiClientSchema = require("../apiSchma/jioClientSchema");
 const tokenValidation = require("../middleware/tokenValidationJwt");
 const resourceMixController = require("../controller/resourcemixController");
 
-//----- Create -----------
-// router.post(
-//   "/",
-//   tokenValidation.validateToken,
-//   joiSchemaValidation.validateBody(joiClientSchema.createClientSchema),
-//   clientController.createClient
-// );
-
 //----- Generate Resource Count -----------
 router.get(
   "/",
@@ -27,6 +19,11 @@ router.get(
   resourceCountController.getResourceCount
 );
 
+router.get(
+  "/rolecount",
+  tokenValidation.validateToken,
+  resourceCountController.GetResourceCountRoleData
+);
 //----- Update Technology-----------
 router.put(
   "/updatetechnology",
@@ -47,19 +44,4 @@ router.get(
   tokenValidation.validateToken,
   resourceMixController.getResourceMix
 );
-
-//----- Get all List -----------
-// router.get(
-//   "/",
-//   tokenValidation.validateToken,
-//   joiSchemaValidation.validateQueryParams(joiClientSchema.getallClients),
-//   clientController.getAllClient
-// );
-
-//----- Delete -----------
-// router.delete(
-//   "/:id",
-//   tokenValidation.validateToken,
-//   clientController.clientDelete
-// );
 module.exports = router;

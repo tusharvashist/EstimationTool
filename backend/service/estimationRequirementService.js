@@ -11,6 +11,8 @@ const RequirementRepository = require("../repository/requirementRepository");
 
 const EstimationHeaderAttributeCalc = require("../database/models/estimationHeaderAtrributeCalcModel");
 const { defaultResponce } = require("../constant");
+const ShareDataModel = require("../database/models/shareDataModel");
+const userService = require("../service/userService");
 
 module.exports.create = async (serviceData) => {
   try {
@@ -19,7 +21,7 @@ module.exports.create = async (serviceData) => {
     );
 
     if (requirement !== false) {
-       await RequirementRepository.createQueryAssumption(
+      await RequirementRepository.createQueryAssumption(
         requirement._id,
         serviceData
       );
@@ -109,15 +111,15 @@ module.exports.getUnpairedRequirementEstimation = async (query) => {
   }
 };
 
-
 module.exports.updateManualCallAttribute = async (id, updateInfo) => {
   try {
-    var bulk = EstimationHeaderAttributeCalc.collection.initializeUnorderedBulkOp();
+    var bulk =
+      EstimationHeaderAttributeCalc.collection.initializeUnorderedBulkOp();
     updateInfo.forEach(async (serviceData) => {
       let manualCallAttribute = new EstimationHeaderAttributeCalc({
         ...serviceData,
       });
-       bulk
+      bulk
         .find({
           _id: manualCallAttribute._id,
         })
@@ -155,34 +157,29 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
 
       var projectReq = ProjectRequirement();
       findRecord.forEach((record) => {
-        console.log("Req: ",String(record._id));
+        console.log("Req: ", String(record._id));
         if (String(record._id) == id) {
           alreadyAvailable = false;
           projectReq = record;
         }
       });
 
-      if(alreadyAvailable) {
+      if (alreadyAvailable) {
         throw new Error(constant.requirementMessage.DUPLICATE_REQUIREMENT);
       } else {
-           let requirement = await ProjectRequirement.findOneAndUpdate(
-            { _id: projectReq._id },
-            updateInfo,
-            { new: true }
-          );
-          if (!requirement) {
-            throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
-          }
+        let requirement = await ProjectRequirement.findOneAndUpdate(
+          { _id: projectReq._id },
+          updateInfo,
+          { new: true }
+        );
+        if (!requirement) {
+          throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
+        }
 
-           await RequirementRepository.updateQuery(
-            requirement._id,
-            updateInfo
-          );
+        await RequirementRepository.updateQuery(requirement._id, updateInfo);
 
-          return formatMongoData(requirement);
+        return formatMongoData(requirement);
       }
-
-
     } else {
       let requirement = await ProjectRequirement.findOneAndUpdate(
         { _id: id },
@@ -193,10 +190,7 @@ module.exports.updateRequirement = async ({ id, updateInfo }) => {
         throw new Error(constant.requirementMessage.REQUIREMENT_NOT_FOUND);
       }
 
-       await RequirementRepository.updateQuery(
-        requirement._id,
-        updateInfo
-      );
+      await RequirementRepository.updateQuery(requirement._id, updateInfo);
     }
   } catch (err) {
     throw new Error(err);
@@ -209,7 +203,7 @@ module.exports.updateRequirementData = async (serviceDataArray) => {
     var bulk = EstRequirementData.collection.initializeUnorderedBulkOp();
     serviceDataArray.data.forEach(async (serviceData) => {
       let estRequirementData = new EstRequirementData({ ...serviceData });
-       bulk
+      bulk
         .find({
           ESTAttributeID: estRequirementData.ESTAttributeID,
           ESTHeaderRequirementID: estRequirementData.ESTHeaderRequirementID,
@@ -275,17 +269,20 @@ module.exports.allRequirementDelete = async (id) => {
   }
 };
 
-module.exports.deleteSelectedRequirement = async (id,requirementList ) => {
+module.exports.deleteSelectedRequirement = async (id, requirementList) => {
   try {
-    await RequirementRepository.deleteRequirementQueryAssumption(requirementList);
-    var ProjectRequirementResponse = await RequirementRepository.deleteSelectedProjectRequirement(requirementList);
-     return formatMongoData(ProjectRequirementResponse);
+    await RequirementRepository.deleteRequirementQueryAssumption(
+      requirementList
+    );
+    var ProjectRequirementResponse =
+      await RequirementRepository.deleteSelectedProjectRequirement(
+        requirementList
+      );
+    return formatMongoData(ProjectRequirementResponse);
   } catch (err) {
     throw new Error(err);
   }
 };
-
-
 
 const getEstBasicDetail = async (id) => {
   return await EstHeaderModel.findById({ _id: id })
@@ -297,7 +294,14 @@ const getEstBasicDetail = async (id) => {
       path: "estTypeId",
       populate: { path: "reqTypeValidation" },
     });
-  
+};
+
+const getAllVersions = async (parentEstId) => {
+  let resp = await EstHeaderModel.find({ estheaderParentid: parentEstId }).sort(
+    { estVersionno: 1 }
+  );
+  console.log("Versions:" + resp);
+  return resp;
 };
 
 module.exports.getById = async ({ id }) => {
@@ -314,8 +318,14 @@ module.exports.getById = async ({ id }) => {
     response.requirementTag = await RequirementRepository.getTags();
     //5
     let estimations = await getEstBasicDetail(id);
-
     response.basicDetails = estimations;
+    //6
+    let verions = await getAllVersions(estimations.estheaderParentid);
+    response.estimationVersions = verions;
+
+    //7
+    response.estimationSharePermission = await getEstimationPermission(id);
+
     return formatMongoData(response);
   } catch (err) {
     throw new Error(err);
@@ -376,7 +386,7 @@ module.exports.getRequirementData = async ({ id }) => {
         contingency,
         contingencySuffix
       );
-    
+
     var projectTotal = {
       id: 1,
       calcType: "percentage",
@@ -458,7 +468,6 @@ async function getRequirementList(
   var arrayRequirement = [];
   estHeaderRequirement.forEach((item, i) => {
     if (item.isDeleted === false) {
-
       var tag = "";
       var tagid = 0;
       var type = "";
@@ -494,15 +503,20 @@ async function getRequirementList(
         requirement["Reply"] = item.requirement.queryassumptions[0].reply;
       }
       item.estRequirementData.forEach((estRequirementItem, index) => {
-        if (estRequirementItem.ESTData !== undefined && estRequirementItem.ESTData !== null) {
+        if (
+          estRequirementItem.ESTData !== undefined &&
+          estRequirementItem.ESTData !== null
+        ) {
           if (
             estRequirementItem.ESTAttributeID !== undefined &&
             estRequirementItem.ESTAttributeID !== null
           ) {
-            requirement[estRequirementItem.ESTAttributeID._id] = estRequirementItem.ESTData;
+            requirement[estRequirementItem.ESTAttributeID._id] =
+              estRequirementItem.ESTData;
             if (contingency > 0) {
-              requirement[estRequirementItem.ESTAttributeID._id + contingencySuffix] =
-                estRequirementItem.ESTDataContingency;
+              requirement[
+                estRequirementItem.ESTAttributeID._id + contingencySuffix
+              ] = estRequirementItem.ESTDataContingency;
             }
           }
         }
@@ -513,7 +527,6 @@ async function getRequirementList(
 
   return arrayRequirement;
 }
-
 
 async function getTagSummaryHeader(estHeaderId) {
   var contingency = await RequirementRepository.getContingency(estHeaderId);
@@ -645,4 +658,12 @@ async function getEstHeaderAttribute(estHeaderId) {
 
 function roundToTwo(value) {
   return Number(Number(value).toFixed(2));
+}
+
+async function getEstimationPermission(estHeaderId) {
+  let sharedata = await ShareDataModel.findOne({
+    typeId: estHeaderId,
+    shareUserId: global.loginId,
+  });
+  return userService.getEstimationRolePermission(sharedata?.roleId);
 }

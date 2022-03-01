@@ -35,6 +35,12 @@ const ResourceCountService = {
     let url = Url.updateResourceRole;
     return axios.put(url, req);
   },
+
+  getResourceRoleCountOnUpdate: function (req) {
+    let url = Url.getResourceRoleCountOnUpdate;
+    return axios.get(url, { params: { estResourceCountID: req } });
+  },
 };
+
 export default ResourceCountService;
 // '61a857b74ea3ae2a0627800a'

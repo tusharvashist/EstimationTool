@@ -72,5 +72,10 @@ const EstimationService = {
     return axios.post(url, {estimationHeaderId:id});
   },
 
+  getNewVersionOfEstimation: function (actionId) {
+    let url = Url.createNewerEstimationVersion + "/" + actionId;
+    return axios.get(url);
+  },
+
 };
 export default EstimationService;

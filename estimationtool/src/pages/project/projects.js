@@ -280,7 +280,7 @@ function Projects(props) {
       tooltip: "edit client",
       onClick: (event, data) => {
         setEditRow({ ...data });
-        setActionId(data.id);
+        setActionId(data._id);
         openUpdateDailog();
       },
 
@@ -292,7 +292,7 @@ function Projects(props) {
       tooltip: "delete client",
       onClick: (event, data) => {
         setEditRow({ ...data });
-        setActionId(data.id);
+        setActionId(data._id);
         openDeleteDailog();
       },
       disabled: rowData.isDeleted,

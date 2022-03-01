@@ -51,7 +51,6 @@ export default function ClientDetails(props) {
     projectId = projectState.projectId;
   }
 
-
   const [clientDetails, setClientDetails] = useState({
     clientName: "",
     description: "",
@@ -78,16 +77,28 @@ export default function ClientDetails(props) {
         let dataResponse = res.data.body;
         setProjectDetails({ ...dataResponse });
         setClientDetails({ ...dataResponse.client });
+        var index = 1;
+        dataResponse.estimates.forEach(estimate => {
+          estimate["id"] = index;
+          index = index + 1;
+          estimate["estType"] = estimate.estTypeId.estType;
+          
+        });
+
+  console.log("dataResponse.estimates ======== : ", dataResponse.estimates);
         setTableDataWithoutFilter([...dataResponse.estimates]);
+
         setTableData(
           dataResponse.estimates.filter((el) => el.isDeleted === false)
         );
       })
       .catch((err) => {
-
         console.log("get Client by id error", err);
       });
   };
+  console.log("tableDataWithoutFilter ======== : ", tableDataWithoutFilter);
+  console.log("tableData ======== : ", tableData);
+
 
   const [projectStatus] = useState([
     { title: "All" },
@@ -238,28 +249,7 @@ export default function ClientDetails(props) {
             </Container>
           </Grid>
           <Grid item xs={6}>
-            <Box sx={{ maxWidth: 200 }}>
-              <FormControl width="300px">
-                <InputLabel id="client-simple-select">
-                  Estimation Status{" "}
-                </InputLabel>
-
-                <Select
-                  labelId="client-simple-select"
-                  id="client-simple-select"
-                  value={projectStatus.title}
-                  label={projectStatus.title}
-                  defaultValue={"Active"}
-                  onChange={getDropDownvalue}
-                >
-                  {projectStatus.map((item) => (
-                    <MenuItem key={item.title} value={item.title}>
-                      {item.title}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+           
           </Grid>
         </Grid>
       </Box>
@@ -269,6 +259,7 @@ export default function ClientDetails(props) {
           clientInfo={clientDetails}
           projectInfo={projectDetails}
           refreshData={getProjectById}
+          getDropDownvalue={ getDropDownvalue}
         />
       </Box>
     </div>

@@ -7,6 +7,7 @@ import Radio from "@mui/material/Radio";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const RoleEditItem = (props) => {
+  console.log("edit", props);
   const [isOpen, setOpen] = React.useState({});
   const [disabledState, setDisabledState] = useState(false);
 
@@ -19,8 +20,24 @@ const RoleEditItem = (props) => {
   const [adjustedTrueRole, setAdjustedTrueRole] = useState("");
 
   useEffect(() => {
-    getResourceMasterRoleData(props.rowEditData._id);
-  }, [props.rowEditData, value]);
+    setResourceCountData();
+  }, [props]);
+
+  const setResourceCountData = () => {
+    let id = "";
+    let check = false;
+    props.rowEditData.rolecount.forEach((el, i) => {
+      if (el.defaultAdjusted) {
+        setAdjustedTrueRole(el._id);
+        check = true;
+      }
+    });
+    if (!check) {
+      props.rowEditData.rolecount[0].defaultAdjusted = true;
+      setAdjustedTrueRole(props.rowEditData.rolecount[0]._id);
+    }
+    setRoleData(props.rowEditData.rolecount);
+  };
 
   const getResourceMasterRoleData = async (resourceCountId) => {
     await ResourceCountService.getResourceMasterRole(resourceCountId)
@@ -68,13 +85,18 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then((res) => {
-        props.handleEditChange();
-        getResourceMasterRoleData(props.rowEditData._id);
-        setValue(!value);
+      .then((updateRes) => {
+        props.handleValidationOnUpdate(updateRes);
+        ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
+          .then((countRes) => {
+            props.handleEditChange(countRes.data.body, props.rowEditData._id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((err) => {
-        if (!err.response.data.message) console.log(err);
+        if (err.response === undefined) console.log(err);
         else {
           setDisabledState(true);
           setOpen({
@@ -103,13 +125,18 @@ const RoleEditItem = (props) => {
           };
 
     ResourceCountService.updateResourceRole(obj)
-      .then((res) => {
-        console.log(res);
+      .then((updateRes) => {
+        props.handleValidationOnUpdate(updateRes);
         setDisabledState(false);
-
-        props.handleEditChange();
-        getResourceMasterRoleData(props.rowEditData._id);
-        setValue(!value);
+        ResourceCountService.getResourceRoleCountOnUpdate(props.rowEditData._id)
+          .then((countRes) => {
+            props.handleEditChange(countRes.data.body, props.rowEditData._id);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        // getResourceMasterRoleData(props.rowEditData._id);
+        // setValue(!value);
       })
       .catch((err) => {
         if (!err.response.data.message) console.log(err);

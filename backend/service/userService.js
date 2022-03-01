@@ -1,5 +1,6 @@
 const constant = require("../constant");
 const userModel = require("../database/models/userModel");
+const roleModel = require("../database/models/roleMasterModel");
 const { formatMongoData } = require("../helper/dbhelper");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -113,6 +114,53 @@ module.exports.login = async (req) => {
     console.log("something went wrong: service > createEstimation ", err);
     throw new Error(err);
   }
+};
+
+module.exports.getAllUserByName = async ({ search }) => {
+  try {
+    let regex = new RegExp(search, "i");
+    return await userModel.find({
+      $or: [
+        { firstName: { $regex: regex } },
+        { lastName: { $regex: regex } },
+        { email: { $regex: regex } },
+      ],
+    });
+  } catch (err) {
+    console.log("something went wrong: service > user service ", err);
+    throw new Error(err);
+  }
+};
+
+module.exports.getEstimationRolePermission = async (roleId) => {
+  return roleModel.aggregate([
+    {
+      $match: {
+        _id: roleId,
+      },
+    },
+    {
+      $lookup: {
+        from: "permissions",
+        localField: "_id",
+        foreignField: "typeId",
+        as: "tokenPermission",
+      },
+    },
+    {
+      $lookup: {
+        from: "moduletokens",
+        localField: "tokenPermission.tokenID",
+        foreignField: "_id",
+        as: "RolePermission",
+      },
+    },
+    {
+      $project: {
+        tokenPermission: 0,
+      },
+    },
+  ]);
 };
 
 module.exports.testUser = async (emailID, pass) => {

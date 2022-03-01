@@ -4,7 +4,9 @@ module.exports = {
     message: "",
     body: {},
   },
-
+  consolidatedAssumption: {
+    assumption: "",
+  },
   requirementExcelHeader: {
     Requirement: "Requirement",
     Description: "Description",
@@ -19,7 +21,7 @@ module.exports = {
     importFile: 1,
     updateData: 2,
     insertSuccess: 3,
-    insertFail : 4,
+    insertFail: 4,
   },
 
   requirementResponse: {
@@ -35,6 +37,8 @@ module.exports = {
     tagSummaryData: [],
     estHeaderCalculatedAttribute: [],
     isReqValid: { err: [], isValid: true },
+    estimationVersions: [],
+    estimationSharePermission: {},
   },
 
   requirementListResponse: {
@@ -65,6 +69,7 @@ module.exports = {
     LOGIN_SUCCESS: "Login successfully",
     USER_NOT_FOUND: "User not found",
     INVALID_PASS: "Invalid password",
+    FETCH_USER: "User founds",
   },
   estimationMessage: {
     ESTIMATION_CREATED: "Estimation created successfully",
@@ -76,6 +81,7 @@ module.exports = {
     ESTIMATION_UPDATE: "Estimation update successfully",
     ESTIMATION_DELETE: "Estimation delete successfully",
     ESTIMATION_NAME_UNIQUE: "Estimation name should be unique",
+    ESTIMATION_VERSION_CREATED: "Estimation Version created successfully",
   },
   requirementTagMessage: {
     REQUIREMENTTAG_FETCH: "All requirement tag fetch successfully",
@@ -135,6 +141,20 @@ module.exports = {
     CLIENT_UPDATE: "Client update successfully",
     CLIENT_DELETE: "Client delete successfully",
     DUPLICATE_CLIENT: "Client already exist with given name.",
+  },
+  assumption: {
+    ASSUMPTION_CREATED: "Assumption created successfully",
+    ASSUMPTION_ERROR: "Assumption create fail",
+    ASSUMPTION_FETCH: "All assumption fetch successfully",
+    ASSUMPTION_Tag_FETCH: "All assumption tags fetch successfully",
+    ASSUMPTION_GET_ERROR: "All assumption featch error",
+    ASSUMPTION_NOT_FOUND: "Assumption not found",
+    ASSUMPTION_EST_NOT_FOUND: "Assumption estimation not found",
+    INVALID_ID: "Invalid id",
+    ASSUMPTION_UPDATE: "Assumption update successfully",
+    ASSUMPTION_DELETE: "Assumption delete successfully",
+    DUPLICATE_ASSUMPTION: "Assumption already exist with given name.",
+    UPDATE_ASSUMPTION: "Assumption updated successfully",
   },
   estimationHeaderAtrributeMessage: {
     estimationHeaderAtrribute_CREATED:
@@ -324,5 +344,26 @@ module.exports = {
   publishMessage: {
     PUBLISH_VALIDATION: "Validation failed",
     PUBLISH_CREATE: "Estimation published successfully",
+  },
+  emailSettings: {
+    SENDGRID_API_KEY:
+      "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",
+    EMAIL_STATUS: "true",
+    FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
+  },
+
+  emailType: {
+    ESTIMATION: "Estimation",
+    ESTIMATION_SUBJECT: "Estimation Shared with you",
+  },
+  SharingMessage: {
+    Sharing_ERROR: "Sharing creation fails",
+    Sharing_CREATED: "Estimation Shared successfully",
+    Sharing_FETCH: "All Estimation Sharing fetch successfully",
+    Sharing_GET_ERROR: "All Estimation Sharing fetching error",
+    Sharing_NOT_FOUND: "Estimation Sharing not found",
+    INVALID_ID: "Invalid id",
+    Sharing_UPDATE: "Estimation Sharing updated successfully",
+    Sharing_DELETE: "Estimation Sharing deleted successfully",
   },
 };

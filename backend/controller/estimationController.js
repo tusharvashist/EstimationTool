@@ -279,3 +279,22 @@ module.exports.releaseEstimation = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
+//Versioning Estimation
+module.exports.versioningEstimation = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  console.log('versioningEstimation - Controller');
+  try {
+    const responceFromVersioningEstimation =
+      await estimationHeaderAtrributeSer.versioningEstimation(
+        req.params
+      );
+    console.log('Version estimation created successfully');
+    responce.status = 200;
+    responce.message = constant.estimationMessage.ESTIMATION_VERSION_CREATED;
+    responce.body = responceFromVersioningEstimation;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};
