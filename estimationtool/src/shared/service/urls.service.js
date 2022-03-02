@@ -41,5 +41,6 @@ const Url = {
   shareEstimate: `${process.env.REACT_APP_URL}share`,
   allAssumptions: `${process.env.REACT_APP_URL}consolidatedAssumption`,
   allAssumptionsTags: `${process.env.REACT_APP_URL}consolidatedAssumption/tags`,
+  getPCUserDetails: `${process.env.REACT_APP_PC_PROXY}GetPCUserDetails`,
 };
 export default Url;

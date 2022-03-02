@@ -7,7 +7,7 @@ const ShareEstimateDialogService = {
   },
   
   getPCUserDetails: function (searchText) {
-    let url = "http://10.4.4.95:9000/api/OMS/GetPCUserDetails/Parm?Vari=" + searchText;
+    let url =  Url.getPCUserDetails + "/Parm?Vari=" + searchText;
     return axios.get(url);
   },
   
