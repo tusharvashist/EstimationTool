@@ -30,6 +30,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import ShareEstimationDialog from "../project-details/ShareEstimationDialog";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
 
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+
 function DeleteButton(props) {
   if (props.params.row.isDeleted) {
     return (
@@ -68,7 +70,7 @@ function ProjectEstimations(props) {
   const classes = useTableStyle();
   const roleState = useSelector((state) => state.role);
   const [tableData, setTableData] = useState();
-  const [selectedEstimation, setSelectedEstimation] = useState();
+  const [selectedEstimation, setSelectedEstimation] = useState([]);
   const [clientDeatils, setClientDeatils] = useState({});
   const [projectDeatils, setProjectDeatils] = useState();
   const [isOpenDailog, setIsOpenDailog] = useState(false);
@@ -77,6 +79,9 @@ function ProjectEstimations(props) {
   const [actionId, setActionId] = useState("");
   const [deleteRecordName, setDeleteRecordName] = useState("");
   const [deleteEstimationDailog, setDeleteEstimationDailog] = useState(false);
+
+  const [isOpen, setOpen] = React.useState({});
+  const { message, severity, open } = isOpen || {};
   const {
     estimationView,
     estimationCreate,
@@ -96,7 +101,12 @@ function ProjectEstimations(props) {
     setClientDeatils({ ...props.clientInfo });
     setProjectDeatils({ ...props.projectInfo });
   }, [props.tableData1]);
+
   console.log("tableData :XxXX  ", tableData);
+
+  const handleClose = () => { 
+    setOpen(false);
+  }
 
   const Estlink = (augData) => {
     console.log("sssss", augData);
@@ -288,7 +298,15 @@ function ProjectEstimations(props) {
     setIsShareOpen(false);
   };
 
-  const shareEstimation = () => {};
+  const shareEstimation = (res) => {
+
+      setOpen({
+             open: true,
+             severity: "success",
+            message: res.data.message,
+      });
+      setIsShareOpen(false);
+  };
 
   const handleShareClick = () => {
     openShareFun();
@@ -351,7 +369,15 @@ function ProjectEstimations(props) {
               style={{ marginRight: "15px" }}
               variant="outlined"
               onClick={() => {
+                if (selectedEstimation.length !== 0) {
                 openShareFun();
+                } else {
+                  setOpen({
+                      open: true,
+                      severity: "error",
+                      message: "Select at least one estimation to share.",
+                      });
+                }
               }}
             >
               {" "}
@@ -392,6 +418,15 @@ function ProjectEstimations(props) {
           )}
         </div>
       </BorderedContainer>
+      {open && (
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        )}
     </div>
   );
 }

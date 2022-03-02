@@ -112,7 +112,11 @@ module.exports.getLinkAssumptionWithEstimation = async (id) => {
     if (!mongoose.Types.ObjectId(id)) {
       throw new Error(constant.projectMessage.INVALID_ID);
     }
-    return await Assumption.aggregate([
+    return await Assumption.aggregate([{
+    $match: {
+        isDeleted: false
+    }
+},
       {
         $addFields: {
           selected: {
