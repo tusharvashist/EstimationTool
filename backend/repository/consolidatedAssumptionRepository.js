@@ -118,7 +118,7 @@ module.exports.getLinkAssumptionWithEstimation = async (id) => {
           selected: {
             $cond: [
               {
-                $setIsSubset: [[ObjectId(id)], "$estHeader"],
+                $setIsSubset: [[ObjectId(id)], ["$estHeader"]],
               },
               true,
               false,
