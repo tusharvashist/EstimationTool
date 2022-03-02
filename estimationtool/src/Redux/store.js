@@ -15,6 +15,7 @@ import calcAttributeSave from "./CalcAttributeRedux";
 import roleRedux from "./roleRedux";
 import projectRedux from "./projectRedux";
 import estimationHeaderId from "./estimationHeaderId";
+import estimationPermission from "./estimationPermission";
 import resourceMixReduxDataSave from "./resourcemixRedux";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
@@ -28,6 +29,7 @@ const reducer = combineReducers({
   project: projectRedux,
   estimationHeaderId: estimationHeaderId,
   resourceMixData: resourceMixReduxDataSave,
+  estimationPermission: estimationPermission,
 });
 
 const persistConfig = {

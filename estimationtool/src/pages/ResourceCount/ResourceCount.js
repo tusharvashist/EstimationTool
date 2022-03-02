@@ -30,6 +30,9 @@ const ResourceCountMatrix = (props) => {
     },
   ]);
   const { estimation_resourcecount_edit } = usePermission();
+
+  let refresh = props.refresh;
+
   useEffect(() => {
     getTechnologySkill();
     getResourceCountData();
@@ -39,7 +42,7 @@ const ResourceCountMatrix = (props) => {
     } else {
       document.body.style.overflow = "scroll";
     }
-  }, [tableOpen, props]);
+  }, [tableOpen, refresh]);
 
   // Get All Technology Skills
 

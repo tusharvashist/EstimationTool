@@ -11,7 +11,7 @@ import {
 
 import React, { useState, useEffect } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
-import { EditOutlined, Add, TramOutlined } from "@material-ui/icons";
+import { EditOutlined, Add, TramOutlined, Check } from "@material-ui/icons";
 import "./estimation-detail.css";
 import { useLocation, Link, useHistory } from "react-router-dom";
 import EstimationService from "./EstimationService";
@@ -37,6 +37,7 @@ import Deletedailog from "./delete-dailog";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
+import { setEstPermission } from "../../Redux/estimationPermission";
 import { IoWarningOutline } from "react-icons/io5";
 import { MdOutlineDocumentScanner, MdOutlineTimeline } from "react-icons/md";
 
@@ -45,11 +46,13 @@ import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import useEstPermission from "../../shared/layout/hooks/useEstPermission";
 import Status from "../../shared/layout/Status/Status";
 import CustomizedDialogs from "../../shared/ui-view/dailog/dailog";
 import { CreateEstimationVersion } from "../CreateVersion/CreateEstimationVersion";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import EstimationAssumptionsDialog from "../Assumptions/EstimationAssumptionsDialog";
+import { ESTIMATION_PERMISSION } from "../../shared/ui-view/constant/enum";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -57,6 +60,7 @@ const EstimationDetail = () => {
   const location = useLocation();
   const estimationHeaderId = useSelector((state) => state.estimationHeaderId);
   const dispatch = useDispatch();
+
   const {
     estimation_generate_timeline,
     estimation_generate_resourcemix,
@@ -216,6 +220,17 @@ const EstimationDetail = () => {
       callBack();
     }
   };
+
+  const checkEstimationPermission = (permissionArr) => {
+    let permissions = ESTIMATION_PERMISSION;
+    if (permissionArr.length > 0) {
+      permissionArr[0].RolePermission.forEach((el) => {
+        permissions[el.token] = true;
+      });
+    }
+    return permissions;
+  };
+
   const getBasicDetailById = async (calback) => {
     setLoader(true);
     await EstimationService.getById(estimationId)
@@ -234,6 +249,13 @@ const EstimationDetail = () => {
         setIsEstimationReleased(releaseStatus);
         setIsEstDeactivated(isDeleted);
         setCurrentSelectedVersion({ ...res.data.body.basicDetails });
+
+        dispatch(
+          setEstPermission(
+            checkEstimationPermission(res.data.body.estimationSharePermission)
+          )
+        );
+
         if (location.state !== undefined) {
           let obj = {
             client: res.data.body.basicDetails.projectId.client,
@@ -610,7 +632,7 @@ const EstimationDetail = () => {
         title="Import Assumptions"
         oktitle="Save"
         cancelTitle="Close"
-        estimationId = {estimationId}
+        estimationId={estimationId}
       />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
