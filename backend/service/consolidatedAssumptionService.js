@@ -95,3 +95,18 @@ module.exports.getLinkAssumptionWithEstimation = async (id) => {
     throw new Error(err);
   }
 };
+
+module.exports.deleteAssumption = async () => {
+  try {
+    let deleteAssumption = await assumptionRepository.deleteAssumption(
+      req.body
+    );
+    return formatMongoData(deleteAssumption);
+  } catch (err) {
+    console.log(
+      "something went wrong: service > consolidatedAssumption > updateAssumption",
+      err
+    );
+    throw new Error(err);
+  }
+};

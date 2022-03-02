@@ -29,10 +29,6 @@ router.put(
   consolidatedAssumptionController.updateAssumption
 );
 
-module.exports = router;
-
-//linkAssumptionWithEstimation
-
 router.put(
   "/mapWithEstimation/:id",
   tokenValidation.validateToken,
@@ -43,6 +39,12 @@ router.get(
   "/getLinkAssumptionWithEstimation/:id",
   tokenValidation.validateToken,
   consolidatedAssumptionController.getLinkAssumptionWithEstimation
+);
+
+router.delete(
+  "/",
+  tokenValidation.validateToken,
+  consolidatedAssumptionController.deleteAssumption
 );
 
 module.exports = router;

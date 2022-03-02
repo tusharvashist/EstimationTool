@@ -54,91 +54,99 @@ module.exports.getConsolidatedAssumption = async () => {
   }
 };
 
-
 module.exports.putUpdatedAssumption = async (req) => {
   try {
     return await Assumption.findByIdAndUpdate(req.assumptionId, {
       assumption: req.assumptionName,
       assumptionTag: req.assumptionTag,
     });
-
   } catch (err) {
     console.log(
       "something went wrong: service > assumptionRepository > putUpdatedAssumption",
       err
     );
-
   }
 };
 
+module.exports.deleteAssumption = (req) => {
+  try {
+    // return await Assumption.findByIdAndDelete();
+  } catch (err) {
+    console.log(
+      "something went wrong: service > assumptionRepository > deleteAssumption",
+      err
+    );
+    throw new Error(err);
+  }
+};
 
 module.exports.linkAssumptionWithEstimation = async ({ id, updateInfo }) => {
-     try {
-        if (!mongoose.Types.ObjectId(id)) {
-          throw new Error(constant.projectMessage.INVALID_ID);
-        }
-    const estHeaderModel = await EstHeaderModel.findById({ _id: id});
+  try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
+    const estHeaderModel = await EstHeaderModel.findById({ _id: id });
     if (estHeaderModel.length != 0) {
       await Assumption.updateMany({}, { $pull: { estHeader: id } });
       var bulk_Assumption = Assumption.collection.initializeOrderedBulkOp();
       var recordUpdated = 0;
       updateInfo.assumptionsList.forEach(async (assumption, i) => {
         recordUpdated = recordUpdated + 1;
-        const result =  await Assumption.updateOne(
+        const result = await Assumption.updateOne(
           { _id: assumption.id },
           { $addToSet: { estHeader: id } }
-     );
-    });
-      return {"recordUpdated" : recordUpdated};
-    }else{
+        );
+      });
+      return { recordUpdated: recordUpdated };
+    } else {
       throw new Error(constant.assumption.ASSUMPTION_EST_NOT_FOUND);
     }
   } catch (err) {
-    console.log( "Error: ", err);
+    console.log("Error: ", err);
     throw new Error(err);
   }
 };
 
 module.exports.getLinkAssumptionWithEstimation = async (id) => {
-      try {
-        if (!mongoose.Types.ObjectId(id)) {
-          throw new Error(constant.projectMessage.INVALID_ID);
-        }
-        return await Assumption.aggregate([
-          {
-            $addFields: {
-              selected: {
-                $cond: [
-                  {
-                    $setIsSubset: [[ObjectId(id)], "$estHeader"],
-                  },
-                  true,
-                  false,
-                ],
+  try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
+    return await Assumption.aggregate([
+      {
+        $addFields: {
+          selected: {
+            $cond: [
+              {
+                $setIsSubset: [[ObjectId(id)], "$estHeader"],
               },
-            },
+              true,
+              false,
+            ],
           },
-          {
-            $lookup: {
-              from: "assumptiontags",
-              localField: "assumptionTag",
-              foreignField: "_id",
-              as: "assumptionTag",
-            },
-          },
-          {
-            $unwind: {
-              path: "$assumptionTag",
-              includeArrayIndex: "string",
-              preserveNullAndEmptyArrays: false,
-            },
-          },
-        ]);
-      } catch (err) {
-        console.log(
-          "something went wrong: service > ProjectService > getAllProject",
-          err
-        );
-        throw new Error(err);
-      }
+        },
+      },
+      {
+        $lookup: {
+          from: "assumptiontags",
+          localField: "assumptionTag",
+          foreignField: "_id",
+          as: "assumptionTag",
+        },
+      },
+      {
+        $unwind: {
+          path: "$assumptionTag",
+          includeArrayIndex: "string",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+    ]);
+  } catch (err) {
+    console.log(
+      "something went wrong: service > ProjectService > getAllProject",
+      err
+    );
+    throw new Error(err);
+  }
 };

@@ -75,31 +75,49 @@ module.exports.linkAssumptionWithEstimation = async (req, res) => {
   return res.status(response.status).send(response);
 };
 
-module.exports.linkAssumptionWithEstimation = async (req,res)=>{
-    let response = {...constant.defaultResponse};
-    try{
-       const responseConsolidatedAssumptionService = await consolidatedAssumptionService.linkAssumptionWithEstimation({
-            id:req.params.id,
-            updateInfo:req.body,
-        });
-        response.status = 200;
-        response.message = constant.assumption.ASSUMPTION_LINK;
-        response.body = responseConsolidatedAssumptionService;
-    }catch(err){
-        response.message = err.message;
-    }
-    return res.status(response.status).send(response);
-}
+module.exports.linkAssumptionWithEstimation = async (req, res) => {
+  let response = { ...constant.defaultResponse };
+  try {
+    const responseConsolidatedAssumptionService =
+      await consolidatedAssumptionService.linkAssumptionWithEstimation({
+        id: req.params.id,
+        updateInfo: req.body,
+      });
+    response.status = 200;
+    response.message = constant.assumption.ASSUMPTION_LINK;
+    response.body = responseConsolidatedAssumptionService;
+  } catch (err) {
+    response.message = err.message;
+  }
+  return res.status(response.status).send(response);
+};
 
-module.exports.getLinkAssumptionWithEstimation = async (req,res)=>{
-    let response = {...constant.defaultResponse};
-    try{
-       const responseConsolidatedAssumptionService = await consolidatedAssumptionService.getLinkAssumptionWithEstimation(req.params.id);
-        response.status = 200;
-        response.message = constant.assumption.ASSUMPTION_FETCH;
-        response.body = responseConsolidatedAssumptionService;
-    }catch(err){
-        response.message = err.message;
-    }
-    return res.status(response.status).send(response);
-}
+module.exports.getLinkAssumptionWithEstimation = async (req, res) => {
+  let response = { ...constant.defaultResponse };
+  try {
+    const responseConsolidatedAssumptionService =
+      await consolidatedAssumptionService.getLinkAssumptionWithEstimation(
+        req.params.id
+      );
+    response.status = 200;
+    response.message = constant.assumption.ASSUMPTION_FETCH;
+    response.body = responseConsolidatedAssumptionService;
+  } catch (err) {
+    response.message = err.message;
+  }
+  return res.status(response.status).send(response);
+};
+
+module.exports.deleteAssumption = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    let deleteAssumptionService =
+      await consolidatedAssumptionService.deleteAssumption(req.body);
+    responce.status = 200;
+    responce.message = constant.assumption.ASSUMPTION_DELETE;
+    responce.body = deleteAssumptionService;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};
