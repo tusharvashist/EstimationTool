@@ -65,96 +65,92 @@ module.exports.putUpdatedAssumption = async (req) => {
       "something went wrong: service > assumptionRepository > putUpdatedAssumption",
       err
     );
-    module.exports.linkAssumptionWithEstimation = async ({
-      id,
-      updateInfo,
-    }) => {
-      try {
-        if (!mongoose.Types.ObjectId(id)) {
-          throw new Error(constant.projectMessage.INVALID_ID);
-        }
+  }
+};
 
-        const estHeaderModel = await EstHeaderModel.findById({ _id: id });
-        if (estHeaderModel.length != 0) {
-          var bulk_Assumption = Assumption.collection.initializeOrderedBulkOp();
-          updateInfo.assumptionsList.forEach(async (assumptionId, i) => {
-            bulk_Assumption
-              .find({ _id: assumptionId })
-              .update({ $set: { assumption: "Pending" } });
-          });
+module.exports.deleteAssumption = async (id) => {
+  try {
+    return await Assumption.findByIdAndUpdate(id, { isDeleted: true });
+  } catch (err) {
+    console.log(
+      "something went wrong: service > assumptionRepository > deleteAssumption",
+      err
+    );
+    throw new Error(err);
+  }
+};
 
-          // { $push: { estHeader : estHeaderModel } }
-          const result = await bulk_Assumption.execute();
-          return result;
-        } else {
-          throw new Error(constant.assumption.ASSUMPTION_EST_NOT_FOUND);
-        }
-      } catch (err) {
-        console.log(
-          "something went wrong: service > ProjectService > getAllProject",
-          err
+module.exports.linkAssumptionWithEstimation = async ({ id, updateInfo }) => {
+  try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
+    const estHeaderModel = await EstHeaderModel.findById({ _id: id });
+    if (estHeaderModel.length != 0) {
+      await Assumption.updateMany({}, { $pull: { estHeader: id } });
+      var bulk_Assumption = Assumption.collection.initializeOrderedBulkOp();
+      var recordUpdated = 0;
+      updateInfo.assumptionsList.forEach(async (assumption, i) => {
+        recordUpdated = recordUpdated + 1;
+        const result = await Assumption.updateOne(
+          { _id: assumption.id },
+          { $addToSet: { estHeader: id } }
         );
-        throw new Error(err);
-      }
-    };
+      });
+      return { recordUpdated: recordUpdated };
+    } else {
+      throw new Error(constant.assumption.ASSUMPTION_EST_NOT_FOUND);
+    }
+  } catch (err) {
+    console.log("Error: ", err);
+    throw new Error(err);
+  }
+};
 
-    module.exports.getLinkAssumptionWithEstimation = async (id) => {
-      try {
-        if (!mongoose.Types.ObjectId(id)) {
-          throw new Error(constant.projectMessage.INVALID_ID);
-        }
-        // return await Assumption.aggregate([{
-        //         $addFields: {
-        //             selected: {
-        //                 $cond: [
-        //                     {
-        //                         $setIsSubset: [[ ObjectId(id)], '$estHeader']
-        //                     },
-        //                 true,
-        //                 false
-        //                 ]
-        //             }
-        //     },
-        // }
-        // ]);
-
-        return await Assumption.aggregate([
-          {
-            $addFields: {
-              selected: {
-                $cond: [
-                  {
-                    $setIsSubset: [[ObjectId(id)], "$estHeader"],
-                  },
-                  true,
-                  false,
-                ],
+module.exports.getLinkAssumptionWithEstimation = async (id) => {
+  try {
+    if (!mongoose.Types.ObjectId(id)) {
+      throw new Error(constant.projectMessage.INVALID_ID);
+    }
+    return await Assumption.aggregate([{
+    $match: {
+        isDeleted: false
+    }
+},
+      {
+        $addFields: {
+          selected: {
+            $cond: [
+              {
+                $setIsSubset: [[ObjectId(id)], "$estHeader"],
               },
-            },
+              true,
+              false,
+            ],
           },
-          {
-            $lookup: {
-              from: "assumptiontags",
-              localField: "assumptionTag",
-              foreignField: "_id",
-              as: "assumptionTag",
-            },
-          },
-          {
-            $unwind: {
-              path: "$assumptionTag",
-              includeArrayIndex: "string",
-              preserveNullAndEmptyArrays: false,
-            },
-          },
-        ]);
-      } catch (err) {
-        console.log(
-          "something went wrong: service > ProjectService > getAllProject",
-          err
-        );
-        throw new Error(err);
-      }
-    };
+        },
+      },
+      {
+        $lookup: {
+          from: "assumptiontags",
+          localField: "assumptionTag",
+          foreignField: "_id",
+          as: "assumptionTag",
+        },
+      },
+      {
+        $unwind: {
+          path: "$assumptionTag",
+          includeArrayIndex: "string",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+    ]);
+  } catch (err) {
+    console.log(
+      "something went wrong: service > ProjectService > getAllProject",
+      err
+    );
+    throw new Error(err);
   }
 };

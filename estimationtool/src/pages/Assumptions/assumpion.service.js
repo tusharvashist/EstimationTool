@@ -17,15 +17,16 @@ const assumptionService = {
     });
   },
   getLinkAssumptionWithEstimation: function (estHeaderId) {
-    let url = Url.allAssumptions + "/getLinkAssumptionWithEstimation/" + estHeaderId;
+    let url =
+      Url.allAssumptions + "/getLinkAssumptionWithEstimation/" + estHeaderId;
     return axios({
       method: "GET",
       url,
     });
   },
-  mapWithEstimation: function (assumptionId, estHeaderId) {
-    let url = Url.allAssumptionsTags + "/mapWithEstimation/" + assumptionId;
-    return axios.put(url, estHeaderId);
+  mapWithEstimation: function (estHeaderId, assumptionsList) {
+    let url = Url.allAssumptions + "/mapWithEstimation/" + estHeaderId;
+    return axios.put(url, assumptionsList);
   },
   addAssumption: function (assumption, assumptionTag) {
     let url = Url.allAssumptions;
@@ -47,6 +48,16 @@ const assumptionService = {
         assumptionName,
         assumptionTag,
         assumptionId,
+      },
+    });
+  },
+  deleteAssumption: function (assumpionId) {
+    let url = Url.allAssumptions;
+    return axios({
+      method: "DELETE",
+      url,
+      data: {
+        assumpionId,
       },
     });
   },
