@@ -11,14 +11,15 @@ import assumptionService from "./assumpion.service";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const EstimationAssumptionsDialog = (props) => {
-  
+
   const [assumptions, setAssumptions] = useState([]);
+  const [assumptionsFilter, setAssumptionsFilter] = useState([]);
   const [selectedAssumptions, setSelectedAssumptions] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState("0");
   const [isOpen, setOpen] = React.useState({});
-
   const { message, severity, open } = isOpen || {};
+
   useEffect(() => {
     importAllAssumptions();
     importAllAssumptionTags();
@@ -26,8 +27,17 @@ const EstimationAssumptionsDialog = (props) => {
   
   const importAllAssumptionTags = async () => {
     let result = await assumptionService.importAllAssumptionTags();
-    setCategories(result.data.body);
-    setSelectedCategory(result.data.body[0].id);
+    var tags = result.data.body;
+
+    tags.splice(0, 0, {
+      "id": "0",
+      "name": "All",
+      "createdAt": "2022-02-24T11:57:48.069Z",
+      "updatedAt": "2022-02-24T11:57:48.069Z",
+      "__v": 0
+    });
+    setCategories(tags);
+    setSelectedCategory(tags[0].id);
   };
 
   const handleClose = () => { 
@@ -66,14 +76,21 @@ const EstimationAssumptionsDialog = (props) => {
     props.closeFun();
   };
 
-  // const handleCategoriesChange = (event) => {
-  //   setCategories(event.target.value);
-  // };
-
   const handleCategoriesChange = (event) => {
     setSelectedCategory(event.target.value);
+
+    if (event.target.value === "0") {
+       setAssumptionsFilter(assumptions);
+    } else {
+       setAssumptionsFilter(assumptions.filter((el) =>  el.assumptionTag._id === event.target.value));
+    }
+
+    setSavedSelectedAssumption(assumptions);
+  
   };
 
+  console.log("AssumptionsFilter: ", assumptionsFilter);
+  
   const importAllAssumptions = async () => {
     let result = await assumptionService.getLinkAssumptionWithEstimation(props.estimationId);
      var index = 1;
@@ -82,7 +99,13 @@ const EstimationAssumptionsDialog = (props) => {
           index = index + 1;
         });
     setAssumptions(result.data.body.assumption);
-    setSavedSelectedAssumption(result.data.body.assumption);
+    if (selectedCategory === "0") {
+       setAssumptionsFilter(result.data.body.assumption);
+    } else {
+       setAssumptionsFilter(...result.data.body.assumption.filter((el) =>  el.assumptionTag._id === selectedCategory));
+    }
+     setSavedSelectedAssumption(result.data.body.assumption);
+
   };
 
   const setSavedSelectedAssumption = (assumption)=> {
@@ -155,7 +178,7 @@ const EstimationAssumptionsDialog = (props) => {
           <div style={{ height: 300, width: "100%" }}>
             <DataGrid
               className={classes.root}
-              rows={assumptions}
+              rows={assumptionsFilter}
               columns={columns}
               checkboxSelection={true}
                 selectionModel={selectedAssumptions}
