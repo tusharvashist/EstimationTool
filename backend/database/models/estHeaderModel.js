@@ -73,5 +73,5 @@ const estimationHeaderSchema = new mongoose.Schema(
   }
 );
 
-estimationHeaderSchema.index({ updatedAt: "-1" });
+estimationHeaderSchema.index({ updatedAt: "-1" ,estVersionno: "-1" });
 module.exports = mongoose.model("EstHeader", estimationHeaderSchema);
