@@ -68,9 +68,9 @@ module.exports.putUpdatedAssumption = async (req) => {
   }
 };
 
-module.exports.deleteAssumption = (req) => {
+module.exports.deleteAssumption = async (id) => {
   try {
-    // return await Assumption.findByIdAndDelete();
+    return await Assumption.findByIdAndUpdate(id, { isDeleted: true });
   } catch (err) {
     console.log(
       "something went wrong: service > assumptionRepository > deleteAssumption",

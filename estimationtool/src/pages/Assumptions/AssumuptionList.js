@@ -9,6 +9,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@material-ui/core/Button";
 import { GrAdd } from "react-icons/gr";
 import assumptionService from "./assumpion.service";
+import { MdDeleteOutline } from "react-icons/md";
 
 const AssumuptionList = (props) => {
   const [editState, setEditState] = useState(false);
@@ -51,95 +52,120 @@ const AssumuptionList = (props) => {
       });
   };
 
+  const checkEditSubmit = (singleAssumption) => {
+    if (clickAssumptionId === singleAssumption.id && editState) {
+      return {
+        icon: <GrAdd />,
+        click: submitEdittedAssumption,
+      };
+    } else {
+      return {
+        icon: <RiPencilLine />,
+        click: handleEditClick,
+      };
+    }
+  };
+
+  const handleDelete = async (e) => {
+    await assumptionService
+      .deleteAssumption(e.currentTarget.id)
+      .then(() => {
+        setEditState(false);
+        props.handleRefresh();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
-      {props.assumptions.map((singleAssumption) => (
-        <div key={singleAssumption.id} className="assumption-container">
-          <Grid container spacing={2}>
-            <Grid item xs={7} className={classes.gridItem}>
-              <TextField
-                id="outlined-basic"
-                variant="outlined"
-                value={
-                  clickAssumptionId === singleAssumption.id && editState
-                    ? editAssumptionName
-                    : singleAssumption.assumption
-                }
-                disabled={
-                  clickAssumptionId === singleAssumption.id && editState
-                    ? false
-                    : true
-                }
-                onChange={handleEditAssumptionName}
-              />
-            </Grid>
-            <Grid item xs={3} className={classes.gridItem}>
-              <FormControl fullWidth>
-                <Select
-                  id="demo-simple-select"
-                  value={
-                    clickAssumptionId === singleAssumption.id && editState
-                      ? editAssumptionTag
-                      : singleAssumption.assumptionTag.id
-                  }
-                  onChange={handleEditTagChange}
-                  disabled={
-                    clickAssumptionId === singleAssumption.id && editState
-                      ? false
-                      : true
-                  }
+      {props.assumptions.map(
+        (singleAssumption) =>
+          !singleAssumption.isDeleted && (
+            <div key={singleAssumption.id} className="assumption-container">
+              <Grid container spacing={2}>
+                <Grid item xs={7} className={classes.gridItem}>
+                  <TextField
+                    id="outlined-basic"
+                    variant="outlined"
+                    value={
+                      clickAssumptionId === singleAssumption.id && editState
+                        ? editAssumptionName
+                        : singleAssumption.assumption
+                    }
+                    disabled={
+                      clickAssumptionId === singleAssumption.id && editState
+                        ? false
+                        : true
+                    }
+                    onChange={handleEditAssumptionName}
+                  />
+                </Grid>
+                <Grid item xs={3} className={classes.gridItem}>
+                  <FormControl fullWidth>
+                    <Select
+                      id="demo-simple-select"
+                      value={
+                        clickAssumptionId === singleAssumption.id && editState
+                          ? editAssumptionTag
+                          : singleAssumption.assumptionTag.id
+                      }
+                      onChange={handleEditTagChange}
+                      disabled={
+                        clickAssumptionId === singleAssumption.id && editState
+                          ? false
+                          : true
+                      }
+                    >
+                      {props.categories.map((category) => (
+                        <MenuItem key={category.id} value={category.id}>
+                          {category.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid
+                  item
+                  xs={1}
+                  className={classes.gridItem}
+                  justifyContent="center"
+                  alignItems="stretch"
                 >
-                  {props.categories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid
-              item
-              xs={1}
-              className={classes.gridItem}
-              justifyContent="center"
-              alignItems="stretch"
-            >
-              <Button
-                variant="outlined"
-                onClick={handleEditClick}
-                id={singleAssumption.id}
-                ass={singleAssumption.assumption}
-                disabled={
-                  clickAssumptionId === singleAssumption.id && editState
-                    ? true
-                    : false
-                }
-              >
-                <RiPencilLine />
-              </Button>
-            </Grid>
-            <Grid
-              item
-              className={classes.gridItem}
-              xs={1}
-              justifyContent="center"
-              alignItems="stretch"
-            >
-              <Button
-                variant="outlined"
-                disabled={
-                  clickAssumptionId === singleAssumption.id && editState
-                    ? false
-                    : true
-                }
-                onClick={submitEdittedAssumption}
-              >
-                <GrAdd />
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
-      ))}
+                  <Button
+                    variant="outlined"
+                    onClick={checkEditSubmit(singleAssumption).click}
+                    id={singleAssumption.id}
+                    ass={singleAssumption.assumption}
+                  >
+                    {checkEditSubmit(singleAssumption).icon}
+                  </Button>
+                </Grid>
+                <Grid
+                  item
+                  className={classes.gridItem}
+                  xs={1}
+                  justifyContent="center"
+                  alignItems="stretch"
+                >
+                  <Button
+                    variant="outlined"
+                    disabled={
+                      clickAssumptionId === singleAssumption.id && editState
+                        ? true
+                        : false
+                    }
+                    id={singleAssumption.id}
+                    onClick={handleDelete}
+                  >
+                    <MdDeleteOutline />
+                  </Button>
+                </Grid>
+              </Grid>
+            </div>
+          )
+      )}
     </>
   );
 };

@@ -96,10 +96,10 @@ module.exports.getLinkAssumptionWithEstimation = async (id) => {
   }
 };
 
-module.exports.deleteAssumption = async () => {
+module.exports.deleteAssumption = async (req) => {
   try {
     let deleteAssumption = await assumptionRepository.deleteAssumption(
-      req.body
+      req.assumpionId
     );
     return formatMongoData(deleteAssumption);
   } catch (err) {
