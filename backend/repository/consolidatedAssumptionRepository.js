@@ -54,70 +54,56 @@ module.exports.getConsolidatedAssumption = async () => {
   }
 };
 
+
 module.exports.putUpdatedAssumption = async (req) => {
   try {
     return await Assumption.findByIdAndUpdate(req.assumptionId, {
       assumption: req.assumptionName,
       assumptionTag: req.assumptionTag,
     });
+
   } catch (err) {
     console.log(
       "something went wrong: service > assumptionRepository > putUpdatedAssumption",
       err
     );
-    module.exports.linkAssumptionWithEstimation = async ({
-      id,
-      updateInfo,
-    }) => {
+
+  }
+};
+
+
+module.exports.linkAssumptionWithEstimation = async ({ id, updateInfo }) => {
+     try {
+        if (!mongoose.Types.ObjectId(id)) {
+          throw new Error(constant.projectMessage.INVALID_ID);
+        }
+    const estHeaderModel = await EstHeaderModel.findById({ _id: id});
+    if (estHeaderModel.length != 0) {
+      await Assumption.updateMany({}, { $pull: { estHeader: id } });
+      var bulk_Assumption = Assumption.collection.initializeOrderedBulkOp();
+      var recordUpdated = 0;
+      updateInfo.assumptionsList.forEach(async (assumption, i) => {
+        recordUpdated = recordUpdated + 1;
+        const result =  await Assumption.updateOne(
+          { _id: assumption.id },
+          { $addToSet: { estHeader: id } }
+     );
+    });
+      return {"recordUpdated" : recordUpdated};
+    }else{
+      throw new Error(constant.assumption.ASSUMPTION_EST_NOT_FOUND);
+    }
+  } catch (err) {
+    console.log( "Error: ", err);
+    throw new Error(err);
+  }
+};
+
+module.exports.getLinkAssumptionWithEstimation = async (id) => {
       try {
         if (!mongoose.Types.ObjectId(id)) {
           throw new Error(constant.projectMessage.INVALID_ID);
         }
-
-        const estHeaderModel = await EstHeaderModel.findById({ _id: id });
-        if (estHeaderModel.length != 0) {
-          var bulk_Assumption = Assumption.collection.initializeOrderedBulkOp();
-          updateInfo.assumptionsList.forEach(async (assumptionId, i) => {
-            bulk_Assumption
-              .find({ _id: assumptionId })
-              .update({ $set: { assumption: "Pending" } });
-          });
-
-          // { $push: { estHeader : estHeaderModel } }
-          const result = await bulk_Assumption.execute();
-          return result;
-        } else {
-          throw new Error(constant.assumption.ASSUMPTION_EST_NOT_FOUND);
-        }
-      } catch (err) {
-        console.log(
-          "something went wrong: service > ProjectService > getAllProject",
-          err
-        );
-        throw new Error(err);
-      }
-    };
-
-    module.exports.getLinkAssumptionWithEstimation = async (id) => {
-      try {
-        if (!mongoose.Types.ObjectId(id)) {
-          throw new Error(constant.projectMessage.INVALID_ID);
-        }
-        // return await Assumption.aggregate([{
-        //         $addFields: {
-        //             selected: {
-        //                 $cond: [
-        //                     {
-        //                         $setIsSubset: [[ ObjectId(id)], '$estHeader']
-        //                     },
-        //                 true,
-        //                 false
-        //                 ]
-        //             }
-        //     },
-        // }
-        // ]);
-
         return await Assumption.aggregate([
           {
             $addFields: {
@@ -155,6 +141,4 @@ module.exports.putUpdatedAssumption = async (req) => {
         );
         throw new Error(err);
       }
-    };
-  }
 };

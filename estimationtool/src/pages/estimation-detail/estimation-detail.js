@@ -609,7 +609,8 @@ const EstimationDetail = () => {
         closeFun={closeImportAssumptionsPopup}
         title="Import Assumptions"
         oktitle="Save"
-        cancelTitle="Cancel"
+        cancelTitle="Close"
+        estimationId = {estimationId}
       />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup

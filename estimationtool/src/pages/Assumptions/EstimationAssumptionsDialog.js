@@ -8,26 +8,63 @@ import Grid from "@mui/material/Grid";
 import { DataGrid } from "@mui/x-data-grid";
 import { makeStyles, createStyles } from "@mui/styles";
 import assumptionService from "./assumpion.service";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const EstimationAssumptionsDialog = (props) => {
+  
   const [assumptions, setAssumptions] = useState([]);
-
   const [selectedAssumptions, setSelectedAssumptions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState({});
+  const [isOpen, setOpen] = React.useState({});
 
+  const { message, severity, open } = isOpen || {};
   useEffect(() => {
-    // importAllAssumptions();
+    importAllAssumptions();
     importAllAssumptionTags();
   }, []);
-
+  
   const importAllAssumptionTags = async () => {
     let result = await assumptionService.importAllAssumptionTags();
     setCategories(result.data.body);
     setSelectedCategory(result.data.body[0].id);
   };
 
-  const popSubmitHandler = () => {};
+  const handleClose = () => { 
+    setOpen(false);
+  }
+
+  const popSubmitHandler = async() => {
+    var selectedItem = [];
+    selectedAssumptions.forEach((item) => {
+      var assumptiontemp = assumptions.filter((el) => el.id === item)
+      if (assumptiontemp.length !== 0) {
+        selectedItem.push({ "id": assumptiontemp[0]._id });
+      }
+    });
+       var request = { "assumptionsList": selectedItem };
+      let result = await assumptionService.mapWithEstimation(props.estimationId, request);
+    console.log("assumptions: ", result);
+    if (result.data.status === 200) {
+      setOpen({
+        open: true,
+        severity: "success",
+        message: result.data.message,
+      });
+    } else {
+      setOpen({
+        open: true,
+        severity: "error",
+        message: result.data.message,
+      });
+    }
+      importAllAssumptions();
+  };
+  
+  const popCancelHandler = () => {
+    setSavedSelectedAssumption(assumptions);
+    props.closeFun();
+  };
 
   // const handleCategoriesChange = (event) => {
   //   setCategories(event.target.value);
@@ -38,32 +75,26 @@ const EstimationAssumptionsDialog = (props) => {
   };
 
   const importAllAssumptions = async () => {
-    let result = await assumptionService.getLinkAssumptionWithEstimation(
-      "6215b5646b458553c13a81e4"
-    );
-    var index = 1;
-    result.data.body.assumption.forEach((estimate) => {
-      estimate["id"] = index;
-      index = index + 1;
-    });
-    console.log(result.data.body.assumption);
-
-    setSelectedAssumptions(
-      ...result.data.body.assumption.filter((el) => el.selected === true)
-    );
+    let result = await assumptionService.getLinkAssumptionWithEstimation(props.estimationId);
+     var index = 1;
+        result.data.body.assumption.forEach(estimate => {
+          estimate["id"] = index;
+          index = index + 1;
+        });
     setAssumptions(result.data.body.assumption);
+    setSavedSelectedAssumption(result.data.body.assumption);
   };
 
+  const setSavedSelectedAssumption = (assumption)=> {
+    var selectedItem = [];
+    selectedItem.push( ...assumption.filter((el) =>  el.selected === true));
+    var selectedItemId = [];
+    selectedItem.forEach((item) => {selectedItemId.push(item.id);});
+    setSelectedAssumptions(selectedItemId);
+ }
   console.log("assumptions: ", assumptions);
-
   console.log("selectedAssumptions: ", selectedAssumptions);
-
-  const rows = [
-    { id: 1, col1: "Hello", col2: "World" },
-    { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-    { id: 3, col1: "MUI", col2: "is Amazing" },
-  ];
-
+  
   const columns = [
     { field: "assumption", headerName: "Assumption", width: 350 },
     {
@@ -92,7 +123,7 @@ const EstimationAssumptionsDialog = (props) => {
     <CustomizedDialogs
       isOpen={props.isOpen}
       openFun={props.openFun}
-      closeFun={props.closeFun}
+      closeFun={popCancelHandler}
       title={props.title}
       oktitle={props.oktitle}
       cancelTitle={props.cancelTitle}
@@ -127,14 +158,23 @@ const EstimationAssumptionsDialog = (props) => {
               rows={assumptions}
               columns={columns}
               checkboxSelection={true}
-              selectionModel={selectedAssumptions}
-              onSelectionModelChange={(newSelectionModel) => {
-                setSelectedAssumptions(newSelectionModel);
+                selectionModel={selectedAssumptions}
+              onSelectionModelChange={(rows) => {
+                setSelectedAssumptions(rows);
               }}
             />
           </div>
         </Grid>
       </Grid>
+      {open && (
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        )}
     </CustomizedDialogs>
   );
 };

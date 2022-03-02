@@ -158,7 +158,7 @@ function ProjectEstimations(props) {
     {
       headerName: "Estimation Name",
       field: "estName",
-      width: 300,
+      width: 370,
       renderCell: (rowData) => {
         return estimationView && !rowData.row.isDeleted
           ? checkStep(rowData.row)
@@ -179,18 +179,18 @@ function ProjectEstimations(props) {
         // </Link>
       },
     },
-    { headerName: "Estimation Type", field: "estType", width: 100 },
+    { headerName: "Estimation Type", field: "estType", width: 95 },
     {
       headerName: "Estimation Description",
       field: "estDescription",
-      width: 200,
+      width: 150,
     },
-    { headerName: "Total Cost($)", field: "totalCost" },
-    { headerName: "No of Persons", field: "manCount" },
+    { headerName: "Total Cost($)", field: "totalCost" , width: 80},
+    { headerName: "No of Persons", field: "manCount", width: 80 },
     {
       headerName: "Last Modified By",
       field: "lastmodify",
-      width: 150,
+      width: 120,
       type: "date",
       renderCell: (dataRow) =>
         dataRow.row.updatedBy ? (
@@ -211,7 +211,7 @@ function ProjectEstimations(props) {
       field: "action",
       type: "actions",
       headerName: "Actions",
-      minWidth: 80,
+     width: 80,
       getActions: (params) => [
         <>
           <Box sx={{ width: "5px" }} className="estimation-detail-box" />

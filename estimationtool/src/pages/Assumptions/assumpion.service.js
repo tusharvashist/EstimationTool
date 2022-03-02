@@ -23,9 +23,9 @@ const assumptionService = {
       url,
     });
   },
-  mapWithEstimation: function (assumptionId, estHeaderId) {
-    let url = Url.allAssumptionsTags + "/mapWithEstimation/" + assumptionId;
-    return axios.put(url, estHeaderId);
+  mapWithEstimation: function ( estHeaderId,assumptionsList) {
+    let url = Url.allAssumptions + "/mapWithEstimation/" + estHeaderId;
+    return axios.put(url, assumptionsList);
   },
   addAssumption: function (assumption, assumptionTag) {
     let url = Url.allAssumptions;
