@@ -39,7 +39,6 @@ const ApplicationAssumptions = () => {
 
   const importAllAssumptions = async () => {
     let result = await assumptionService.importAllAssumptions();
-    console.log(result.data.body);
     setAssumptions(result.data.body);
   };
 

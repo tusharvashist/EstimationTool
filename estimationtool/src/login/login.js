@@ -92,7 +92,6 @@ export default function Login(props) {
         dispatch(setLastName(result.data.body.lastName));
         dispatch(setRole(result.data.body.roles.roleName));
         const permissions = mapPermissions(result.data.body.RolePermission);
-        console.log("permissions", permissions);
         dispatch(setRolePermission(permissions));
         dispatch(
           setFullName(

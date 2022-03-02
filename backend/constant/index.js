@@ -146,6 +146,7 @@ module.exports = {
     ASSUMPTION_CREATED: "Assumption created successfully",
     ASSUMPTION_ERROR: "Assumption create fail",
     ASSUMPTION_FETCH: "All assumption fetch successfully",
+    ASSUMPTION_LINK: "All assumption link to estimation successfully",
     ASSUMPTION_Tag_FETCH: "All assumption tags fetch successfully",
     ASSUMPTION_GET_ERROR: "All assumption featch error",
     ASSUMPTION_NOT_FOUND: "Assumption not found",

@@ -37,8 +37,10 @@ const Url = {
   getEstimationLocation: `${process.env.REACT_APP_URL}location/estimation`,
   getResourceRoleCountOnUpdate: `${process.env.REACT_APP_URL}resource/rolecount`,
   createNewerEstimationVersion: `${process.env.REACT_APP_URL}estimation/versioningEstimation`,
-  shareEstimate: `${process.env.REACT_APP_URL}role`,
+  shareRoleEstimate: `${process.env.REACT_APP_URL}role`,
+  shareEstimate: `${process.env.REACT_APP_URL}share`,
   allAssumptions: `${process.env.REACT_APP_URL}consolidatedAssumption`,
   allAssumptionsTags: `${process.env.REACT_APP_URL}consolidatedAssumption/tags`,
+  getPCUserDetails: `${process.env.REACT_APP_PC_PROXY}GetPCUserDetails`,
 };
 export default Url;

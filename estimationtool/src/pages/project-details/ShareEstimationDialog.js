@@ -11,7 +11,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import ShareEstimateDialogService from "./ShareEstimateDialogService";
 
-const WAIT_INTERVAL = 3000;
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
+
+const WAIT_INTERVAL = 1000;
 const ENTER_KEY = 13;
 
 const ShareEstimationDialog = (props) => {
@@ -19,9 +21,12 @@ const ShareEstimationDialog = (props) => {
   const [selectedEstimation, setSelectedEstimation] = useState();  
   const [roleMasterList, setRoleMasterList] = useState();
   const [userList, setUserList] = useState([]);
-  
+   const [selectedUserList, setSelectedUserList] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-const [timer, setTimer] = useState([]);
+  const [timer, setTimer] = useState([]);
+  const [isOpen, setOpen] = React.useState({});
+  const { message, severity, open } = isOpen || {};
+
   useEffect(() => {
     setSelectedEstimation(props.selectedEstimation);
     getRole();
@@ -30,8 +35,8 @@ const [timer, setTimer] = useState([]);
   const handleChange = (e) => {
     if (timer !== null) {
       clearTimeout(timer);
+       setUserList([]);
     }
-
     setSearchKeyword(e.target.value);
     setTimer( setTimeout(() => { getPCUserDetails() }, WAIT_INTERVAL));
   };
@@ -72,20 +77,82 @@ const [timer, setTimer] = useState([]);
     }
   };
 
-  const [roles, setRoles] = React.useState([]);
+  const [roles, setRoles] = React.useState();
   const handleRoleChange = (event) => {
     setRoles(event.target.value);
   };
 
+const handleShareClick = (event) => {
+  var estimationId = [];
+  selectedEstimation.forEach((item) => { 
+    estimationId.push(item._id);
+  });
+
+ if (estimationId.length === 0) {
+    setOpen({
+      open: true,
+      severity: "error",
+      message: "Add least one estimate before sharing.",
+    });
+  } else if (roles === undefined) {
+    setOpen({
+      open: true,
+      severity: "error",
+      message: "Select user role before sharing.",
+    });
+  } else if (selectedUserList.length === 0) {
+    setOpen({
+      open: true,
+      severity: "error",
+      message: "Add least one user before sharing.",
+    });
+ } else {
+     var requestJson = {
+      "Estimations": estimationId,
+      "RoleId": roles,
+      "Users": selectedUserList
+    };
+ 
+    console.log("requestJson : ",requestJson);
+    ShareEstimateDialogService.share(requestJson)
+     .then((res) => {
+       let status = res.data.status;
+       console.log("get Client by id error", status);
+       if (status === 200) {
+         setRoles(undefined);
+         setSelectedUserList([]);
+         props.saveFun(res);
+       } else {
+         setOpen({
+           open: true,
+           severity: "error",
+           message: res.data.message,
+         });
+       }
+     }).catch((err) => {
+        console.log("get Client by id error", err);
+    });;
+  }
+  };
+
+  const handleClose = () => { 
+    setOpen(false);
+  }
+
+  const handleDialogClose = () => { 
+      setRoles(undefined);
+         setSelectedUserList([]);
+    props.closeF();
+  }
   return (
     <CustomizedDialogs
       isOpen={props.isOpen}
       openFun={props.openF}
-      closeFun={props.closeF}
+      closeFun={handleDialogClose}
       title={props.title}
       oktitle={props.oktitle}
       cancelTitle={props.cancelTitle}
-      saveFun={props.saveFun}
+      saveFun={handleShareClick}
     >
       <Grid container>
         <Grid item xs={12}>
@@ -96,7 +163,7 @@ const [timer, setTimer] = useState([]);
               label={item.estName}
                 variant="outlined"
                 onClick={handleChipClick}
-              onDelete={() => { handleChipDelete(item) }}
+                onDelete={() => { handleChipDelete(item) }}
               />)
             }) : ""}
       
@@ -133,6 +200,10 @@ const [timer, setTimer] = useState([]);
             options={userList}
             getOptionLabel={(option) => option.EmpFName + " " + option.EmpLName }
             filterSelectedOptions
+             onChange={(e,value) => {
+               console.log("e:", e, " v:", value)
+               setSelectedUserList(value);
+              }}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -146,6 +217,15 @@ const [timer, setTimer] = useState([]);
           />
         </Grid>
       </Grid>
+      {open && (
+          <Snackbar
+            isOpen={open}
+            severity={severity}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        )}
     </CustomizedDialogs>
   );
 };

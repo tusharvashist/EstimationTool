@@ -30,9 +30,29 @@ export const USER_PERMISSIONS = {
   estimation_generate_timeline: "estimation_generate_timeline",
   estimation_export_resourcemix: "estimation_export_resourcemix",
   estimation_export_timeline: "estimation_export_timeline",
-  estimation_share: "estimation_share",  // Not implemented
+  estimation_share: "estimation_share", // Not implemented
   estimation_requirement_add: "estimation_requirement_add",
-  estimation_pricing_view: "estimation_pricing_view",  
+  estimation_pricing_view: "estimation_pricing_view",
   estimation_add_review_comment: "estimation_add_review_comment", // Not implemented
   estimation_resourcecount_edit: "estimation_resourcecount_edit",
+};
+
+export const ESTIMATION_PERMISSION = {
+  estimation_view: false,
+  estimation_list: false,
+  estimation_delete: false,
+  estimation_create: false,
+  estimation_configuation: false,
+  estimation_attribute_data: false,
+  estimation_calc_attribute_data: false,
+  estimation_export_excel: false,
+  estimation_generate_resourcemix: false,
+  estimation_generate_timeline: false,
+  estimation_export_resourcemix: false,
+  estimation_export_timeline: false,
+  estimation_share: false, // Not implemented
+  estimation_requirement_add: false,
+  estimation_pricing_view: false,
+  estimation_add_review_comment: false, // Not implemented
+  estimation_resourcecount_edit: false,
 };
