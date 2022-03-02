@@ -10,19 +10,8 @@ module.exports.createShareData = async (serviceData) => {
   try {
     for (let estimation of serviceData.Estimations) {
       for (let user of serviceData.Users) {
-        //Check User in Application
-        let userexists = await userModel.findOne({ email: user.vc_Email });
-        if (!userexists) {
-          //Create New User
-          let role = await roleModel.find({ seq: 8 });
-          userexists = await userService.signup({
-            email: user.vc_Email,
-            password: "admin@321",
-            roleId: role._id,
-            firstname: user.EmpFName,
-            lastname: user.EmpLName,
-          });
-        }
+        //Check User in Application and create it
+        let userexists = await CheckUserandCreate(user);
         let sharedata = new ShareDataModel({
           typeId: mongoose.Types.ObjectId(estimation.id),
           typeName: "E",
@@ -159,3 +148,18 @@ module.exports.GetSharingData = async ({ estimationId }) => {
     throw new Error(err);
   }
 };
+async function CheckUserandCreate(user) {
+  let userexists = await userModel.findOne({ email: user.vc_Email });
+  if (!userexists) {
+    //Create New User
+    let role = await roleModel.find({ seq: 8 });
+    userexists = await userService.signup({
+      email: user.vc_Email,
+      password: "admin@321",
+      roleId: role._id,
+      firstname: user.EmpFName,
+      lastname: user.EmpLName,
+    });
+  }
+  return userexists;
+}
