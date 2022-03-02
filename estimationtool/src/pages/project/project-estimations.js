@@ -112,6 +112,7 @@ function ProjectEstimations(props) {
               "/Estimation-Detail",
             state: { estId: augData._id },
           }}
+          onClick={(e) => dispatch(setEstHeaderId(augData._id))}
         >
           {" "}
           {augData.estName}
@@ -121,7 +122,6 @@ function ProjectEstimations(props) {
   };
 
   const checkStep = (data) => {
-    dispatch(setEstHeaderId(data._id));
     if (data.estStep == "3") {
       return Estlink(data);
     } else if (data.estStep == "2" || data.estStep == "1") {
@@ -143,6 +143,7 @@ function ProjectEstimations(props) {
                 step: data.estStep,
               },
             }}
+            onClick={(e) => dispatch(setEstHeaderId(data._id))}
           >
             {" "}
             {data.estName}
@@ -185,7 +186,7 @@ function ProjectEstimations(props) {
       field: "estDescription",
       width: 150,
     },
-    { headerName: "Total Cost($)", field: "totalCost" , width: 80},
+    { headerName: "Total Cost($)", field: "totalCost", width: 80 },
     { headerName: "No of Persons", field: "manCount", width: 80 },
     {
       headerName: "Last Modified By",
@@ -211,7 +212,7 @@ function ProjectEstimations(props) {
       field: "action",
       type: "actions",
       headerName: "Actions",
-     width: 80,
+      width: 80,
       getActions: (params) => [
         <>
           <Box sx={{ width: "5px" }} className="estimation-detail-box" />
