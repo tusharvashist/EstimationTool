@@ -5,10 +5,12 @@ import TextField from "@material-ui/core/TextField";
 import EstimationService from "../estimation-detail/EstimationService";
 import { useDispatch } from "react-redux";
 import { setEstHeaderId } from "../../Redux/estimationHeaderId";
+import Snackbar from "../../shared/layout/snackbar/Snackbar";
 
 const EstimationCloneDialog = (props) => {
   const dispatch = useDispatch();
 
+  const [isOpen, setOpen] = React.useState({});
   const [estName, setEstName] = useState("");
 
   let name = props.estimationName;
@@ -21,16 +23,28 @@ const EstimationCloneDialog = (props) => {
     setEstName(e.target.value);
   };
 
+  const handleClose = () => {
+    setOpen({});
+  };
+
   const handleSave = async () => {
     await EstimationService.cloneEstimation(props.estimationId, estName)
       .then((res) => {
         dispatch(setEstHeaderId(res.data.body._id));
         props.closeFun();
+        props.handleCloneSuccess(res);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("_______", err);
+        setOpen({
+          open: true,
+          severity: "error",
+          message: "Sorry! Not able to clone",
+        });
       });
   };
+
+  const { message, severity, open } = isOpen || {};
 
   return (
     <CustomizedDialogsBlank
@@ -45,6 +59,7 @@ const EstimationCloneDialog = (props) => {
       <Grid container>
         <TextField
           required
+          error={estName.length === 0 ? true : false}
           variant="outlined"
           id="outlined-required"
           label="Estimation Name"
@@ -54,6 +69,13 @@ const EstimationCloneDialog = (props) => {
           helperText="Please provide unique estimation name"
         />
       </Grid>
+      <Snackbar
+        isOpen={open}
+        severity={severity}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={message}
+      />
     </CustomizedDialogsBlank>
   );
 };

@@ -690,6 +690,14 @@ const EstimationDetail = () => {
     }
   };
 
+  const handleCloneSuccess = (res) => {
+    setOpen({
+      open: true,
+      severity: "success",
+      message: res.data.message,
+    });
+  };
+
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
   console.log("selected currentSelctedVersion", currentSelctedVersion);
@@ -721,6 +729,7 @@ const EstimationDetail = () => {
         cancelTitle="Close"
         estimationId={estimationId}
         estimationName={headerData.estName}
+        handleCloneSuccess={handleCloneSuccess}
       />
       <EstimationAssumptionsDialog
         isOpen={isOpenImportAssumptions}
