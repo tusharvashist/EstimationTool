@@ -41,7 +41,7 @@ import { setEstPermission } from "../../Redux/estimationPermission";
 import { IoWarningOutline } from "react-icons/io5";
 import { MdOutlineDocumentScanner, MdOutlineTimeline } from "react-icons/md";
 
-import { BiExport, BiImport,BiHistory } from "react-icons/bi";
+import { BiExport, BiImport, BiHistory } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
@@ -55,6 +55,8 @@ import EstimationAssumptionsDialog from "../Assumptions/EstimationAssumptionsDia
 import { ESTIMATION_PERMISSION } from "../../shared/ui-view/constant/enum";
 import SharedUserList from "./SharedUserList";
 import { RiUserShared2Line } from "react-icons/ri";
+import EstimationCloneDialog from "../EstimationCloning/EstimationCloneDialog";
+import { VscCopy } from "react-icons/vsc";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -147,6 +149,8 @@ const EstimationDetail = () => {
   const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
   const [isOpenSharedUserList, setIsOpenSharedUserList] = useState(false);
   const [refreshCount, setRefreshCount] = useState(false);
+
+  const [isOpenEstimationClone, setIsOpenEstimationClone] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -635,6 +639,18 @@ const EstimationDetail = () => {
   const closeSharedUserList = () => {
     setIsOpenSharedUserList(false);
   };
+  const handleOpenEstimationClone = () => {
+    openEstimationClonePopup();
+  };
+
+  const openEstimationClonePopup = () => {
+    setIsOpenEstimationClone(true);
+  };
+
+  const closeEstimationClonePopup = () => {
+    setIsOpenEstimationClone(false);
+  };
+
   const createNewVersion = async (estId) => {
     setIsVersionDialogOpen(false);
     setLoader(true);
@@ -696,7 +712,17 @@ const EstimationDetail = () => {
         cancelTitle="Close"
         estimationId={estimationId}
       />
-       <EstimationAssumptionsDialog
+      <EstimationCloneDialog
+        isOpen={isOpenEstimationClone}
+        openFun={openEstimationClonePopup}
+        closeFun={closeEstimationClonePopup}
+        title="Clone Estimation"
+        oktitle="Save"
+        cancelTitle="Close"
+        estimationId={estimationId}
+        estimationName={headerData.estName}
+      />
+      <EstimationAssumptionsDialog
         isOpen={isOpenImportAssumptions}
         openFun={openImportAssumptionsPopup}
         closeFun={closeImportAssumptionsPopup}
@@ -704,7 +730,7 @@ const EstimationDetail = () => {
         oktitle="Save"
         cancelTitle="Close"
         estimationId={estimationId}
-        isEstimationReleased={isEstimationReleased }
+        isEstimationReleased={isEstimationReleased}
       />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
@@ -836,6 +862,10 @@ const EstimationDetail = () => {
             <RiUserShared2Line className="link-icon" />
             &nbsp; Shared with
           </Button>
+          <Button variant="outlined" onClick={handleOpenEstimationClone}>
+            <VscCopy className="link-icon" />
+            &nbsp;Clone
+          </Button>
           <Button variant="outlined" onClick={openImportAssumptions}>
             <HiOutlineLightBulb className="link-icon" />
             &nbsp;Include Assumptions
@@ -843,7 +873,7 @@ const EstimationDetail = () => {
           {finalEstPermission.checkExport() && (
             <Button variant="outlined" onClick={openExportEstimation}>
               <BiExport style={{ fontSize: "18px" }} />
-              &nbsp;Export in Excel
+              &nbsp;Export Report
             </Button>
           )}
           {!isEstimationReleased ? (
@@ -865,7 +895,7 @@ const EstimationDetail = () => {
               {finalEstPermission.checkConfiguration() && (
                 <Button variant="outlined" className="estimation-detail-button">
                   <EditOutlined style={{ fontSize: "18px" }} />
-                  &nbsp;Edit Configuration
+                  &nbsp;Edit Config
                 </Button>
               )}
             </Link>
