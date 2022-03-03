@@ -298,3 +298,21 @@ module.exports.versioningEstimation = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
+//Clone Estimation
+module.exports.cloningEstimation = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responceFromCloningEstimation =
+      await estimationSer.cloneEstimation(
+        req.query 
+      );
+    console.log('estimation clone created successfully');
+    responce.status = 200;
+    responce.message = constant.CloneEstimationMessage.ESTIMATION_CLONE_CREATED;
+    responce.body = responceFromCloningEstimation;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};

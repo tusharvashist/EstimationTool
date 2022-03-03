@@ -367,4 +367,12 @@ module.exports = {
     Sharing_UPDATE: "Estimation Sharing updated successfully",
     Sharing_DELETE: "Estimation Sharing deleted successfully",
   },
+
+  CloneEstimationMessage: {
+    ESTIMATION_CLONE_CREATED: "Estimation clone created successfully",
+    ESTIMATION_CLONE_ERROR: "Error in cloning Estimation",
+    ESTIMATION_NOT_FOUND: "Estimation not found",
+    INVALID_ID: "Invalid id",
+    ESTIMATION_NAME_UNIQUE: "Estimation name should be unique",
+  },
 };
