@@ -35,11 +35,10 @@ const EstimationCloneDialog = (props) => {
         props.handleCloneSuccess(res);
       })
       .catch((err) => {
-        console.log("_______", err);
         setOpen({
           open: true,
           severity: "error",
-          message: "Sorry! Not able to clone",
+          message: err.data.message,
         });
       });
   };

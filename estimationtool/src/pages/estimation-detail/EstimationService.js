@@ -90,6 +90,8 @@ const EstimationService = {
         id,
         estName,
       },
+    }).catch((e) => {
+      throw e.response;
     });
   },
 };
