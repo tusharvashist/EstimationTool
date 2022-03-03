@@ -12,6 +12,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton"
 import AddIcon from "@material-ui/icons/Add";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -59,10 +60,36 @@ function DeleteButton(props) {
 }
 
 function EditButton(props) {
+    const dispatch = useDispatch();
   if (props.params.row.isDeleted) {
-    return <GridActionsCellItem icon={<EditIcon />} label="Delete" disabled />;
+   return  <GridActionsCellItem icon={<EditIcon />} label="Delete" disabled />
   } else {
-    return <GridActionsCellItem icon={<EditIcon />} label="Delete" />;
+
+      return  <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  props.clientDetails.clientName +
+                  "/" +
+                  props.projectDetails.projectName +
+                  "/createEstimate",
+                state: {
+                  clientInfo: props.clientDetails,
+                  projectInfo: props.projectDetails,
+                  estimationHeaderId: props.params.row._id,
+                   step: props.params.row.estStep,
+                },
+        }}
+        
+            onClick={(e) => dispatch(setEstHeaderId(props.params.row._id))}
+      >
+        <IconButton aria-label="edit" >
+    
+                  <EditIcon style={{ fontSize: "18px" }} />
+          
+          </IconButton>
+      </Link>
+  
   }
 }
 
@@ -135,6 +162,9 @@ function ProjectEstimations(props) {
     setOpen(false);
   };
 
+  // const dispatchSetEstHeaderId = (id) =>{
+  //   dispatch(setEstHeaderId(id));
+  // };
   const Estlink = (augData) => {
     console.log("sssss", augData);
     if (clientDeatils && projectDeatils) {
@@ -202,20 +232,6 @@ function ProjectEstimations(props) {
           !rowData.row.isDeleted
           ? checkStep(rowData.row)
           : rowData.estName;
-        // <Link
-        //   to={{
-        //     pathname:
-        //       "/All-Clients/" +
-        //       clientDeatils.clientName +
-        //       "/" +
-        //       projectDeatils.projectName +
-        //       "/Estimation-Detail",
-        //     state: { estId: rowData._id },
-        //   }}
-        // >
-        //   {" "}
-        //   {rowData.estName}
-        // </Link>
       },
     },
     { headerName: "Estimation Type", field: "estType", width: 95 },
@@ -250,30 +266,24 @@ function ProjectEstimations(props) {
       field: "action",
       type: "actions",
       headerName: "Actions",
-      width: 80,
+      width: 100,
       getActions: (params) => [
         <>
           <Box sx={{ width: "5px" }} className="estimation-detail-box" />
-          {/* <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label="Delete"
-                /> */}
-          <EditButton params={params} openDeleteDailog={openDeleteDailog} />
-
-          <Box sx={{ width: "5px" }} className="estimation-detail-box" />
+          <EditButton
+            params={params}
+            clientDetails={clientDeatils}
+            projectDetails={projectDeatils}
+            estimationId={params.row._id}
+            openDeleteDailog={openDeleteDailog}
+            />
 
           <DeleteButton
             params={params}
             openDeleteDailog={openDeleteDailog}
             disabled={finalEstPermission.checkEstimationDelete()}
           />
-          {/* <GridActionsCellItem
-                  icon={<DeleteIcon />}
-                  label="Delete"
-                  onClick={() => { openDeleteDailog(params) }}
-                  
-                /> */}
-          <Box sx={{ width: "5px" }} className="estimation-detail-box" />
+          <Box sx={{ width: "10px" }} className="estimation-detail-box" />
         </>,
       ],
     },
@@ -288,9 +298,6 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => {};
-
-  const openUpdateDailog = () => {};
 
   const openDeleteDailog = (params) => {
     setEditRow({ ...params.row });
@@ -314,9 +321,7 @@ function ProjectEstimations(props) {
       });
   };
 
-  let history = useHistory();
 
-  const actionArry = (rowData) => {};
   const rowBackgroundColor = {
     true: "#eef5e9",
     false: "#fff",
@@ -339,9 +344,7 @@ function ProjectEstimations(props) {
     setIsShareOpen(false);
   };
 
-  const handleShareClick = () => {
-    openShareFun();
-  };
+
 
   return (
     <div className="all-project-wrap">
