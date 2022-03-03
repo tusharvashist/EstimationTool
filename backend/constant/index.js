@@ -366,6 +366,7 @@ module.exports = {
     INVALID_ID: "Invalid id",
     Sharing_UPDATE: "Estimation Sharing updated successfully",
     Sharing_DELETE: "Estimation Sharing deleted successfully",
+    VALIDATE_LINK_TOKEN: "SHARE ESTIMATION LINK TOKEN VALIDATION FAILED",
   },
 
   CloneEstimationMessage: {

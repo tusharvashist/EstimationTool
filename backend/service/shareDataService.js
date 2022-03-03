@@ -1,10 +1,10 @@
+const mongoose = require("mongoose");
 const constant = require("../constant");
 const ShareDataModel = require("../database/models/shareDataModel");
 const userModel = require("../database/models/userModel");
 const roleModel = require("../database/models/roleMasterModel");
-const { formatMongoData } = require("../helper/dbhelper");
 const userService = require("../service/userService");
-const mongoose = require("mongoose");
+const EstimationHeader = require("../database/models/estHeaderModel");
 
 module.exports.createShareData = async (serviceData) => {
   try {
@@ -27,9 +27,9 @@ module.exports.createShareData = async (serviceData) => {
           ],
         });
         await sharedata.save();
-
+        const estShareLink = await prepareShareEstimationLink(estimation.id, userexists.id);
         //send mail...
-        //callSendMailService(estimation.id);
+        //callSendMailService(estimation.id, estShareLink);
       }
     }
     return "Success";
@@ -39,7 +39,18 @@ module.exports.createShareData = async (serviceData) => {
   }
 };
 
-callSendMailService = ({ estimationId }) => {
+prepareShareEstimationLink = async (estimationId, shareUserId ) => {
+  return await EstimationHeader.findById( estimationId ).then( async(res, err) => {
+    return await userModel.findById(shareUserId).then( async(res, err) => {
+      const token = await userService.getToken(shareUserId);
+      const baseURL = process.env.NODE_ENV === "production" ? process.env.PRODUCTION_URL : process.env.DEVELOPEMENT_URL;
+      console.log(`${baseURL}/api/v1/user/validateshareestlink/${estimationId}?token=${token}`);
+      return `${baseURL}/api/v1/user/validateshareestlink/${estimationId}?token=${token}`;
+    });
+  });
+};
+
+callSendMailService = ({ estimationId , estShareLink}) => {
   //Prepare the email data
   const estimationData = this.GetSharingData(estimationId);
   const data = {
@@ -51,8 +62,7 @@ callSendMailService = ({ estimationId }) => {
       clientName: "TYC",
       projectName: "TYC_Client",
       estimationName: estimationData.estimation.estName,
-      estimationLink:
-        "http://localhost:3000/All-Clients/BioIQ/BioIQ%20healtcare%20Applications/uid?13432/estHeaderId?123456709",
+      estimationLink: estShareLink,
       assignedRole: estimationData.sharingrole.roleName,
       mialType: constant.emailType.ESTIMATION,
     },

@@ -39,3 +39,16 @@ module.exports.getAllUserByName = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
+module.exports.validateshareestlink = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responceFromUserService = await signupSer.validateshareestlink(req);
+    responce.status = 200;
+    responce.message = constant.userMessage.FETCH_USER;
+    responce.body = responceFromUserService;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};
