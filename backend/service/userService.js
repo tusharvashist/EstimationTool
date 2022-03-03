@@ -189,20 +189,28 @@ module.exports.testUser = async (emailID, pass) => {
 module.exports.validateshareestlink = async (req) => {
   try {
     //1. Validate Token
-    var decodedToken = jwt.verify(req.query.token, process.env.SECRET_KEY || "py-estimation#$#");
+    var decodedToken = jwt.verify(
+      req.query.token,
+      process.env.SECRET_KEY || "py-estimation#$#"
+    );
 
     //2. Validate Estimation TODO
-    const estimation = await EstimationHeader.findById(req.params.estheaderId).then(async (res, err) => {
-      if (res) {
-        const sharedEst = await ShareDataModel.findOne({ typeId: res._id, shareUserId: decodedToken.id });
-          
-      } else {
-        throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
+    let sharedEst;
+    await EstimationHeader.findById(req.params.estheaderId).then(
+      async (res, err) => {
+        if (res) {
+          sharedEst = await ShareDataModel.findOne({
+            typeId: res._id,
+            shareUserId: decodedToken.id,
+          });
+        } else {
+          throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
+        }
       }
-    })
+    );
 
     //3. Validate User
-    const users = await getUsersData(decodedToken.id, estimation._id);
+    const users = await getUsersData(decodedToken.id, sharedEst._id);
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
@@ -218,7 +226,6 @@ module.exports.validateshareestlink = async (req) => {
 };
 
 getUsersData = async (userid, estheaderId) => {
-
   const users = await userModel.aggregate([
     {
       $match: {
@@ -269,7 +276,7 @@ getUsersData = async (userid, estheaderId) => {
   ]);
 
   return users;
-}
+};
 
 module.exports.getToken = async (userId) => {
   var token = jwt.sign(
