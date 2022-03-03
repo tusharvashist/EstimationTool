@@ -42,6 +42,22 @@ const RequirementMix = () => {
   const { estimation_export_resourcemix, estimation_pricing_view } =
     usePermission();
 
+  const { this_estimation_export_resourcemix, this_estimation_pricing_view } =
+    useEstPermission();
+
+  const finalEstPermission = {
+    checkExportResourceMix: () => {
+      return this_estimation_export_resourcemix == undefined
+        ? estimation_export_resourcemix
+        : this_estimation_export_resourcemix;
+    },
+    checkPricingView: () => {
+      return this_estimation_pricing_view == undefined
+        ? estimation_pricing_view
+        : this_estimation_pricing_view;
+    },
+  };
+
   useEffect(() => {
     getResourceCountData();
   }, [estimationId]);
@@ -126,26 +142,26 @@ const RequirementMix = () => {
     {
       field: "costrate",
       headerName: "Cost/Hr ($)",
-      hide: !estimation_pricing_view,
+      hide: !finalEstPermission.checkPricingView(),
       width: 160,
     },
     {
       field: "pricerate",
       headerName: "Price/Hr ($)",
-      hide: !estimation_pricing_view,
+      hide: !finalEstPermission.checkPricingView(),
       width: 160,
     },
     {
       field: "cost",
       headerName: "Cost ($)",
-      hide: !estimation_pricing_view,
+      hide: !finalEstPermission.checkPricingView(),
 
       width: 160,
     },
     {
       field: "price",
       headerName: "Price ($)",
-      hide: !estimation_pricing_view,
+      hide: !finalEstPermission.checkPricingView(),
 
       width: 160,
     },
@@ -167,7 +183,7 @@ const RequirementMix = () => {
       <Container>
         <Grid container>
           <Grid item className="multi-button-grid">
-            {estimation_export_resourcemix && (
+            {finalEstPermission.checkExportResourceMix() && (
               <Button variant="outlined" onClick={openExportEstimation}>
                 <BiExport style={{ fontSize: "18px" }} />
                 &nbsp;Export in Excel
@@ -218,7 +234,7 @@ const RequirementMix = () => {
                 disableSelectionOnClick
               />
             </div>
-            {estimation_pricing_view && (
+            {finalEstPermission.checkPricingView() && (
               <div className={styleClasses.totalcontainer}>
                 <div className={styleClasses.totalRow}>
                   <div className={styleClasses.total_item}>
@@ -238,10 +254,10 @@ const RequirementMix = () => {
                   </h4>
                 </div>
                 <div className={styleClasses.total_item}>
-                <Tooltip title="Margin Formula = [((Price -Cost)/Price) X 100]">
-                  <h4>
-                    Margin: <span>{totalMargin.marginPercent}</span>
-                  </h4>
+                  <Tooltip title="Margin Formula = [((Price -Cost)/Price) X 100]">
+                    <h4>
+                      Margin: <span>{totalMargin.marginPercent}</span>
+                    </h4>
                   </Tooltip>
                 </div>
               </div>

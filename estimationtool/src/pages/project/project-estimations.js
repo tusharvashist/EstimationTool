@@ -22,6 +22,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { useSelector, useDispatch } from "react-redux";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import useEstPermission from "../../shared/layout/hooks/useEstPermission";
 import { IoFastFood } from "react-icons/io5";
 import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
@@ -88,7 +89,33 @@ function ProjectEstimations(props) {
     estimationUpdate,
     estimationListing,
     estimationDelete,
+    estimation_share,
   } = usePermission();
+
+  const {
+    this_estimation_view,
+    this_estimation_list,
+    this_estimation_delete,
+    this_estimation_share,
+  } = useEstPermission();
+
+  const finalEstPermission = {
+    checkestimationView: () => {
+      return this_estimation_view == undefined
+        ? estimationView
+        : this_estimation_view;
+    },
+    checkEstimationDelete: () => {
+      return this_estimation_delete == undefined
+        ? estimationDelete
+        : this_estimation_delete;
+    },
+    checkEstimationShare: () => {
+      return this_estimation_share == undefined
+        ? estimation_share
+        : this_estimation_share;
+    },
+  };
 
   const [projectStatus] = useState([
     { title: "All" },
@@ -104,9 +131,9 @@ function ProjectEstimations(props) {
 
   console.log("tableData :XxXX  ", tableData);
 
-  const handleClose = () => { 
+  const handleClose = () => {
     setOpen(false);
-  }
+  };
 
   const Estlink = (augData) => {
     console.log("sssss", augData);
@@ -171,7 +198,8 @@ function ProjectEstimations(props) {
       field: "estName",
       width: 370,
       renderCell: (rowData) => {
-        return estimationView && !rowData.row.isDeleted
+        return finalEstPermission.checkestimationView() &&
+          !rowData.row.isDeleted
           ? checkStep(rowData.row)
           : rowData.estName;
         // <Link
@@ -234,7 +262,11 @@ function ProjectEstimations(props) {
 
           <Box sx={{ width: "5px" }} className="estimation-detail-box" />
 
-          <DeleteButton params={params} openDeleteDailog={openDeleteDailog} />
+          <DeleteButton
+            params={params}
+            openDeleteDailog={openDeleteDailog}
+            disabled={finalEstPermission.checkEstimationDelete()}
+          />
           {/* <GridActionsCellItem
                   icon={<DeleteIcon />}
                   label="Delete"
@@ -299,13 +331,12 @@ function ProjectEstimations(props) {
   };
 
   const shareEstimation = (res) => {
-
-      setOpen({
-             open: true,
-             severity: "success",
-            message: res.data.message,
-      });
-      setIsShareOpen(false);
+    setOpen({
+      open: true,
+      severity: "success",
+      message: res.data.message,
+    });
+    setIsShareOpen(false);
   };
 
   const handleShareClick = () => {
@@ -314,16 +345,18 @@ function ProjectEstimations(props) {
 
   return (
     <div className="all-project-wrap">
-      <ShareEstimationDialog
-        isOpen={isShareOpen}
-        openF={openShareFun}
-        closeF={closeShareFun}
-        title="Share Estimations"
-        oktitle="Share"
-        saveFun={shareEstimation}
-        cancelTitle="Cancel"
-        selectedEstimation={selectedEstimation}
-      />
+      {finalEstPermission.checkEstimationShare() && (
+        <ShareEstimationDialog
+          isOpen={isShareOpen}
+          openF={openShareFun}
+          closeF={closeShareFun}
+          title="Share Estimations"
+          oktitle="Share"
+          saveFun={shareEstimation}
+          cancelTitle="Cancel"
+          selectedEstimation={selectedEstimation}
+        />
+      )}
       {deleteEstimationDailog === true && isOpenDailog === true ? (
         <DeleteProjectdailog
           isOpen={isOpenDailog}
@@ -365,25 +398,27 @@ function ProjectEstimations(props) {
             </FormControl>
           </Box>
           <Box>
-            <Button
-              style={{ marginRight: "15px" }}
-              variant="outlined"
-              onClick={() => {
-                if (selectedEstimation.length !== 0) {
-                openShareFun();
-                } else {
-                  setOpen({
+            {finalEstPermission.checkEstimationShare() && (
+              <Button
+                style={{ marginRight: "15px" }}
+                variant="outlined"
+                onClick={() => {
+                  if (selectedEstimation.length !== 0) {
+                    openShareFun();
+                  } else {
+                    setOpen({
                       open: true,
                       severity: "error",
                       message: "Select at least one estimation to share.",
-                      });
-                }
-              }}
-            >
-              {" "}
-              <BiShare style={{ fontSize: "20px" }} />
-              &nbsp; Share
-            </Button>
+                    });
+                  }
+                }}
+              >
+                {" "}
+                <BiShare style={{ fontSize: "20px" }} />
+                &nbsp; Share
+              </Button>
+            )}
           </Box>
         </Grid>
         <Box
@@ -419,14 +454,14 @@ function ProjectEstimations(props) {
         </div>
       </BorderedContainer>
       {open && (
-          <Snackbar
-            isOpen={open}
-            severity={severity}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            message={message}
-          />
-        )}
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </div>
   );
 }
