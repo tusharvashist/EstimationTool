@@ -69,13 +69,28 @@ const EstimationService = {
 
   estimationPublish: function (id) {
     let url = Url.releaseEstimation + "/";
-    return axios.post(url, {estimationHeaderId:id});
+    return axios.post(url, { estimationHeaderId: id });
   },
 
   getNewVersionOfEstimation: function (actionId) {
     let url = Url.createNewerEstimationVersion + "/" + actionId;
     return axios.get(url);
   },
+  getShareEstimate: function (estHeaderId, assumptionsList) {
+    let url = Url.shareEstimate + "?estimationId=" + estHeaderId;
+    return axios.get(url);
+  },
 
+  cloneEstimation: function (id, estName) {
+    let url = Url.cloneEstimation;
+    return axios({
+      method: "GET",
+      url,
+      params: {
+        id,
+        estName,
+      },
+    });
+  },
 };
 export default EstimationService;

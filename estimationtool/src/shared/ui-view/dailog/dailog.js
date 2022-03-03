@@ -88,14 +88,19 @@ export default function CustomizedDialogs(props) {
       </DialogTitle>
       <DialogContent dividers>{props.children}</DialogContent>
       <DialogActions>
-        <Button
+        { !props.isHideOkButton ? (<Button
           size="small"
           color="primary"
           onClick={okFun}
+          disabled={props.okButtonDisabled}
           type={props.buttonType ? props.buttonType : "button"}
         >
           {props.oktitle}
-        </Button>
+        </Button> )
+          : null
+
+        }
+        
 
         <Button onClick={handleClose} color="primary">
           {props.cancelTitle}

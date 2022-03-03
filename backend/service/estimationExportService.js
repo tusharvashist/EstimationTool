@@ -3,6 +3,7 @@ const resourceCountMixService = require("./resourceMixService");
 const estimationHeaderModal = require("../database/models/estHeaderModel");
 const estimationResourceCountService = require("./estimationResourceCountService");
 const estTimelinePlanningServive = require("./timelinePlanningService");
+const estAssumptionService = require("./consolidatedAssumptionService");
 
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
@@ -89,6 +90,20 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
       columns: colSummaryData,
       rows: (await getEstimationRequirementData(reportPayload)).estCalRowData,
     });
+
+    // Add table in summary report for Assumptions - @vishalv 3 March 2022
+    worksheet.addTable({
+      name: "AssumptionTable",
+      ref: `A${worksheet.rowCount + 5}`,
+      headerRow: true,
+      style: {
+        theme: "TableStyleMedium6",
+        showRowStripes: true,
+      },
+      columns: getAssumptionColData(),
+      rows: (await getEstimationAssumptionsData(reportPayload.estimationHeaderId)), 
+    });
+
   }
 
   if (getReportFlagValue("resourceCount", reportPayload)) {
@@ -365,6 +380,52 @@ async function getTimelinePlanningData(estinationHeaderId) {
   return { columnData, totalHour, rowData };
 }
 
+//get Assumptions table records row data
+async function getEstimationAssumptionsData(estHeaderId){
+  let rowsData = [];
+  const resData = await estAssumptionService.getLinkAssumptionWithEstimation(estHeaderId);
+  rowsData = resData.assumption.
+  filter((it) => {
+    return !it.isDeleted && it.selected
+  }).
+  map((el,i) => {
+      let recordData = [];
+      getAssumptionColData().map((item) => {
+        if(item.key === "sno"){
+          return recordData.push(i+1);
+        }
+        if(item.key === "assumption"){
+        return recordData.push(el.assumption);
+        }
+        if(item.key === "Tag"){
+          return recordData.push(el.assumptionTag.name);
+        }
+      });
+      return recordData;
+  });
+  return rowsData;
+}
+
+//get Assumptions table column
+function getAssumptionColData() {
+  const colData = [
+    {
+      key: "sno",
+      width: 10,
+      name: "S.No"
+    },
+    {
+      key: "assumption",
+      width: 40,
+      name: "Assumption"
+    },
+    {
+      name: "Tag",
+      width: 20,
+      key: "Tag"
+    }];
+  return colData;
+}
 module.exports.checkEstName = async (reqPayload) => {
   try {
     return estimationHeaderModal.findById(
