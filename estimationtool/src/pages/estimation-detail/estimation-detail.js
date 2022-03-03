@@ -41,7 +41,7 @@ import { setEstPermission } from "../../Redux/estimationPermission";
 import { IoWarningOutline } from "react-icons/io5";
 import { MdOutlineDocumentScanner, MdOutlineTimeline } from "react-icons/md";
 
-import { BiExport, BiImport } from "react-icons/bi";
+import { BiExport, BiImport,BiHistory } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
@@ -53,6 +53,8 @@ import { CreateEstimationVersion } from "../CreateVersion/CreateEstimationVersio
 import { HiOutlineLightBulb } from "react-icons/hi";
 import EstimationAssumptionsDialog from "../Assumptions/EstimationAssumptionsDialog";
 import { ESTIMATION_PERMISSION } from "../../shared/ui-view/constant/enum";
+import SharedUserList from "./SharedUserList";
+import { RiUserShared2Line } from "react-icons/ri";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -143,6 +145,7 @@ const EstimationDetail = () => {
   const [estVersions, setEstimationVersions] = useState([]);
   const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
   const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
+  const [isOpenSharedUserList, setIsOpenSharedUserList] = useState(false);
   const [refreshCount, setRefreshCount] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
@@ -625,6 +628,13 @@ const EstimationDetail = () => {
     setIsOpenImportAssumptions(false);
   };
 
+  const openSharedUserList = () => {
+    setIsOpenSharedUserList(true);
+  };
+
+  const closeSharedUserList = () => {
+    setIsOpenSharedUserList(false);
+  };
   const createNewVersion = async (estId) => {
     setIsVersionDialogOpen(false);
     setLoader(true);
@@ -677,7 +687,16 @@ const EstimationDetail = () => {
           onClickButton={handleCreateNewVersionClick}
         />
       ) : null}
-      <EstimationAssumptionsDialog
+      <SharedUserList
+        isOpen={isOpenSharedUserList}
+        openFun={openSharedUserList}
+        closeFun={closeSharedUserList}
+        title="Shared User"
+        oktitle="Ok"
+        cancelTitle="Close"
+        estimationId={estimationId}
+      />
+       <EstimationAssumptionsDialog
         isOpen={isOpenImportAssumptions}
         openFun={openImportAssumptionsPopup}
         closeFun={closeImportAssumptionsPopup}
@@ -685,6 +704,7 @@ const EstimationDetail = () => {
         oktitle="Save"
         cancelTitle="Close"
         estimationId={estimationId}
+        isEstimationReleased={isEstimationReleased }
       />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
@@ -812,6 +832,10 @@ const EstimationDetail = () => {
           </div>
         </Grid>
         <Grid xs={11} item className="multi-button-grid">
+          <Button variant="outlined" onClick={openSharedUserList}>
+            <RiUserShared2Line className="link-icon" />
+            &nbsp; Shared with
+          </Button>
           <Button variant="outlined" onClick={openImportAssumptions}>
             <HiOutlineLightBulb className="link-icon" />
             &nbsp;Include Assumptions

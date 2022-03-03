@@ -85,7 +85,8 @@ const ShareEstimationDialog = (props) => {
 const handleShareClick = (event) => {
   var estimationId = [];
   selectedEstimation.forEach((item) => { 
-    estimationId.push(item._id);
+    //{"id":"61eacd1ad063cf60c2b8523a"},
+    estimationId.push({ "id": item._id });
   });
 
  if (estimationId.length === 0) {
@@ -153,6 +154,7 @@ const handleShareClick = (event) => {
       oktitle={props.oktitle}
       cancelTitle={props.cancelTitle}
       saveFun={handleShareClick}
+
     >
       <Grid container>
         <Grid item xs={12}>
@@ -173,7 +175,7 @@ const handleShareClick = (event) => {
           <Grid item>Estimation Role</Grid>
           <Box sx={{ maxWidth: 120 }}>
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Age</InputLabel>
+              <InputLabel id="demo-simple-select-label">Estimation Role</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"

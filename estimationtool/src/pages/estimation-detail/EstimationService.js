@@ -76,6 +76,9 @@ const EstimationService = {
     let url = Url.createNewerEstimationVersion + "/" + actionId;
     return axios.get(url);
   },
-
+  getShareEstimate: function (estHeaderId, assumptionsList) {
+    let url = Url.shareEstimate + "?estimationId=" + estHeaderId;
+    return axios.get(url);
+  },
 };
 export default EstimationService;
