@@ -52,3 +52,16 @@ module.exports.validateshareestlink = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
+module.exports.updateuserrole = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responceFromUserService = await signupSer.updateuserrole(req);
+    responce.status = 200;
+    responce.message = constant.roleMessage.ROLE_UPDATE;
+    responce.body = responceFromUserService.user;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};
