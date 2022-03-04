@@ -7,10 +7,17 @@ const ShareEstimateDialogService = {
   },
   
   getPCUserDetails: function (searchText) {
-    let url =  Url.getPCUserDetails + "/Parm?Vari=" + searchText;
-    return axios.get(url);
+    var config = {
+      method: 'get',
+      url:  Url.getPCUserDetails + "/Parm?Vari=" + searchText,
+      headers: { 
+        'secret_key': 'I1B5ZENvcmVFVDIwMjI='
+      }
+      };
+    return axios(config)
   },
   
+       
   share: function (requestJson) {
     let url = Url.shareEstimate;
     return axios.post(url, requestJson);
