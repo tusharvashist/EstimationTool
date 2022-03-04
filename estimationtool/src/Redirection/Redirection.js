@@ -55,37 +55,44 @@ export default function Redirection(props) {
 
     console.log("result", result);
 
-    if (result.status === 200) {
-       await AuthSer.login(result.data.body.user);
-        dispatch(setEmail(result.data.body.user.email));
-        dispatch(setFirstName(result.data.body.user.firstName));
-        dispatch(setLastName(result.data.body.user.lastName));
-        dispatch(
-          setFullName(
-            result.data.body.user.firstName + " " + result.data.body.user.lastName
-          )
-        );
-      
-        // dispatch(setRole(result.data.body.user.roles.roleName));
-        // const permissions = mapPermissions(result.data.body.user.RolePermission);
-        // dispatch(setRolePermission(permissions));
-       
-        // if (result.data.body.user.roles.roleName === "Admin") {
-        //   dispatch(setAdmin(true));
-        // } else if (result.data.body.user.roles.roleName === "Super Admin") {
-        //   dispatch(setSuperAdmin(true));
-        // } else {
-        //   dispatch(setContributor(true));
-        // }
-      
-      redirectToEstimationDetail(result.data.body.user.estimationDetails._id,
-        result.data.body.user.clientDetails.clientName,
-        result.data.body.user.projectDetails.projectName
+      if (result.status === 200) {
+        var user = result.data.body.user;
+        saveDataToRedux(user);
+      redirectToEstimationDetail(user.estimationDetails._id,
+        user.clientDetails.clientName,
+        user.projectDetails.projectName
       );
     }
       } catch (error) {
       console.log("Error", error);
       }
+  }
+
+  const saveDataToRedux = async(user)=>{
+
+       await AuthSer.login(user);
+        dispatch(setEmail(user.email));
+        dispatch(setFirstName(user.firstName));
+        dispatch(setLastName(user.lastName));
+        dispatch(
+          setFullName(
+            user.firstName + " " + user.lastName
+          )
+        );
+      
+        // dispatch(setRole(user.roles.roleName));
+        // const permissions = mapPermissions(user.RolePermission);
+        // dispatch(setRolePermission(permissions));
+       
+        // if (user.roles.roleName === "Admin") {
+        //   dispatch(setAdmin(true));
+        // } else if (user.roles.roleName === "Super Admin") {
+        //   dispatch(setSuperAdmin(true));
+        // } else {
+        //   dispatch(setContributor(true));
+        // }
+      
+     
   }
 
   const redirectToEstimationDetail = (estimationId,clientName,projectName) => {
