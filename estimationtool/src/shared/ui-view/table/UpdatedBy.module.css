@@ -1,7 +1,8 @@
 .updatedDate {
   font-size: 12px;
   padding: 5px;
-  background-color: #c5ffc5;
+  /* background-color: #c5ffc5; */
+  text-shadow: 0px 0px 10px aqua;
   display: inline-block;
   border-radius: 15%;
   color: #0a440a;

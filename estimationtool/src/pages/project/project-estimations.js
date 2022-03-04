@@ -234,18 +234,18 @@ function ProjectEstimations(props) {
           : rowData.estName;
       },
     },
-    { headerName: "Estimation Type", field: "estType", width: 95 },
+    { headerName: "Estimation Type", field: "estType", width: 140 },
     {
       headerName: "Estimation Description",
       field: "estDescription",
-      width: 150,
+      width: 170,
     },
-    { headerName: "Total Cost($)", field: "totalCost", width: 80 },
-    { headerName: "No of Persons", field: "manCount", width: 80 },
+    // { headerName: "Total Cost($)", field: "totalCost", width: 80 },
+    // { headerName: "No of Persons", field: "manCount", width: 80 },
     {
       headerName: "Last Modified By",
       field: "lastmodify",
-      width: 120,
+      width: 190,
       type: "date",
       renderCell: (dataRow) =>
         dataRow.row.updatedBy ? (
