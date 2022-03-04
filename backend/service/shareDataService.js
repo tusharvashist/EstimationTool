@@ -1,10 +1,11 @@
+const mongoose = require("mongoose");
 const constant = require("../constant");
 const ShareDataModel = require("../database/models/shareDataModel");
 const userModel = require("../database/models/userModel");
 const roleModel = require("../database/models/roleMasterModel");
-const { formatMongoData } = require("../helper/dbhelper");
 const userService = require("../service/userService");
-const mongoose = require("mongoose");
+const EstimationHeader = require("../database/models/estHeaderModel");
+const emailservice = require("../service/emailService");
 
 module.exports.createShareData = async (serviceData) => {
   try {
@@ -27,9 +28,12 @@ module.exports.createShareData = async (serviceData) => {
           ],
         });
         await sharedata.save();
-
+        const estShareLink = await prepareShareEstimationLink(
+          estimation.id,
+          userexists.id
+        );
         //send mail...
-        //callSendMailService(estimation.id);
+        await callSendMailService(estimation.id, userexists.id, estShareLink);
       }
     }
     return "Success";
@@ -39,37 +43,66 @@ module.exports.createShareData = async (serviceData) => {
   }
 };
 
-callSendMailService = ({ estimationId }) => {
-  //Prepare the email data
-  const estimationData = this.GetSharingData(estimationId);
-  const data = {
-    to: estimationData.shareuser.email,
-    subject: constant.emailType.ESTIMATION_SUBJECT,
-    bodyData: {
-      senderName: `${estimationData.shareuser.firstName} ${estimationData.shareuser.lastName}`,
-      ownerName: `${estimationData.owneruser.firstName} ${estimationData.owneruser.firstName}`,
-      clientName: "TYC",
-      projectName: "TYC_Client",
-      estimationName: estimationData.estimation.estName,
-      estimationLink:
-        "http://localhost:3000/All-Clients/BioIQ/BioIQ%20healtcare%20Applications/uid?13432/estHeaderId?123456709",
-      assignedRole: estimationData.sharingrole.roleName,
-      mialType: constant.emailType.ESTIMATION,
-    },
-    isFileAttached: false,
-  };
-  //Call service method
-  emsilService.sendEmail(data);
+const prepareShareEstimationLink = async (estimationId, shareUserId) => {
+  return EstimationHeader.findById(estimationId).then(async (res, err) => {
+    return userModel.findById(shareUserId).then(async (res, err) => {
+      const token = await userService.getToken(shareUserId);
+      const baseURL =
+        process.env.NODE_ENV === "production"
+          ? process.env.PRODUCTION_URL
+          : process.env.DEVELOPEMENT_URL;
+      console.log(
+        `${baseURL}/api/v1/user/validateshareestlink/${estimationId}?token=${token}`
+      );
+      return `${baseURL}/api/v1/user/validateshareestlink/${estimationId}?token=${token}`;
+    });
+  });
 };
-module.exports.GetSharingData = async ({ estimationId }) => {
+
+const callSendMailService = async (estimationId, userid, estShareLink) => {
+  //Prepare the email data
+  const estimation = await this.GetSharingData(estimationId, userid);
+  if (estimation.length > 0) {
+    let estimationData = estimation[0];
+    const data = {
+      to: estimationData.shareuser.email,
+      subject: constant.emailType.ESTIMATION_SUBJECT,
+      bodyData: {
+        senderName: `${estimationData.shareuser.firstName} ${estimationData.shareuser.lastName}`,
+        ownerName: `${estimationData.owneruser.firstName} ${estimationData.owneruser.lastName}`,
+        clientName: estimationData.estimation.projectId.client.clientName,
+        projectName: estimationData.estimation.projectId.projectName,
+        estimationName: estimationData.estimation.estName,
+        estimationLink: estShareLink,
+        assignedRole: estimationData.sharingrole.roleName,
+        mialType: constant.emailType.ESTIMATION,
+      },
+      isFileAttached: false,
+    };
+    //Call service method
+    emailservice.sendEmail(data);
+  }
+};
+
+module.exports.GetSharingData = async (estimationId, loginId) => {
   try {
+    let filter = {};
+    if (loginId) {
+      filter = {
+        typeId: mongoose.Types.ObjectId(estimationId),
+        typeName: "E",
+        shareUserId: mongoose.Types.ObjectId(loginId),
+      };
+    } else {
+      filter = {
+        typeId: mongoose.Types.ObjectId(estimationId),
+        typeName: "E",
+        ownerUserId: mongoose.Types.ObjectId(global.loginId),
+      };
+    }
     return await ShareDataModel.aggregate([
       {
-        $match: {
-          typeId: mongoose.Types.ObjectId(estimationId),
-          typeName: "E",
-          ownerUserId: mongoose.Types.ObjectId(global.loginId),
-        },
+        $match: filter,
       },
       {
         $lookup: {
@@ -106,6 +139,34 @@ module.exports.GetSharingData = async ({ estimationId }) => {
       {
         $unwind: {
           path: "$estimation",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "projectmasters",
+          localField: "estimation.projectId",
+          foreignField: "_id",
+          as: "estimation.projectId",
+        },
+      },
+      {
+        $unwind: {
+          path: "$estimation.projectId",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "clientmasters",
+          localField: "estimation.projectId.client",
+          foreignField: "_id",
+          as: "estimation.projectId.client",
+        },
+      },
+      {
+        $unwind: {
+          path: "$estimation.projectId.client",
           preserveNullAndEmptyArrays: true,
         },
       },
@@ -148,7 +209,8 @@ module.exports.GetSharingData = async ({ estimationId }) => {
     throw new Error(err);
   }
 };
-async function CheckUserandCreate(user) {
+
+const CheckUserandCreate = async (user) => {
   let userexists = await userModel.findOne({ email: user.vc_Email });
   if (!userexists) {
     //Create New User
@@ -162,4 +224,4 @@ async function CheckUserandCreate(user) {
     });
   }
   return userexists;
-}
+};

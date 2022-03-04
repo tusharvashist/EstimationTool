@@ -38,21 +38,21 @@ export const USER_PERMISSIONS = {
 };
 
 export const ESTIMATION_PERMISSION = {
-  estimation_view: false,
-  estimation_list: false,
-  estimation_delete: false,
-  estimation_create: false,
-  estimation_configuation: false,
-  estimation_attribute_data: false,
-  estimation_calc_attribute_data: false,
-  estimation_export_excel: false,
-  estimation_generate_resourcemix: false,
-  estimation_generate_timeline: false,
-  estimation_export_resourcemix: false,
-  estimation_export_timeline: false,
-  estimation_share: false, // Not implemented
-  estimation_requirement_add: false,
-  estimation_pricing_view: false,
-  estimation_add_review_comment: false, // Not implemented
-  estimation_resourcecount_edit: false,
+  this_estimation_view: false,
+  this_estimation_list: false,
+  this_estimation_delete: false,
+  this_estimation_create: false,
+  this_estimation_configuation: false,
+  this_estimation_attribute_data: false,
+  this_estimation_calc_attribute_data: false,
+  this_estimation_export_excel: false,
+  this_estimation_generate_resourcemix: false,
+  this_estimation_generate_timeline: false,
+  this_estimation_export_resourcemix: false,
+  this_estimation_export_timeline: false,
+  this_estimation_share: false, // Not implemented
+  this_estimation_requirement_add: false,
+  this_estimation_pricing_view: false,
+  this_estimation_add_review_comment: false, // Not implemented
+  this_estimation_resourcecount_edit: false,
 };

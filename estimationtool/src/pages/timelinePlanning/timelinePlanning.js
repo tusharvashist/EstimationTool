@@ -15,9 +15,22 @@ import ResourceCountService from "../ResourceCount/resourcecount.service";
 import { useSelector } from "react-redux";
 import { ExportEstimationPopup } from "../estimation-detail/Export/ExportEstimation";
 import { BiExport } from "react-icons/bi";
+import usePermission from "../../shared/layout/hooks/usePermissions";
+import useEstPermission from "../../shared/layout/hooks/useEstPermission";
 
 const TimelinePlanning = () => {
   const resMixData = useSelector((state) => state.resourceMixData);
+
+  const { estimation_export_timeline } = usePermission();
+  const { this_estimation_export_timeline } = useEstPermission();
+
+  const finalEstPermission = {
+    checkExportTimeline: () => {
+      return this_estimation_export_timeline == undefined
+        ? estimation_export_timeline
+        : this_estimation_export_timeline;
+    },
+  };
 
   const classes = useTableStyle();
   const location = useLocation();
@@ -138,15 +151,17 @@ const TimelinePlanning = () => {
   return (
     <div className="estimation-detail-cover">
       {/*========= JSX- Export Estimation in Report - START ========= */}
-      <ExportEstimationPopup
-        openExport={openExport}
-        openExportEstimation={openExportEstimation}
-        closeExportEstimation={closeExportEstimation}
-        title="Export Estimation"
-        oktitle="Generate"
-        cancelTitle="Cancel"
-        exportFun={exportFun}
-      />
+      {finalEstPermission.checkExportTimeline() && (
+        <ExportEstimationPopup
+          openExport={openExport}
+          openExportEstimation={openExportEstimation}
+          closeExportEstimation={closeExportEstimation}
+          title="Export Estimation"
+          oktitle="Generate"
+          cancelTitle="Cancel"
+          exportFun={exportFun}
+        />
+      )}
       {/*========= JSX- Export Estimation in Report - END ========= */}
       <Container>
         <Grid container>

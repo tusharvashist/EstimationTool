@@ -42,5 +42,6 @@ const Url = {
   allAssumptions: `${process.env.REACT_APP_URL}consolidatedAssumption`,
   allAssumptionsTags: `${process.env.REACT_APP_URL}consolidatedAssumption/tags`,
   getPCUserDetails: `${process.env.REACT_APP_PC_PROXY}GetPCUserDetails`,
+  cloneEstimation: `${process.env.REACT_APP_URL}clone/cloneEstimation`,
 };
 export default Url;

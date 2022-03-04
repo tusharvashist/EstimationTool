@@ -105,6 +105,9 @@ app.use("/api/v1/share", require("./routes/shareData.route"));
 //------------Email Send
 app.use("/api/v1/sendmail", require("./routes/email.route"));
 
+//------------Clone Estimation
+app.use("/api/v1/clone", require("./routes/cloneestimation.route"));
+
 //------------Consolidated Assumption
 app.use(
   "/api/v1/consolidatedAssumption",

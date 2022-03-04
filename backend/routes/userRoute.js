@@ -23,4 +23,9 @@ router.get(
   joiSchemaValidation.validateHeadresAuthorization(),
   userController.getAllUserByName
 );
+
+router.get("/validateshareestlink/:estheaderId",
+userController.validateshareestlink
+);
+
 module.exports = router;

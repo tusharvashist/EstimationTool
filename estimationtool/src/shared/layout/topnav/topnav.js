@@ -19,7 +19,7 @@ import {
 } from "@material-ui/icons";
 import { Badge, Box, Divider } from "@material-ui/core";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import logo from "../../../login/img/logo.png";
+import logo from "../../../login/img/celsior_600x600_01_Logo.jpg";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";

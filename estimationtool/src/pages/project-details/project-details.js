@@ -29,6 +29,7 @@ import {
 import { setProjectId } from "../../Redux/projectRedux";
 import Header from "../../shared/layout/Header/Header";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import useEstPermission from "../../shared/layout/hooks/useEstPermission";
 import { BiImport } from "react-icons/bi";
 export default function ClientDetails(props) {
   const projectState = useSelector((state) => state.project);
@@ -37,6 +38,16 @@ export default function ClientDetails(props) {
     projectRequirementCreate,
     projectRequirementImport,
   } = usePermission();
+
+  const { this_estimation_create } = useEstPermission();
+
+  const finalEstPermission = {
+    checkEstimationCreate: () => {
+      return this_estimation_create == undefined
+        ? estimationCreate
+        : this_estimation_create;
+    },
+  };
 
   const dispatch = useDispatch();
 
@@ -78,14 +89,16 @@ export default function ClientDetails(props) {
         setProjectDetails({ ...dataResponse });
         setClientDetails({ ...dataResponse.client });
         var index = 1;
-        dataResponse.estimates.forEach(estimate => {
+        dataResponse.estimates.forEach((estimate) => {
           estimate["id"] = index;
           index = index + 1;
           estimate["estType"] = estimate.estTypeId.estType;
-          
         });
 
-  console.log("dataResponse.estimates ======== : ", dataResponse.estimates);
+        console.log(
+          "dataResponse.estimates ======== : ",
+          dataResponse.estimates
+        );
         setTableDataWithoutFilter([...dataResponse.estimates]);
 
         setTableData(
@@ -98,7 +111,6 @@ export default function ClientDetails(props) {
   };
   console.log("tableDataWithoutFilter ======== : ", tableDataWithoutFilter);
   console.log("tableData ======== : ", tableData);
-
 
   const [projectStatus] = useState([
     { title: "All" },
@@ -233,7 +245,7 @@ export default function ClientDetails(props) {
                       },
                     }}
                   >
-                    {estimationCreate && (
+                    {finalEstPermission.checkEstimationCreate() && (
                       <Button
                         onClick={createEstimationHandle}
                         variant="outlined"
@@ -248,9 +260,7 @@ export default function ClientDetails(props) {
               </Grid>
             </Container>
           </Grid>
-          <Grid item xs={6}>
-           
-          </Grid>
+          <Grid item xs={6}></Grid>
         </Grid>
       </Box>
       <Box p={0} pt={0}>
@@ -259,7 +269,7 @@ export default function ClientDetails(props) {
           clientInfo={clientDetails}
           projectInfo={projectDetails}
           refreshData={getProjectById}
-          getDropDownvalue={ getDropDownvalue}
+          getDropDownvalue={getDropDownvalue}
         />
       </Box>
     </div>

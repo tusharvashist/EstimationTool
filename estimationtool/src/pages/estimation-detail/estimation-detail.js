@@ -41,7 +41,7 @@ import { setEstPermission } from "../../Redux/estimationPermission";
 import { IoWarningOutline } from "react-icons/io5";
 import { MdOutlineDocumentScanner, MdOutlineTimeline } from "react-icons/md";
 
-import { BiExport, BiImport } from "react-icons/bi";
+import { BiExport, BiImport, BiHistory } from "react-icons/bi";
 import { ExportEstimationPopup } from "./Export/ExportEstimation";
 
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
@@ -53,6 +53,10 @@ import { CreateEstimationVersion } from "../CreateVersion/CreateEstimationVersio
 import { HiOutlineLightBulb } from "react-icons/hi";
 import EstimationAssumptionsDialog from "../Assumptions/EstimationAssumptionsDialog";
 import { ESTIMATION_PERMISSION } from "../../shared/ui-view/constant/enum";
+import SharedUserList from "./SharedUserList";
+import { RiUserShared2Line } from "react-icons/ri";
+import EstimationCloneDialog from "../EstimationCloning/EstimationCloneDialog";
+import { VscCopy } from "react-icons/vsc";
 
 const EstimationDetail = () => {
   const classes = useTableStyle();
@@ -70,6 +74,18 @@ const EstimationDetail = () => {
     estimation_export_excel,
     estimation_requirement_add,
   } = usePermission();
+
+  const {
+    this_estimation_configuation,
+    this_estimation_attribute_data,
+    this_estimation_calc_attribute_data,
+    this_estimation_export_excel,
+    this_estimation_generate_resourcemix,
+    this_estimation_generate_timeline,
+    this_estimation_requirement_add,
+    this_estimation_resourcecount_edit,
+  } = useEstPermission();
+
   const [isOpen, setOpen] = React.useState({});
   let estimationId;
   if (estimationHeaderId.estHeaderId) {
@@ -131,7 +147,10 @@ const EstimationDetail = () => {
   const [estVersions, setEstimationVersions] = useState([]);
   const [currentSelctedVersion, setCurrentSelectedVersion] = useState();
   const [isOpenImportAssumptions, setIsOpenImportAssumptions] = useState(false);
+  const [isOpenSharedUserList, setIsOpenSharedUserList] = useState(false);
   const [refreshCount, setRefreshCount] = useState(false);
+
+  const [isOpenEstimationClone, setIsOpenEstimationClone] = useState(false);
 
   const handleEditRowsModelChange = React.useCallback((model) => {
     setEditRowsModel(model);
@@ -144,6 +163,44 @@ const EstimationDetail = () => {
   useEffect(() => {
     getById();
   }, [estimationId]);
+
+  const finalEstPermission = {
+    checkConfiguration: () => {
+      return this_estimation_configuation == undefined
+        ? estimationConfiguation
+        : this_estimation_configuation;
+    },
+    checkExport: () => {
+      return this_estimation_export_excel == undefined
+        ? estimation_export_excel
+        : this_estimation_export_excel;
+    },
+    checkGenerateTimeline: () => {
+      return this_estimation_generate_timeline == undefined
+        ? estimation_generate_timeline
+        : this_estimation_generate_timeline;
+    },
+    checkResourceMix: () => {
+      return this_estimation_generate_resourcemix == undefined
+        ? estimation_generate_resourcemix
+        : this_estimation_generate_resourcemix;
+    },
+    checkRequirementAdd: () => {
+      return this_estimation_requirement_add == undefined
+        ? estimation_requirement_add
+        : this_estimation_requirement_add;
+    },
+    checkAttributeDataEditable: () => {
+      return this_estimation_attribute_data == undefined
+        ? estimationAttributeData
+        : this_estimation_attribute_data;
+    },
+    checkCalAttributeDataEditable: () => {
+      return this_estimation_calc_attribute_data == undefined
+        ? estimation_calc_attribute_data
+        : this_estimation_calc_attribute_data;
+    },
+  };
 
   const openFun = () => {
     setOpenEditConfigurationBox(true);
@@ -225,8 +282,10 @@ const EstimationDetail = () => {
     let permissions = ESTIMATION_PERMISSION;
     if (permissionArr.length > 0) {
       permissionArr[0].RolePermission.forEach((el) => {
-        permissions[el.token] = true;
+        permissions["this_" + el.token] = true;
       });
+    } else {
+      permissions = {};
     }
     return permissions;
   };
@@ -573,6 +632,25 @@ const EstimationDetail = () => {
     setIsOpenImportAssumptions(false);
   };
 
+  const openSharedUserList = () => {
+    setIsOpenSharedUserList(true);
+  };
+
+  const closeSharedUserList = () => {
+    setIsOpenSharedUserList(false);
+  };
+  const handleOpenEstimationClone = () => {
+    openEstimationClonePopup();
+  };
+
+  const openEstimationClonePopup = () => {
+    setIsOpenEstimationClone(true);
+  };
+
+  const closeEstimationClonePopup = () => {
+    setIsOpenEstimationClone(false);
+  };
+
   const createNewVersion = async (estId) => {
     setIsVersionDialogOpen(false);
     setLoader(true);
@@ -612,6 +690,14 @@ const EstimationDetail = () => {
     }
   };
 
+  const handleCloneSuccess = (res) => {
+    setOpen({
+      open: true,
+      severity: "success",
+      message: res.data.message,
+    });
+  };
+
   // Destructing of snackbar
   const { message, severity, open } = isOpen || {};
   console.log("selected currentSelctedVersion", currentSelctedVersion);
@@ -625,6 +711,26 @@ const EstimationDetail = () => {
           onClickButton={handleCreateNewVersionClick}
         />
       ) : null}
+      <SharedUserList
+        isOpen={isOpenSharedUserList}
+        openFun={openSharedUserList}
+        closeFun={closeSharedUserList}
+        title="Shared User"
+        oktitle="Ok"
+        cancelTitle="Close"
+        estimationId={estimationId}
+      />
+      <EstimationCloneDialog
+        isOpen={isOpenEstimationClone}
+        openFun={openEstimationClonePopup}
+        closeFun={closeEstimationClonePopup}
+        title="Clone Estimation"
+        oktitle="Save"
+        cancelTitle="Close"
+        estimationId={estimationId}
+        estimationName={headerData.estName}
+        handleCloneSuccess={handleCloneSuccess}
+      />
       <EstimationAssumptionsDialog
         isOpen={isOpenImportAssumptions}
         openFun={openImportAssumptionsPopup}
@@ -633,6 +739,7 @@ const EstimationDetail = () => {
         oktitle="Save"
         cancelTitle="Close"
         estimationId={estimationId}
+        isEstimationReleased={isEstimationReleased}
       />
       {/*========= JSX- Export Estimation in Report - START ========= */}
       <ExportEstimationPopup
@@ -760,14 +867,22 @@ const EstimationDetail = () => {
           </div>
         </Grid>
         <Grid xs={11} item className="multi-button-grid">
+          <Button variant="outlined" onClick={openSharedUserList}>
+            <RiUserShared2Line className="link-icon" />
+            &nbsp; Shared with
+          </Button>
+          <Button variant="outlined" onClick={handleOpenEstimationClone}>
+            <VscCopy className="link-icon" />
+            &nbsp;Clone
+          </Button>
           <Button variant="outlined" onClick={openImportAssumptions}>
             <HiOutlineLightBulb className="link-icon" />
             &nbsp;Include Assumptions
           </Button>
-          {estimation_export_excel && (
+          {finalEstPermission.checkExport() && (
             <Button variant="outlined" onClick={openExportEstimation}>
               <BiExport style={{ fontSize: "18px" }} />
-              &nbsp;Export in Excel
+              &nbsp;Export Report
             </Button>
           )}
           {!isEstimationReleased ? (
@@ -786,10 +901,10 @@ const EstimationDetail = () => {
                 },
               }}
             >
-              {estimationConfiguation && (
+              {finalEstPermission.checkConfiguration() && (
                 <Button variant="outlined" className="estimation-detail-button">
                   <EditOutlined style={{ fontSize: "18px" }} />
-                  &nbsp;Edit Configuration
+                  &nbsp;Edit Config
                 </Button>
               )}
             </Link>
@@ -821,7 +936,7 @@ const EstimationDetail = () => {
                 &nbsp; Import Requirements
               </Button>
             </Link>
-            {estimation_requirement_add && (
+            {finalEstPermission.checkRequirementAdd() && (
               <Button
                 variant="outlined"
                 className="estimation-detail-button"
@@ -832,7 +947,7 @@ const EstimationDetail = () => {
                 &nbsp;Include Project Requirements
               </Button>
             )}
-            {estimation_requirement_add && (
+            {finalEstPermission.checkRequirementAdd() && (
               <Button
                 variant="outlined"
                 className="estimation-detail-button"
@@ -889,7 +1004,8 @@ const EstimationDetail = () => {
                   Toolbar: CustomToolbar,
                 }}
                 isCellEditable={() =>
-                  estimationAttributeData && !isEstimationReleased
+                  finalEstPermission.checkAttributeDataEditable() &&
+                  !isEstimationReleased
                 }
               />
             </div>
@@ -936,7 +1052,9 @@ const EstimationDetail = () => {
                   (params.colDef.field === "total_Contingency" && "darkbg")
                 );
               }}
-              isCellEditable={() => estimation_calc_attribute_data}
+              isCellEditable={() =>
+                finalEstPermission.checkCalAttributeDataEditable()
+              }
             />
           )}
         </div>
@@ -988,7 +1106,7 @@ const EstimationDetail = () => {
       <Grid container justifyContent="flex-end" alignItems="center">
         <Grid item style={{ marginRight: "10px" }}>
           <div class="tooltip">
-            {estimation_generate_resourcemix && (
+            {finalEstPermission.checkResourceMix() && (
               <Button
                 disabled={countError && !isEstimationReleased}
                 variant="outlined"
@@ -1032,7 +1150,7 @@ const EstimationDetail = () => {
         </Grid>
         <Grid item style={{ marginRight: "10px" }}>
           <div class="tooltip">
-            {estimation_generate_timeline && (
+            {finalEstPermission.checkGenerateTimeline() && (
               <Button
                 disabled={countError && !isEstimationReleased}
                 variant="outlined"

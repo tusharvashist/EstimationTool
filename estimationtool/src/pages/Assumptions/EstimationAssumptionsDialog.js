@@ -9,6 +9,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { makeStyles, createStyles } from "@mui/styles";
 import assumptionService from "./assumpion.service";
 import Snackbar from "../../shared/layout/snackbar/Snackbar";
+import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
 
 const EstimationAssumptionsDialog = (props) => {
 
@@ -119,11 +120,11 @@ const EstimationAssumptionsDialog = (props) => {
   console.log("selectedAssumptions: ", selectedAssumptions);
   
   const columns = [
-    { field: "assumption", headerName: "Assumption", width: 350 },
+    { field: "assumption", headerName: "Assumption", width: 670 },
     {
       field: "assumptionTag",
       headerName: "Tag",
-      width: 150,
+      width: 200,
       renderCell: (rowData) => {
         return rowData.row.assumptionTag.name;
       },
@@ -140,7 +141,7 @@ const EstimationAssumptionsDialog = (props) => {
     })
   );
 
-  const classes = useStyles();
+  const classes = useTableStyle();
 
   return (
     <CustomizedDialogs
@@ -151,8 +152,10 @@ const EstimationAssumptionsDialog = (props) => {
       oktitle={props.oktitle}
       cancelTitle={props.cancelTitle}
       saveFun={popSubmitHandler}
-      width={"sm"}
+      width={"md"}
       buttonType="submit"
+      okButtonDisabled={props.isEstimationReleased}
+      
     >
       <Grid container>
         <Grid item xs={3}>
@@ -177,11 +180,12 @@ const EstimationAssumptionsDialog = (props) => {
         <Grid item xs={12} style={{ paddingTop: "10px" }}>
           <div style={{ height: 300, width: "100%" }}>
             <DataGrid
-              className={classes.root}
+              className={`${classes.root} ${classes.dataGrid}`}
               rows={assumptionsFilter}
               columns={columns}
-              checkboxSelection={true}
-                selectionModel={selectedAssumptions}
+              checkboxSelection={!props.isEstimationReleased}
+              selectionModel={selectedAssumptions}
+               isRowSelectable={(params) => !props.isEstimationReleased}
               onSelectionModelChange={(rows) => {
                 setSelectedAssumptions(rows);
               }}

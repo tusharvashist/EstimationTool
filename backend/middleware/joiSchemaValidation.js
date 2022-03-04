@@ -28,6 +28,19 @@ module.exports.validateBody = (schema) => {
   };
 };
 
+module.exports.validateParams = (schema) => {
+  return (req, res, next) => {
+    const isError = validateObjectSchema(req.params, schema);
+    let responce = { ...constant.defaultResponce };
+    if (isError) {
+      responce.body = isError;
+      responce.message = constant.requestValidationMessage.BAD_REQUEST;
+      return res.status(responce.status).send(responce);
+    }
+    return next();
+  };
+};
+
 module.exports.validateQueryParams = (schema) => {
   return (req, res, next) => {
     const isError = validateObjectSchema(req.query, schema);

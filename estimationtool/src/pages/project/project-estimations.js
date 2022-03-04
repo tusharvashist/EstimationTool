@@ -12,6 +12,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton"
 import AddIcon from "@material-ui/icons/Add";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -22,6 +23,7 @@ import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedCo
 import { useSelector, useDispatch } from "react-redux";
 import UpdatedBy from "../../shared/ui-view/table/UpdatedBy";
 import usePermission from "../../shared/layout/hooks/usePermissions";
+import useEstPermission from "../../shared/layout/hooks/useEstPermission";
 import { IoFastFood } from "react-icons/io5";
 import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 import { useTableStyle } from "../../shared/ui-view/table/TableStyle";
@@ -58,10 +60,36 @@ function DeleteButton(props) {
 }
 
 function EditButton(props) {
+    const dispatch = useDispatch();
   if (props.params.row.isDeleted) {
-    return <GridActionsCellItem icon={<EditIcon />} label="Delete" disabled />;
+   return  <GridActionsCellItem icon={<EditIcon />} label="Delete" disabled />
   } else {
-    return <GridActionsCellItem icon={<EditIcon />} label="Delete" />;
+
+      return  <Link
+              to={{
+                pathname:
+                  "/All-Clients/" +
+                  props.clientDetails.clientName +
+                  "/" +
+                  props.projectDetails.projectName +
+                  "/createEstimate",
+                state: {
+                  clientInfo: props.clientDetails,
+                  projectInfo: props.projectDetails,
+                  estimationHeaderId: props.params.row._id,
+                   step: props.params.row.estStep,
+                },
+        }}
+        
+            onClick={(e) => dispatch(setEstHeaderId(props.params.row._id))}
+      >
+        <IconButton aria-label="edit" >
+    
+                  <EditIcon style={{ fontSize: "18px" }} />
+          
+          </IconButton>
+      </Link>
+  
   }
 }
 
@@ -88,7 +116,33 @@ function ProjectEstimations(props) {
     estimationUpdate,
     estimationListing,
     estimationDelete,
+    estimation_share,
   } = usePermission();
+
+  const {
+    this_estimation_view,
+    this_estimation_list,
+    this_estimation_delete,
+    this_estimation_share,
+  } = useEstPermission();
+
+  const finalEstPermission = {
+    checkestimationView: () => {
+      return this_estimation_view == undefined
+        ? estimationView
+        : this_estimation_view;
+    },
+    checkEstimationDelete: () => {
+      return this_estimation_delete == undefined
+        ? estimationDelete
+        : this_estimation_delete;
+    },
+    checkEstimationShare: () => {
+      return this_estimation_share == undefined
+        ? estimation_share
+        : this_estimation_share;
+    },
+  };
 
   const [projectStatus] = useState([
     { title: "All" },
@@ -104,10 +158,13 @@ function ProjectEstimations(props) {
 
   console.log("tableData :XxXX  ", tableData);
 
-  const handleClose = () => { 
+  const handleClose = () => {
     setOpen(false);
-  }
+  };
 
+  // const dispatchSetEstHeaderId = (id) =>{
+  //   dispatch(setEstHeaderId(id));
+  // };
   const Estlink = (augData) => {
     console.log("sssss", augData);
     if (clientDeatils && projectDeatils) {
@@ -171,37 +228,24 @@ function ProjectEstimations(props) {
       field: "estName",
       width: 370,
       renderCell: (rowData) => {
-        return estimationView && !rowData.row.isDeleted
+        return finalEstPermission.checkestimationView() &&
+          !rowData.row.isDeleted
           ? checkStep(rowData.row)
           : rowData.estName;
-        // <Link
-        //   to={{
-        //     pathname:
-        //       "/All-Clients/" +
-        //       clientDeatils.clientName +
-        //       "/" +
-        //       projectDeatils.projectName +
-        //       "/Estimation-Detail",
-        //     state: { estId: rowData._id },
-        //   }}
-        // >
-        //   {" "}
-        //   {rowData.estName}
-        // </Link>
       },
     },
-    { headerName: "Estimation Type", field: "estType", width: 95 },
+    { headerName: "Estimation Type", field: "estType", width: 140 },
     {
       headerName: "Estimation Description",
       field: "estDescription",
-      width: 150,
+      width: 170,
     },
-    { headerName: "Total Cost($)", field: "totalCost", width: 80 },
-    { headerName: "No of Persons", field: "manCount", width: 80 },
+    // { headerName: "Total Cost($)", field: "totalCost", width: 80 },
+    // { headerName: "No of Persons", field: "manCount", width: 80 },
     {
       headerName: "Last Modified By",
       field: "lastmodify",
-      width: 120,
+      width: 190,
       type: "date",
       renderCell: (dataRow) =>
         dataRow.row.updatedBy ? (
@@ -222,26 +266,24 @@ function ProjectEstimations(props) {
       field: "action",
       type: "actions",
       headerName: "Actions",
-      width: 80,
+      width: 100,
       getActions: (params) => [
         <>
           <Box sx={{ width: "5px" }} className="estimation-detail-box" />
-          {/* <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label="Delete"
-                /> */}
-          <EditButton params={params} openDeleteDailog={openDeleteDailog} />
+          <EditButton
+            params={params}
+            clientDetails={clientDeatils}
+            projectDetails={projectDeatils}
+            estimationId={params.row._id}
+            openDeleteDailog={openDeleteDailog}
+            />
 
-          <Box sx={{ width: "5px" }} className="estimation-detail-box" />
-
-          <DeleteButton params={params} openDeleteDailog={openDeleteDailog} />
-          {/* <GridActionsCellItem
-                  icon={<DeleteIcon />}
-                  label="Delete"
-                  onClick={() => { openDeleteDailog(params) }}
-                  
-                /> */}
-          <Box sx={{ width: "5px" }} className="estimation-detail-box" />
+          <DeleteButton
+            params={params}
+            openDeleteDailog={openDeleteDailog}
+            disabled={finalEstPermission.checkEstimationDelete()}
+          />
+          <Box sx={{ width: "10px" }} className="estimation-detail-box" />
         </>,
       ],
     },
@@ -256,9 +298,6 @@ function ProjectEstimations(props) {
     setIsOpenDailog(false);
   };
 
-  const openCreateDailog = () => {};
-
-  const openUpdateDailog = () => {};
 
   const openDeleteDailog = (params) => {
     setEditRow({ ...params.row });
@@ -282,9 +321,7 @@ function ProjectEstimations(props) {
       });
   };
 
-  let history = useHistory();
 
-  const actionArry = (rowData) => {};
   const rowBackgroundColor = {
     true: "#eef5e9",
     false: "#fff",
@@ -299,31 +336,30 @@ function ProjectEstimations(props) {
   };
 
   const shareEstimation = (res) => {
-
-      setOpen({
-             open: true,
-             severity: "success",
-            message: res.data.message,
-      });
-      setIsShareOpen(false);
+    setOpen({
+      open: true,
+      severity: "success",
+      message: res.data.message,
+    });
+    setIsShareOpen(false);
   };
 
-  const handleShareClick = () => {
-    openShareFun();
-  };
+
 
   return (
     <div className="all-project-wrap">
-      <ShareEstimationDialog
-        isOpen={isShareOpen}
-        openF={openShareFun}
-        closeF={closeShareFun}
-        title="Share Estimations"
-        oktitle="Share"
-        saveFun={shareEstimation}
-        cancelTitle="Cancel"
-        selectedEstimation={selectedEstimation}
-      />
+      {finalEstPermission.checkEstimationShare() && (
+        <ShareEstimationDialog
+          isOpen={isShareOpen}
+          openF={openShareFun}
+          closeF={closeShareFun}
+          title="Share Estimations"
+          oktitle="Share"
+          saveFun={shareEstimation}
+          cancelTitle="Cancel"
+          selectedEstimation={selectedEstimation}
+        />
+      )}
       {deleteEstimationDailog === true && isOpenDailog === true ? (
         <DeleteProjectdailog
           isOpen={isOpenDailog}
@@ -365,25 +401,27 @@ function ProjectEstimations(props) {
             </FormControl>
           </Box>
           <Box>
-            <Button
-              style={{ marginRight: "15px" }}
-              variant="outlined"
-              onClick={() => {
-                if (selectedEstimation.length !== 0) {
-                openShareFun();
-                } else {
-                  setOpen({
+            {finalEstPermission.checkEstimationShare() && (
+              <Button
+                style={{ marginRight: "15px" }}
+                variant="outlined"
+                onClick={() => {
+                  if (selectedEstimation.length !== 0) {
+                    openShareFun();
+                  } else {
+                    setOpen({
                       open: true,
                       severity: "error",
                       message: "Select at least one estimation to share.",
-                      });
-                }
-              }}
-            >
-              {" "}
-              <BiShare style={{ fontSize: "20px" }} />
-              &nbsp; Share
-            </Button>
+                    });
+                  }
+                }}
+              >
+                {" "}
+                <BiShare style={{ fontSize: "20px" }} />
+                &nbsp; Share
+              </Button>
+            )}
           </Box>
         </Grid>
         <Box
@@ -419,14 +457,14 @@ function ProjectEstimations(props) {
         </div>
       </BorderedContainer>
       {open && (
-          <Snackbar
-            isOpen={open}
-            severity={severity}
-            autoHideDuration={6000}
-            onClose={handleClose}
-            message={message}
-          />
-        )}
+        <Snackbar
+          isOpen={open}
+          severity={severity}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message={message}
+        />
+      )}
     </div>
   );
 }
