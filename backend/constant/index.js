@@ -348,9 +348,9 @@ module.exports = {
   },
   emailSettings: {
     SENDGRID_API_KEY:
-      "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",
+      "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",
     EMAIL_STATUS: "true",
-    FROM_EMAIL: "sarfaraz.ali@pyramidconsultinginc.com",
+    FROM_EMAIL: "vishal.verma@pyramidconsultinginc.com",
   },
 
   emailType: {
