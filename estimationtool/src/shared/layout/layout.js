@@ -21,6 +21,7 @@ import ImportExcelRequirements from "../../pages/ImportExcelRequirements/ImportE
 import ResourceMix from "../../pages/ResourceMix/ResourceMix";
 import TimeLinePlanning from "../../pages/timelinePlanning/timelinePlanning";
 import ApplicationAssumptions from "../../pages/Assumptions/ApplicationAssumptions";
+import UserRoleManagement from "../../pages/UserRoleManagement/UserRoleManagement";
 
 const EsContainer = withStyles((props) => {
   return {
@@ -128,6 +129,9 @@ export default class Layout extends Component {
                   </Route>
                   <Route exact path="/Assumptions">
                     <ApplicationAssumptions />
+                  </Route>
+                  <Route exact path="/RoleManagement">
+                    <UserRoleManagement />
                   </Route>
                 </Switch>
               </Grid>

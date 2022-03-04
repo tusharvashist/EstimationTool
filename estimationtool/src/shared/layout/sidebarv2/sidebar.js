@@ -8,6 +8,7 @@ import { IoPeopleOutline, IoHomeOutline } from "react-icons/io5";
 import "./sidebar.css";
 import { withRouter } from "react-router";
 import { HiOutlineLightBulb } from "react-icons/hi";
+import { RiUserSettingsLine } from "react-icons/ri";
 
 const Sidebarv2 = (props) => {
   const { history } = props;
@@ -42,6 +43,16 @@ const Sidebarv2 = (props) => {
     const dashboradbutton = document.getElementById("assumption");
     dashboradbutton.classList.add("active");
     history.push("/Assumptions");
+  };
+
+  const userManagementClick = () => {
+    const listitem = document.getElementsByClassName("listitem");
+    const listArr = Array.from(listitem);
+    listArr.forEach((el) => el.classList.remove("active"));
+
+    const dashboradbutton = document.getElementById("userManagement");
+    dashboradbutton.classList.add("active");
+    history.push("/RoleManagement");
   };
 
   return (
@@ -88,6 +99,18 @@ const Sidebarv2 = (props) => {
             <HiOutlineLightBulb className="link-icon" />
           </ListItemIcon>
           <span>&nbsp;Assumptions</span>
+        </ListItem>
+        <ListItem
+          button
+          id="userManagement"
+          className="listitem"
+          activeClassName="active"
+          onClick={userManagementClick}
+        >
+          <ListItemIcon>
+            <RiUserSettingsLine className="link-icon" />
+          </ListItemIcon>
+          <span>&nbsp;Role Management</span>
         </ListItem>
       </List>
     </div>

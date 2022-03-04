@@ -35,6 +35,8 @@ export const USER_PERMISSIONS = {
   estimation_pricing_view: "estimation_pricing_view",
   estimation_add_review_comment: "estimation_add_review_comment", // Not implemented
   estimation_resourcecount_edit: "estimation_resourcecount_edit",
+  //user manangement for admin
+  user_management_listing: "user_management_listing",
 };
 
 export const ESTIMATION_PERMISSION = {
