@@ -44,5 +44,7 @@ const Url = {
   getPCUserDetails: `${process.env.REACT_APP_PC_PROXY}GetPCUserDetails`,
   cloneEstimation: `${process.env.REACT_APP_URL}clone/cloneEstimation`,
   getAllRoles: `${process.env.REACT_APP_URL}role`,
+  getAllUserWithRoles: `${process.env.REACT_APP_URL}user/fetchalluserswithrole`,
+  updateUserRole: `${process.env.REACT_APP_URL}user/updateuserrole`,
 };
 export default Url;
