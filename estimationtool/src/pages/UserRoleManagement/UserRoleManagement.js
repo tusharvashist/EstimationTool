@@ -45,7 +45,7 @@ const UserRoleManagement = () => {
 
   return (
     <>
-      <BorderedContainer>
+      <BorderedContainer className={classes.headerTitle}>
         <Grid container className={classes.lableContainer}>
           <Grid item xs={4} className={classes.lableName}>
             <h3>Application Roles</h3>

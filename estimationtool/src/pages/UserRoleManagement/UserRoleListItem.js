@@ -38,9 +38,9 @@ const UserRoleListItem = (props) => {
           <BorderedContainer key={user._id}>
             <Grid container className={classes.userContainer}>
               <Grid item xs={4}>
-                <h3>
+                <h4>
                   {user.firstName} {user.lastName}
-                </h3>
+                </h4>
                 <p>{user.email}</p>
               </Grid>
               <Grid iten xs={8} className={classes.userFourmRow}>
