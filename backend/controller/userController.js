@@ -65,3 +65,16 @@ module.exports.updateuserrole = async (req, res) => {
   }
   return res.status(responce.status).send(responce);
 };
+
+module.exports.fetchalluserswithrole = async (req, res) => {
+  let responce = { ...constant.defaultResponce };
+  try {
+    const responceFromUserService = await signupSer.fetchalluserswithrole();
+    responce.status = 200;
+    responce.message = constant.userMessage.FETCH_USER;
+    responce.body = responceFromUserService;
+  } catch (err) {
+    responce.message = err.message;
+  }
+  return res.status(responce.status).send(responce);
+};

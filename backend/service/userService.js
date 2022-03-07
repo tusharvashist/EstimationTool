@@ -338,3 +338,12 @@ module.exports.updateuserrole = async (req) => {
     throw new Error(err);
   }
 };
+
+module.exports.fetchalluserswithrole = async () => {
+  try {
+    return await userModel.find().populate("roleId");
+  } catch (err) {
+    console.log("something went wrong: service > user service > fetchalluserswithrole  ", err);
+    throw new Error(err);
+  }
+};
