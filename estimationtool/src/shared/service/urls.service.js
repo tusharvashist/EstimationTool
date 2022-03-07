@@ -43,5 +43,6 @@ const Url = {
   allAssumptionsTags: `${process.env.REACT_APP_URL}consolidatedAssumption/tags`,
   getPCUserDetails: `${process.env.REACT_APP_PC_PROXY}GetPCUserDetails`,
   cloneEstimation: `${process.env.REACT_APP_URL}clone/cloneEstimation`,
+  getAllRoles: `${process.env.REACT_APP_URL}role`,
 };
 export default Url;
