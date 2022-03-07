@@ -33,4 +33,10 @@ router.put("/updateuserrole/:id",
   joiSchemaValidation.validateHeadresAuthorization(),
   userController.updateuserrole
 );
+
+router.get("/fetchalluserswithrole",
+  joiSchemaValidation.validateHeadresAuthorization(),
+  userController.fetchalluserswithrole
+);
+
 module.exports = router;
