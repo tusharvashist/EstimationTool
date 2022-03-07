@@ -16,7 +16,7 @@ import AuthSer from "../shared/service/auth";
 import BorderedContainer from "../shared/ui-view/borderedContainer/BorderedContainer";
 
 import { USER_PERMISSIONS } from "../shared/ui-view/constant/enum";
-import logo from "./img/logo.png";
+import logo from "./img/celsior_600x600_01_Logo.jpg";
 import { useDispatch } from "react-redux";
 import {
   setEmail,

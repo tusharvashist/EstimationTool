@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const EstimationHeader = require("../database/models/estHeaderModel");
 const ShareDataModel = require("../database/models/shareDataModel");
 const mongoose = require("mongoose");
+const Client = require("../database/models/clientModel");
+const Project = require("../database/models/projectModel");
 
 module.exports.signup = async ({
   email,
@@ -188,21 +190,39 @@ module.exports.testUser = async (emailID, pass) => {
 
 module.exports.validateshareestlink = async (req) => {
   try {
+
+    const decodedEstId = Buffer.from(req.params.estheaderId, 'base64').toString();
+    try {
+      if (!mongoose.Types.ObjectId(decodedEstId)) {
+        throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
+      }
+    } catch (err) {
+      console.log("Estimation Header ID is Not Correct ", err);
+      throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
+    }
+
+    const decodedToken = Buffer.from(req.query.token, 'base64').toString();
+
     //1. Validate Token
-    var decodedToken = jwt.verify(
-      req.query.token,
+    var tokenData = jwt.verify(
+      decodedToken,
       process.env.SECRET_KEY || "py-estimation#$#"
     );
 
-    //2. Validate Estimation TODO
+    //2. Validate Estimation
     let sharedEst;
-    await EstimationHeader.findById(req.params.estheaderId).then(
+    const estimationDetails = await EstimationHeader.findById(decodedEstId).then(
       async (res, err) => {
         if (res) {
           sharedEst = await ShareDataModel.findOne({
             typeId: res._id,
-            shareUserId: decodedToken.id,
+            shareUserId: tokenData.id,
           });
+          if (sharedEst) {
+            return res;
+          } else {
+            throw new Error(constant.PermssionMessage.PERMISSION_NOT_FOUND);
+          }
         } else {
           throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
         }
@@ -210,13 +230,29 @@ module.exports.validateshareestlink = async (req) => {
     );
 
     //3. Validate User
-    const users = await getUsersData(decodedToken.id, sharedEst._id);
+    const users = await getUsersData(tokenData.id);
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
     }
 
-    user.token = req.query.token;
+    user.token = decodedToken;
+    user.estimationDetails = estimationDetails;
+
+    //Find Project Details
+    const projectDetails = await Project.findById(estimationDetails.projectId);
+    if (!projectDetails) {
+      throw new Error(constant.projectMessage.PROJECT_NOT_FOUND);
+    }
+    user.projectDetails = projectDetails;
+
+    //Find Client Details
+    const clientDetails = await Client.findById(projectDetails.client);
+    if (!clientDetails) {
+      throw new Error(constant.clientMessage.CLIENT_NOT_FOUND);
+    }
+    user.clientDetails = clientDetails;
+
     delete user["password"];
     return { user };
   } catch (err) {
@@ -225,7 +261,7 @@ module.exports.validateshareestlink = async (req) => {
   }
 };
 
-getUsersData = async (userid, estheaderId) => {
+getUsersData = async (userid) => {
   const users = await userModel.aggregate([
     {
       $match: {
@@ -269,8 +305,10 @@ getUsersData = async (userid, estheaderId) => {
     },
     {
       $addFields: {
+        clientDetails: new Client(),
+        projectDetails: new Project(),
+        estimationDetails: new EstimationHeader(),
         token: "",
-        redirecturl: `?estimation=${estheaderId}`,
       },
     },
   ]);
@@ -285,4 +323,18 @@ module.exports.getToken = async (userId) => {
     { expiresIn: "1d" }
   );
   return token;
+};
+
+module.exports.updateuserrole = async (req) => {
+  try {
+
+    const user = await userModel.findByIdAndUpdate(req.params.id, {
+      roleId: req.query.roleId
+    }, { new: true });
+
+    return { user };
+  } catch (err) {
+    console.log("something went wrong: service > updateuserrole ", err);
+    throw new Error(err);
+  }
 };

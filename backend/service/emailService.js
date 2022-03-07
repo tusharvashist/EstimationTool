@@ -21,14 +21,20 @@ module.exports.sendEmail = async (serviceData) => {
 function splitString(string){
     return string.split(',');
 }
-function  getEmailTemplate(templateData) {
+function getEmailTemplate(templateData) {
       // if (templateData.mailType.toLowerCase() == constant.emailType.ESTIMATION.toLowerCase()) {
     var html = `<!DOCTYPE html>
             <html>
+            <style>
+                table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+                }
+            </style>
             <body>
             <p>Hi ${templateData.senderName},</h4>
             <p>${templateData.ownerName} has shared the following estimation with you. Please check with the below shared details and start contributing.</p>
-            <table border="0" cellspacing="0" width="100%">
+            <table cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Client Name</th>
@@ -44,7 +50,7 @@ function  getEmailTemplate(templateData) {
                         <td>${templateData.projectName}</td>
                         <td>${templateData.estimationName}</td>
                         <td>${templateData.assignedRole}</td>
-                        <td><a style="background-color: #04AA6D!important;border-radius: 5px;font-size: 12px;font-family: 'Source Sans Pro', sans-serif;padding: 6px 18px;color: #FFFFFF;text-decoration: none;" href="${templateData.estimationLink}" target="_blank">Get Estimation</a></td>
+                        <td><a style="background-color: #04AA6D!important;border-radius: 5px;font-size: 12px;font-family: 'Source Sans Pro', sans-serif;padding: 3px 18px;color: #FFFFFF;text-decoration: none;" href="${templateData.estimationLink}" target="_blank">Get Estimation</a></td>
                     </tr>
                 </tbody>
             </table>

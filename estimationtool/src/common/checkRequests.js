@@ -37,13 +37,14 @@ const checkRequests = (Wrapped) => {
 
     axios.interceptors.request.use(
       (request) => {
-        if (!request.url.includes("login")) {
+        if (!request.url.includes("login") && !request.url.includes("validateshareestlink")) {
           const getToken = localStorage.getItem("auth");
           const token = JSON.parse(getToken).token;
           if (token) {
             request.headers["Authorization"] = `Bearer ${token}`;
           }
         }
+        request.headers["Access-Control-Allow-Origin"] = "*";
         return request;
       },
       (error) => {

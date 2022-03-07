@@ -48,13 +48,19 @@ const prepareShareEstimationLink = async (estimationId, shareUserId) => {
     return userModel.findById(shareUserId).then(async (res, err) => {
       const token = await userService.getToken(shareUserId);
       const baseURL =
-        process.env.NODE_ENV === "production"
-          ? process.env.PRODUCTION_URL
-          : process.env.DEVELOPEMENT_URL;
+        process.env.REACT_ENV === "production"
+          ? process.env.REACT_PRODUCTION_URL
+          : process.env.REACT_DEVELOPEMENT_URL;
+      // Encode estimationId 
+      const encodedEstId = Buffer.from(estimationId).toString('base64');
+
+      // Encode token 
+      const encodedToken = Buffer.from(token).toString('base64');
+
       console.log(
-        `${baseURL}/api/v1/user/validateshareestlink/${estimationId}?token=${token}`
+        `${baseURL}/validateshare?estimationId=${encodedEstId}&token=${encodedToken}`
       );
-      return `${baseURL}/api/v1/user/validateshareestlink/${estimationId}?token=${token}`;
+      return `${baseURL}/validateshare?estimationId=${encodedEstId}&token=${encodedToken}`;
     });
   });
 };
@@ -214,7 +220,7 @@ const CheckUserandCreate = async (user) => {
   let userexists = await userModel.findOne({ email: user.vc_Email });
   if (!userexists) {
     //Create New User
-    let role = await roleModel.find({ seq: 8 });
+    const role = await roleModel.findOne({ seq: 8 });
     userexists = await userService.signup({
       email: user.vc_Email,
       password: "admin@321",

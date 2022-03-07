@@ -1,0 +1,14 @@
+.userFourmRow {
+  display: flex;
+  align-items: center;
+}
+
+.lableContainer {
+  margin: 10px;
+  padding: 10px 20px;
+}
+.userRoles {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
