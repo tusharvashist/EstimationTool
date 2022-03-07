@@ -213,7 +213,14 @@ const ShareEstimationDialog = (props) => {
             multiple
             id="tags-outlined"
             options={userList}
-            getOptionLabel={(option) => option.EmpFName + " " + option.EmpLName}
+            getOptionLabel={(option) =>
+              option.EmpFName +
+              " " +
+              option.EmpLName +
+              " (" +
+              option.vc_Email +
+              ")"
+            }
             filterSelectedOptions
             onChange={(e, value) => {
               console.log("e:", e, " v:", value);
