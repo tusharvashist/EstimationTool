@@ -220,7 +220,7 @@ const CheckUserandCreate = async (user) => {
   let userexists = await userModel.findOne({ email: user.vc_Email });
   if (!userexists) {
     //Create New User
-    let role = await roleModel.find({ seq: 8 });
+    const role = await roleModel.findOne({ seq: 8 });
     userexists = await userService.signup({
       email: user.vc_Email,
       password: "admin@321",
