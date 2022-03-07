@@ -230,7 +230,7 @@ module.exports.validateshareestlink = async (req) => {
     );
 
     //3. Validate User
-    const users = await getUsersData(tokenData.id);
+    const users = await this.getUsersData(tokenData.id);
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
@@ -261,7 +261,7 @@ module.exports.validateshareestlink = async (req) => {
   }
 };
 
-getUsersData = async (userid) => {
+module.exports.getUsersData = async (userid) => {
   const users = await userModel.aggregate([
     {
       $match: {
