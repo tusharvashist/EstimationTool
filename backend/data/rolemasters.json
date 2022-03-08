@@ -1,33 +1,65 @@
 [{
-  "_id": "617b7e9906b52001082eeb29", 
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb29"
+  },
   "roleName": "Admin",
-  "roleDescription": "Admin Role have all permission in application."
+  "roleDescription": "Admin Role have all permission in application.",
+  "__v": 0,
+  "seq": 1
 },{
-  "_id": "617b7e9906b52001082eeb30",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb30"
+  },
   "roleName": "Super Admin",
-  "roleDescription": "Super Admin Role have all permission in application."
+  "roleDescription": "Super Admin Role have all permission in application.",
+  "__v": 0,
+  "seq": 2
 },{
-  "_id": "617b7e9906b52001082eeb31",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb31"
+  },
   "roleName": "Full Contributor",
-  "roleDescription": "This role have permission of estimation detail,add requirement and view pricing"
+  "roleDescription": "This role have permission of estimation detail,add requirement and view pricing",
+  "__v": 0,
+  "seq": 3
 },{
-  "_id": "617b7e9906b52001082eeb32",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb32"
+  },
   "roleName": "Basic Contributor",
-  "roleDescription": "This role have permission of estimation detail,add requirement."
+  "roleDescription": "This role have permission of estimation detail,add requirement.",
+  "__v": 0,
+  "seq": 4
 },{
-  "_id": "617b7e9906b52001082eeb33",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb33"
+  },
   "roleName": "Full Reviewer",
-  "roleDescription": "This role have permission of view pricing and adding review comment."
+  "roleDescription": "This role have permission of view pricing and adding review comment.",
+  "__v": 0,
+  "seq": 5
 },{
-  "_id": "617b7e9906b52001082eeb34",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb34"
+  },
   "roleName": "Basic Reviewer",
-  "roleDescription": "This role have permission of adding review comment."
+  "roleDescription": "This role have permission of adding review comment.",
+  "__v": 0,
+  "seq": 6
 },{
-  "_id": "617b7e9906b52001082eeb35",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb35"
+  },
   "roleName": "Full Viewer",
-  "roleDescription": "This role have permission of view pricing."
+  "roleDescription": "This role have permission of view pricing.",
+  "__v": 0,
+  "seq": 7
 },{
-  "_id": "617b7e9906b52001082eeb36",
+  "_id": {
+    "$oid": "617b7e9906b52001082eeb36"
+  },
   "roleName": "Basic Viewer",
-  "roleDescription": "This role have basic permission of application without any crud operation."
+  "roleDescription": "This role have basic permission of application without any crud operation.",
+  "__v": 0,
+  "seq": 8
 }]
