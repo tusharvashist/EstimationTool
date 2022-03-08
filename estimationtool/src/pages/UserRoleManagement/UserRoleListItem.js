@@ -41,7 +41,7 @@ const UserRoleListItem = (props) => {
                 <h4>
                   {user.firstName} {user.lastName}
                 </h4>
-                <p>{user.email}</p>
+                <p className={classes.userEmail}>{user.email}</p>
               </Grid>
               <Grid iten xs={8} className={classes.userFourmRow}>
                 <FormControl
