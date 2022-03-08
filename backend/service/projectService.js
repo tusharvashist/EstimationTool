@@ -4,6 +4,7 @@ const Client = require("../database/models/clientModel");
 const { formatMongoData } = require("../helper/dbhelper");
 const mongoose = require("mongoose");
 const ShareDataModel = require("../database/models/shareDataModel");
+const userService = require("../service/userService");
 
 module.exports.createProject = async (serviceData) => {
   try {
@@ -64,12 +65,13 @@ module.exports.getProjectById = async ({ id }) => {
       });
       const estimatesTemp = project.estimates;
       let estimates = [];
+      const isUserAllowedToListAllEstimations = await userService.checkUserPermissionWithReqModuleToken(global.loginId, 'all_estimation_data');
       for(const estimate of estimatesTemp) {
-        if(estimate){          
+        if(estimate){         
           const sharedEst = await ShareDataModel.findOne({typeId: estimate._id, shareUserId: global.loginId});
           const createdBy = estimate.createdBy !=null ? estimate.createdBy._id : '';
           const typeId = sharedEst!=null && sharedEst.typeId !=null ? sharedEst.typeId : '';           
-          if(createdBy == global.loginId || (sharedEst!=null && typeId.equals(estimate._id) && sharedEst.shareUserId == global.loginId)){
+          if(isUserAllowedToListAllEstimations || createdBy == global.loginId || (sharedEst!=null && typeId.equals(estimate._id) && sharedEst.shareUserId == global.loginId)){
             estimates.push(estimate);
           }
         }

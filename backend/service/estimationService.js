@@ -22,6 +22,7 @@ const EstResourcePlanning = require("../database/models/estResourcePlanning");
 const EstRequirementData = require("../database/models/estRequirementData");
 const VersionEstRollback = require("../database/models/versionEstRollback");
 const ShareDataModel = require("../database/models/shareDataModel");
+const userService = require("../service/userService");
 
 const { result } = require("lodash");
 
@@ -63,12 +64,13 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
       .sort({ updatedAt: "desc" });
 
     let result = [];
-    for(const element of estimations) {
+    const isUserAllowedToListAllEstimations = await userService.checkUserPermissionWithReqModuleToken(global.loginId, 'all_estimation_data');
+    for (const element of estimations) {
       if (element.projectId != null && element.projectId.client != null) {
-        const sharedEst = await ShareDataModel.findOne({typeId: element._id, shareUserId: global.loginId});
-        const createdBy = element.createdBy !=null ? element.createdBy._id : '';
-        const typeId = sharedEst!=null && sharedEst.typeId !=null ? sharedEst.typeId : '';           
-        if(createdBy == global.loginId || (sharedEst!=null && typeId.equals(element._id) && sharedEst.shareUserId == global.loginId)){
+        const sharedEst = await ShareDataModel.findOne({ typeId: element._id, shareUserId: global.loginId });
+        const createdBy = element.createdBy != null ? element.createdBy._id : '';
+        const typeId = sharedEst != null && sharedEst.typeId != null ? sharedEst.typeId : '';
+        if (isUserAllowedToListAllEstimations || createdBy == global.loginId || (sharedEst != null && typeId.equals(element._id) && sharedEst.shareUserId == global.loginId)) {
           result.push(element);
         }
       }
@@ -76,7 +78,7 @@ module.exports.getRecentEstimation = async ({ skip = 0, limit = 10 }) => {
 
     return formatMongoData(result);
   } catch (err) {
-    console.log("something went wrong: service > createEstimation Header", err);
+    console.log("something went wrong: service > getRecentEstimation", err);
     throw new Error(err);
   }
 };
@@ -101,12 +103,12 @@ module.exports.createEstimationHeader = async (serviceData) => {
     projectModel.estimates.push(estimation);
     await projectModel.save();
 
-   let updateRec = await EstimationHeader.findOneAndUpdate(
-        { _id: result._id },
-        {estheaderParentid: result._id},
-        {new: true}
-      );
-     
+    let updateRec = await EstimationHeader.findOneAndUpdate(
+      { _id: result._id },
+      { estheaderParentid: result._id },
+      { new: true }
+    );
+
     return formatMongoData(updateRec);
   } catch (err) {
     console.log(
@@ -125,21 +127,22 @@ module.exports.updateEstimationHeader = async ({ id, updatedInfo }) => {
     }
 
     const findRecord = await EstimationHeader.find({
-      estName: updatedInfo.estName, isDeleted: false 
+      estName: updatedInfo.estName, isDeleted: false
     });
     updatedInfo.updatedBy = global.loginId;
     if (findRecord.length != 0) {
       if (findRecord.length == 1 && String(findRecord[0]._id) == id) {
         let estimation = await EstimationHeader.findOneAndUpdate(
           { _id: id },
-          {estName: updatedInfo.estName,
+          {
+            estName: updatedInfo.estName,
             estTypeId: updatedInfo.estTypeId,
             estDescription: updatedInfo.estDescription,
             effortUnit: updatedInfo.effortUnit,
             estTentativeTimeline: updatedInfo.estTentativeTimeline,
             locations: updatedInfo.locations,
             contingency: updatedInfo.contingency,
-            updatedBy: global.loginId,   
+            updatedBy: global.loginId,
           }
         );
         if (!estimation) {
@@ -690,7 +693,7 @@ module.exports.versioningEstimation = async ({ id }) => {
   } catch (err) {
     //Rollback or delete if something happens
     console.log(err);
-    this.callVersionEstRollBack(versionEstRollback,true);
+    this.callVersionEstRollBack(versionEstRollback, true);
     throw new Error(err);
   }
 };
@@ -1074,7 +1077,7 @@ const prepareVersionEstHeaderdto = (parentEstimation) => {
   return estimation;
 };
 
-module.exports.callVersionEstRollBack = async (versionEstRollback,isVersioning) => {
+module.exports.callVersionEstRollBack = async (versionEstRollback, isVersioning) => {
   if (versionEstRollback) {
     if (versionEstRollback.estResourcePlanningIds) {
       for (const estResourcePlanningId of versionEstRollback.estResourcePlanningIds) {
@@ -1115,16 +1118,16 @@ module.exports.callVersionEstRollBack = async (versionEstRollback,isVersioning) 
           ProjectModel.findByIdAndUpdate(
             res.projectId,
             { $pull: { estimates: versionEstRollback.newEstHeaderId } },
-            function (err, res) {}
+            function (err, res) { }
           );
         }
       );
-      if(isVersioning){
-      EstimationHeader.findByIdAndUpdate(
-        versionEstRollback.estheaderParentid,
-        { isDeleted: false, updatedBy: global.loginId },
-        function (err, res) {}
-      );
+      if (isVersioning) {
+        EstimationHeader.findByIdAndUpdate(
+          versionEstRollback.estheaderParentid,
+          { isDeleted: false, updatedBy: global.loginId },
+          function (err, res) { }
+        );
       }
 
       await EstimationHeader.findByIdAndDelete(
@@ -1143,12 +1146,12 @@ const convertStringToObject = (id) => {
 
 
 //Cloning Estimation
-module.exports.cloneEstimation = async ({ id , estName}) => {
+module.exports.cloneEstimation = async ({ id, estName }) => {
   const cloneEstRollback = new VersionEstRollback();
   try {
-    
-    const checkEstimationByName = await EstimationHeader.find({estName : estName});
-    if(checkEstimationByName.length != 0){
+
+    const checkEstimationByName = await EstimationHeader.find({ estName: estName });
+    if (checkEstimationByName.length != 0) {
       throw new Error(
         `${estName} already exist. Please enter unique estination name for cloning.`
       );
@@ -1161,47 +1164,47 @@ module.exports.cloneEstimation = async ({ id , estName}) => {
     );
 
     if (parentEstimation) {
-        //Creating clone of Estimation header and updating bellow details
-        let createVersionEstPayload =
-          prepareVersionEstHeaderdto(parentEstimation);
-        //TODO: paranetId need to be updated upon successfully clone
-        createVersionEstPayload.estheaderParentid = "-1"
-        createVersionEstPayload.publishDate = null;
-        createVersionEstPayload.estVersionno = "1";
-        createVersionEstPayload.estName = estName;
-        createVersionEstPayload.isDeleted = false;
+      //Creating clone of Estimation header and updating bellow details
+      let createVersionEstPayload =
+        prepareVersionEstHeaderdto(parentEstimation);
+      //TODO: paranetId need to be updated upon successfully clone
+      createVersionEstPayload.estheaderParentid = "-1"
+      createVersionEstPayload.publishDate = null;
+      createVersionEstPayload.estVersionno = "1";
+      createVersionEstPayload.estName = estName;
+      createVersionEstPayload.isDeleted = false;
 
-        //estheaders
-        const resultCloneHeader =
-          await this.createVersionEstimationHeader(createVersionEstPayload);
+      //estheaders
+      const resultCloneHeader =
+        await this.createVersionEstimationHeader(createVersionEstPayload);
 
-        //paranetId need to be updated upon successfully clone header
-        let cloneEstimationResult = await EstimationHeader.findOneAndUpdate(
-          { _id: resultCloneHeader._id },
-          {estheaderParentid: resultCloneHeader._id},
-          {new: true}
+      //paranetId need to be updated upon successfully clone header
+      let cloneEstimationResult = await EstimationHeader.findOneAndUpdate(
+        { _id: resultCloneHeader._id },
+        { estheaderParentid: resultCloneHeader._id },
+        { new: true }
+      );
+
+      if (cloneEstimationResult) {
+        cloneEstRollback.newEstHeaderId = convertStringToObject(
+          cloneEstimationResult._id
         );
 
-        if(cloneEstimationResult) {
-            cloneEstRollback.newEstHeaderId = convertStringToObject(
-            cloneEstimationResult._id
-          );
+        //estheaderrequirements
+        await this.createEstHeaderRequirements(cloneEstRollback);
 
-          //estheaderrequirements
-          await this.createEstHeaderRequirements(cloneEstRollback);
+        //estimationheaderattributecalcs
+        await this.createEstHeaderAttrCalcs(cloneEstRollback);
 
-          //estimationheaderattributecalcs
-          await this.createEstHeaderAttrCalcs(cloneEstRollback);
+        //estHeaderAttributes
+        await this.createEstHeaderAttributes(cloneEstRollback);
 
-          //estHeaderAttributes
-          await this.createEstHeaderAttributes(cloneEstRollback);
+        //estresourcecounts
+        await this.createEstResourceCounts(cloneEstRollback);
 
-          //estresourcecounts
-          await this.createEstResourceCounts(cloneEstRollback);
+      }
+      return formatMongoData(cloneEstimationResult);
 
-        }
-        return formatMongoData(cloneEstimationResult);
-       
     } else {
       throw new Error(
         "Selected Estimation not Found. Can not create Clone for this estimation"
@@ -1210,7 +1213,7 @@ module.exports.cloneEstimation = async ({ id , estName}) => {
   } catch (err) {
     //Rollback or delete if something happens wrong
     console.log(err);
-    this.callVersionEstRollBack(cloneEstRollback,false);
+    this.callVersionEstRollBack(cloneEstRollback, false);
     throw new Error(err);
   }
 };

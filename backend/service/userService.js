@@ -393,3 +393,29 @@ module.exports.fetchalluserswithrole = async () => {
     throw new Error(err);
   }
 };
+
+module.exports.checkUserPermissionWithReqModuleToken = async (userId, moduleTokenName) => {
+  try {
+    const users = await this.getUsersData(userId);
+    let user = users[0];
+    if (!user) {
+      throw new Error(constant.userMessage.USER_NOT_FOUND);
+    }
+
+    if (user.RolePermission) {
+      let exists = user.RolePermission.filter(
+        (x) => x.token == moduleTokenName
+      );
+
+      if (exists && exists.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+  } catch (err) {
+    console.log("something went wrong: service > user service > checkUserPermission  ", err);
+    throw new Error(err);
+  }
+};
