@@ -1,5 +1,3 @@
-
-
 const exporess = require("express");
 const router = exporess.Router();
 const userController = require("../controller/userController");
@@ -7,15 +5,22 @@ const joiSchemaValidation = require("../middleware/joiSchemaValidation");
 const joiUserSchema = require("../apiSchma/joiUserSchema");
 
 //-----  signup/ create user -----------
-router.post("/signup",
+router.post(
+  "/signup",
   joiSchemaValidation.validateBody(joiUserSchema.signup),
   userController.signup
 );
 
 //----- Create -----------
-router.post("/login",
+router.post(
+  "/login",
   joiSchemaValidation.validateHeadresAuthorization(),
   userController.login
+);
+
+router.get(
+  "/loginsso",
+  userController.loginSSO
 );
 
 router.get(
@@ -24,12 +29,14 @@ router.get(
   userController.getAllUserByName
 );
 
-router.get("/validateshareestlink/:estheaderId",
+router.get(
+  "/validateshareestlink/:estheaderId",
   userController.validateshareestlink
 );
 
 //----- Update User Role  -----------
-router.put("/updateuserrole/:id",
+router.put(
+  "/updateuserrole/:id",
   joiSchemaValidation.validateHeadresAuthorization(),
   userController.updateuserrole
 );

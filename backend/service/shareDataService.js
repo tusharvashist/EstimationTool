@@ -12,7 +12,7 @@ module.exports.createShareData = async (serviceData) => {
     for (let estimation of serviceData.Estimations) {
       for (let user of serviceData.Users) {
         //Check User in Application and create it
-        let userexists = await CheckUserandCreate(user);
+        let userexists = await userService.CheckUserandCreate(user);
         let sharedata = new ShareDataModel({
           typeId: mongoose.Types.ObjectId(estimation.id),
           typeName: "E",
@@ -67,7 +67,10 @@ const prepareShareEstimationLink = async (estimationId, shareUserId) => {
 
 const callSendMailService = async (estimationId, userid, estShareLink) => {
   //Prepare the email data
-  const estimation = await this.GetSharingData(estimationId, userid);
+  const estimation = await this.GetSharingData({
+    estimationId: estimationId,
+    loginId: userid,
+  });
   if (estimation.length > 0) {
     let estimationData = estimation[0];
     const data = {
@@ -90,7 +93,7 @@ const callSendMailService = async (estimationId, userid, estShareLink) => {
   }
 };
 
-module.exports.GetSharingData = async (estimationId, loginId) => {
+module.exports.GetSharingData = async ({ estimationId, loginId }) => {
   try {
     let filter = {};
     if (loginId) {
@@ -214,20 +217,4 @@ module.exports.GetSharingData = async (estimationId, loginId) => {
     console.log("something went wrong: service > Sharing Data Service ", err);
     throw new Error(err);
   }
-};
-
-const CheckUserandCreate = async (user) => {
-  let userexists = await userModel.findOne({ email: user.vc_Email });
-  if (!userexists) {
-    //Create New User
-    const role = await roleModel.findOne({ seq: 8 });
-    userexists = await userService.signup({
-      email: user.vc_Email,
-      password: "admin@321",
-      roleId: role._id,
-      firstname: user.EmpFName,
-      lastname: user.EmpLName,
-    });
-  }
-  return userexists;
 };
