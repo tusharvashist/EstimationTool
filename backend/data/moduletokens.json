@@ -1,265 +1,162 @@
-[{
-  "_id": {
-    "$oid": "6177f3b772038a8d25716675"
-  },
-  "moduleId": {
-    "$oid": "6177f2f572038a8d25716671"
-  },
-  "token": "client_edit"
-},{
-  "_id": {
-    "$oid": "6177f3bf72038a8d25716677"
-  },
-  "moduleId": {
-    "$oid": "6177f2f572038a8d25716671"
-  },
-  "token": "client_delete"
-},{
-  "_id": {
-    "$oid": "6177f3c572038a8d25716679"
-  },
-  "moduleId": {
-    "$oid": "6177f2f572038a8d25716671"
-  },
-  "token": "client_create"
-},{
-  "_id": {
-    "$oid": "6177f3ca72038a8d2571667b"
-  },
-  "moduleId": {
-    "$oid": "6177f2f572038a8d25716671"
-  },
-  "token": "client_listing"
-},{
-  "_id": {
-    "$oid": "6177f3d172038a8d2571667d"
-  },
-  "moduleId": {
-    "$oid": "6177f2f572038a8d25716671"
-  },
-  "token": "client_view"
-},{
-  "_id": {
-    "$oid": "61dd1d4982ac56d1f0909910"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_edit"
-},{
-  "_id": {
-    "$oid": "61dd1d5b82ac56d1f0909911"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_delete"
-},{
-  "_id": {
-    "$oid": "61dd1d6782ac56d1f0909912"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_create"
-},{
-  "_id": {
-    "$oid": "61dd1d7282ac56d1f0909913"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_listing"
-},{
-  "_id": {
-    "$oid": "61dd1dfe82ac56d1f0909915"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_requirement_create"
-},{
-  "_id": {
-    "$oid": "61dd1d7f82ac56d1f0909914"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_view"
-},{
-  "_id": {
-    "$oid": "61dd1e0982ac56d1f0909916"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_requirement_edit"
-},{
-  "_id": {
-    "$oid": "61dd1e1682ac56d1f0909917"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_requirement_import"
-},{
-  "_id": {
-    "$oid": "61dd1e2382ac56d1f0909918"
-  },
-  "moduleId": {
-    "$oid": "6177fa7753423cde199def45"
-  },
-  "token": "project_requirement_delete"
-},{
-  "_id": {
-    "$oid": "61dd204a82ac56d1f0909919"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_configuation"
-},{
-  "_id": {
-    "$oid": "61dd206182ac56d1f090991a"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_delete"
-},{
-  "_id": {
-    "$oid": "61dd206b82ac56d1f090991b"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_create"
-},{
-  "_id": {
-    "$oid": "61dd207482ac56d1f090991c"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_list"
-},{
-  "_id": {
-    "$oid": "61dd207f82ac56d1f090991d"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_view"
-},{
-  "_id": {
-    "$oid": "61dd208c82ac56d1f090991e"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_attribute_data"
-},{
-  "_id": {
-    "$oid": "61dd209682ac56d1f090991f"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_calc_attribute_data"
-},{
-  "_id": {
-    "$oid": "61dd20a282ac56d1f0909920"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_export_excel"
-},{
-  "_id": {
-    "$oid": "61dd20ad82ac56d1f0909921"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_generate_resourcemix"
-},{
-  "_id": {
-    "$oid": "61dd20b782ac56d1f0909922"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_generate_timeline"
-},{
-  "_id": {
-    "$oid": "61dd20ee82ac56d1f0909923"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_export_resourcemix"
-},{
-  "_id": {
-    "$oid": "61dd20f782ac56d1f0909924"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_export_timeline"
-},{
-  "_id": {
-    "$oid": "61dd210e82ac56d1f0909926"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_requirement_add"
-},{
-  "_id": {
-    "$oid": "61dd210482ac56d1f0909925"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_share"
-},{
-  "_id": {
-    "$oid": "61dd211e82ac56d1f0909927"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_pricing_view"
-},{
-  "_id": {
-    "$oid": "61dd213c82ac56d1f0909928"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_add_review_comment"
-},{
-  "_id": {
-    "$oid": "61dd4bcb82ac56d1f090999f"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "estimation_resourcecount_edit"
-},{
-  "_id": {
-    "$oid": "6221f26e26ab3ff1025e9b8c"
-  },
-  "moduleId": {
-    "$oid": "6221f1e026ab3ff1025e9b89"
-  },
-  "token": "user_management_listing"
-},{
-  "_id": {
-    "$oid": "6227049d53bd74a6aed8a48e"
-  },
-  "moduleId": {
-    "$oid": "6177fba39aacee5bf1b01f10"
-  },
-  "token": "all_estimation_data"
-}]
+[
+  {
+    "_id": "6177f3b772038a8d25716675",
+    "moduleId": "6177f2f572038a8d25716671",
+    "token": "client_edit"
+  },
+  {
+    "_id": "6177f3bf72038a8d25716677",
+    "moduleId": "6177f2f572038a8d25716671",
+    "token": "client_delete"
+  },
+  {
+    "_id": "6177f3c572038a8d25716679",
+    "moduleId": "6177f2f572038a8d25716671",
+    "token": "client_create"
+  },
+  {
+    "_id": "6177f3ca72038a8d2571667b",
+    "moduleId": "6177f2f572038a8d25716671",
+    "token": "client_listing"
+  },
+  {
+    "_id": "6177f3d172038a8d2571667d",
+    "moduleId": "6177f2f572038a8d25716671",
+    "token": "client_view"
+  },
+  {
+    "_id": "61dd1d4982ac56d1f0909910",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_edit"
+  },
+  {
+    "_id": "61dd1d5b82ac56d1f0909911",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_delete"
+  },
+  {
+    "_id": "61dd1d6782ac56d1f0909912",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_create"
+  },
+  {
+    "_id": "61dd1d7282ac56d1f0909913",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_listing"
+  },
+  {
+    "_id": "61dd1d7f82ac56d1f0909914",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_view"
+  },
+  {
+    "_id": "61dd1dfe82ac56d1f0909915",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_requirement_create"
+  },
+  {
+    "_id": "61dd1e0982ac56d1f0909916",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_requirement_edit"
+  },
+  {
+    "_id": "61dd1e1682ac56d1f0909917",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_requirement_import"
+  },
+  {
+    "_id": "61dd1e2382ac56d1f0909918",
+    "moduleId": "6177fa7753423cde199def45",
+    "token": "project_requirement_delete"
+  },
+  {
+    "_id": "61dd204a82ac56d1f0909919",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_configuation"
+  },
+  {
+    "_id": "61dd206182ac56d1f090991a",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_delete"
+  },
+  {
+    "_id": "61dd206b82ac56d1f090991b",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_create"
+  },
+  {
+    "_id": "61dd207482ac56d1f090991c",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_list"
+  },
+  {
+    "_id": "61dd207f82ac56d1f090991d",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_view"
+  },
+  {
+    "_id": "61dd208c82ac56d1f090991e",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_attribute_data"
+  },
+  {
+    "_id": "61dd209682ac56d1f090991f",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_calc_attribute_data"
+  },
+  {
+    "_id": "61dd20a282ac56d1f0909920",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_export_excel"
+  },
+  {
+    "_id": "61dd20ad82ac56d1f0909921",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_generate_resourcemix"
+  },
+  {
+    "_id": "61dd20b782ac56d1f0909922",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_generate_timeline"
+  },
+  {
+    "_id": "61dd20ee82ac56d1f0909923",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_export_resourcemix"
+  },
+  {
+    "_id": "61dd20f782ac56d1f0909924",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_export_timeline"
+  },
+  {
+    "_id": "61dd210482ac56d1f0909925",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_share"
+  },
+  {
+    "_id": "61dd210e82ac56d1f0909926",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_requirement_add"
+  },
+  {
+    "_id": "61dd211e82ac56d1f0909927",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_pricing_view"
+  },
+  {
+    "_id": "61dd213c82ac56d1f0909928",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_add_review_comment"
+  },
+  {
+    "_id": "61dd4bcb82ac56d1f090999f",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_resourcecount_edit"
+  },
+  {
+    "_id": "6221f26e26ab3ff1025e9b8c",
+    "moduleId": "6221f1e026ab3ff1025e9b89",
+    "token": "user_management_listing"
+  }
+]
