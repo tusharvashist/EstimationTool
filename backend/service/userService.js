@@ -233,7 +233,7 @@ module.exports.validateshareestlink = async (req) => {
     });
 
     //3. Validate User
-    const users = await getUsersData(tokenData.id);
+    const users = await this.getUsersData(tokenData.id);
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
@@ -264,7 +264,7 @@ module.exports.validateshareestlink = async (req) => {
   }
 };
 
-const getUsersData = async (userid, estheaderId) => {
+module.exports.getUsersData = async (userid) => {
   return userModel.aggregate([
     {
       $match: {
@@ -342,6 +342,7 @@ module.exports.updateuserrole = async (req) => {
     throw new Error(err);
   }
 };
+
 module.exports.loginSSO = async ({ uid }) => {
   try {
     //Check UID on pcode site
@@ -352,7 +353,7 @@ module.exports.loginSSO = async ({ uid }) => {
       let pcoreuser = pcoreres.data.body[0];
       let user = await this.CheckUserandCreate(pcoreuser);
       //Get User data and assign token
-      let users = await getUsersData(user._id);
+      let users = await this.getUsersData(user._id);
       user = users[0];
       user.token = await this.getToken(user._id);
       delete user["password"];
@@ -379,4 +380,16 @@ module.exports.CheckUserandCreate = async (user) => {
     });
   }
   return userexists;
+};
+
+module.exports.fetchalluserswithrole = async () => {
+  try {
+    return await userModel.find().populate("roleId");
+  } catch (err) {
+    console.log(
+      "something went wrong: service > user service > fetchalluserswithrole  ",
+      err
+    );
+    throw new Error(err);
+  }
 };

@@ -18,7 +18,7 @@ router.post(
   userController.login
 );
 
-router.post(
+router.get(
   "/loginsso",
   userController.loginSSO
 );
@@ -40,4 +40,10 @@ router.put(
   joiSchemaValidation.validateHeadresAuthorization(),
   userController.updateuserrole
 );
+
+router.get("/fetchalluserswithrole",
+  joiSchemaValidation.validateHeadresAuthorization(),
+  userController.fetchalluserswithrole
+);
+
 module.exports = router;

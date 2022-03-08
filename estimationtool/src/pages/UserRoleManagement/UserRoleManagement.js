@@ -1,167 +1,72 @@
 import { Grid } from "@material-ui/core";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BorderedContainer from "../../shared/ui-view/borderedContainer/BorderedContainer";
 import classes from "./UserRoleManagement.module.css";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import userRoleManagementService from "./userRoleManagement.service";
+import UserRoleListItem from "./UserRoleListItem";
 
 const UserRoleManagement = () => {
+  const [roles, setRoles] = useState([]);
+  const [userWithRoles, setUserWithRoles] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    getAllRoles();
+    getAllUserWithRoles();
+  }, [refresh]);
+
+  const getAllRoles = async () => {
+    await userRoleManagementService
+      .getAllRoles()
+      .then((res) => {
+        setRoles(res.data.body);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const checkRefresh = () => {
+    setRefresh(!refresh);
+  };
+
+  const getAllUserWithRoles = async () => {
+    await userRoleManagementService
+      .getAllUserWithRoles()
+      .then((res) => {
+        setUserWithRoles(res.data.body);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  console.log("user role", userWithRoles);
+
   return (
     <>
-      <Grid container className={classes.lableContainer}>
-        <Grid item xs={5}></Grid>
-        <Grid iten xs={7} className={classes.userRoles}>
-          <div className={classes.roleName}>
-            <p>Super Admin</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Admin</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Full Contributor</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Basic Contributor</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Full Reviewer</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Basic Reviewer</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Full Viewer</p>
-          </div>
-          <div className={classes.roleName}>
-            <p>Basic Viewer</p>
-          </div>
-        </Grid>
-      </Grid>
-      <BorderedContainer>
-        <Grid container className={classes.userContainer}>
-          <Grid item xs={5}>
-            <h3>User</h3>
-            <p>Email Id</p>
+      <BorderedContainer className={classes.headerTitle}>
+        <Grid container className={classes.lableContainer}>
+          <Grid item xs={4} className={classes.lableName}>
+            <h3>Application Roles</h3>
           </Grid>
-          <Grid iten xs={7} className={classes.userFourmRow}>
-            <FormControl component="fieldset">
-              <RadioGroup
-                row
-                aria-label="gender"
-                name="row-radio-buttons-group"
-              >
-                <FormControlLabel
-                  value="Super Admin"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel value="Admin" control={<Radio />} label="" />
-                <FormControlLabel
-                  value="Contributor"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-              </RadioGroup>
-            </FormControl>
+          <Grid iten xs={8} className={classes.userRoles}>
+            {roles.map((el) => {
+              return (
+                <div className={classes.roleName}>
+                  <p>{el.roleName}</p>
+                </div>
+              );
+            })}
           </Grid>
         </Grid>
       </BorderedContainer>
-      <BorderedContainer>
-        <Grid container className={classes.userContainer}>
-          <Grid item xs={5}>
-            <h3>User</h3>
-            <p>Email Id</p>
-          </Grid>
-          <Grid iten xs={7} className={classes.userFourmRow}>
-            <FormControl component="fieldset">
-              <RadioGroup
-                row
-                aria-label="gender"
-                name="row-radio-buttons-group"
-              >
-                <FormControlLabel
-                  value="Super Admin"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel value="Admin" control={<Radio />} label="" />
-                <FormControlLabel
-                  value="Contributor"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-                <FormControlLabel value="Viewer" control={<Radio />} label="" />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
-      <BorderedContainer>
-        <Grid container className={classes.userContainer}>
-          <Grid item xs={5}>
-            <h3>User</h3>
-            <p>Email Id</p>
-          </Grid>
-          <Grid iten xs={7} className={classes.userFourmRow}>
-            <FormControl component="fieldset">
-              <RadioGroup
-                row
-                aria-label="gender"
-                name="row-radio-buttons-group"
-              >
-                <FormControlLabel
-                  value="Super Admin"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel value="Admin" control={<Radio />} label="" />
-                <FormControlLabel
-                  value="Full Contributor"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel
-                  value="Basic Contributor"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel
-                  value="Full Reviewer"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel
-                  value="Basic Reviewer"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel
-                  value="Full Viewer"
-                  control={<Radio />}
-                  label=""
-                />
-                <FormControlLabel
-                  value="Basic Viewer"
-                  control={<Radio />}
-                  label=""
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-        </Grid>
-      </BorderedContainer>
+      <UserRoleListItem
+        roles={roles}
+        userWithRoles={userWithRoles}
+        setUserWithRoles={setUserWithRoles}
+        checkRefresh={checkRefresh}
+      />
     </>
   );
 };

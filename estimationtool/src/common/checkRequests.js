@@ -44,6 +44,7 @@ const checkRequests = (Wrapped) => {
             request.headers["Authorization"] = `Bearer ${token}`;
           }
         }
+        request.headers["Access-Control-Allow-Origin"] = "*";
         return request;
       },
       (error) => {

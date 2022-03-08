@@ -9,9 +9,12 @@ import "./sidebar.css";
 import { withRouter } from "react-router";
 import { HiOutlineLightBulb } from "react-icons/hi";
 import { RiUserSettingsLine } from "react-icons/ri";
+import usePermission from "../hooks/usePermissions";
 
 const Sidebarv2 = (props) => {
   const { history } = props;
+
+  const { user_management_listing } = usePermission();
 
   const dashboardClick = () => {
     const listitem = document.getElementsByClassName("listitem");
@@ -100,18 +103,20 @@ const Sidebarv2 = (props) => {
           </ListItemIcon>
           <span>&nbsp;Assumptions</span>
         </ListItem>
-        <ListItem
-          button
-          id="userManagement"
-          className="listitem"
-          activeClassName="active"
-          onClick={userManagementClick}
-        >
-          <ListItemIcon>
-            <RiUserSettingsLine className="link-icon" />
-          </ListItemIcon>
-          <span>&nbsp;Role Management</span>
-        </ListItem>
+        {user_management_listing && (
+          <ListItem
+            button
+            id="userManagement"
+            className="listitem"
+            activeClassName="active"
+            onClick={userManagementClick}
+          >
+            <ListItemIcon>
+              <RiUserSettingsLine className="link-icon" />
+            </ListItemIcon>
+            <span>&nbsp;Role Management</span>
+          </ListItem>
+        )}
       </List>
     </div>
   );

@@ -1,14 +1,36 @@
 .userFourmRow {
   display: flex;
   align-items: center;
-}
-
-.lableContainer {
-  margin: 10px;
-  padding: 10px 20px;
+  justify-content: center;
 }
 .userRoles {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 5px;
+  text-align: center;
+}
+.roleName {
+  flex-basis: 84.5px;
+  font-size: 12px;
+}
+
+.centerRadio {
+  justify-content: center;
+  margin: 0 !important;
+}
+.lableName {
+  display: flex;
+  align-items: center;
+}
+.headerTitle {
+  position: sticky;
+  top: 70px;
+  z-index: 1;
+  background-color: #15233e !important;
+  color: white !important;
+}
+
+.userEmail {
+  font-size: 14px;
 }
