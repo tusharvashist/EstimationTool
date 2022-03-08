@@ -19,18 +19,17 @@ import {
 import { setAdmin, setContributor, setSuperAdmin } from "../Redux/roleRedux";
 import { USER_PERMISSIONS } from "../shared/ui-view/constant/enum";
 
-export default function Redirection(props) {
+export default function SSORedirection(props) {
   const dispatch = useDispatch();
   let history = useHistory();
   const search = useLocation().search;
-  const estimationId = new URLSearchParams(search).get('estimationId');
-  const token = new URLSearchParams(search).get('token');
+  const uid = new URLSearchParams(search).get('uid');
+//  const token = new URLSearchParams(search).get('token');
+  const [status, setStatus] = useState("");
   
   useEffect(() => {
-    validateShareEstLink(estimationId, token);
+    loginsso(uid);
   }, []);
-
-
 
   const mapPermissions = (permissionArray) => {
     const permissionObj = {};
@@ -41,30 +40,26 @@ export default function Redirection(props) {
     for (let userP in USER_PERMISSIONS) {
       finalPermissions[USER_PERMISSIONS[userP]] = !!permissionObj[userP];
     }
-
     return { ...finalPermissions };
   };
 
-
-
-  const validateShareEstLink = async (estimationId, token) => {
+  const loginsso = async (uid) => {
     try {
-  
-    
-    let result = await redirectionService.validateShareEstLink(estimationId, token);
-
+    let result = await redirectionService.loginsso(uid);
     console.log("result", result);
-
       if (result.status === 200) {
+        setStatus("Valid user.");
         var user = result.data.body.user;
         saveDataToRedux(user);
-      redirectToEstimationDetail(user.estimationDetails._id,
-        user.clientDetails.clientName,
-        user.projectDetails.projectName
-      );
+        redirectDashbord();
+      // redirectToEstimationDetail(user.estimationDetails._id,
+      //   user.clientDetails.clientName,
+      //   user.projectDetails.projectName
+      // );
     }
-      } catch (error) {
-      console.log("Error", error);
+    } catch (error) {
+        setStatus("Invalid user.");
+        console.log("Error", error);
       }
   }
 
@@ -95,17 +90,21 @@ export default function Redirection(props) {
     }
      
   }
-
-  const redirectToEstimationDetail = (estimationId,clientName,projectName) => {
-    var url = "All-Clients/" + clientName + "/" + projectName + "/Estimation-Detail/";
-    dispatch(setEstHeaderId(estimationId))
+  const redirectDashbord = () => {
+    let url = "/Recent-Estimations";
     history.push(url);
+  };
+
+//   const redirectToEstimationDetail = (estimationId,clientName,projectName) => {
+//     var url = "All-Clients/" + clientName + "/" + projectName + "/Estimation-Detail/";
+//     dispatch(setEstHeaderId(estimationId))
+//     history.push(url);
     
-//http://localhost:3000/All-Clients/Star-Link/Apple/Estimation-Detail/
-// dispatch(setEstHeaderId(augData._id))
-  // let url = "/Recent-Estimations";
-  //   history.push(url);
-}
+// //http://localhost:3000/All-Clients/Star-Link/Apple/Estimation-Detail/
+// // dispatch(setEstHeaderId(augData._id))
+//   // let url = "/Recent-Estimations";
+//   //   history.push(url);
+// }
 
   return (
     <Grid container className="h-100 login-wrp" direction="row">
@@ -131,8 +130,9 @@ export default function Redirection(props) {
             alignItems="center"
             className="h-100"
           >
-                  <div class="loading">
-              <p>Please wait.. </p>
+            <div class="loading">
+              <p>Please wait..</p>
+                <p>{status}</p>
             <span><i></i><i></i></span>
         </div>
            
