@@ -9,6 +9,7 @@ const ShareDataModel = require("../database/models/shareDataModel");
 const mongoose = require("mongoose");
 const Client = require("../database/models/clientModel");
 const Project = require("../database/models/projectModel");
+const pcoreservice = require("../service/pcoreAPIservice");
 
 module.exports.signup = async ({
   email,
@@ -190,8 +191,10 @@ module.exports.testUser = async (emailID, pass) => {
 
 module.exports.validateshareestlink = async (req) => {
   try {
-
-    const decodedEstId = Buffer.from(req.params.estheaderId, 'base64').toString();
+    const decodedEstId = Buffer.from(
+      req.params.estheaderId,
+      "base64"
+    ).toString();
     try {
       if (!mongoose.Types.ObjectId(decodedEstId)) {
         throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
@@ -201,7 +204,7 @@ module.exports.validateshareestlink = async (req) => {
       throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
     }
 
-    const decodedToken = Buffer.from(req.query.token, 'base64').toString();
+    const decodedToken = Buffer.from(req.query.token, "base64").toString();
 
     //1. Validate Token
     var tokenData = jwt.verify(
@@ -211,26 +214,26 @@ module.exports.validateshareestlink = async (req) => {
 
     //2. Validate Estimation
     let sharedEst;
-    const estimationDetails = await EstimationHeader.findById(decodedEstId).then(
-      async (res, err) => {
-        if (res) {
-          sharedEst = await ShareDataModel.findOne({
-            typeId: res._id,
-            shareUserId: tokenData.id,
-          });
-          if (sharedEst) {
-            return res;
-          } else {
-            throw new Error(constant.PermssionMessage.PERMISSION_NOT_FOUND);
-          }
+    const estimationDetails = await EstimationHeader.findById(
+      decodedEstId
+    ).then(async (res, err) => {
+      if (res) {
+        sharedEst = await ShareDataModel.findOne({
+          typeId: res._id,
+          shareUserId: tokenData.id,
+        });
+        if (sharedEst) {
+          return res;
         } else {
-          throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
+          throw new Error(constant.PermssionMessage.PERMISSION_NOT_FOUND);
         }
+      } else {
+        throw new Error(constant.estimationMessage.ESTIMATION_NOT_FOUND);
       }
-    );
+    });
 
     //3. Validate User
-    const users = await getUsersData(tokenData.id);
+    const users = await this.getUsersData(tokenData.id);
     let user = users[0];
     if (!user) {
       throw new Error(constant.userMessage.USER_NOT_FOUND);
@@ -261,8 +264,8 @@ module.exports.validateshareestlink = async (req) => {
   }
 };
 
-getUsersData = async (userid) => {
-  const users = await userModel.aggregate([
+module.exports.getUsersData = async (userid) => {
+  return userModel.aggregate([
     {
       $match: {
         _id: mongoose.Types.ObjectId(userid),
@@ -312,8 +315,6 @@ getUsersData = async (userid) => {
       },
     },
   ]);
-
-  return users;
 };
 
 module.exports.getToken = async (userId) => {
@@ -327,14 +328,68 @@ module.exports.getToken = async (userId) => {
 
 module.exports.updateuserrole = async (req) => {
   try {
-
-    const user = await userModel.findByIdAndUpdate(req.params.id, {
-      roleId: req.query.roleId
-    }, { new: true });
+    const user = await userModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        roleId: req.query.roleId,
+      },
+      { new: true }
+    );
 
     return { user };
   } catch (err) {
     console.log("something went wrong: service > updateuserrole ", err);
+    throw new Error(err);
+  }
+};
+
+module.exports.loginSSO = async ({ uid }) => {
+  try {
+    //Check UID on pcode site
+    let pcoreres = await pcoreservice.GetPcoreUser(uid);
+
+    if (pcoreres.data.status == 200 && pcoreres.data.body.length > 0) {
+      //Check user exists in Estimation Tool
+      let pcoreuser = pcoreres.data.body[0];
+      let user = await this.CheckUserandCreate(pcoreuser);
+      //Get User data and assign token
+      let users = await this.getUsersData(user._id);
+      user = users[0];
+      user.token = await this.getToken(user._id);
+      delete user["password"];
+      return { user };
+    } else {
+      throw new Error(constant.userMessage.USER_NOT_FOUND);
+    }
+  } catch (error) {
+    throw new Error(constant.userMessage.USER_NOT_FOUND);
+  }
+};
+
+module.exports.CheckUserandCreate = async (user) => {
+  let userexists = await userModel.findOne({ email: user.vc_Email });
+  if (!userexists) {
+    //Create New User
+    let role = await roleModel.findOne({ seq: 8 });
+    userexists = await this.signup({
+      email: user.vc_Email,
+      password: "admin@321",
+      roleId: role._id,
+      firstname: user.EmpFName,
+      lastname: user.EmpLName,
+    });
+  }
+  return userexists;
+};
+
+module.exports.fetchalluserswithrole = async () => {
+  try {
+    return await userModel.find().populate("roleId");
+  } catch (err) {
+    console.log(
+      "something went wrong: service > user service > fetchalluserswithrole  ",
+      err
+    );
     throw new Error(err);
   }
 };

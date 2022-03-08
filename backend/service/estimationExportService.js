@@ -4,6 +4,7 @@ const estimationHeaderModal = require("../database/models/estHeaderModel");
 const estimationResourceCountService = require("./estimationResourceCountService");
 const estTimelinePlanningServive = require("./timelinePlanningService");
 const estAssumptionService = require("./consolidatedAssumptionService");
+const userSer = require("../service/userService");
 
 const ExcelJS = require("exceljs");
 const constant = require("../constant/index");
@@ -161,16 +162,17 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
 
   if (getReportFlagValue("resourcePlanning", reportPayload)) {
     const worksheet = workbook.addWorksheet("Resource Planning");
-    worksheet.columns = getResourcePlanningColumns();
+    var isPriceAllowed = await getUserPricePermission();
+    worksheet.columns = await getResourcePlanningColumns(isPriceAllowed);
     var rowData = await getResourcePlanningRowData(
-      reportPayload.estimationHeaderId
+      reportPayload.estimationHeaderId, isPriceAllowed
     );
     worksheet.addRows(rowData.resPlanningRowData);
     worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     });
 
-    if (rowData.resPlanningRowData.length > 0) {
+    if (rowData.resPlanningRowData.length > 0 && isPriceAllowed) {
       // Insert a row by sparse Array
       var rowValuesTotalCost = [];
       rowValuesTotalCost[6] = "Total";
@@ -211,20 +213,30 @@ async function generateRequiredSpreadsheet(workbook, reportPayload) {
   }
 }
 
-function getResourcePlanningColumns() {
-  return [
-    { header: "S No.", key: "s_no", width: 5 },
-    { header: "Allocation%", key: "allocation", width: 13 },
-    { header: "Role", key: "role", width: 12 },
-    { header: "Skills(Effort & Summary Attributes)", key: "skill", width: 25 },
-    { header: "Unit Cost/Hr($)", key: "cost", width: 12 },
-    { header: "Unit Price/Hr($)", key: "price", width: 12 },
-    { header: "Total Cost($)", key: "cost_cal", width: 12 },
-    { header: "Total Price($)", key: "price_cal", width: 12 },
-  ];
+async function getResourcePlanningColumns(isPriceAllowed) {
+  if(isPriceAllowed){
+    return [
+      { header: "S No.", key: "s_no", width: 5 },
+      { header: "Allocation%", key: "allocation", width: 13 },
+      { header: "Role", key: "role", width: 12 },
+      { header: "Skills(Effort & Summary Attributes)", key: "skill", width: 25 },
+      { header: "Unit Cost/Hr($)", key: "cost", width: 12 },
+      { header: "Unit Price/Hr($)", key: "price", width: 12 },
+      { header: "Total Cost($)", key: "cost_cal", width: 12 },
+      { header: "Total Price($)", key: "price_cal", width: 12 },
+    ];
+  }else{
+    return [
+      { header: "S No.", key: "s_no", width: 5 },
+      { header: "Allocation%", key: "allocation", width: 13 },
+      { header: "Role", key: "role", width: 12 },
+      { header: "Skills(Effort & Summary Attributes)", key: "skill", width: 25 },
+    ];
+  }
+  
 }
 
-async function getResourcePlanningRowData(estinationHeaderId) {
+async function getResourcePlanningRowData(estinationHeaderId, isPriceAllowed) {
   const payload = { id: estinationHeaderId };
   const resData = await resourceCountMixService.getResourceMixPlanning(payload);
   var totalCost = resData.total.cost;
@@ -233,6 +245,7 @@ async function getResourcePlanningRowData(estinationHeaderId) {
   var marginPercent = resData.marginPercent;
 
   var resPlanningRowData = resData.resourceMixData.map((e, i) => {
+  if(isPriceAllowed){
     return {
       s_no: i + 1,
       allocation: e.resourceMix.allocationPercent,
@@ -242,8 +255,16 @@ async function getResourcePlanningRowData(estinationHeaderId) {
       price: e.resourceMix.role.price,
       cost_cal: e.costcal,
       price_cal: e.pricecal,
-    };
-  });
+    }
+  }else{
+      return {
+        s_no: i + 1,
+        allocation: e.resourceMix.allocationPercent,
+        role: e.resourceMix.role.resourceRole,
+        skill: e.attributeName,
+        }
+  }
+});
 
   return { resPlanningRowData, totalCost, totalPrice, margin, marginPercent };
 }
@@ -451,4 +472,15 @@ async function createDirIfNotExist() {
     fs.mkdirSync(dir);
   }
   return true;
+}
+
+async function getUserPricePermission() {
+  var permissions = await userSer.getUsersData(global.loginId);
+  if(permissions != undefined && permissions.length > 0){
+  var permission = permissions[0];
+  var perArr = permission.RolePermission;
+  var value = await perArr.find(per => per.token === 'estimation_pricing_view');
+  return value != undefined;
+  }
+  return false;
 }
