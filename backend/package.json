@@ -9,7 +9,7 @@
     "remove": "node seedData.js -d",
     "test-init": "node ./node_modules/jasmine/bin/jasmine.js init",
     "test": "node ./node_modules/jasmine/bin/jasmine.js",
-    "start:production": "env-cmd -f .env.production nodemon server.js"
+    "start:production": "env-cmd -f .env.production node server.js"
   },
   "keywords": [],
   "author": "",
