@@ -129,9 +129,9 @@ function AllClient(props) {
           />
         ) : (
           <UpdatedBy
-            firstName="Daniel"
-            lastName="Neblet"
-            updatedAt={dataRow.createdAt}
+            firstName={dataRow.createdBy.firstName}
+            lastName={dataRow.createdBy.lastName}
+            updatedAt={dataRow.createdBy.updatedAt}
           />
         ),
 
