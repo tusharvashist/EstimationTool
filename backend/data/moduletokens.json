@@ -163,5 +163,25 @@
     "_id": "6227049d53bd74a6aed8a48e",
     "moduleId": "6177fba39aacee5bf1b01f10",
     "token": "all_estimation_data"
+  },
+  {
+    "_id": "62285408de0663c8a8fbcea4",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_release"
+  },
+  {
+    "_id": "62285425de0663c8a8fbcea5",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_versioning"
+  },
+  {
+    "_id": "622856d3de0663c8a8fbcea7",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_requirement_edit"
+  },
+  {
+    "_id": "622856dcde0663c8a8fbcea8",
+    "moduleId": "6177fba39aacee5bf1b01f10",
+    "token": "estimation_requirement_delete"
   }
 ]
