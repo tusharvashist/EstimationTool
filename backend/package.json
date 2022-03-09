@@ -4,11 +4,7 @@
   "description": "Estimation tool",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
-    "start": "node server.js",
-=======
-    "start": "env-cmd -f .env.development nodemon server.js",
->>>>>>> dev-phase2
+    "start": "env-cmd -f .env.development node server.js",
     "import": "node seedData.js -i",
     "remove": "node seedData.js -d",
     "test-init": "node ./node_modules/jasmine/bin/jasmine.js init",
