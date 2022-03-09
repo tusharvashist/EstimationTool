@@ -256,9 +256,9 @@ function ProjectEstimations(props) {
           />
         ) : (
           <UpdatedBy
-            firstName=""
-            lastName=""
-            updatedAt={dataRow.row.createdAt}
+            firstName={dataRow.row.createdBy.firstName}
+            lastName={dataRow.row.createdBy.lastName}
+            updatedAt={dataRow.row.createdBy.updatedAt}
           />
         ),
     },
