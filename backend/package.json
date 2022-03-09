@@ -4,15 +4,12 @@
   "description": "Estimation tool",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "env-cmd -f .env.development nodemon server.js",
     "import": "node seedData.js -i",
     "remove": "node seedData.js -d",
     "test-init": "node ./node_modules/jasmine/bin/jasmine.js init",
     "test": "node ./node_modules/jasmine/bin/jasmine.js",
-    "start:production": "env-cmd -f .env.production nodemon server.js",
-    "build:production": "env-cmd -f .env.production nodemon server.js",
-    "start:development": "env-cmd -f .env.development nodemon server.js",
-    "build:development": "env-cmd -f .env.development nodemon server.js"
+    "start:production": "env-cmd -f .env.production nodemon server.js"
   },
   "keywords": [],
   "author": "",
