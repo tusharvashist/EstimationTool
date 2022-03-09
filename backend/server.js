@@ -9,7 +9,7 @@ const productionURL = "https://pyramidestimationtool.azurewebsites.net";
 const app = express();
 const PORT = process.env.PORT || 5252;
 let envName = "";
-dotEnv.config();
+dotEnv.config({ path: `.env.${process.env.NODE_ENV}` });
 global.ResourceWeekHours = 40;
 //do connection
 dbconnection();

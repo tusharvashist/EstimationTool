@@ -73,6 +73,12 @@ const EstimationDetail = () => {
     estimationConfiguation,
     estimation_export_excel,
     estimation_requirement_add,
+    estimation_resourcecount_edit,
+    estimation_requirement_delete,
+    estimation_requirement_edit,
+    estimation_versioning,
+    estimation_release,
+    all_estimation_data,
   } = usePermission();
 
   const {
@@ -384,6 +390,7 @@ const EstimationDetail = () => {
               <>
                 <GridActionsCellItem
                   icon={<DeleteIcon />}
+                  disabled={!estimation_requirement_edit}
                   label="Delete"
                   onClick={deleteUser(params)}
                 />
@@ -391,6 +398,7 @@ const EstimationDetail = () => {
                 <GridActionsCellItem
                   icon={<EditIcon />}
                   label="Delete"
+                  disabled={!estimation_requirement_edit}
                   onClick={openEditRequirement(params)}
                 />
               </>,

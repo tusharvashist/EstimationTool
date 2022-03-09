@@ -4,11 +4,16 @@
   "description": "Estimation tool",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "node server.js",
+=======
+    "start": "env-cmd -f .env.development nodemon server.js",
+>>>>>>> dev-phase2
     "import": "node seedData.js -i",
     "remove": "node seedData.js -d",
     "test-init": "node ./node_modules/jasmine/bin/jasmine.js init",
-    "test": "node ./node_modules/jasmine/bin/jasmine.js"
+    "test": "node ./node_modules/jasmine/bin/jasmine.js",
+    "start:production": "env-cmd -f .env.production node server.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +26,7 @@
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
+    "env-cmd": "^10.1.0",
     "exceljs": "^4.3.0",
     "express": "^4.17.2",
     "express-fileupload": "^1.2.1",
