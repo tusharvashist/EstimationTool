@@ -35,6 +35,11 @@ export const USER_PERMISSIONS = {
   estimation_pricing_view: "estimation_pricing_view",
   estimation_add_review_comment: "estimation_add_review_comment", // Not implemented
   estimation_resourcecount_edit: "estimation_resourcecount_edit",
+  estimation_requirement_delete: "estimation_requirement_delete",
+  estimation_requirement_edit: "estimation_requirement_edit",
+  estimation_versioning: "estimation_versioning",
+  estimation_release: "estimation_release",
+  all_estimation_data: "all_estimation_data",
   //user manangement for admin
   user_management_listing: "user_management_listing",
 };
@@ -57,4 +62,9 @@ export const ESTIMATION_PERMISSION = {
   this_estimation_pricing_view: false,
   this_estimation_add_review_comment: false, // Not implemented
   this_estimation_resourcecount_edit: false,
+  estimation_requirement_delete: false,
+  estimation_requirement_edit: false,
+  estimation_versioning: false,
+  estimation_release: false,
+  all_estimation_data: false
 };

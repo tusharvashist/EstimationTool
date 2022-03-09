@@ -38,6 +38,7 @@ const ResourceCountGrid = (props) => {
         <Select
           style={{ width: "100%" }}
           onChange={(e) => props.onChangeSelect(e, rowdata)}
+          disabled={!props.estimation_resourcecount_edit}
           onMouseEnter={(e) =>
             rowdata.row.rolecount.length !== 0 &&
             props.setTechError({
@@ -68,8 +69,7 @@ const ResourceCountGrid = (props) => {
 
   return (
     <div style={{ height: 300, width: "100%" }}>
-      {props.estimation_resourcecount_edit &&
-      props.resouceCountData.length > 0 ? (
+      {props.resouceCountData.length > 0 ? (
         <DataGrid
           sx={{
             "& .MuiDataGrid-cell:hover": {
