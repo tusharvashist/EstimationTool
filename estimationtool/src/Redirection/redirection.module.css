@@ -13,10 +13,6 @@
     background-color: #1d1761;
   }
 }
-
-.logintitle {
-  font-size: 20px;
-}
 .loginwidget_container {
   display: flex;
   align-items: center;
@@ -25,7 +21,7 @@
 .loginwidget {
   width: 300px;
   width: calc(60%);
-  padding: 10% 20px !important;
+  padding: 40px !important;
 }
 .bgimg {
   height: 100%;
@@ -92,4 +88,18 @@
 }
 .loadercontainer {
   display: flex;
+  align-items: center;
+  padding-top: 10px;
+}
+.logoContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-bottom: 20px;
+}
+.tagline {
+  line-height: 40px;
+}
+.toolname {
+  color: #15233e;
 }

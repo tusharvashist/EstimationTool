@@ -15,6 +15,7 @@ import {
   setRole,
   setRolePermission,
 } from "../Redux/loginRedux";
+import logo from "../login/img/celsior_600x600_01_Logo.jpg";
 import classes from "./redirection.module.css";
 import bgvideo from "../login/img/bgvideo.mp4";
 import rightImg from "../login/img/img-right-estimation.png";
@@ -135,7 +136,13 @@ export default function Redirection(props) {
               className={classes.h100}
             >
               <div>
-                <h1>Welcome to EstimationTool</h1>
+                <div className={classes.logoContainer}>
+                  <img src={logo} />
+                </div>
+                <h1 className={classes.tagline}>
+                  Welcome to{" "}
+                  <span className={classes.toolname}>EstimationTool</span>
+                </h1>
                 <div className={classes.loadercontainer}>
                   <p>Please wait while we are setting up tool for you...</p>
                   <div className={classes.loader}>{loaderComponent}</div>
