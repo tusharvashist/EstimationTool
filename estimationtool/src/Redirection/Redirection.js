@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Grid from "@material-ui/core/Grid";
-import { Box } from "@material-ui/core";
-import BorderedContainer from "../shared/ui-view/borderedContainer/BorderedContainer";
+
 import { useLocation, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../Redux/estimationHeaderId";
@@ -16,15 +14,16 @@ import {
   setRolePermission,
 } from "../Redux/loginRedux";
 import logo from "../login/img/celsior_600x600_01_Logo.jpg";
-import classes from "./redirection.module.css";
 import bgvideo from "../login/img/bgvideo.mp4";
 import rightImg from "../login/img/img-right-estimation.png";
 import useLoader from "../shared/layout/hooks/useLoader";
 import { setAdmin, setContributor, setSuperAdmin } from "../Redux/roleRedux";
 import { USER_PERMISSIONS } from "../shared/ui-view/constant/enum";
+import Welcome from "./Welcome";
 
 export default function Redirection(props) {
   const [loaderComponent, setLoader] = useLoader();
+  const [status, setStatus] = useState("");
 
   const dispatch = useDispatch();
   let history = useHistory();
@@ -52,6 +51,7 @@ export default function Redirection(props) {
   const validateShareEstLink = async (estimationId, token) => {
     try {
       setLoader(true);
+      setStatus("Authentication InProgress");
       let result = await redirectionService.validateShareEstLink(
         estimationId,
         token
@@ -60,6 +60,7 @@ export default function Redirection(props) {
       console.log("result", result);
 
       if (result.status === 200) {
+        setStatus("Authentication Successful"); //to be changed
         var user = result.data.body.user;
         saveDataToRedux(user);
         redirectToEstimationDetail(
@@ -113,54 +114,12 @@ export default function Redirection(props) {
   };
 
   return (
-    <Grid
-      container
-      className={`${classes.h100} ${classes.loginwrp}`}
-      direction="row"
-    >
-      <video autoPlay muted loop className={classes.fullbgvideo}>
-        <source src={bgvideo} type="video/mp4" />
-      </video>
-      <Grid item xs={6} className={classes.bgimg}>
-        <Grid
-          container
-          justify="center"
-          alignItems="center"
-          className={classes.bgmask}
-        >
-          <BorderedContainer className={classes.loginwidget}>
-            <Grid
-              container
-              justify="center"
-              alignItems="center"
-              className={classes.h100}
-            >
-              <div>
-                <div className={classes.logoContainer}>
-                  <img src={logo} />
-                </div>
-                <h1 className={classes.tagline}>
-                  Welcome to{" "}
-                  <span className={classes.toolname}>EstimationTool</span>
-                </h1>
-                <div className={classes.loadercontainer}>
-                  <p>Please wait while we are setting up tool for you...</p>
-                  <div className={classes.loader}>{loaderComponent}</div>
-                </div>
-              </div>
-            </Grid>
-          </BorderedContainer>
-        </Grid>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        md={6}
-        alignItems={"center"}
-        className={classes.loginwidget_container}
-      >
-        <img width={"600px"} src={rightImg} />
-      </Grid>
-    </Grid>
+    <Welcome
+      bgvideo={bgvideo}
+      logo={logo}
+      loaderComponent={loaderComponent}
+      status={status}
+      rightImg={rightImg}
+    />
   );
 }
