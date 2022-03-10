@@ -30,9 +30,12 @@ export default function Redirection(props) {
   const search = useLocation().search;
   const estimationId = new URLSearchParams(search).get("estimationId");
   const token = new URLSearchParams(search).get("token");
-
+  var referrer = document.referrer;
+         console.log("referrer url",referrer);
   useEffect(() => {
     validateShareEstLink(estimationId, token);
+
+     
   }, []);
 
   const mapPermissions = (permissionArray) => {

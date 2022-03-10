@@ -33,9 +33,14 @@ export default function SSORedirection(props) {
   const uid = new URLSearchParams(search).get("uid");
   //  const token = new URLSearchParams(search).get('token');
   const [status, setStatus] = useState("");
-
+  var referrer = document.referrer;
+  console.log("referrer url", referrer); 
   useEffect(() => {
-    loginsso(uid);
+    if (process.env.REACT_APP_REFERRAL === referrer) {
+        loginsso(uid);
+    } else {
+      setStatus( "Unauthorized access!")
+    }
   }, []);
 
   const mapPermissions = (permissionArray) => {
