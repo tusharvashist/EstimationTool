@@ -87,6 +87,7 @@ module.exports.fetchalluserswithrole = async (req, res) => {
     responce.message = constant.userMessage.FETCH_USER;
     responce.body = responceFromUserService;
   } catch (err) {
+    responce.status = 401;
     responce.message = err.message;
   }
   return res.status(responce.status).send(responce);

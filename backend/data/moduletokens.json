@@ -183,5 +183,10 @@
     "_id": "622856dcde0663c8a8fbcea8",
     "moduleId": "6177fba39aacee5bf1b01f10",
     "token": "estimation_requirement_delete"
+  },
+  {
+    "_id": "6229971f66c9a4e132f490ef",
+    "moduleId": "6221f1e026ab3ff1025e9b89",
+    "token": "user_role_list"
   }
 ]

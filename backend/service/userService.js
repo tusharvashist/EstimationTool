@@ -384,6 +384,11 @@ module.exports.CheckUserandCreate = async (user) => {
 
 module.exports.fetchalluserswithrole = async () => {
   try {
+    const isUserAllowedToListAllEstimations = await this.checkUserPermissionWithReqModuleToken(global.loginId, 'user_role_list');
+    
+    if (!isUserAllowedToListAllEstimations) {
+      throw new Error(constant.PermssionMessage.PERMISSION_NOT_FOUND);
+    }
     return await userModel.find().populate("roleId");
   } catch (err) {
     console.log(
@@ -415,7 +420,7 @@ module.exports.checkUserPermissionWithReqModuleToken = async (userId, moduleToke
     }
 
   } catch (err) {
-    console.log("something went wrong: service > user service > checkUserPermission  ", err);
+    console.log("something went wrong: service > user service > checkUserPermissionWithReqModuleToken  ", err);
     throw new Error(err);
   }
 };
