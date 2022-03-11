@@ -348,9 +348,9 @@ module.exports = {
   },
   emailSettings: {
     SENDGRID_API_KEY:
-      "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",
+      "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",
     EMAIL_STATUS: "true",
-    FROM_EMAIL: "vishal.verma@pyramidconsultinginc.com",
+    FROM_EMAIL: "vishal.verma@celsiortech.com",
   },
 
   emailType: {

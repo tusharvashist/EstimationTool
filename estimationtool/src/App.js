@@ -9,6 +9,8 @@ import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import history from "./common/history";
 
 function App() {
+    var referrer = document.referrer;
+  console.log("Get : referrer url : ", referrer); 
   return (
     <BrowserRouter history={history}>
       <Switch>

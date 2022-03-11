@@ -4,9 +4,11 @@
   "description": "Estimation tool",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f .env.development node server.js",
-    "import": "node seedData.js -i",
-    "remove": "node seedData.js -d",
+    "start": "env-cmd -f .env.development nodemon server.js",
+    "import": "env-cmd -f .env.development node seedData.js -i",
+    "remove": "env-cmd -f .env.development node seedData.js -d",
+    "import:production": "env-cmd -f .env.production node seedData.js -i",
+    "remove:production": "env-cmd -f .env.production node seedData.js -d",
     "test-init": "node ./node_modules/jasmine/bin/jasmine.js init",
     "test": "node ./node_modules/jasmine/bin/jasmine.js",
     "start:production": "env-cmd -f .env.production node server.js"

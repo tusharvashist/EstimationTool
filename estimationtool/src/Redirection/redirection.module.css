@@ -103,3 +103,7 @@
 .toolname {
   color: #15233e;
 }
+.message {
+  color: rgb(107, 107, 107);
+  font-size: 14px;
+}

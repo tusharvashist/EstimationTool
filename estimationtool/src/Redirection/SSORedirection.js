@@ -1,8 +1,8 @@
-import React, {useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import Grid from "@material-ui/core/Grid";
 import { Box } from "@material-ui/core";
 import BorderedContainer from "../shared/ui-view/borderedContainer/BorderedContainer";
-import { useLocation,useHistory } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setEstHeaderId } from "../Redux/estimationHeaderId";
 import redirectionService from "./RedirectionService";
@@ -18,17 +18,29 @@ import {
 
 import { setAdmin, setContributor, setSuperAdmin } from "../Redux/roleRedux";
 import { USER_PERMISSIONS } from "../shared/ui-view/constant/enum";
+import Welcome from "./Welcome";
+
+import logo from "../login/img/celsior_600x600_01_Logo.jpg";
+import bgvideo from "../login/img/bgvideo.mp4";
+import rightImg from "../login/img/img-right-estimation.png";
+import useLoader from "../shared/layout/hooks/useLoader";
 
 export default function SSORedirection(props) {
+  const [loaderComponent, setLoader] = useLoader();
   const dispatch = useDispatch();
   let history = useHistory();
   const search = useLocation().search;
-  const uid = new URLSearchParams(search).get('uid');
-//  const token = new URLSearchParams(search).get('token');
+  const uid = new URLSearchParams(search).get("uid");
+  //  const token = new URLSearchParams(search).get('token');
   const [status, setStatus] = useState("");
-  
+  var referrer = document.referrer;
+  console.log("referrer url", referrer); 
   useEffect(() => {
-    loginsso(uid);
+    if (process.env.REACT_APP_REFERRAL === referrer) {
+        loginsso(uid);
+    } else {
+      setStatus( "Unauthorized access!")
+    }
   }, []);
 
   const mapPermissions = (permissionArray) => {
@@ -45,41 +57,38 @@ export default function SSORedirection(props) {
 
   const loginsso = async (uid) => {
     try {
-    let result = await redirectionService.loginsso(uid);
-    console.log("result", result);
+      setLoader(true);
+      let result = await redirectionService.loginsso(uid);
+      console.log("result", result);
       if (result.status === 200) {
+        setLoader(false);
         setStatus("Valid user.");
         var user = result.data.body.user;
         saveDataToRedux(user);
         redirectDashbord();
-      // redirectToEstimationDetail(user.estimationDetails._id,
-      //   user.clientDetails.clientName,
-      //   user.projectDetails.projectName
-      // );
-    }
-    } catch (error) {
-        setStatus("Invalid user.");
-        console.log("Error", error);
+        // redirectToEstimationDetail(user.estimationDetails._id,
+        //   user.clientDetails.clientName,
+        //   user.projectDetails.projectName
+        // );
       }
-  }
+    } catch (error) {
+      setStatus("Invalid user.");
+      console.log("Error", error);
+    }
+  };
 
-  const saveDataToRedux = async(user)=>{
+  const saveDataToRedux = async (user) => {
+    await AuthSer.login(user);
+    dispatch(setEmail(user.email));
+    dispatch(setFirstName(user.firstName));
+    dispatch(setLastName(user.lastName));
+    dispatch(setFullName(user.firstName + " " + user.lastName));
 
-       await AuthSer.login(user);
-        dispatch(setEmail(user.email));
-        dispatch(setFirstName(user.firstName));
-        dispatch(setLastName(user.lastName));
-        dispatch(
-          setFullName(
-            user.firstName + " " + user.lastName
-          )
-        );
-    
     if (user.roles !== undefined) {
       dispatch(setRole(user.roles.roleName));
       const permissions = mapPermissions(user.RolePermission);
       dispatch(setRolePermission(permissions));
-       
+
       if (user.roles.roleName === "Admin") {
         dispatch(setAdmin(true));
       } else if (user.roles.roleName === "Super Admin") {
@@ -88,57 +97,30 @@ export default function SSORedirection(props) {
         dispatch(setContributor(true));
       }
     }
-     
-  }
+  };
   const redirectDashbord = () => {
     let url = "/Recent-Estimations";
     history.push(url);
   };
 
-//   const redirectToEstimationDetail = (estimationId,clientName,projectName) => {
-//     var url = "All-Clients/" + clientName + "/" + projectName + "/Estimation-Detail/";
-//     dispatch(setEstHeaderId(estimationId))
-//     history.push(url);
-    
-// //http://localhost:3000/All-Clients/Star-Link/Apple/Estimation-Detail/
-// // dispatch(setEstHeaderId(augData._id))
-//   // let url = "/Recent-Estimations";
-//   //   history.push(url);
-// }
+  //   const redirectToEstimationDetail = (estimationId,clientName,projectName) => {
+  //     var url = "All-Clients/" + clientName + "/" + projectName + "/Estimation-Detail/";
+  //     dispatch(setEstHeaderId(estimationId))
+  //     history.push(url);
+
+  // //http://localhost:3000/All-Clients/Star-Link/Apple/Estimation-Detail/
+  // // dispatch(setEstHeaderId(augData._id))
+  //   // let url = "/Recent-Estimations";
+  //   //   history.push(url);
+  // }
 
   return (
-    <Grid container className="h-100 login-wrp" direction="row">
-   <Grid item xs={6} className="bg-img">
-        <Grid
-          container
-          justify="center"
-          alignItems="center"
-          className="bg-mask"
-        ></Grid>
-      </Grid>
-      <Grid
-        item
-        xs={12}
-        md={6}
-        alignItems={"center"}
-        className="login-widget_container"
-      >
-        <BorderedContainer className="login-widget">
-          <Grid
-            container
-            justify="center"
-            alignItems="center"
-            className="h-100"
-          >
-            <div class="loading">
-              <p>Please wait..</p>
-                <p>{status}</p>
-            <span><i></i><i></i></span>
-        </div>
-           
-          </Grid>
-        </BorderedContainer>
-      </Grid> 
-    </Grid>
+    <Welcome
+      bgvideo={bgvideo}
+      logo={logo}
+      loaderComponent={loaderComponent}
+      status={status}
+      rightImg={rightImg}
+    />
   );
 }

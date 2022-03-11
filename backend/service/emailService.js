@@ -59,7 +59,7 @@ function getEmailTemplate(templateData) {
                 <b>
                     <i>
                          Thanks & Regards <br>
-                         Team Pyramid <br>
+                         Team Celsior <br>
                          web: <a href="http://pyramidcore.pyramidci.com">pyramidcore.pyramidci.com</a>
                     </i>
                 </b>
